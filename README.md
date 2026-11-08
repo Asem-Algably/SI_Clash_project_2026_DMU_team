@@ -6,8 +6,6 @@ bursts at 4 samples per symbol.
 
 ## Signal chain
 
-
-
 ![b0f336a8f61db0fc7d20374396da6bbbbf239396.png](assets/b0f336a8f61db0fc7d20374396da6bbbbf239396.png)
 
 ## Repository layout
@@ -46,13 +44,6 @@ recreate. `out/` is git-ignored except for its folder markers.
 2. MATLAB reads it and writes input vectors and expected outputs to `data/vectors/`.
 3. The SV testbenches read the vectors, drive the design and compare outputs.
 
-## Open questions (assumptions until the organisers answer)
 
-- **Q-a:** is "SNR" per-sample SNR or symbol-rate Es/N0?
-- **Q-b:** is EVM normalised to the RMS or to the peak constellation amplitude?
-- **Q-c:** is the input level fixed and nominal, or variable?
 
-## Getting started
-
-Makefile targets and script usage will be added here when the scripts exist.
-# SI_Clash_project_2026_DMU_team
+open questions are submitted here: https://docs.google.com/document/d/1GWW_wlDotfCcXGYMSorvOwoiDHHeGffAWlMhd7J3kbQ/edit?tab=t.0
