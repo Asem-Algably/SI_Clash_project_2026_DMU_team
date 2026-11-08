@@ -86,8 +86,8 @@ The counter range is split into two regions:
 
 | Region  | Range of `M`            | Strobe                                                           |
 | ------- | ----------------------- | ---------------------------------------------------------------- |
-| Current | [0.75, 1) and [0, 0.25) | Current strobe when `M` enters this region (from the mid region) |
-| Mid     | [0.25, 0.75)            | Mid strobe when `M` enters this region (from the current region) |
+| Current | from [0.25, 0.5) to [0.75, 1) and [0, 0.25) | Current strobe when `M` enters this region (from the mid region) |
+| Mid     | from [0.75, 1) to [0.25, 0.75)            | Mid strobe when `M` enters this region (from the current region) |
 
 Two consecutive samples in the same region give no strobe. With `W` near 0.25 this gives one mid strobe and one current strobe per symbol.
 **Interpolation interval `mu`.** `mu` is calculated **once per strobe**, with one equation for each strobe type. Let `M_old` be the counter value before this sample's decrement, and `pi` the PI filter output (`W = 0.25 + pi`).
