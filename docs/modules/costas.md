@@ -48,8 +48,6 @@ Angles are in binary radians (section 3).
 | `freq_adj_o`           | out | TBD            | PI output, sent to the derotator                                           |
 | `phase_adj_valid_o`    | out | 1              | One pulse, when a sign counter is full or at the preamble end: initial phase correction valid |
 | `phase_adj_o`          | out | 32             | Initial phase correction `k * pi/2`, sent to the derotator once            |
-| `err_valid_o`, `err_o` | out | 1, TBD         | Phase error with its valid, for the wrapper to align with the symbol       |
-| `int_o`                | out | TBD            | Loop integrator (for the fine CFO estimate)                                |
 | `lock_o`               | out | 1              | Costas lock flag                                                           |
 
 Latency: the slicer is combinational. The loop delay is the derotator pipeline plus the mutliplier and the PI filter. This total (`pipe_delay`) is fixed at RTL and must match the design: TBD.
