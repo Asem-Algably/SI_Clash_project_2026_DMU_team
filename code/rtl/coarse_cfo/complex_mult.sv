@@ -7,7 +7,7 @@
 
 module complex_mult #(
   parameter int unsigned InWidth  = 16,  // Input sample width
-  parameter int unsigned OutWidth = 32   // Output product width (32-bit is sufficient)
+  parameter int unsigned OutWidth = 33   // Output product width (fixed_point mult_out 33-bit)
 ) (
   input  logic signed [InWidth-1:0]  a_re_i,  // Real part of A
   input  logic signed [InWidth-1:0]  a_im_i,  // Imag part of A

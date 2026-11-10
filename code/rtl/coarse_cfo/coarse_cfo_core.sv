@@ -63,12 +63,12 @@ module coarse_cfo_core #(
   end
 
   // Complex multiply r[n] * conj(r[n-Lag]) - 32-bit output
-  logic signed [31:0] mult_re;  // Product real
-  logic signed [31:0] mult_im;  // Product imag
+  logic signed [32:0] mult_re;  // Product real
+  logic signed [32:0] mult_im;  // Product imag
 
   complex_mult #(
     .InWidth (DataWidth),    // 16-bit input
-    .OutWidth(32)            // 32-bit output
+    .OutWidth(33)            // 32-bit output
   ) u_complex_mult (
     .a_re_i (s_axis_i_sym_i),         // Current real
     .a_im_i (s_axis_q_sym_i),         // Current imag
@@ -84,7 +84,7 @@ module coarse_cfo_core #(
   logic                       acc_done; // Level: window done
 
   accumulator #(
-    .InWidth (32),           // 32-bit input
+    .InWidth (33),           // 32-bit input
     .AccWidth(AccWidth),     // 40-bit accumulator
     .WinLen  (WinLen)        // 32 symbols
   ) u_accumulator (

@@ -6,7 +6,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 module accumulator #(
-  parameter int unsigned InWidth  = 32,  // Complex sample width
+  parameter int unsigned InWidth  = 33,  // Complex sample width
   parameter int unsigned AccWidth = 40,  // Accumulator width
   parameter int unsigned WinLen   = 32   // Window length in symbols
 ) (
