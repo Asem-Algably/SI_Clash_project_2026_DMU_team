@@ -9,7 +9,6 @@ vlog accumulator.sv
 vlog cordic_angle.sv
 vlog coarse_cfo_core.sv
 vlog coarse_cfo_axi_wrapper.sv
-vlog sync_system_top.sv
 
 # 2. Compile Testbenches
 vlog -sv tb_checkpoint3_full.sv

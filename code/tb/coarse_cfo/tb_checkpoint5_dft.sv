@@ -265,9 +265,9 @@ module tb_checkpoint5_dft;
     $display("  dft_sel=4 -> dft_obs_data = 0x%08x (DEFAULT)", dft_obs_data);
 
     // 4. AXI Read of CFO Estimate (Addr 0x04)
-    $display("[TB] Testing AXI Read of CFO Estimate (Addr 0x04)...");
-    axi_read(6'h04, read_data);
-    $display("  AXI Read CFO (0x04) -> 0x%08x", read_data);
+    $display("[TB] Testing AXI Read of CFO Estimate (Addr 0x0C)...");
+    axi_read(6'h0C, read_data);
+    $display("  AXI Read CFO (0x0C) -> 0x%08x", read_data);
 
     // 5. Cleanup
     s_axis_tdata_re = '0;
