@@ -97,11 +97,32 @@ The DFT MUX correctly displays internal signals, and the AXI interface successfu
 *   **DFT MUX (CFO = 0.05 Rsym):** `dft_sel=0 -> 0x000ccce9` (which equals 838889 decimal).
 *   **AXI Read (Addr 0x04):** `0x000ccce9`
 
-### 5.3. Generated Output Files
-The testbenches generate the following output files, which can be read by the next stage (Costas Loop Testbench) using `$fscanf`:
+---
 
-*   `cfo_output_tb3.txt`:
-    ```text
-    -0.100000 e66649  -1677751
-    -0.075000 eccce9  -1258263
-    0.050000 0ccce9    838889
+## 6. File Structure
+
+| File | Description |
+| :--- | :--- |
+| `coarse_cfo_core.sv` | Main estimator datapath. |
+| `coarse_cfo_axi_wrapper.sv` | AXI4-Lite and AXI4-Stream wrapper. |
+| `complex_mult.sv` | Complex multiplier sub-module. |
+| `accumulator.sv` | 40-bit complex accumulator. |
+| `cordic_angle.sv` | 16-iteration CORDIC engine. |
+| `reset_sync.sv` | Asynchronous assert / synchronous deassert reset synchronizer. |
+| `tb_checkpoint3_full.sv` | Testbench for core accuracy sweep. |
+| `tb_checkpoint5_dft.sv` | Testbench for AXI and DFT MUX. |
+| `run_checkpoint3_full.do` | ModelSim script for Checkpoint 3. |
+| `run_checkpoint5_dft.do` | ModelSim script for Checkpoint 5. |
+
+---
+
+## 7. How to Run
+To run the simulations in QuestaSim/ModelSim:
+
+1. Open the QuestaSim transcript.
+2. Change directory to the project folder.
+3. Run the desired test script:
+
+For Checkpoint 3 (Core Accuracy):
+```tcl
+do run_checkpoint3_full.do
