@@ -156,7 +156,7 @@ module parabolic_farrow_interpolator
             term2 <= '0;
             term3 <= '0;
         end else begin
-            term1 <= v0;
+            term1 <= {v0, 4'b0000}; // i have added 4 bits to the fractional part of the variable to make it in the format of Q1.15 to meet the requiremets of the output of the parabolic farrow interpolator
             term2 <= term2_before_trancation [DATA_OUT_INTEGER_WIDTH-1:-DATA_OUT_FRACTIONAL_WIDTH];
             term3 <= term3_before_trancation [DATA_OUT_INTEGER_WIDTH-1:-DATA_OUT_FRACTIONAL_WIDTH];
         end     
