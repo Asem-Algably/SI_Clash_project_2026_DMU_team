@@ -1,5 +1,5 @@
 ////////////////////////////////////////////////////////////////////////////////
-// Author: Abdelrhman Khalifa
+// Author: Abd El-Rhman Khalifa
 // Co_Author: Hadeer Ghoneim
 // Design: Gardner Timing Error Detector (TED) module.
 // Date: 12-11-2026
