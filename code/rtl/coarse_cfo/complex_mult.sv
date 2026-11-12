@@ -1,8 +1,10 @@
 ////////////////////////////////////////////////////////////////////////////////
-// Author: Hadeer Ghoneim
-// Design: A complex multiplier module.
-// Date: 6-11-2026
-// Description: Multiply each number to its conjugate for the coarse CFO estimator.
+// Author:         Hadeer Ghoneim
+// Design:         A complex multiplier module.
+// Date:           6-11-2026
+// Description:    Multiply each number to its conjugate for the coarse CFO estimator.
+// Project Name:   Real-Time All-Digital Carrier & Timing Synchronization Unit
+// Organization:   Electronics Research Institute (ERI) - SI_CLASH Challenge
 ////////////////////////////////////////////////////////////////////////////////
 
 module complex_mult #(
