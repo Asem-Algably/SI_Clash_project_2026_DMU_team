@@ -34,5 +34,12 @@ module complex_mult #(
 
   assign p_im_o = {{(OutWidth-2*InWidth){prod_ri[2*InWidth-1]}}, prod_ri} +
                   {{(OutWidth-2*InWidth){prod_ir[2*InWidth-1]}}, prod_ir};
+  
+  // Real Part Calculation: (Real * Real) - (Imag * Imag)
+  // To prevent overflow during subtraction, both 32-bit products are 
+  // sign-extended to 33 bits (OutWidth) BEFORE the subtraction.
+  // 33-(2*16) = 1 : Sign Extend from product by replicating its MSB to the sign bit
+  // sign bit merged with the product output which has width of (2*16)-1 = 31
+  // one more bit for overflow
 
 endmodule 
