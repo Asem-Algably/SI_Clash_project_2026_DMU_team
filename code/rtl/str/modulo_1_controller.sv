@@ -1,5 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
-// Author: Hadeer Ghoneim
+// Author: Abd El-Rhman Khalifa
+// Co_Author: Hadeer Ghoneim
 // Design: Modulo-1 Controller (NCO) module.
 // Date: 12-11-2026
 // Description: Generates mid and current strobes, and calculates the fractional 
