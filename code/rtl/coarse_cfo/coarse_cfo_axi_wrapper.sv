@@ -1,7 +1,9 @@
-// Author: Hadeer Ghoneim
-// Design: A coarse_cfo_axi_wrapper module.
-// Date: 8-11-2026
-// Description: AXI4-Lite wrapper for the coarse CFO estimator with DFT Force Regs.
+// Author:         Hadeer Ghoneim
+// Design:         A coarse_cfo_axi_wrapper module.
+// Date:           8-11-2026
+// Description:    AXI4-Lite wrapper for the coarse CFO estimator with DFT Force Regs.
+// Project Name:   Real-Time All-Digital Carrier & Timing Synchronization Unit
+// Organization:   Electronics Research Institute (ERI) - SI_CLASH Challenge
 ////////////////////////////////////////////////////////////////////////////////
 
 module coarse_cfo_axi_wrapper #(
