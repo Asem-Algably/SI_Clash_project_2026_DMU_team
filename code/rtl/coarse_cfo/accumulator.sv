@@ -1,8 +1,10 @@
 ////////////////////////////////////////////////////////////////////////////////
-// Author: Hadeer Ghoneim
-// Design: An accumulator module.
-// Date: 6-11-2026
-// Description: Delay line and accumulator for Coarse CFO estimator.
+// Author:         Hadeer Ghoneim
+// Design:         An accumulator module.
+// Date:           6-11-2026
+// Description:    Delay line and accumulator for Coarse CFO estimator.
+// Project Name:   Real-Time All-Digital Carrier & Timing Synchronization Unit
+// Organization:   Electronics Research Institute (ERI) - SI_CLASH Challenge
 ////////////////////////////////////////////////////////////////////////////////
 
 module accumulator #(
