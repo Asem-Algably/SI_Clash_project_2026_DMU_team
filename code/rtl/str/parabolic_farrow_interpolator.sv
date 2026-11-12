@@ -29,7 +29,8 @@ module parabolic_farrow_interpolator
     );
 
     // ------------ capture the input sample in a register to be used for interpolation ------------ 
-    logic signed [DATA_IN_INTEGER_WIDTH-1:-DATA_IN_FRACTIONAL_WIDTH] x_i_reg;
+    logic signed [DATA_IN_INTEGER_WIDTH-1:-DATA_IN_FRACTIONAL_WIDTH] x_i_reg; // i added this register to avoid timing issues if their are any routing or other combinational logic between the input sample and the parabolic farrow interpolator
+    logic valid_sample_i_reg; // i added this register to avoid timing issues if their are any routing or other combinational logic between the input sample and the parabolic farrow interpolator
 
     // ------------ the delayed input samples (half branch) ------------ 
     // i did not reduce the number of bits for the half branch by 1 bit less than the full branch because i need to keep the sign to mantain Q1.11 format
@@ -56,22 +57,28 @@ module parabolic_farrow_interpolator
     // i made a register for mu_i and mu_i_squared to avoid the timing issues of the multiplication and to make sure that the multiplication is done with the correct values of mu_i and mu_i_squared
     logic signed [0:-MU_WIDTH] mu_i_reg; // i have added 1 bit for the sign to make it in the format of Q1.N to meet the requiremets of multiplication
     logic signed [0:-MU_WIDTH * 2 ] mu_i_squared_reg; // the multiplication duples the number of bits in the fractional part of the result
-
+    logic [2*MU_WIDTH-1:0] mu_i_squared; // i have added this signal to make sure that the multiplication result is 20 bits and not 10 bits (the width of mu_i) to avoid losing the fractional part of the multiplication result
 
     // ------------ terms of the equations of the parabolic farrow interpolator ------------
-    // the final terms must be Q1.15 to meet the requirements of the output of the parabolic farrow interpolator
-    // i did not accout for overflow (did not add an extra bit)in the terms because the max value of the terms is less than 1 and the max value of the output is also less than 1
-    // according to the normalized input samples and the normalized output of the parabolic farrow interpolator
-    logic signed [DATA_OUT_INTEGER_WIDTH-1:-DATA_OUT_FRACTIONAL_WIDTH] term1 , term2 , term3;
+    // the final terms must be QM.15 to meet the requirements of the output of the parabolic farrow interpolator
+    // i added two bits for the integer part of term2 and term3 to avoid overflow in the calculations since the max value of term2 and term3 can be 3 times and 2 times the max value of the input samples respectively
+
+    localparam integer TERM2_BEFORE_TRANCATION_INTEGER_WIDTH = (1) + (DATA_IN_INTEGER_WIDTH-1 +2 +1); //term2_before_trancation =  mu_i_reg * v1;
+    localparam integer TERM2_BEFORE_TRANCATION_FRACTIONAL_WIDTH = ((MU_WIDTH) + (DATA_IN_FRACTIONAL_WIDTH) ); //term2_before_trancation =  mu_i_reg * v1;
+    
+    localparam integer TERM3_BEFORE_TRANCATION_INTEGER_WIDTH = (1) + (DATA_IN_INTEGER_WIDTH-1 +2 +1); //term3_before_trancation = mu_i_squared_reg * v2;
+    localparam integer TERM3_BEFORE_TRANCATION_FRACTIONAL_WIDTH = ((MU_WIDTH * 2 ) + (DATA_IN_FRACTIONAL_WIDTH) ); //term3_before_trancation = mu_i_squared_reg * v2;
+
+    logic signed [DATA_OUT_INTEGER_WIDTH-1 +2:-DATA_OUT_FRACTIONAL_WIDTH] term1 , term2 , term3;
     logic signed [TERM2_BEFORE_TRANCATION_INTEGER_WIDTH-1:-TERM2_BEFORE_TRANCATION_FRACTIONAL_WIDTH] term2_before_trancation ;
     logic signed [TERM3_BEFORE_TRANCATION_INTEGER_WIDTH-1:-TERM3_BEFORE_TRANCATION_FRACTIONAL_WIDTH] term3_before_trancation;
-    
-    local parameter integer TERM2_BEFORE_TRANCATION_INTEGER_WIDTH = (1) + (DATA_IN_INTEGER_WIDTH-1 +2 +1); //term2_before_trancation =  mu_i_reg * v1;
-    local parameter integer TERM2_BEFORE_TRANCATION_FRACTIONAL_WIDTH = ((MU_WIDTH) + (DATA_IN_FRACTIONAL_WIDTH) ); //term2_before_trancation =  mu_i_reg * v1;
-    
-    local parameter integer TERM3_BEFORE_TRANCATION_INTEGER_WIDTH = (1) + (DATA_IN_INTEGER_WIDTH-1 +2 +1); //term3_before_trancation = mu_i_squared_reg * v2;
-    local parameter integer TERM3_BEFORE_TRANCATION_FRACTIONAL_WIDTH = ((MU_WIDTH * 2 ) + (DATA_IN_FRACTIONAL_WIDTH) ); //term3_before_trancation = mu_i_squared_reg * v2;
 
+
+    // ------------ valid_sample_o of the parabolic farrow interpolator ------------
+    logic [1:0] valid_sample_o_counter; // to count the number of valid samples to make sure that the registers till x2_half are filled with valid samples before starting the normal operation of the parabolic farrow interpolator
+    logic valid_sample_o_counter_flag; // to indicate that the registers till x2_half are filled with valid samples and the normal operation of the parabolic farrow interpolator can start
+
+    logic valid_sample_i_reg1 ,valid_sample_i_reg2 ,valid_sample_i_reg3 ; // to delay the valid_sample_i signal by 4 clock cycles to match the delay of the output of the parabolic farrow interpolator
 
 
     // ------------------------------------------------------------
@@ -80,27 +87,26 @@ module parabolic_farrow_interpolator
 
 
     // ------------ capture the input sample in a register to be used for interpolation ------------ 
-    logic signed [DATA_IN_INTEGER_WIDTH-1:-DATA_IN_FRACTIONAL_WIDTH] x_i_reg;
-    always @(posedge clk or negedge rst_n_i ) begin
+    always @(posedge clk_i or negedge rst_n_i ) begin
         if (!rst_n_i) begin
             x_i_reg <= '0;
-        end else if (valid_sample_i) begin // no need to capture the input sample in a register if it is not valid
+            valid_sample_i_reg <= '0;
+        end else begin
             x_i_reg <= x_i ;
+            valid_sample_i_reg <= valid_sample_i ;
         end
-
     end
 
 
     // ------------ the delayed input samples (half branch) ------------ 
-    always @(posedge clk or negedge rst_n_i ) begin
+    always @(posedge clk_i or negedge rst_n_i ) begin
         if (!rst_n_i) begin
             x0_half <= '0;
             x1_half <= '0;
             x2_half <= '0;
             x3_half <= '0;
-        end else if (valid_sample_i) begin // no need to delay the input sample if it is not valid
-            x0_half <= (-x_i_reg) >>> 1 ; // it is must to use the arithmetic right shift operator >>> instead of the logical right shift operator >> to avoid losing the sign of the input sample 
-                                          // it is best practice to include the sign in a parenthesis
+        end else if (valid_sample_i_reg) begin // no need to delay the input sample if it is not valid
+            x0_half <= (x_i_reg) >>> 1 ; // it is must to use the arithmetic right shift operator >>> instead of the logical right shift operator >> to avoid losing the sign of the input sample 
             x1_half <= x0_half;
             x2_half <= x1_half;
             x3_half <= x2_half;
@@ -108,12 +114,12 @@ module parabolic_farrow_interpolator
     end
 
     // ------------ the delayed input samples (not half branch) ------------
-    always @(posedge clk or negedge rst_n_i ) begin
+    always @(posedge clk_i or negedge rst_n_i ) begin
         if (!rst_n_i) begin
             x0 <= '0;
             x1 <= '0;
             x2 <= '0;
-        end else if (valid_sample_i) begin // no need to delay the input sample if it is not valid
+        end else if (valid_sample_i_reg) begin // no need to delay the input sample if it is not valid
             x0 <= x_i_reg;
             x1 <= x0;
             x2 <= x1;
@@ -122,7 +128,7 @@ module parabolic_farrow_interpolator
 
 
     // ------------ variables of the equations of the parabolic farrow interpolator ------------
-    always @(posedge clk or negedge rst_n_i ) begin
+    always @(posedge clk_i or negedge rst_n_i ) begin
         if (!rst_n_i) begin
             v0 <= '0;
             v1 <= '0;
@@ -130,35 +136,36 @@ module parabolic_farrow_interpolator
         end else begin  // no need to add if statement here since the samplese regesters are forsen when valid_sample_i is not active 
                         // so the values of the variables will be the same as the previous values when valid_sample_i is not active
                         // also this makes the routing more better
-            v0 <= x1_half;
-            v1 <= x2_half - x0_half;
-            v2 <= x0 - x1 + x2_half;
+            v0 <=  x1;
+            v1 <= -x3_half + x2_half + x2 - x1_half - x0_half ;
+            v2 <= +x3_half - x2_half - x1_half + x0_half ;
         end
     end
 
 
-    always @(posedge clk or negedge rst_n_i ) begin
+    always @(posedge clk_i or negedge rst_n_i ) begin
         if (!rst_n_i) begin
             mu_i_reg <= '0;
             mu_i_squared_reg <= '0;
         end else begin 
             mu_i_reg <= {1'b0 , mu_i}; // i have added 1 bit for the sign to make it in the format of Q1.N to meet the requiremets of multiplication
                                      // the sign bit is 0 since mu_i is always positive
-            mu_i_squared_reg <= {1'b0 , mu_i * mu_i};
+            mu_i_squared_reg <= {1'b0 , mu_i_squared};
         end
     end
 
+    assign mu_i_squared = mu_i * mu_i; // i have added this signal to make sure that the multiplication result is 20 bits and not 10 bits (the width of mu_i) to avoid losing the fractional part of the multiplication result
 
     // ------------ terms of the equations of the parabolic farrow interpolator ------------
-    always @(posedge clk or negedge rst_n_i ) begin
+    always @(posedge clk_i or negedge rst_n_i ) begin
         if (!rst_n_i) begin
             term1 <= '0;
             term2 <= '0;
             term3 <= '0;
         end else begin
-            term1 <= {v0, 4'b0000}; // i have added 4 bits to the fractional part of the variable to make it in the format of Q1.15 to meet the requiremets of the output of the parabolic farrow interpolator
-            term2 <= term2_before_trancation [DATA_OUT_INTEGER_WIDTH-1:-DATA_OUT_FRACTIONAL_WIDTH];
-            term3 <= term3_before_trancation [DATA_OUT_INTEGER_WIDTH-1:-DATA_OUT_FRACTIONAL_WIDTH];
+            term1 <= {v0[DATA_OUT_INTEGER_WIDTH-1 +2],v0[DATA_OUT_INTEGER_WIDTH-1 +2],v0, 4'b0000}; // the first two bits are the sign bit and the integer bit of the variable v0 and the last 4 bits are 0s to make it in the format of Q1.15 for addition requirements
+            term2 <= term2_before_trancation [DATA_OUT_INTEGER_WIDTH-1 +2:-DATA_OUT_FRACTIONAL_WIDTH];
+            term3 <= term3_before_trancation [DATA_OUT_INTEGER_WIDTH-1 +2:-DATA_OUT_FRACTIONAL_WIDTH];
         end     
     end
 
@@ -166,13 +173,54 @@ module parabolic_farrow_interpolator
     assign term3_before_trancation = mu_i_squared_reg * v2;
 
     // ------------ output of the parabolic farrow interpolator ------------
-    always @(posedge clk or negedge rst_n_i ) begin
+    always @(posedge clk_i or negedge rst_n_i ) begin
         if (!rst_n_i) begin
             y_o <= '0;
-        end else begin
+        end else if (valid_sample_i_reg3 & valid_sample_o_counter_flag) begin // no need to update the output if it is not valid (this makes the design more power efficient)
             y_o <= term1 + term2 + term3;
         end     
     end
     
     
+    // ------------ valid_sample_o of the parabolic farrow interpolator ------------
+    // 1. handling initial conditions
+    // at the start of the system, there will be a counter to count 3 valid_sample_i signals to make sure thet 
+    // the registers till x2_half are filled with valid samples 
+    // then it will assign a flag for the rest of the operation until reset of the system
+    
+    // 2. handling the normarl operation
+    // the update of the x_3_half takes one clocy cycle 
+    // then the output comes out after 3 clock cycles
+    
+    // so the valid_sample_o will be assigned to valid_sample_i_reg delayed by (1+3) clock cycles
+       
+
+    // 1. handling initial conditions
+    always @(posedge clk_i or negedge rst_n_i ) begin
+        if (!rst_n_i) begin
+            valid_sample_o_counter <= '0;
+        end else if (valid_sample_i_reg && !valid_sample_o_counter_flag) begin // no need to count the valid_sample_i if it is not valid
+                valid_sample_o_counter <= valid_sample_o_counter + 1'b1; 
+        end 
+    end
+
+    assign valid_sample_o_counter_flag = valid_sample_o_counter[1]&valid_sample_o_counter[0]; // when the counter reaches 3, the flag will be set to 1
+
+
+    // 2. handling the normarl operation
+    always @(posedge clk_i or negedge rst_n_i ) begin
+        if (!rst_n_i) begin
+            valid_sample_i_reg1 <= '0;
+            valid_sample_i_reg2 <= '0;
+            valid_sample_i_reg3 <= '0;
+            valid_sample_o <= '0;
+        end else begin
+            valid_sample_i_reg1 <= valid_sample_i_reg;
+            valid_sample_i_reg2 <= valid_sample_i_reg1;
+            valid_sample_i_reg3 <= valid_sample_i_reg2;
+            valid_sample_o <= valid_sample_i_reg3 & valid_sample_o_counter_flag; // the output will be valid only if the counter flag is set to 1 and the valid_sample_i_reg3 is 1
+        end     
+    end
+
+
 endmodule
