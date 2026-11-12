@@ -6,9 +6,15 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 module accumulator #(
-  parameter int unsigned InWidth  = 33,  // Complex sample width
+  
+  parameter int unsigned InWidth  = 33,  // Complex sample input width ( is the complex multiplier output width)
+  
   parameter int unsigned AccWidth = 40,  // Accumulator width
-  parameter int unsigned WinLen   = 32   // Window length in symbols
+  //33 bit width input + 5 bit for 32 (2^5) window lengh = 38 bits 
+  //if used 6 bit for 64 (2^6) window lengh + 33 bit width input = 39
+  // and one or two more bits for fixed point addition overflow = 40 total
+  
+  parameter int unsigned WinLen   = 32   // Window length in symbols (number of symbols to sum)
 ) (
   input  logic                       clk_i,     // Clock
   input  logic                       rst_ni,    // Async reset, active low
@@ -18,12 +24,17 @@ module accumulator #(
   input  logic signed [InWidth-1:0]  in_im_i,   // Imag sample in
   output logic signed [AccWidth-1:0] out_re_o,  // Real sum out
   output logic signed [AccWidth-1:0] out_im_o,  // Imag sum out
-  output logic                       valid_o    // Level: window is done
+  output logic                       valid_o    // valid output pulse
 );
 
-  // Parameterized counter width to 5 registers
   localparam int unsigned CountWidth = $clog2(WinLen);
+  // Parameterized counter width to 5 registers
+  // $clog2 calculates the minimum number of bits needed to represent WinLen.
+  // For WinLen = 32, $clog2(32) = 5 bits  (2^5) = 32 and for WinLen = 64 , (2^5) = 64
+  // if changed window lengh to 64 the counter width will be 6 registers
+  // local parameter because it is a drived parameter depends on a main parameter
 
+  // number of registered flip flops to store the current symbol count and track the accumulation window.
   logic [CountWidth-1:0] count_q;  // Symbols accumulated so far
 
   always_ff @(posedge clk_i or negedge rst_ni) begin
@@ -42,7 +53,11 @@ module accumulator #(
     end
   end
 
-  // Valid is edge-detect for single pulse.
   assign valid_o = (count_q == WinLen - 1);
+  // Valid is edge-detect for single pulse.
+  // Flag to indicate the accumulation window is complete.
+  // Hardware counts from 0, so the final (32nd) sample is at index 31 (WinLen - 1).
+  // the final sample will be received when the counter reaches its MAXIMUM value: (WinLen - 1).
+  // When this condition is true, valid_o asserts high (Level) to indicate the window is full.
 
 endmodule 
