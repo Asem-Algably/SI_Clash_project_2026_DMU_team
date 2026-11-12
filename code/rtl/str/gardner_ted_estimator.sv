@@ -1,5 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
-// Author: Hadeer Ghoneim
+// Author: Abdelrhman Khalifa
+// Co_Author: Hadeer Ghoneim
 // Design: Gardner Timing Error Detector (TED) module.
 // Date: 12-11-2026
 // Description: Calculates the timing error using the Gardner algorithm.
