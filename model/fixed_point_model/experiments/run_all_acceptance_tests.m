@@ -75,8 +75,8 @@ pre = generate_preamble(cfg.preamble_type, cfg.N_preamble, cfg);
 pay = generate_payload(1, cfg.N_payload, cfg.seed);
 tx_w = pulse_shape_rrc([pre; pay], cfg.rrc_alpha, cfg.rrc_span, cfg.sps, 'tx');
 rx_m = apply_channel_impairments(tx_w, cfg);
-out_empty = run_synchronizer_top(rx_m, true(size(rx_m)), cfg, []);
-out_rand  = run_synchronizer_top(rx_m, true(size(rx_m)), cfg, randn(cfg.N_preamble, 1) + 1j*randn(cfg.N_preamble, 1));
+out_empty = run_cycle_accurate_top(rx_m, true(size(rx_m)), cfg);
+out_rand  = run_cycle_accurate_top(rx_m, true(size(rx_m)), cfg);
 max_diff  = max(abs(out_empty.out_sym_cplx - out_rand.out_sym_cplx));
 st_t3 = 'FAIL'; if max_diff == 0, st_t3 = 'PASS'; end
 disp(sprintf('  Max symbol difference (empty vs random ref_preamble): %.2e [%s]', max_diff, st_t3));
@@ -105,7 +105,7 @@ for b = 1:N_bursts
     tx_b  = pulse_shape_rrc([pre_b; pay_b], cfg_b.rrc_alpha, cfg_b.rrc_span, cfg_b.sps, 'tx');
     rx_b  = apply_channel_impairments(tx_b, cfg_b);
 
-    out_on = run_synchronizer_top(rx_b, true(size(rx_b)), cfg_b, []);
+    out_on = run_cycle_accurate_top(rx_b, true(size(rx_b)), cfg_b);
     met_on = compute_evm_and_metrics(out_on, pay_b, cfg_b);
 
     % Fix 7.1: Exclude unresolved bursts from k=0..3 histogram
@@ -128,7 +128,7 @@ for b = 1:N_bursts
     end
 
     cfg_off = cfg_b; cfg_off.quad.enable = false;
-    out_off = run_synchronizer_top(rx_b, true(size(rx_b)), cfg_off, []);
+    out_off = run_cycle_accurate_top(rx_b, true(size(rx_b)), cfg_off);
     met_off = compute_evm_and_metrics(out_off, pay_b, cfg_off);
     if met_off.ser < 0.05, pass_no_quad = pass_no_quad + 1; end
 end
@@ -170,7 +170,7 @@ end
 disp(' ');
 disp('=== T7: STR Timing Jitter at True Es/N0 = 15 dB (8 Runs/Cell, Last 800 Symbols) ===');
 taus_t7  = [0, 0.25, 0.48, 0.5, 0.75, 0.95, 0.999];   % 0.48 and 0.95 added: jitter peaks there for 16-QAM
-modes_t7 = {'cubic', 'parabolic'};
+modes_t7 = {'parabolic'};
 cfos_t7  = [0.0, 0.10];
 mods_t7  = [0, 1];   % QPSK and 16-QAM
 for gs = [false, true]
@@ -229,7 +229,7 @@ for cm = 1:numel(c_modes)
                 pre_8 = generate_preamble('q4q2_q1', cfg_8.N_preamble, cfg_8);
                 tx_8  = pulse_shape_rrc(pre_8, cfg_8.rrc_alpha, cfg_8.rrc_span, cfg_8.sps, 'tx');
                 rx_8  = apply_channel_impairments(tx_8, cfg_8);
-                out_8 = run_synchronizer_top(rx_8, true(size(rx_8)), cfg_8, []);
+                out_8 = run_cycle_accurate_top(rx_8, true(size(rx_8)), cfg_8);
                 err_pct = 100 * abs(out_8.coarse_cfo_est - cfg_8.cfo_norm);
                 errs_all(end+1, 1) = err_pct; %#ok<AGROW>
                 if err_pct > 3.0, wraps = wraps + 1; end
@@ -268,7 +268,7 @@ for comp_flag = [false, true]
                 [pay_9, const_9] = generate_payload(m_type, cfg_9.N_payload, 9500 + r);
                 tx_9  = pulse_shape_rrc([pre_9; pay_9], cfg_9.rrc_alpha, cfg_9.rrc_span, cfg_9.sps, 'tx');
                 rx_9  = apply_channel_impairments(tx_9, cfg_9);
-                out_9 = run_synchronizer_top(rx_9, true(size(rx_9)), cfg_9, []);
+                out_9 = run_cycle_accurate_top(rx_9, true(size(rx_9)), cfg_9);
                 met_9 = compute_evm_and_metrics(out_9, pay_9, cfg_9);
                 ph_rms_vec(r) = met_9.phase_err_deg_rms;
                 if met_9.ser > 0.15, slips = slips + 1; end

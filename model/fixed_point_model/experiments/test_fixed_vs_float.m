@@ -36,7 +36,7 @@ for mod_t = [0, 1]
     for m = 1:numel(modes)
         cfg_run = cfg;
         cfg_run.exec_mode = modes{m};
-        out_r = run_synchronizer_top(rx_w, true(size(rx_w)), cfg_run, []);
+        out_r = run_cycle_accurate_top(rx_w, true(size(rx_w)), cfg_run);
         met_r = compute_evm_and_metrics(out_r, pay, cfg_run, meas_esn0);
         disp(sprintf('  %-6s | %-14s | %8.2f %% | %8.4f | %4d sym | %6d sym | %8.4f %% | %5d', ...
             const.name, modes{m}, met_r.evm_rms_pct, met_r.ser, ...

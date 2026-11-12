@@ -1,14 +1,16 @@
 function preamble = generate_preamble(preamble_type, N_preamble, cfg)
-    % Generates the burst preamble.
-    % For 'q4q2_q1':
-    %   Phase A & B : Alternating Q4 (+d - j*d) and Q2 (-d + j*d)
-    %   Phase C     : Repeats [Q1, Q2, Q4, Q1] -> Q3 (-d - j*d) is empty,
-    %                 both I and Q sign counters have +2 net drift per 4 symbols.
-    if nargin < 1 || isempty(preamble_type), preamble_type = 'q4q2_q1'; end
-    if nargin < 3, cfg = struct(); end
+    % GENERATE_PREAMBLE  Generates the 3-phase synchronization preamble.
+    %
+    % Structure ('q4q2_q1'):
+    %   - Phase A (N_A symbols): Alternating Q4 (+d - j*d) and Q2 (-d + j*d)
+    %     for timing acquisition and coarse CFO estimation (period-2 pattern).
+    %   - Phase B (N_B symbols): Same alternating pattern for Costas frequency pull-in.
+    %   - Phase C (N_C symbols): Repeats [Q1, Q2, Q4, Q1] sequence (Q3 is omitted).
+    %     Both I and Q sign counters receive +2 net drift every 4 symbols, allowing
+    %     unambiguous 90-degree quadrant ambiguity resolution.
 
     norm_mode = 'peak';
-    if isstruct(cfg) && isfield(cfg, 'norm_mode') && ~isempty(cfg.norm_mode)
+    if isstruct(cfg) && isfield(cfg, 'norm_mode')
         norm_mode = cfg.norm_mode;
     end
     c_qpsk = get_constellation_map(0, norm_mode);
@@ -20,12 +22,12 @@ function preamble = generate_preamble(preamble_type, N_preamble, cfg)
 
     switch lower(strtrim(char(preamble_type)))
         case 'q4q2_q1'
-            N_A = 120; N_B = 60; N_C = 20;
+            N_A = 84; N_B = 40; N_C = 40;
             if isstruct(cfg) && isfield(cfg, 'preamble')
                 N_A = cfg.preamble.N_A;
                 N_B = cfg.preamble.N_B;
                 N_C = cfg.preamble.N_C;
-            elseif nargin >= 2 && ~isempty(N_preamble)
+            elseif exist('N_preamble', 'var')
                 N_C = min(20, floor(N_preamble * 0.2));
                 N_B = min(60, floor(N_preamble * 0.3));
                 N_A = max(N_preamble - N_B - N_C, 0);

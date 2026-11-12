@@ -1,12 +1,6 @@
 function [out, st] = step_str(in, st, T)
-    % STEP_STR  Cycle-Accurate & Interface-Accurate Symbol Timing Recovery (str.md).
-    %
-    % Ports (in):
-    %   rst_ni, s_axis_valid_i, s_axis_i_sample_i, s_axis_q_sample_i (Q1.11),
-    %   loop_gain_i (8-bit), force_w_en_i, force_w_i
-    % Ports (out):
-    %   m_axis_valid_o, m_axis_i_sym_o, m_axis_q_sym_o (Q2.14), lock_o,
-    %   ted_err_valid_o, ted_err_o, mu_o, w_o
+    % STEP_STR  Cycle-Accurate Fixed-Point Symbol Timing Recovery (str.md).
+    % All datapath registers use pure 2's-complement wrapping ('wrap'); saturation is used ONLY in the PI filter.
 
     R  = T.rd;
     S  = T.str;
@@ -15,42 +9,43 @@ function [out, st] = step_str(in, st, T)
     % =====================================================================
     % 1. ACTIVE-LOW RESET & INITIALIZATION (~rst_ni)
     % =====================================================================
-    if isempty(st) || ~in.rst_ni
-        st.Di      = T.fi(zeros(1, 3), 'in', 'sat');      % 3 registers + input wire = 4-tap window
-        st.Dq      = T.fi(zeros(1, 3), 'in', 'sat');
-        st.M       = T.fi(0.75, 'M', 'wrap');             % Reset value M = 0.75 (str.md Section 2)
-        st.W       = T.fi(0.25, 'M', 'sat');              % Reset value W = 0.25
-        st.pi_reg  = T.fi(0, 'str_pi', 'sat');            % PI output feeding controller
-        st.acc     = T.fi(0, 'str_pi', 'sat');            % PI integrator
-        st.cur_i   = T.fi(0, 'str_sym', 'sat');
-        st.cur_q   = T.fi(0, 'str_sym', 'sat');
-        st.prev_i  = T.fi(0, 'str_sym', 'sat');
-        st.prev_q  = T.fi(0, 'str_sym', 'sat');
-        st.mid_i   = T.fi(0, 'str_sym', 'sat');
-        st.mid_q   = T.fi(0, 'str_sym', 'sat');
-        st.mu_reg  = T.fi(0, 'mu', 'sat');
-        st.t_phase = 0.0;                                 % Exact timing phase diagnostic
-        st.smp_cnt = 0;                                   % Input sample counter for diagnostic
-        st.sym_cnt = T.fi(0, 'cnt', 'sat');
-        st.sat_cnt = T.fi(0, 'cnt', 'sat');
+    if ~in.rst_ni
+        st.Di      = T.fi(zeros(1, 3), 'in');             % 3 registers + input wire = 4-tap window
+        st.Dq      = T.fi(zeros(1, 3), 'in');
+        st.M       = T.fi(0.75, 'M');                     % Reset value M = 0.75 (str.md Section 2)
+        st.W       = T.fi(0.25, 'M');                     % Reset value W = 0.25
+        st.pi_reg  = T.fi(0, 'str_pi', 'sat');            % PI output feeding controller (saturated)
+        st.acc     = T.fi(0, 'str_pi', 'sat');            % PI integrator (saturated)
+        st.cur_i   = T.fi(0, 'str_sym');
+        st.cur_q   = T.fi(0, 'str_sym');
+        st.prev_i  = T.fi(0, 'str_sym');
+        st.prev_q  = T.fi(0, 'str_sym');
+        st.mid_i   = T.fi(0, 'str_sym');
+        st.mid_q   = T.fi(0, 'str_sym');
+        st.mu_reg  = T.fi(0, 'mu');
+        st.t_phase = 0.0;
+        st.smp_cnt = 0;
+        st.smp_reg = 0;
+        st.sym_cnt = T.fi(0, 'cnt');
+        st.sat_cnt = T.fi(0, 'cnt');
 
         % Lumped Farrow interpolator pipeline (T.lat.str clocks)
         st.ip_cur  = false(1, Lp);
         st.ip_mid  = false(1, Lp);
-        st.ip_yi   = T.fi(zeros(1, Lp), 'str_sym', 'sat');
-        st.ip_yq   = T.fi(zeros(1, Lp), 'str_sym', 'sat');
-        st.ip_mu   = T.fi(zeros(1, Lp), 'mu', 'sat');
+        st.ip_yi   = T.fi(zeros(1, Lp), 'str_sym');
+        st.ip_yq   = T.fi(zeros(1, Lp), 'str_sym');
+        st.ip_mu   = T.fi(zeros(1, Lp), 'mu');
         st.ip_smp  = zeros(1, Lp);
 
         % Lock detector state (EMA + hysteresis + leaky bucket)
-        st.lock.m      = T.fi(S.lock.m0, 'lock_m', 'sat');
-        st.lock.good   = false;
-        st.lock.bucket = T.fi(0, 'lock_b', 'sat');
-        st.lock.locked = false;
+        st.lock.m        = T.fi(S.lock.m0, 'lock_m');
+        st.lock.good     = false;
+        st.lock.bucket   = T.fi(0, 'lock_b');
+        st.lock.locked   = false;
         st.lock.lock_sym = NaN;
 
         st.te_val  = false;
-        st.te_e    = T.fi(0, 'ted_e', 'sat');
+        st.te_e    = T.fi(0, 'ted_e');
 
         out = str_drive_outputs(st, false);
         return;
@@ -66,8 +61,8 @@ function [out, st] = step_str(in, st, T)
     % =====================================================================
     new_cur = false;
     new_mid = false;
-    new_yi  = T.fi(0, 'str_sym', 'sat');
-    new_yq  = T.fi(0, 'str_sym', 'sat');
+    new_yi  = T.fi(0, 'str_sym');
+    new_yq  = T.fi(0, 'str_sym');
     new_mu  = st_old.mu_reg;
     cur_smp = st_old.smp_cnt;
 
@@ -75,23 +70,23 @@ function [out, st] = step_str(in, st, T)
         cur_smp    = st_old.smp_cnt + 1;
         st.smp_cnt = cur_smp;
 
-        xi = R(T.fi(in.s_axis_i_sample_i, 'in', 'sat'));
-        xq = R(T.fi(in.s_axis_q_sample_i, 'in', 'sat'));
+        xi = R(T.fi(in.s_axis_i_sample_i, 'in'));
+        xq = R(T.fi(in.s_axis_q_sample_i, 'in'));
 
         W_use = st_old.W;
         if in.force_w_en_i
-            W_use = T.fi(in.force_w_i, 'M', 'sat');
+            W_use = T.fi(in.force_w_i, 'M');
         end
 
         % Pure fi two-region Modulo-1 boundary check using 25-bit signed wire M_s
-        M_s   = R(T.fi(st_old.M, 'M_s', 'sat'));
-        W_s   = R(T.fi(W_use,    'M_s', 'sat'));
-        q25_s = R(T.fi(T.c.q25,  'M_s', 'sat'));
-        q75_s = R(T.fi(T.c.q75,  'M_s', 'sat'));
+        M_s   = R(T.fi(st_old.M, 'M_s'));
+        W_s   = R(T.fi(W_use,    'M_s'));
+        q25_s = R(T.fi(T.c.q25,  'M_s'));
+        q75_s = R(T.fi(T.c.q75,  'M_s'));
 
         in_mid_old = (M_s >= q25_s) && (M_s < q75_s);
-        M_next_val = T.wrapf(T.fi(M_s - W_s, 'M', 'wrap'));
-        M_next_s   = R(T.fi(M_next_val, 'M_s', 'sat'));
+        M_next_val = T.fi(M_s - W_s, 'M');
+        M_next_s   = R(T.fi(M_next_val, 'M_s'));
         in_mid_new = (M_next_s >= q25_s) && (M_next_s < q75_s);
 
         if in_mid_old && ~in_mid_new
@@ -102,22 +97,16 @@ function [out, st] = step_str(in, st, T)
             if M_s >= q75_s
                 eta_raw = M_s - q75_s;
             else
-                % Wrapped across 0 -> 1 boundary while crossing 0.75
                 eta_raw = M_s + q25_s;
             end
         else
-            eta_raw = T.fi(0, 'M_s', 'sat');
+            eta_raw = T.fi(0, 'M_s');
         end
 
         if new_cur || new_mid
-            eta = T.fi(eta_raw, 'eta', 'sat');
-            if S.mu_exact
-                mu_v = T.fi(double(eta) / double(W_use), 'mu', 'sat');
-            else
-                % Pure fi RTL linear form: mu = 4*eta - 16*eta*pi
-                pm   = T.fi(R(st_old.pi_reg), 'pi_mu', 'sat');
-                mu_v = T.fi(R(eta) * T.c.k4 - (R(eta) * R(pm)) * T.c.k16m, 'mu', 'sat');
-            end
+            eta  = T.fi(eta_raw, 'eta');
+            pm   = T.fi(R(st_old.pi_reg), 'pi_mu');
+            mu_v = T.fi(R(eta) * T.c.k4 - (R(eta) * R(pm)) * T.c.k16m, 'mu');
             new_mu = mu_v;
 
             % Evaluate Farrow interpolator over 4-sample window [D1, D2, D3, x_new]
@@ -168,16 +157,17 @@ function [out, st] = step_str(in, st, T)
         st.mu_reg(:)  = yt_mu;
         st.sym_cnt(:) = R(st_old.sym_cnt) + 1;
         cnt_new       = double(st.sym_cnt);
+        st.smp_reg    = yt_smp;
         st.t_phase    = ((yt_smp - 3) + double(yt_mu)) / T.sps - (cnt_new - 1);
 
-        % Gardner TED: e = Re{mid}*(Re{cur} - Re{prev}) + Im{mid}*(Im{cur} - Im{prev})
-        d_i = T.fi(yt_i - R(st_old.cur_i), 'ted_d', 'sat');
-        d_q = T.fi(yt_q - R(st_old.cur_q), 'ted_d', 'sat');
-        e_t = T.fi(R(st_old.mid_i) * R(d_i) + R(st_old.mid_q) * R(d_q), 'ted_e', 'sat');
+        % Gardner TED (pure wrap with guard bits in ted_d and ted_e)
+        d_i = T.fi(yt_i - R(st_old.cur_i), 'ted_d');
+        d_q = T.fi(yt_q - R(st_old.cur_q), 'ted_d');
+        e_t = T.fi(R(st_old.mid_i) * R(d_i) + R(st_old.mid_q) * R(d_q), 'ted_e');
         st.te_val  = true;
         st.te_e(:) = e_t;
 
-        % PI loop filter with saturation & conditional anti-windup
+        % PI loop filter (the ONLY block with saturation & anti-windup)
         [v_pi, acc_new, sat_f] = fxp_pi_step(R(e_t), R(st_old.acc), S.kp, S.ki, S.max_v_pi, T, 'str_pi');
         st.acc(:)    = acc_new;
         st.pi_reg(:) = v_pi;
@@ -188,11 +178,11 @@ function [out, st] = step_str(in, st, T)
         if S.open_loop
             st.W(:) = T.c.q25;
         else
-            q25_s   = R(T.fi(T.c.q25, 'M_s', 'sat'));
-            st.W(:) = T.fi(q25_s + R(v_pi), 'M', 'sat');
+            q25_s   = R(T.fi(T.c.q25, 'M_s'));
+            st.W(:) = T.fi(q25_s + R(v_pi), 'M');
         end
 
-        % Continuous Hardware Lock Detector (str.md Section 3)
+        % Continuous Hardware Lock Detector
         st.lock = fxp_lock_step(st_old.lock, e_t, S.lock, cnt_new, T);
     end
 
@@ -211,27 +201,21 @@ function out = str_drive_outputs(st, sym_valid)
 end
 
 function y = fxp_farrow_eval(a, b, c, d, mu, T)
+    % 4-Tap Piecewise-Parabolic Farrow Interpolator (alpha = 0.5)
+    % Hardware Datapath:
+    %   v2 = 0.5 * (d - c - b + a)
+    %   v1 = 0.5 * (3*c - d - b - a)
+    %   h1 = v2 * mu + v1
+    %   y  = h1 * mu + b
     R    = T.rd;
     mu   = R(mu);
-    half = T.c.half; % Exact 1-bit wire right-shift (ufix1_En1 in fi)
+    half = T.c.half;
 
-    if T.str.interp_cubic
-        k16 = R(T.c.k16); k13 = R(T.c.k13);
-        v3 = T.fi((R(b) - R(c)) * half + (R(d) - R(a)) * k16,          'fv', 'sat');
-        v2 = T.fi((R(c) + R(a)) * half - R(b),                         'fv', 'sat');
-        v1 = T.fi(R(c) - R(b) * half - R(d) * k16 - R(a) * k13,        'fv', 'sat');
-        h1 = T.fi(R(v3) * mu + R(v2), 'fh', 'sat');
-        h2 = T.fi(R(h1) * mu + R(v1), 'fh', 'sat');
-        y  = T.fi(R(h2) * mu + R(b),  'str_sym', 'sat');
-    else
-        % Parabolic Farrow (str.md Section 3.1):
-        % 3*c is formed in FullPrecision fi (R(c)+R(c)+R(c)) so it never clips to Q1.11 before Q4.12 ('fv')!
-        c3 = R(c) + R(c) + R(c);
-        v2 = T.fi((R(d) - R(c) - R(b) + R(a)) * half,                  'fv', 'sat');
-        v1 = T.fi((c3 - R(d) - R(b) - R(a)) * half,                    'fv', 'sat');
-        h1 = T.fi(R(v2) * mu + R(v1), 'fh', 'sat');
-        y  = T.fi(R(h1) * mu + R(b),  'str_sym', 'sat');
-    end
+    c3 = R(c) + R(c) + R(c);
+    v2 = T.fi((R(d) - R(c) - R(b) + R(a)) * half, 'fv');
+    v1 = T.fi((c3 - R(d) - R(b) - R(a)) * half,   'fv');
+    h1 = T.fi(R(v2) * mu + R(v1), 'fh');
+    y  = T.fi(R(h1) * mu + R(b),  'str_sym');
 end
 
 function [v, acc_next, sat] = fxp_pi_step(e, acc, Kp, Ki, lim, T, tname)
@@ -262,8 +246,8 @@ function ld = fxp_lock_step(ld_old, e, p, sym_idx, T)
     ld = ld_old;
     a  = R(e);
     if a < 0, a = -a; end
-    m_old = R(ld_old.m);
-    d     = a - m_old;
+    m_old   = R(ld_old.m);
+    d       = a - m_old;
     ld.m(:) = m_old + bitsra(d, p.ema_shift);
 
     m_new = R(ld.m);

@@ -1,5 +1,8 @@
 function theta = angle_solver(R_complex, mode)
-    if nargin < 2 || strcmpi(mode, 'atan2')
+    % ANGLE_SOLVER  Evaluates the complex angle of R via atan2 or iterative bisection.
+    % Outputs angle in radians [-pi, +pi].
+
+    if strcmpi(mode, 'atan2')
         theta = atan2(imag(R_complex), real(R_complex));
         return;
     end

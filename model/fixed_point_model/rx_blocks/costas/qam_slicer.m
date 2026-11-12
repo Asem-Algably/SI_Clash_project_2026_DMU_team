@@ -1,9 +1,16 @@
 function a_hat = qam_slicer(y_sym, mod_type, norm_mode)
-    % Part 0b: Derives all slicer thresholds (0 and +-thresh_2d) and decision levels
-    % strictly from get_constellation_map(mod_type, norm_mode). No hard-coded thresholds.
-    if nargin < 3 || isempty(norm_mode)
-        norm_mode = 'peak';
-    end
+    % QAM_SLICER  Decision-directed slicer for QPSK and 16-QAM constellations.
+    % Derives all slicer thresholds (0 and +-thresh_2d) and decision levels
+    % strictly from get_constellation_map(mod_type, norm_mode).
+    %
+    % Inputs:
+    %   y_sym     - Received derotated complex symbol
+    %   mod_type  - Modulation format selector (0 = QPSK, 1 = 16-QAM)
+    %   norm_mode - Constellation normalization convention ('peak' or 'rms')
+    %
+    % Outputs:
+    %   a_hat     - Hard-decision sliced constellation point
+
     const = get_constellation_map(mod_type, norm_mode);
     d     = const.d;
     t_2d  = const.thresh_2d;

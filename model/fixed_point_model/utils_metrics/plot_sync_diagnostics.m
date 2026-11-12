@@ -1,5 +1,11 @@
 function plot_sync_diagnostics(rx_out, metrics, cfg)
-    const = get_constellation_map(cfg.mod_type);
+    % PLOT_SYNC_DIAGNOSTICS  Display 4-panel synchronizer diagnostic visualization:
+    %   1. Constellation diagram (STR output vs. synced payload vs. ideal grid)
+    %   2. STR tracking (mu fractional delay and Gardner TED error)
+    %   3. Carrier frequency tracking (NCO frequency word vs. coarse estimate vs. true CFO)
+    %   4. Fine phase lock (Costas phase detector error and top-level lock_detect status)
+
+    const = get_constellation_map(cfg.mod_type, cfg.norm_mode);
     N_sym = numel(rx_out.out_sym_cplx);
     N_tail= max(min(1000, floor(N_sym * 0.6)), 1);
     idx_t = (N_sym - N_tail + 1) : N_sym;

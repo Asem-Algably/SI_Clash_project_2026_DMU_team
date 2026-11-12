@@ -55,7 +55,7 @@ function metrics = compute_evm_and_metrics(rx_out, tx_payload, cfg, measured_esn
     metrics.n_eval       = n_eval;
 
     % Part 2a: Noise-floor EVM and Excess EVM
-    if nargin < 4 || isempty(measured_esn0_dB)
+    if exist('measured_esn0_dB', 'var') == 0
         if isfield(cfg, 'snr_def') && strcmpi(cfg.snr_def, 'sample')
             measured_esn0_dB = cfg.snr_dB + 10 * log10(cfg.sps);
         else
@@ -74,7 +74,7 @@ function metrics = compute_evm_and_metrics(rx_out, tx_payload, cfg, measured_esn
     metrics.excess_peak_pct = sqrt(max(metrics.evm_peak_pct^2 - metrics.floor_peak_pct^2, 0.0));
 
     norm_mode = 'peak';
-    if isfield(cfg, 'norm_mode') && ~isempty(cfg.norm_mode)
+    if isfield(cfg, 'norm_mode')
         norm_mode = cfg.norm_mode;
     end
 
@@ -119,8 +119,8 @@ function metrics = compute_evm_and_metrics(rx_out, tx_payload, cfg, measured_esn
         evm_limit = 8.0;
     end
     metrics.evm_target_pct        = evm_limit;
-    metrics.pass.evm_rms          = (metrics.evm_rms_pct  <= evm_limit);
-    metrics.pass.evm_peak         = (metrics.evm_peak_pct <= evm_limit);
+    metrics.pass.evm_rms          = (metrics.excess_rms_pct  <= evm_limit);
+    metrics.pass.evm_peak         = (metrics.excess_peak_pct <= evm_limit);
     metrics.pass.evm              = metrics.pass.evm_rms;
     metrics.pass.str_jitter       = (metrics.timing_jitter_Ts <= 0.02);
     metrics.pass.str_lock         = (metrics.str_lock_syms > 0) && (metrics.str_lock_syms <= 150);

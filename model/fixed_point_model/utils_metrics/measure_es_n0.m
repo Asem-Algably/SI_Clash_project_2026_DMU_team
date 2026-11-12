@@ -1,11 +1,13 @@
 function es_n0_dB = measure_es_n0(tx_waveform, cfg)
-    % Measures true Es/N0 (dB) at the symbol instants of the RX matched-filter output.
-    % Note (Fix 7.3): Forces tau_offset = 0, cfo_norm = 0, and phase_offset = 0 in a
-    % local copy of cfg so signal and noise power are sampled at exact symbol peaks.
+    % MEASURE_ES_N0  True unclipped Es/N0 (dB) at symbol sampling instants.
+    % Evaluates signal-to-noise ratio at the output of the receiver matched filter
+    % without quantization or clipping artifacts to obtain true channel SNR.
+
     cfg_eval              = cfg;
     cfg_eval.tau_offset   = 0.0;
     cfg_eval.cfo_norm     = 0.0;
     cfg_eval.phase_offset = 0.0;
+    cfg_eval.quantize_q11 = false;
 
     cfg_clean        = cfg_eval;
     cfg_clean.snr_dB = Inf;

@@ -1,4 +1,23 @@
 function [sig_out, h_rrc] = pulse_shape_rrc(sig_in, alpha, span, sps, mode)
+    % PULSE_SHAPE_RRC  Root-Raised Cosine (RRC) pulse shaping and matched filtering.
+    %
+    % Mathematical Model:
+    %   Generates normalized unit-energy RRC impulse response with roll-off factor alpha.
+    %   - 'tx' mode: Upsamples input symbols by factor sps with zeros, scales by sqrt(sps),
+    %                and convolves with h_rrc.
+    %   - 'rx' mode: Convolves input oversampled samples with matched filter h_rrc / sqrt(sps).
+    %
+    % Inputs:
+    %   sig_in - Input signal (symbols for 'tx', oversampled samples for 'rx')
+    %   alpha  - RRC excess bandwidth roll-off factor (typically 0.35 per CP6)
+    %   span   - Filter span in symbol periods
+    %   sps    - Samples per symbol (oversampling factor = 4)
+    %   mode   - Operation mode ('tx' or 'rx')
+    %
+    % Outputs:
+    %   sig_out - Filtered output signal
+    %   h_rrc   - Computed unit-energy filter coefficients
+
     sig_in = sig_in(:);
     t = (-span*sps/2 : span*sps/2).' / sps;
     h_rrc = zeros(size(t));

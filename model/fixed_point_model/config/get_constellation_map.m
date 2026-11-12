@@ -1,15 +1,23 @@
 function const = get_constellation_map(mod_type, norm_mode)
-    % Part 0a & 0b: Single source of truth for constellation scale and 16-QAM slicer thresholds.
-    % - 'peak' (default): largest per-axis symbol level is 1.
-    %     QPSK   = +-1 per axis (d = 1, Es = 2).
-    %     16-QAM = +-1/3 and +-1 per axis (d = 1/3, thresh_2d = 2/3, Es = 10/9).
-    % - 'rms': unit average power (Es = 1).
-    %     QPSK   = +-1/sqrt(2) per axis (d = 1/sqrt(2), Es = 1).
-    %     16-QAM = +-1/sqrt(10) and +-3/sqrt(10) per axis (d = 1/sqrt(10), thresh_2d = 2/sqrt(10), Es = 1).
+    % GET_CONSTELLATION_MAP  Single source of truth for constellation scale and slicer thresholds.
+    %
+    % Normalization Modes:
+    %   - 'peak' (default): Largest per-axis symbol level is 1.0.
+    %       QPSK:   levels = [-1, +1] per axis (d = 1.0, Es = 2.0).
+    %       16-QAM: levels = [-1, -1/3, +1/3, +1] (d = 1/3, thresh_2d = 2/3, Es = 10/9).
+    %   - 'rms': Unit average constellation symbol power (Es = 1.0).
+    %       QPSK:   levels = [-1, +1] / sqrt(2) (d = 1/sqrt(2), Es = 1.0).
+    %       16-QAM: levels = [-3, -1, +1, +3] / sqrt(10) (d = 1/sqrt(10), thresh_2d = 2/sqrt(10), Es = 1.0).
+    %
+    % Inputs:
+    %   mod_type  - Modulation format selector (0 = QPSK, 1 = 16-QAM)
+    %   norm_mode - Scaling convention ('peak' or 'rms')
+    %
+    % Outputs:
+    %   const - Struct containing constellation mapping parameters:
+    %             .name, .M, .d (step size), .thresh_2d, .symbols, .avg_power
 
-    if nargin < 2 || isempty(norm_mode)
-        norm_mode = 'peak';
-    elseif isstruct(norm_mode) && isfield(norm_mode, 'norm_mode')
+    if isstruct(norm_mode)
         norm_mode = norm_mode.norm_mode;
     end
 

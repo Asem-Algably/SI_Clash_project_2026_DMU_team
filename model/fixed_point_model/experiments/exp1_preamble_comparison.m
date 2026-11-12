@@ -29,7 +29,7 @@ for i = 1:numel(types)
     pay = generate_payload(cfg.mod_type, cfg.N_payload, cfg.seed);
     tx  = pulse_shape_rrc([pre; pay], cfg.rrc_alpha, cfg.rrc_span, cfg.sps, 'tx');
     rx  = apply_channel_impairments(tx, cfg);
-    out = run_synchronizer_top(rx, true(size(rx)), cfg, pre);
+    out = run_cycle_accurate_top(rx, true(size(rx)), cfg);
     met = compute_evm_and_metrics(out, pay, cfg);
     disp(sprintf('%-14s | %-16d | %-18.4f | %.2f%%', ...
         types{i}, met.str_lock_syms, met.coarse_cfo_err_pct, met.evm_rms_pct));

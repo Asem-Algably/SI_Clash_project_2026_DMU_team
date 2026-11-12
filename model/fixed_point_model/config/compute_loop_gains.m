@@ -1,11 +1,33 @@
 function [Kp, Ki, scale_factor] = compute_loop_gains(Bn_Ts, zeta, K_ted, K_nco, pipe_delay, compensate_delay)
-    % Computes 2nd-order digital PI loop filter gains directly from Bn_Ts and zeta
-    % without external loop_gain[7:0] or costas_loop_gain[7:0] ports.
-    % When compensate_delay is true and pipe_delay > 0 (Fix 5.2), scales (Kp, Ki)
-    % via bisection on the delayed linear loop impulse response so Bn*T matches Bn_Ts.
-    if nargin < 5 || isempty(pipe_delay),       pipe_delay = 0;          end
-    if nargin < 6 || isempty(compensate_delay), compensate_delay = false; end
+    % COMPUTE_LOOP_GAINS  Derive second-order digital PI loop filter parameters.
+    %
+    % Mathematical Model:
+    %   Standard continuous-to-discrete approximation for a charge-pump/type-II PLL:
+    %     theta = Bn_Ts / (zeta + 1 / (4 * zeta))
+    %     denom = (1 + 2*zeta*theta + theta^2) * K_ted * K_nco
+    %     Kp0   = (4 * zeta * theta) / denom
+    %     Ki0   = (4 * theta^2) / denom
+    %
+    % Loop Delay Compensation:
+    %   When compensate_delay is enabled and pipe_delay > 0, excess pipeline latency
+    %   causes loop bandwidth expansion and phase margin degradation. A bisection
+    %   search numerically evaluates the equivalent noise bandwidth (Bn*T) of the
+    %   delayed impulse response and determines an exact gain scaling factor.
+    %
+    % Inputs:
+    %   Bn_Ts            - Normalized loop noise bandwidth (e.g., 0.010 for STR, 0.025 for Costas)
+    %   zeta             - Damping factor (typically 0.707 for critical damping)
+    %   K_ted            - Detector gain slope at equilibrium (Gardner TED or Costas PD)
+    %   K_nco            - NCO/controller sensitivity gain (4 for Mod-1, 2*pi for Costas NCO)
+    %   pipe_delay       - Total closed-loop feedback latency in symbols
+    %   compensate_delay - Boolean flag enabling latency gain derating
+    %
+    % Outputs:
+    %   Kp           - Proportional filter coefficient
+    %   Ki           - Integral filter coefficient
+    %   scale_factor - Delay compensation attenuation factor applied to (Kp0, Ki0)
 
+    % Nominal continuous-equivalent discrete loop gains
     theta = Bn_Ts / (zeta + 1 / (4 * zeta));
     denom = (1 + 2 * zeta * theta + theta^2) * K_ted * K_nco;
 
@@ -14,6 +36,7 @@ function [Kp, Ki, scale_factor] = compute_loop_gains(Bn_Ts, zeta, K_ted, K_nco, 
 
     scale_factor = 1.0;
     if compensate_delay && pipe_delay > 0
+        % Bisection search over scale factor [0.20, 1.05]
         low  = 0.20;
         high = 1.05;
         for iter = 1:28

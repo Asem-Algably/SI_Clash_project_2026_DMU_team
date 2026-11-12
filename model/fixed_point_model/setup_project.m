@@ -1,13 +1,22 @@
 function setup_project(force_rebuild_mlx)
-% Initializes MATLAB paths and compiles Live Scripts from live_scripts/src/*.m
-% into live_scripts/*.mlx (without keeping duplicate .m files in live_scripts/).
-    if nargin < 1
+    % SETUP_PROJECT  Initialize project workspace paths and build Live Scripts.
+    %
+    % Operations:
+    %   1. Recursively adds all model directories to the MATLAB search path:
+    %      - config: loop filters, fixed-point widths, and hardware reports
+    %      - tx_channel: transmitter, RRC shaping, AWGN, and channel impairments
+    %      - rx_blocks: cycle-accurate RTL behavioral models (STR, CFO, Costas, Top)
+    %      - utils_metrics: diagnostic EVM, lock metrics, and reporting
+    %      - live_scripts, experiments: test runners and interactive notebooks
+    %   2. Cleans up stray script copies and compiles live_scripts/src/*.m into .mlx
+    %
+    % Inputs:
+    %   force_rebuild_mlx - (Optional) Boolean flag to force recompilation of .mlx files
+
+    if exist('force_rebuild_mlx', 'var') == 0
         force_rebuild_mlx = false;
     end
     root_dir = fileparts(mfilename('fullpath'));
-    if isempty(root_dir)
-        root_dir = pwd;
-    end
 
     folders = {
         'config', ...

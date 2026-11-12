@@ -1,4 +1,8 @@
 function R_D = conj_autocorr(rx_win, D, ref_preamble, data_aided)
+    % CONJ_AUTOCORR  Delayed-conjugate autocorrelation across window:
+    %   R_D = sum_{n=1+D}^N rx_win(n) * conj(rx_win(n-D))
+    % If data_aided is true, multiplies by the conjugate preamble difference.
+
     rx_win = rx_win(:);
     N = numel(rx_win);
     if N <= D
@@ -8,7 +12,7 @@ function R_D = conj_autocorr(rx_win, D, ref_preamble, data_aided)
     r_early = rx_win(1 : N-D);
     prod_r  = r_late .* conj(r_early);
 
-    if nargin >= 4 && data_aided && ~isempty(ref_preamble) && numel(ref_preamble) >= N
+    if data_aided && numel(ref_preamble) >= N
         ref_preamble = ref_preamble(:);
         p_win  = ref_preamble(1:N);
         p_diff = p_win(1+D : N) .* conj(p_win(1 : N-D));

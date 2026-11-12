@@ -1,9 +1,22 @@
 function str_out = run_str_subsystem(rx_samples, cfg, in_scale)
-    % STR subsystem (matches str.md).
-    % - Always running, ignores the burst FSM.
-    % - Single fixed (Kp, Ki) gain pair (loop_gain_i port excluded for now).
-    % - Continuous lock detector (no artificial freeze after N_preamble).
-    if nargin < 3 || isempty(in_scale)
+    % RUN_STR_SUBSYSTEM  Standalone simulation model for Symbol Timing Recovery (str.md).
+    %
+    % Pipeline Behavior:
+    %   - Continuously runs on incoming samples, independently of burst FSM states.
+    %   - Modulo-1 counter decrements every sample by W (nominal 0.25 + loop filter correction v_pi).
+    %   - 4-sample shift register feeds piecewise-parabolic Farrow interpolator.
+    %   - Mid and current strobes trigger half-symbol and on-time symbol interpolation.
+    %   - Non-data-aided Gardner TED drives 2nd-order saturating PI filter.
+    %
+    % Inputs:
+    %   rx_samples - Vector of oversampled baseband I/Q samples (4 samples per symbol)
+    %   cfg        - Master system configuration struct
+    %   in_scale   - Front-end scaling factor (default 1.0)
+    %
+    % Outputs:
+    %   str_out - Diagnostic struct with interpolated symbols, timing phase, and lock metrics
+
+    if exist('in_scale', 'var') == 0
         in_scale = 1.0;
     end
     rx_samples = rx_samples(:);
@@ -28,11 +41,11 @@ function str_out = run_str_subsystem(rx_samples, cfg, in_scale)
         K_nom_sc = K_16_ref   * scale_sq;
     end
 
-    % Compute single fixed Kp, Ki (loop_gain_i port excluded)
-    [Kp_fixed, Ki_fixed] = decode_gain_ports(0, cfg.str.Bn_Ts, cfg.str.zeta, K_nom_sc, cfg.str.K_nco, 0, false);
+    % Compute single fixed Kp, Ki (internal fixed parameters)
+    [Kp_fixed, Ki_fixed] = compute_loop_gains(cfg.str.Bn_Ts, cfg.str.zeta, K_nom_sc, cfg.str.K_nco, 0, false);
 
     max_v_pi = 0.035;
-    if isfield(cfg.str, 'max_v_pi') && ~isempty(cfg.str.max_v_pi)
+    if isfield(cfg.str, 'max_v_pi')
         max_v_pi = cfg.str.max_v_pi;
     end
 
@@ -62,12 +75,12 @@ function str_out = run_str_subsystem(rx_samples, cfg, in_scale)
         [M_next, strobe, mu, mid_strobe, mu_mid] = modulo1_controller(M, W, cfg.str.mu_bits, cfg.str.mu_mode, cfg.str.W_nom);
 
         if mid_strobe
-            y_mid_hold = farrow_interpolator(buf4, mu_mid, cfg, in_scale);
+            y_mid_hold = farrow_interpolator(buf4, mu_mid, in_scale);
         end
 
         if strobe
             sym_cnt = sym_cnt + 1;
-            y_cur   = farrow_interpolator(buf4, mu, cfg, in_scale);
+            y_cur   = farrow_interpolator(buf4, mu, in_scale);
             e_ted   = gardner_ted(y_cur, y_prev, y_mid_hold);
 
             [v_pi, int_state, sat_flag] = pi_loop_filter(e_ted, int_state, Kp_fixed, Ki_fixed, max_v_pi);

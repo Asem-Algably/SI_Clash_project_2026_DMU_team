@@ -29,7 +29,7 @@ for t = 1:numel(taps)
         pay = generate_payload(cfg_run.mod_type, 400, cfg_run.seed);
         tx  = pulse_shape_rrc([pre; pay], cfg_run.rrc_alpha, cfg_run.rrc_span, cfg_run.sps, 'tx');
         rx  = apply_channel_impairments(tx, cfg_run);
-        out = run_synchronizer_top(rx, true(size(rx)), cfg_run, pre);
+        out = run_cycle_accurate_top(rx, true(size(rx)), cfg_run);
         err_mat(t, c) = 100 * abs(out.coarse_cfo_est - cfg_run.cfo_norm);
     end
 end

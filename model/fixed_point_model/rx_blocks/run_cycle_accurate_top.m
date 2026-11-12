@@ -1,50 +1,41 @@
 function [rx_out, lg, T] = run_cycle_accurate_top(in_sample_iq, in_sample_valid, cfg)
     % RUN_CYCLE_ACCURATE_TOP  Master Clock-Accurate & Interface-Accurate Synchronizer Loop.
     %
-    % Follows CLOCK_ACCURATE_MODELING_STANDARD.md (Rules 1-7):
-    %   - 1 iteration = 1 rising edge of clk (125 MHz)
-    %   - w_prev = w snapshot at the top of the loop (order-independent module execution)
-    %   - Exact RTL port structs for STR, Coarse CFO, Derotator, Costas, and Wrapper FSM
-    %   - Produces both the cycle-by-cycle RTL trace (lg) AND the symbol-rate rx_out struct
-    %     for 100% compatibility with compute_evm_and_metrics, print_spec_report, and plots.
+    % Execution Methodology:
+    %   - 1 iteration = 1 rising clock edge (125 MHz system clock).
+    %   - Wire snapshot methodology (w_prev = w) models RTL non-blocking (<=) registers
+    %     and guarantees order-independent execution between modules.
+    %   - Input samples (in_sample_iq) arrive pre-scaled (/2, in_scale=0.5) and bounded
+    %     to [-1, 1 - 2^-11] (signed Q1.11) by the front-end ADC / channel.
+    %   - Datapath registers use pure 2's-complement wrapping with MSB guard bits;
+    %     saturation is strictly confined to the STR and Costas PI loop filters.
+    %
+    % Inputs:
+    %   in_sample_iq    - Complex baseband input samples at 4 sps (pre-scaled)
+    %   in_sample_valid - Boolean valid strobe vector corresponding to input samples
+    %   cfg             - Master system configuration struct
+    %
+    % Outputs:
+    %   rx_out - Post-synchronization diagnostic output struct (symbols, EVM, lock metrics)
+    %   lg     - Clock-cycle trace struct recording every internal signal transition
+    %   T      - Hardware types, constants, and LUT definitions struct
 
-    if nargin < 3 || isempty(cfg)
-        cfg = get_default_config();
-    end
     T = get_hw_types_and_cfg(cfg);
 
     in_sample_iq    = in_sample_iq(:);
     in_sample_valid = logical(in_sample_valid(:));
-
-    % =====================================================================
-    % 0. WRAPPER INPUT RIGHT-SHIFT (>> 1 = / 2, +1 MSB Pad) & Q1.11 QUANTIZATION
-    % =====================================================================
-    in_scale     = T.in_scale;
-    rx_in_scaled = in_sample_iq * in_scale;
-
-    do_q11 = isfield(cfg, 'quantize_q11') && cfg.quantize_q11;
-    if do_q11
-        scale_q11 = 2048; % 2^11 for signed Q1.11 in [-1, 1 - 2^-11]
-        q11_min   = -1.0;
-        q11_max   = 1.0 - (1.0 / scale_q11);
-        re_in     = round(real(rx_in_scaled) * scale_q11) / scale_q11;
-        im_in     = round(imag(rx_in_scaled) * scale_q11) / scale_q11;
-        q11_clips = sum((re_in < q11_min) | (re_in > q11_max)) + sum((im_in < q11_min) | (im_in > q11_max));
-        rx_in_scaled = min(max(re_in, q11_min), q11_max) + 1j * min(max(im_in, q11_min), q11_max);
-    else
-        q11_clips = 0;
-    end
+    in_scale        = T.in_scale;
 
     % Build cycle-by-cycle stimulus vectors (4 reset cycles + active burst + pipeline flush tail)
     n_reset  = 4;
-    n_burst  = numel(rx_in_scaled);
+    n_burst  = numel(in_sample_iq);
     n_tail   = T.lat.top_total + 16;
     N_clocks = n_reset + n_burst + n_tail;
 
     rst_n_vec = [false(n_reset, 1); true(n_burst + n_tail, 1)];
     valid_vec = [false(n_reset, 1); in_sample_valid; false(n_tail, 1)];
-    smp_i_vec = [zeros(n_reset, 1); real(rx_in_scaled); zeros(n_tail, 1)];
-    smp_q_vec = [zeros(n_reset, 1); imag(rx_in_scaled); zeros(n_tail, 1)];
+    smp_i_vec = [zeros(n_reset, 1); real(in_sample_iq); zeros(n_tail, 1)];
+    smp_q_vec = [zeros(n_reset, 1); imag(in_sample_iq); zeros(n_tail, 1)];
 
     % =====================================================================
     % 1. INITIALIZE ALL HARDWARE MODULES & WIRES (Active-Low Reset)
@@ -58,11 +49,9 @@ function [rx_out, lg, T] = run_cycle_accurate_top(in_sample_iq, in_sample_valid,
 
     w.top_in.rst_n            = false;
     w.top_in.in_sample_valid  = false;
-    w.top_in.in_sample_i      = T.fi(0, 'in', 'sat');
-    w.top_in.in_sample_q      = T.fi(0, 'in', 'sat');
+    w.top_in.in_sample_i      = T.fi(0, 'in');
+    w.top_in.in_sample_q      = T.fi(0, 'in');
     w.top_in.mod_type         = cfg.mod_type;
-    w.top_in.loop_gain        = cfg.mod_type;
-    w.top_in.costas_loop_gain = cfg.mod_type;
 
     % Preallocate cycle-level trace (lg) and symbol-level buffers
     lg.str_valid    = false(N_clocks, 1);
@@ -98,37 +87,31 @@ function [rx_out, lg, T] = run_cycle_accurate_top(in_sample_iq, in_sample_valid,
     sys_lock_log      = false(max_syms, 1);
     fsm_state_log     = strings(max_syms, 1);
 
-    n_str_sym         = 0;
-    n_derot_sym       = 0;
-    load_sym_idx      = NaN;
-    coarse_done_sym   = NaN;
-    costas_settle_sym = NaN;
-    quad_corr_sym     = NaN;
+    n_str_sym          = 0;
+    n_derot_sym        = 0;
+    load_sym_idx       = NaN;
+    coarse_done_sym    = NaN;
+    costas_settle_sym  = NaN;
+    quad_corr_sym      = NaN;
     nco_phase_pre_quad = NaN;
-    prev_reported     = false;
+    prev_reported      = false;
 
     % =====================================================================
     % 2. MAIN HARDWARE CLOCK LOOP (1 iteration = 1 rising edge of clk)
     % =====================================================================
     for clk = 1:N_clocks
-        % Step 2.1: Snapshot all wires on the rising clock edge (Rule 1)
         w_prev = w;
 
-        % Step 2.2: Drive top-level input pins for this clock cycle
         w_prev.top_in.rst_n            = rst_n_vec(clk);
         w_prev.top_in.in_sample_valid  = valid_vec(clk);
-        w_prev.top_in.in_sample_i      = T.fi(smp_i_vec(clk), 'in', 'sat');
-        w_prev.top_in.in_sample_q      = T.fi(smp_q_vec(clk), 'in', 'sat');
+        w_prev.top_in.in_sample_i      = T.fi(smp_i_vec(clk), 'in');
+        w_prev.top_in.in_sample_q      = T.fi(smp_q_vec(clk), 'in');
         w_prev.top_in.mod_type         = cfg.mod_type;
-        w_prev.top_in.loop_gain        = cfg.mod_type;
-        w_prev.top_in.costas_loop_gain = cfg.mod_type;
 
-        % Step 2.3: Combinational Inter-Module Wire Routing (from w_prev only!)
         str_in.rst_ni            = w_prev.top_in.rst_n;
         str_in.s_axis_valid_i    = w_prev.top_in.in_sample_valid;
         str_in.s_axis_i_sample_i = w_prev.top_in.in_sample_i;
         str_in.s_axis_q_sample_i = w_prev.top_in.in_sample_q;
-        str_in.loop_gain_i       = w_prev.top_in.loop_gain;
         str_in.force_w_en_i      = false;
         str_in.force_w_i         = 0.25;
 
@@ -164,7 +147,6 @@ function [rx_out, lg, T] = run_cycle_accurate_top(in_sample_iq, in_sample_valid,
         costas_in.s_axis_i_sym_i = w_prev.derot_out.m_axis_i_sym_o;
         costas_in.s_axis_q_sym_i = w_prev.derot_out.m_axis_q_sym_o;
         costas_in.mod_type_i     = w_prev.top_in.mod_type;
-        costas_in.costas_gain_i  = w_prev.top_in.costas_loop_gain;
         costas_in.mode_i         = w_prev.wrap_out.costas_mode;
         costas_in.slicer_qpsk_i  = w_prev.wrap_out.slicer_qpsk;
         costas_in.preamble_end_i = w_prev.wrap_out.preamble_end;
@@ -181,7 +163,6 @@ function [rx_out, lg, T] = run_cycle_accurate_top(in_sample_iq, in_sample_valid,
         wrap_in.costas_int      = w_prev.costas_out.int_o;
         wrap_in.costas_lock     = w_prev.costas_out.lock_o;
 
-        % Step 2.4: Execute All Hardware Modules (Order-Independent!)
         [w.str_out,    st.str]    = step_str(str_in, st.str, T);
         [w.coarse_out, st.coarse] = step_coarse_cfo(coarse_in, st.coarse, T);
         [w.derot_out,  st.derot]  = step_derotator(derot_in, st.derot, T);
@@ -189,7 +170,6 @@ function [rx_out, lg, T] = run_cycle_accurate_top(in_sample_iq, in_sample_valid,
         [w.wrap_out,   st.wrap]   = step_wrapper_fsm(wrap_in, st.wrap, T);
         w.top_in = w_prev.top_in;
 
-        % Step 2.5: Record Cycle-Level Trace
         lg.str_valid(clk)    = w.str_out.m_axis_valid_o;
         lg.str_i(clk)        = double(w.str_out.m_axis_i_sym_o);
         lg.str_q(clk)        = double(w.str_out.m_axis_q_sym_o);
@@ -202,7 +182,6 @@ function [rx_out, lg, T] = run_cycle_accurate_top(in_sample_iq, in_sample_valid,
         lg.lock_detect(clk)  = w.wrap_out.lock_detect;
         lg.fsm_state(clk)    = double(w.wrap_out.fsm_state);
 
-        % Step 2.6: Capture Symbol-Rate Logs for Compatibility with Report & Scorer
         if w.str_out.m_axis_valid_o
             n_str_sym = n_str_sym + 1;
             str_syms(n_str_sym)        = (double(w.str_out.m_axis_i_sym_o) + 1j * double(w.str_out.m_axis_q_sym_o)) / in_scale;
@@ -213,7 +192,7 @@ function [rx_out, lg, T] = run_cycle_accurate_top(in_sample_iq, in_sample_valid,
             str_v_pi_log(n_str_sym)    = double(st.str.pi_reg);
             str_lock_log(n_str_sym)    = w.str_out.lock_o;
             str_lock_m_log(n_str_sym)  = double(st.str.lock.m) / T.str.K_pre_sc;
-            str_sym_clk_idx(n_str_sym) = st.str.ip_smp(end);
+            str_sym_clk_idx(n_str_sym) = st.str.smp_reg;
         end
 
         if w.coarse_out.m_axis_valid_o && isnan(load_sym_idx)
@@ -223,11 +202,11 @@ function [rx_out, lg, T] = run_cycle_accurate_top(in_sample_iq, in_sample_valid,
 
         if w.derot_out.m_axis_valid_o
             n_derot_sym = n_derot_sym + 1;
-            derot_syms(n_derot_sym)      = double(w.derot_out.m_axis_i_sym_o) + 1j * double(w.derot_out.m_axis_q_sym_o);
-            nco_freq_log(n_derot_sym)    = double(w.derot_out.freq_word_o);
-            nco_phase_log(n_derot_sym)   = w.derot_out.phase_rad_o;
-            fsm_idx                      = min(max(double(w.wrap_out.fsm_state) + 1, 1), 6);
-            fsm_state_log(n_derot_sym)   = T.enc.fsm_names(fsm_idx);
+            derot_syms(n_derot_sym)    = double(w.derot_out.m_axis_i_sym_o) + 1j * double(w.derot_out.m_axis_q_sym_o);
+            nco_freq_log(n_derot_sym)  = double(w.derot_out.freq_word_o);
+            nco_phase_log(n_derot_sym) = w.derot_out.phase_rad_o;
+            fsm_idx                    = min(max(double(w.wrap_out.fsm_state) + 1, 1), 6);
+            fsm_state_log(n_derot_sym) = T.enc.fsm_names(fsm_idx);
         end
 
         if w_prev.derot_out.m_axis_valid_o && n_derot_sym >= 1
@@ -250,27 +229,10 @@ function [rx_out, lg, T] = run_cycle_accurate_top(in_sample_iq, in_sample_valid,
     end
 
     % =====================================================================
-    % 3. TRIM SYMBOL ARRAYS & APPLY WRAPPER <<1 OUTPUT SHIFT
+    % 3. TRIM SYMBOL ARRAYS & RESTORE DISPLAY SCALE (* 2 FOR DOWNSTREAM SCORER)
     % =====================================================================
-    N_sym = min(n_str_sym, n_derot_sym);
-    out_sym_internal = derot_syms(1:N_sym);
-
-    do_q15 = isfield(cfg, 'quantize_q15') && cfg.quantize_q15;
-    if do_q15
-        scale_q15 = 32768; % 2^15 for signed Q1.15 in [-1, 1 - 2^-15]
-        q_min     = -1.0;
-        q_max     = 1.0 - (1.0 / scale_q15);
-        re_q      = round(real(out_sym_internal) * scale_q15) / scale_q15;
-        im_q      = round(imag(out_sym_internal) * scale_q15) / scale_q15;
-        q15_clips = sum((re_q < q_min) | (re_q > q_max)) + sum((im_q < q_min) | (im_q > q_max));
-        out_q15   = min(max(re_q, q_min), q_max) + 1j * min(max(im_q, q_min), q_max);
-    else
-        out_q15   = out_sym_internal;
-        q15_clips = 0;
-    end
-
-    % Left-shift by 1 (* 2) back to nominal constellation scale
-    out_display = out_q15 / in_scale;
+    N_sym       = min(n_str_sym, n_derot_sym);
+    out_display = derot_syms(1:N_sym) / in_scale;
 
     str_res.symbols     = str_syms(1:N_sym);
     str_res.mu_log      = str_mu_log(1:N_sym);
@@ -297,8 +259,8 @@ function [rx_out, lg, T] = run_cycle_accurate_top(in_sample_iq, in_sample_valid,
     rx_out.out_sym_i             = real(out_display);
     rx_out.out_sym_q             = imag(out_display);
     rx_out.out_sym_cplx          = out_display;
-    rx_out.q11_clip_count        = q11_clips;
-    rx_out.q15_clip_count        = q15_clips;
+    rx_out.q11_clip_count        = 0;
+    rx_out.q15_clip_count        = 0;
     rx_out.slicer_sym            = slicer_syms(1:N_sym);
     rx_out.out_sym_valid         = true(N_sym, 1);
     rx_out.coarse_cfo_est        = double(w.wrap_out.coarse_cfo_est);

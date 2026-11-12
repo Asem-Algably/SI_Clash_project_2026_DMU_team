@@ -1,8 +1,29 @@
 function costas_out = run_costas_subsystem(sym_in, cfg, cfo_init_norm, train_syms)
+    % RUN_COSTAS_SUBSYSTEM  Standalone simulation model for Costas Carrier Loop (costas.md).
+    %
+    % Pipeline Behavior:
+    %   - Rotates input symbols using quarter-wave LUT derotator or continuous exponential.
+    %   - Slices symbols to constellation points (decision-directed).
+    %   - Phase error e = Im{y * conj(a)} drives 2nd-order saturating PI filter.
+    %   - Compensates for pipeline loop latency when enabled.
+    %
+    % Inputs:
+    %   sym_in        - Symbol-rate complex input symbols
+    %   cfg           - Master system configuration struct
+    %   cfo_init_norm - Initial coarse frequency offset estimate (turns/symbol)
+    %   train_syms    - Optional known training sequence for data-aided operation
+    %
+    % Outputs:
+    %   costas_out - Diagnostic struct with derotated symbols, NCO phase, and lock flags
+
     sym_in = sym_in(:);
     N_sym  = numel(sym_in);
-    if nargin < 3, cfo_init_norm = 0.0; end
-    if nargin < 4, train_syms = []; end
+    if exist('cfo_init_norm', 'var') == 0
+        cfo_init_norm = 0.0;
+    end
+    if exist('train_syms', 'var') == 0
+        train_syms = [];
+    end
 
     pipe_delay = 0;
     if isfield(cfg.costas, 'pipe_delay')
@@ -12,12 +33,14 @@ function costas_out = run_costas_subsystem(sym_in, cfg, cfo_init_norm, train_sym
 
     K_nco = 2 * pi;
     norm_mode = 'peak';
-    if isfield(cfg, 'norm_mode') && ~isempty(cfg.norm_mode), norm_mode = cfg.norm_mode; end
+    if isfield(cfg, 'norm_mode')
+        norm_mode = cfg.norm_mode;
+    end
     es_cur = get_constellation_map(cfg.mod_type, norm_mode).avg_power;
-    [Kp, Ki] = decode_gain_ports(0, cfg.costas.Bn_Ts, cfg.costas.zeta, cfg.costas.Kp_ted * es_cur, K_nco, pipe_delay, comp_delay);
+    [Kp, Ki] = compute_loop_gains(cfg.costas.Bn_Ts, cfg.costas.zeta, cfg.costas.Kp_ted * es_cur, K_nco, pipe_delay, comp_delay);
 
     max_v_pi_c = 0.12;
-    if isfield(cfg.costas, 'max_v_pi') && ~isempty(cfg.costas.max_v_pi)
+    if isfield(cfg.costas, 'max_v_pi')
         max_v_pi_c = cfg.costas.max_v_pi;
     end
 
@@ -35,7 +58,7 @@ function costas_out = run_costas_subsystem(sym_in, cfg, cfo_init_norm, train_sym
 
     for k = 1:N_sym
         y_k = derotator(sym_in(k), phase_nco, cfg.costas.derot_mode, cfg.costas.lut_addr_bits);
-        if k <= numel(train_syms) && ~isempty(train_syms)
+        if k <= numel(train_syms)
             a_k = train_syms(k);
         else
             a_k = qam_slicer(y_k, cfg.mod_type, norm_mode);

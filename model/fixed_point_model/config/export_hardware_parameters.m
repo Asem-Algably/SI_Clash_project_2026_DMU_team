@@ -1,9 +1,15 @@
 function export_hardware_parameters(T, filename)
-    % EXPORT_HARDWARE_PARAMETERS  Exports all key hardware parameters, loop gains (Kp, Ki),
+    % EXPORT_HARDWARE_PARAMETERS  Exports key hardware parameters, loop gains (Kp, Ki),
     % lock thresholds, and register bit-widths (with true fixed-point hex & RTL descriptions)
     % into a text report inside the config folder.
-    if nargin < 2 || isempty(filename)
-        filename = fullfile(fileparts(mfilename('fullpath')), 'hw_parameters_exported.txt');
+    %
+    % Inputs:
+    %   T        - Hardware definitions struct from get_hw_types_and_cfg()
+    %   filename - (Optional) Destination text report path; defaults to config/hw_parameters_exported.txt
+
+    default_file = fullfile(fileparts(mfilename('fullpath')), 'hw_parameters_exported.txt');
+    if exist('filename', 'var') == 0
+        filename = default_file;
     end
 
     fid = fopen(filename, 'w');
@@ -132,9 +138,8 @@ end
 function d = get_bus_descriptions()
     d.in      = '[Top / STR In]       Input I/Q sample port (in_sample_i/q) after wrapper >>1 shift';
     d.str_sym = '[STR -> Derot/CFO]   Interpolated I/Q symbol output from Farrow filter (m_axis_i/q_sym_o)';
-    d.fv      = '[STR Farrow]         Farrow polynomial coefficients v1, v2, v3 (4-tap sum with +3 MSB guard bits)';
+    d.fv      = '[STR Farrow]         Farrow polynomial coefficients v1, v2 (4-tap sum with +3 MSB guard bits)';
     d.fh      = '[STR Farrow]         Farrow Horner MAC intermediate stage register (v2*mu + v1)';
-    d.fk      = '[STR Farrow]         Cubic Farrow constant ROM coefficients (1/6 and 1/3)';
     d.M       = '[STR Controller]     Modulo-1 decrementing timing phase counter M and step register W (wraps mod 1)';
     d.M_s     = '[STR Controller]     Signed 25-bit combinational difference wire (M - W, M - 0.25, M - 0.75)';
     d.eta     = '[STR Controller]     Distance above strobe boundary (M - 0.25 for cur_strobe, M - 0.75 for mid_strobe)';

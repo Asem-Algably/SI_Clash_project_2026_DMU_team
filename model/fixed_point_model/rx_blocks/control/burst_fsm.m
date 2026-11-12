@@ -1,7 +1,14 @@
 function [fsm_next, costas_mode, preamble_end_pulse] = burst_fsm(fsm, in_valid, str_locked, N_AB, N_preamble)
-    % Burst Controller State Machine (matches wrapper.md Section 4):
-    % States: WAIT_BURST -> ACQUIRE -> COARSE_EST -> LOAD -> COSTAS_ACQ -> TRACK
-    % Costas modes: HOLD (WaitBurst..Load), ACQ (CostasAcq), TRACK (Track)
+    % BURST_FSM  Top-level burst sequencing state machine (wrapper.md Section 4).
+    %
+    % State Machine Graph:
+    %   WAIT_BURST -> ACQUIRE -> COARSE_EST -> LOAD -> COSTAS_ACQ -> TRACK
+    %
+    % Costas Operating Modes:
+    %   - HOLD  : WaitBurst, Acquire, CoarseEst, Load (Costas loop frozen)
+    %   - ACQ   : CostasAcq (Preamble acquisition, QPSK forced, quadrant sign counters active)
+    %   - TRACK : Track (Steady-state payload tracking with data-matched slicer)
+
     fsm_next           = fsm;
     preamble_end_pulse = false;
 

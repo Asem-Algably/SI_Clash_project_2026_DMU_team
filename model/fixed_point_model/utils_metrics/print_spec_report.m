@@ -1,6 +1,12 @@
 function print_spec_report(rx_out, metrics, cfg, ch_info)
-    % Part 2 (2a..2d) & Part 4b: Prints dual-normalisation EVM rows (Measured, Noise-Floor, Excess)
-    % with explicit (snr_def, EVM norm, norm_mode) labels, plus Q1.11/Q1.15 clip and PI saturation counts.
+    % PRINT_SPEC_REPORT  Format and display synchronization verification report.
+    % Evaluates all project performance metrics against SI-CLASH competition specifications:
+    %   - EVM compliance (clean <= 2.5%, QPSK <= 5.5%, 16-QAM <= 8.0%)
+    %   - Timing jitter <= 0.02 Ts (R.111) and STR lock time <= 150 syms (R.112)
+    %   - Coarse CFO accuracy <= 0.5% (CP3) and latency 32..128 syms (R.116)
+    %   - Residual CFO <= 0.01 Rsym (R.117) and phase error <= 1.5 deg RMS (R.121)
+    %   - Costas lock acquisition <= 200 syms (R.122)
+
     const = get_constellation_map(cfg.mod_type, cfg.norm_mode);
     snr_def = 'esn0';
     if isfield(cfg, 'snr_def'), snr_def = cfg.snr_def; end
@@ -59,9 +65,7 @@ function print_spec_report(rx_out, metrics, cfg, ch_info)
 
     % 10. Part 0c, 0f, 4b: Hardware Clip & Saturation Safety Counters
     q11_c = 0;
-    if nargin >= 4 && isstruct(ch_info) && isfield(ch_info, 'q11_clip_count')
-        q11_c = ch_info.q11_clip_count;
-    elseif isfield(rx_out, 'q11_clip_count')
+    if isfield(rx_out, 'q11_clip_count')
         q11_c = rx_out.q11_clip_count;
     end
     q15_c = 0; if isfield(rx_out, 'q15_clip_count'), q15_c = rx_out.q15_clip_count; end

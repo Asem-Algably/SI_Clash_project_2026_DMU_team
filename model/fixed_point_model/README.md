@@ -18,7 +18,6 @@ si_clash_fxp_golden_model/
 │   ├── get_default_config.m              # Master parameter struct (channel, loops, schedule, fxp widths & latencies)
 │   ├── get_hw_types_and_cfg.m            # Builds Fixed-Point Designer numerictypes, fimaths, LUTs, and T.fi/T.rd helpers
 │   ├── compute_loop_gains.m              # Computes (Kp, Ki) with closed-loop delay compensation
-│   ├── decode_gain_ports.m               # Gain port wrapper
 │   └── get_constellation_map.m           # 'peak' and 'rms' constellation definitions
 ├── tx_channel/
 │   ├── generate_preamble.m               # 3-phase preamble with Phase C = [Q1, Q2, Q4, Q1]
@@ -26,12 +25,11 @@ si_clash_fxp_golden_model/
 │   ├── pulse_shape_rrc.m                 # Root-Raised Cosine TX/RX matched filter
 │   └── apply_channel_impairments.m       # Fractional delay, CFO, phase offset, AWGN, RX RRC
 ├── rx_blocks/
-│   ├── run_synchronizer_top.m            # Unified entry point (routes to cycle-accurate or symbol-rate model)
 │   ├── run_cycle_accurate_top.m          # Master clock-edge loop (w_prev = w) & symbol-rate logger
 │   ├── str/
 │   │   ├── step_str.m                    # Cycle-accurate Fixed-Point STR module (str.md)
 │   │   ├── run_str_subsystem.m           # Symbol-rate Float STR module
-│   │   ├── farrow_interpolator.m         # Parabolic (Q4.12 internal, Q2.14 output) & Cubic Farrow
+│   │   ├── farrow_interpolator.m         # Parabolic Farrow interpolator (Q4.12 internal, Q2.14 output)
 │   │   ├── modulo1_controller.m          # Two-region Modulo-1 controller with wrap-around protection
 │   │   └── gardner_ted.m                 # Gardner TED
 │   ├── coarse_cfo/

@@ -1,10 +1,13 @@
 function [cfo_est_norm, details] = run_coarse_cfo_subsystem(rx_sym_win, cfg, ref_preamble_win)
-    if nargin < 3
+    % RUN_COARSE_CFO_SUBSYSTEM  Coarse frequency offset estimation over window of symbols.
+    % Supports single lag-4 mode ('single4') or dual-lag mode ('dual').
+
+    if exist('ref_preamble_win', 'var') == 0
         ref_preamble_win = [];
     end
 
     est_mode = 'dual';
-    if isfield(cfg.coarse, 'mode') && ~isempty(cfg.coarse.mode)
+    if isfield(cfg.coarse, 'mode')
         est_mode = cfg.coarse.mode;
     end
 

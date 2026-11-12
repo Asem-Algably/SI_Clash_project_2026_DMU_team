@@ -63,7 +63,7 @@ for c_idx = 1:5
         pay = generate_payload(cfg.mod_type, cfg.N_payload, 6000 + b);
         tx  = pulse_shape_rrc([pre; pay], cfg.rrc_alpha, cfg.rrc_span, cfg.sps, 'tx');
         rx  = apply_channel_impairments(tx, cfg);
-        out = run_synchronizer_top(rx, true(size(rx)), cfg, []);
+        out = run_cycle_accurate_top(rx, true(size(rx)), cfg);
         met = compute_evm_and_metrics(out, pay, cfg);
 
         str_lck(b) = met.str_lock_syms;
