@@ -1,3 +1,12 @@
+////////////////////////////////////////////////////////////////////////////////
+// Author: Abd El-Rhman Khalifa
+// Design: Parabolic Farrow Interpolator module.
+// Date: 11-11-2026
+// Description: Calculates the interpolated sample using a parabolic Farrow structure.
+//              Handles fixed-point arithmetic (Q1.11 to Q1.15) with pipeline stages
+//              and valid signal synchronization for initial conditions.
+////////////////////////////////////////////////////////////////////////////////
+
 module parabolic_farrow_interpolator 
     #( 
     // parameter definitions
