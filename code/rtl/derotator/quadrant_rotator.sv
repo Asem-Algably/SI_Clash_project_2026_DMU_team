@@ -1,39 +1,41 @@
-/**
- * ============================================================================
- * * Design Name:      Quadrant Rotator / Full-Circle De-rotation Mapping
- * * Project Name:     Real-Time All-Digital Carrier and Timing Synchronization Unit
- * * Organization:     Electronics Research Institute (ERI) - CLASH Challenge
- * * Author:           Haneen Fady Kamel Shahin
- * ============================================================================
- * * Description:
- *   Performs 90-degree quadrant-based complex rotation (multiplying by (-j)^q)
- *   to map full 360-degree derotation down to the 0 to 90 degree quarter-wave 
- *   sine/cosine lookup table region, minimizing hardware multiplier usage.
- * 
- * * Specifications:
- *   - Data Precision: Configurable signed fixed-point width (default 16-bit Q1.15)
- *   - Saturation Management: Custom `neg` function prevents two's-complement
- *     overflow during negation of minimum negative values (e.g., -(-1.0)).
- * ============================================================================
- */
-module quadrant_rotator #(
-    parameter int W = 16
-)(
-    input  logic [1:0]          quad_i,
-    input  logic signed [W-1:0] xi_i,
-    input  logic signed [W-1:0] xq_i,
-    output logic signed [W-1:0] xi_o,
-    output logic signed [W-1:0] xq_o
-);
-    localparam logic signed [W-1:0] MAXV = {1'b0, {(W-1){1'b1}}};
-    localparam logic signed [W-1:0] MINV = {1'b1, {(W-1){1'b0}}};
+// Design Name:  Quadrant rotator, full-circle derotation mapping (quadrant_rotator)
+// Project:      Real-Time All-Digital Carrier and Timing Synchronization Unit
+// Organization: Electronics Research Institute (ERI) - CLASH Challenge
+// Author:       Haneen Fady Kamel Shahin
+//
+// Combinational 90-degree rotation of the input symbol by minus the NCO quadrant,
+// x' = x * (-j)^q. Only signs and a swap depend on q, no multiplier. After this rotation the
+// complex multiplier always uses the q = 0 equations with the 0..90 degree table values, so one
+// quarter-wave table covers the full circle (derotator.md, "Equivalent form").
+//   q = 0: x' = ( xi,  xq)
+//   q = 1: x' = ( xq, -xi)
+//   q = 2: x' = (-xi, -xq)
+//   q = 3: x' = (-xq,  xi)
+//
+// Saturation: the negation is saturating, so -(-1.0) gives +0.99997 (0x7FFF) instead of
+// overflowing Q1.15. This adds an error of 1 LSB, only when an input is exactly -1.0, and the
+// reference model must do the same.
 
-    // negate with saturation (-(-1.0) would overflow Q1.15)
-    function automatic logic signed [W-1:0] neg(input logic signed [W-1:0] v);
+module quadrant_rotator #(
+    parameter int DataWidth = 16
+)(
+    // Quadrant, the top two bits of the NCO phase
+    input  logic        [1:0]           quad_i,
+    input  logic signed [DataWidth-1:0] xi_i,
+    input  logic signed [DataWidth-1:0] xq_i,
+    // Rotated symbol x'
+    output logic signed [DataWidth-1:0] xi_o,
+    output logic signed [DataWidth-1:0] xq_o
+);
+    localparam logic signed [DataWidth-1:0] MAXV = {1'b0, {(DataWidth-1){1'b1}}};
+    localparam logic signed [DataWidth-1:0] MINV = {1'b1, {(DataWidth-1){1'b0}}};
+
+    // Negate with saturation: -(-1.0) would overflow Q1.15, so it gives the maximum value
+    function automatic logic signed [DataWidth-1:0] neg(input logic signed [DataWidth-1:0] v);
         return (v == MINV) ? MAXV : -v;
     endfunction
 
-    // x' = x * (-j)^q   (spec: "Equivalent form")
+    // Rotate by minus q * 90 degrees, see the table in the header. q = 3 is the default case.
     always_comb begin
         unique case (quad_i)
             2'd0:    begin xi_o =  xi_i;      xq_o =  xq_i;      end
