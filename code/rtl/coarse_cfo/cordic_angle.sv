@@ -6,7 +6,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 module cordic_angle #(
-    parameter int unsigned InWidth    = 40,  // Input vector width
+    parameter int unsigned InWidth    = 40,  // Input vector width come from the output width of accumulator
     parameter int unsigned OutWidth   = 24,  // Angle width (fraction of turn)
     parameter int unsigned Iterations = 16   // CORDIC iterations
   ) (
