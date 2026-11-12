@@ -6,29 +6,30 @@
 //               Accumulates sign stats to calculate initial phase adjustment.
 // ============================================================================
 module quad_check #(
-    parameter int PW = 32
+    parameter int Phase_Width = 32
 )(
-    input logic clk_i,
-    input logic rst_ni,
-    input logic [1:0]mode_i,
-    input logic valid_i,
-    input logic sgn_i_pos_i,
-    input logic sgn_q_pos_i,
-    input logic lock_i,
-    input logic preamble_end_i,
-    output logic phase_adj_valid_o,
-    output logic [PW-1:0]phase_adj_o,
-    output logic quad_unresolved_o,
-    output logic done_o
-);
-    localparam logic [1:0]MODE_HOLD = 2'b00;
-    localparam logic signed [4:0]CNT_MAX = 5'sd15;  // Saturation max limit
-    localparam logic signed [4:0]CNT_MIN = -5'sd16; // Saturation min limit
+    input  logic                   clk_i,
+    input  logic                   rst_ni,
+    input  logic [1:0]             mode_i,
+    input  logic                   valid_i,
+    input  logic                   sgn_i_pos_i,
+    input  logic                   sgn_q_pos_i,
+    input  logic                   lock_i,
+    input  logic                   preamble_end_i,
 
-    logic signed [4:0]cnt_i_q, cnt_q_q;             // 5-bit sign counters
-    logic signed [4:0]cnt_i_next, cnt_q_next;
+    output logic                   phase_adj_valid_o,
+    output logic [Phase_Width-1:0] phase_adj_o,
+    output logic                   quad_unresolved_o,
+    output logic                   done_o
+);
+    localparam logic        [1:0] MODE_HOLD = 2'b00;
+    localparam logic signed [4:0] CNT_MAX   =  5'sd15; // Saturation max limit
+    localparam logic signed [4:0] CNT_MIN   = -5'sd16; // Saturation min limit
+
+    logic signed [4:0] cnt_i_q, cnt_q_q;               // 5-bit sign counters
+    logic signed [4:0] cnt_i_next, cnt_q_next;
     logic full_any, evt, unknown;
-    logic neg_i, neg_q;                             // Sign bits
+    logic neg_i, neg_q;                                // Sign bits
 
     always_comb begin
         cnt_i_next = cnt_i_q;
@@ -56,28 +57,29 @@ module quad_check #(
             end
         end
 
-        full_any = (cnt_i_next == CNT_MAX) || (cnt_i_next == CNT_MIN) || (cnt_q_next == CNT_MAX) || (cnt_q_next == CNT_MIN); // Counter full flag
-        evt = !done_o && (full_any || preamble_end_i); // Trigger evaluation
-        unknown = ((cnt_i_next == 5'sd0) || (cnt_q_next == 5'sd0)); // Zero sign ambiguity
-        neg_i = cnt_i_next[4];                       // Extract sign I
-        neg_q = cnt_q_next[4];                       // Extract sign Q
+        full_any = (cnt_i_next == CNT_MAX) || (cnt_i_next == CNT_MIN) ||
+                   (cnt_q_next == CNT_MAX) || (cnt_q_next == CNT_MIN);          // Counter full flag
+        evt = !done_o && (full_any || preamble_end_i);                          // Trigger evaluation
+        unknown = ((cnt_i_next == 5'sd0) || (cnt_q_next == 5'sd0));             // Zero sign ambiguity
+        neg_i = cnt_i_next[4];                                                  // Extract sign I
+        neg_q = cnt_q_next[4];                                                  // Extract sign Q
     end
 
     always_ff @(posedge clk_i or negedge rst_ni) begin
         if (!rst_ni) begin
-            cnt_i_q <= '0;
-            cnt_q_q <= '0;
-            done_o <= 1'b0;
+            cnt_i_q           <= '0;
+            cnt_q_q           <= '0;
+            done_o            <= 1'b0;
             phase_adj_valid_o <= 1'b0;
-            phase_adj_o <= '0;
+            phase_adj_o       <= '0;
             quad_unresolved_o <= 1'b0;
         end
         else if (mode_i == MODE_HOLD) begin
-            cnt_i_q <= '0;
-            cnt_q_q <= '0;
-            done_o <= 1'b0;
+            cnt_i_q           <= '0;
+            cnt_q_q           <= '0;
+            done_o            <= 1'b0;
             phase_adj_valid_o <= 1'b0;
-            phase_adj_o <= '0;
+            phase_adj_o       <= '0;
             quad_unresolved_o <= 1'b0;
         end
         else begin
@@ -100,7 +102,7 @@ module quad_check #(
                     end
                     else begin
                         phase_adj_valid_o <= 1'b1;   // Pulse valid
-                        phase_adj_o <= {neg_q, neg_q ^ neg_i, {(PW-2){1'b0}}}; // Phase correction (k * pi/2)
+                        phase_adj_o       <= {neg_q, neg_q ^ neg_i, {(Phase_Width-2){1'b0}}}; // Phase correction (k * pi/2)
                     end
                 end
             end
