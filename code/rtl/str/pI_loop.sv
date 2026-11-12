@@ -1,5 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
-// Author: Hadeer Ghoneim
+// Author: Abd El-Rhman Khalifa
+// Co_Author: Hadeer Ghoneim
 // Design: Proportional-Integral (PI) Loop Filter module.
 // Date: 12-11-2026
 // Description: Filters the timing error from the TED, applying proportional 
