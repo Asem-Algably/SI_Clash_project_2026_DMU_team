@@ -206,7 +206,7 @@ module parabolic_farrow_interpolator
     always @(posedge clk_i or negedge rst_n_i ) begin
         if (!rst_n_i) begin
             y_o <= '0;
-        end else if (valid_sample_i_reg4 & valid_sample_o_counter_flag) begin // no need to update the output if it is not valid (this makes the design more power efficient)
+        end else if (valid_sample_i_reg4  ) begin // no need to update the output if it is not valid (this makes the design more power efficient)
             y_o <= term1 + term2 + term3;
         end     
     end
@@ -237,7 +237,7 @@ module parabolic_farrow_interpolator
     assign valid_sample_o_counter_flag = valid_sample_o_counter[1]&valid_sample_o_counter[0]; // when the counter reaches 3, the flag will be set to 1
 
 
-    // 2. handling the normarl operation
+    // 2. handling the normal operation
     always @(posedge clk_i or negedge rst_n_i ) begin
         if (!rst_n_i) begin
             valid_sample_i_reg1 <= '0;
@@ -245,12 +245,12 @@ module parabolic_farrow_interpolator
             valid_sample_i_reg3 <= '0;
             valid_sample_i_reg4 <= '0;
             valid_sample_o <= '0;
-        end else if (valid_sample_o_counter_flag) begin
+        end else if (valid_sample_o_counter_flag) begin // we wil acount for the valid signal branch only after the flag is asserted to make sure the output pipelining is alligned with the valid branch
             valid_sample_i_reg1 <= valid_sample_i_reg;
             valid_sample_i_reg2 <= valid_sample_i_reg1;
             valid_sample_i_reg3 <= valid_sample_i_reg2;
             valid_sample_i_reg4 <= valid_sample_i_reg3;
-            valid_sample_o <= valid_sample_i_reg4 & valid_sample_o_counter_flag; // the output will be valid only if the counter flag is set to 1 and the valid_sample_i_reg4 is 1
+            valid_sample_o <= valid_sample_i_reg4  ;
         end     
     end
 
