@@ -35,7 +35,11 @@ module quad_check #(
         cnt_i_next = cnt_i_q;
         cnt_q_next = cnt_q_q;
 
-        if (valid_i && lock_i && !done_o) begin
+        if (!lock_i) begin
+            cnt_i_next = 0;
+            cnt_q_next = 0;
+        end
+        else if (valid_i && !done_o) begin
             if (sgn_i_pos_i) begin
                 if (cnt_i_q != CNT_MAX) begin
                     cnt_i_next = cnt_i_q + 5'sd1;   // Count up I

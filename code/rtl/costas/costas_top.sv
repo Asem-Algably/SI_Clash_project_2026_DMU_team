@@ -4,6 +4,7 @@
 // Author      : Arwa Kantoush
 // Description : Top-level Costas Loop Subsystem wrapper incorporating slicer,
 //               phase detector, PI filter, dual lock detectors, and quad check.
+//               Separate loop gains for ACQ (preamble) and TRACK (payload).
 // ============================================================================
 module costas_top #(
     parameter int Data_Width     = 16,
@@ -17,21 +18,33 @@ module costas_top #(
     parameter logic signed [Data_Width-1:0]  Qpsk_Level    = 16'sd16384,
     parameter logic signed [Data_Width-1:0]  Qam_Level     = 16'sd5461,
 
-    // Loop gains
-    parameter logic [Gain_Width-1:0] Kp_Qpsk = 24'd299803,
-    parameter logic [Gain_Width-1:0] Ki_Qpsk = 24'd9995,
-    parameter logic [Gain_Width-1:0] Kp_Qam  = 24'd539646,
-    parameter logic [Gain_Width-1:0] Ki_Qam  = 24'd17992,
+    // Loop gains - ACQ (preamble): Bn_Ts ~ 0.035
+    parameter logic [Gain_Width-1:0] Kp_Acq  = 24'd419700,
+    parameter logic [Gain_Width-1:0] Ki_Acq  = 24'd19600,
 
-    // Lock detector parameters
+    // Loop gains - TRACK (payload): Bn_Ts = 0.015, zeta = 0.707, pipe_delay = 2
+    // computed from compute_loop_gains.m (Q0.24)
+    parameter logic [Gain_Width-1:0] Kp_Qpsk = 24'd180428,   // K_ted = 0.5
+    parameter logic [Gain_Width-1:0] Ki_Qpsk = 24'd3609,
+    parameter logic [Gain_Width-1:0] Kp_Qam  = 24'd324771,   // K_ted = 10*(1/6)^2
+    parameter logic [Gain_Width-1:0] Ki_Qam  = 24'd6497,
+
+    // Public lock detector parameters
     parameter int                      Lock_Alpha_Shift       = 4,
-    parameter int                      Lock_Confirm_Count     = 20,
+    parameter int                      Lock_Confirm_Count     = 12,
     parameter int                      Lock_Min_Symbols       = 15,
     parameter logic [Error_Width-1:0]  Lock_Init_Error        = 16'd8192,
     parameter logic [Error_Width-1:0]  Lock_Enter_Thresh_Qpsk = 16'd2064,
     parameter logic [Error_Width-1:0]  Lock_Exit_Thresh_Qpsk  = 16'd3277,
     parameter logic [Error_Width-1:0]  Lock_Enter_Thresh_Qam  = 16'd1147,
-    parameter logic [Error_Width-1:0]  Lock_Exit_Thresh_Qam   = 16'd1820
+    parameter logic [Error_Width-1:0]  Lock_Exit_Thresh_Qam   = 16'd1820,
+
+    // Internal lock detector parameters
+    parameter int                      Lock_Int_Confirm_Count = 8,
+    parameter logic [Error_Width-1:0]  Lock_Int_Enter_Thresh  = 16'd3600,
+    parameter logic [Error_Width-1:0]  Lock_Int_Exit_Thresh   = 16'd5000,
+    parameter int                      Lock_Int_Min_Symbols   = 4,
+    parameter logic [Error_Width-1:0]  Lock_Int_Init_Error    = 16'd4000
 )(
     input  logic                          clk_i,
     input  logic                          rst_ni,
@@ -57,6 +70,7 @@ module costas_top #(
     output logic                          dbg_quad_done_o                // quadrant decision made
 );
     localparam logic [1:0] MODE_HOLD = 2'b00;
+    localparam logic [1:0] MODE_ACQ  = 2'b01;
     localparam logic [1:0] MOD_QAM16 = 2'b01;
 
     // -------------------------------------- Reset Synchronizer (Async Assert, Sync Deassert)
@@ -74,10 +88,9 @@ module costas_top #(
     end
 
     // ------------------------------------------------ Slicer Subsystem
-    logic signed [Data_Width-1:0]ai, aq;
+    logic signed [Data_Width-1:0] ai, aq;
     logic sgn_i_pos, sgn_q_pos;
     logic sgn_i_pos_q, sgn_q_pos_q;
-    logic sgn_i_pos_q2, sgn_q_pos_q2;
 
     slicer #(
         .Data_Width   (Data_Width),
@@ -96,35 +109,39 @@ module costas_top #(
 
     // Pipeline delay to align signs with phase_error output valid
     always_ff @(posedge clk_i or negedge rst_sync_n) begin
-    if (!rst_sync_n) begin
-        sgn_i_pos_q  <= 1'b0;
-        sgn_q_pos_q  <= 1'b0;
-        sgn_i_pos_q2 <= 1'b0;
-        sgn_q_pos_q2 <= 1'b0;
-    end else if (s_axis_valid_i) begin
-        sgn_i_pos_q  <= sgn_i_pos;
-        sgn_q_pos_q  <= sgn_q_pos;
-        sgn_i_pos_q2 <= sgn_i_pos_q; // <--- Add this
-        sgn_q_pos_q2 <= sgn_q_pos_q; // <--- Add this
+        if (!rst_sync_n) begin
+            sgn_i_pos_q <= 1'b0;
+            sgn_q_pos_q <= 1'b0;
+        end
+        else if (s_axis_valid_i) begin
+            sgn_i_pos_q <= sgn_i_pos;
+            sgn_q_pos_q <= sgn_q_pos;
+        end
     end
-end
-
 
     // ------------------------------------------------ Gain/Threshold Config
     logic use_qam;
-    logic [Gain_Width-1:0]kp, ki;
-    logic [Error_Width-1:0]thr_enter, thr_exit;
+    logic [Gain_Width-1:0]  kp, ki;
+    logic [Error_Width-1:0] thr_enter, thr_exit;
 
     always_comb begin
         use_qam = !slicer_qpsk_i && (mod_type_i == MOD_QAM16);
-        kp = use_qam ? Kp_Qam : Kp_Qpsk;
-        ki = use_qam ? Ki_Qam : Ki_Qpsk;
+
+        if (mode_i == MODE_ACQ) begin
+            kp = Kp_Acq;
+            ki = Ki_Acq;
+        end
+        else begin
+            kp = use_qam ? Kp_Qam : Kp_Qpsk;
+            ki = use_qam ? Ki_Qam : Ki_Qpsk;
+        end
+
         thr_enter = use_qam ? Lock_Enter_Thresh_Qam : Lock_Enter_Thresh_Qpsk;
-        thr_exit  = use_qam ? Lock_Exit_Thresh_Qam  : Lock_Exit_Thresh_Qpsk ;
+        thr_exit  = use_qam ? Lock_Exit_Thresh_Qam  : Lock_Exit_Thresh_Qpsk;
     end
 
     // ------------------------------------------------ Phase Error Subsystem
-    logic signed [Error_Width-1:0]e;
+    logic signed [Error_Width-1:0] e;
     logic e_valid;
 
     phase_error #(
@@ -176,17 +193,17 @@ end
     lock_detector #(
         .Error_Width       (Error_Width),
         .Alpha_Shift       (Lock_Alpha_Shift),
-        .Confirm_Count     (Lock_Confirm_Count),
-        .Min_Symbols       (Lock_Min_Symbols),
-        .Init_Error        (Lock_Init_Error)
+        .Confirm_Count     (Lock_Int_Confirm_Count),
+        .Min_Symbols       (Lock_Int_Min_Symbols),
+        .Init_Error        (Lock_Int_Init_Error)
     ) u_lock_int (
         .clk_i      (clk_i),
         .rst_ni     (rst_sync_n),
         .clr_i      (mode_i == MODE_HOLD),
         .valid_i    (e_valid && !done),
         .e_i        (e),
-        .thr_enter_i(thr_enter),
-        .thr_exit_i (thr_exit),
+        .thr_enter_i(Lock_Int_Enter_Thresh),
+        .thr_exit_i (Lock_Int_Exit_Thresh),
         .locked_o   (lock_int)
     );
 

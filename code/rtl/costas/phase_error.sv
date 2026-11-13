@@ -3,7 +3,7 @@
 // Module Name : phase_error
 // Author      : Arwa Kantoush
 // Description : Phase error detector (Im{y * a*}) in Q1.15 format.
-//               Features a 2-stage pipeline to achieve 125MHz timing closure.
+//               3-stage pipeline: multiply / subtract / round+shift+saturate.
 // ============================================================================
 module phase_error #(
     parameter int Data_Width     = 16,
@@ -21,27 +21,34 @@ module phase_error #(
     output logic                          valid_o
 );
     localparam logic        [1:0]             MODE_HOLD = 2'b00;
-    localparam logic signed [2*Data_Width:0]  HALF      = 1 <<< (Data_Frac_Bits-1);         // 0.5 in Q1.15 format
-    localparam logic signed [Error_Width-1:0] E_MAX     = {1'b0, {(Error_Width-1){1'b1}}}; // 0.999969482421875 in Q1.15 format
-    localparam logic signed [Error_Width-1:0] E_MIN     = {1'b1, {(Error_Width-1){1'b0}}}; // -1.0 in Q1.15 format
+    localparam logic signed [2*Data_Width:0]  HALF      = 1 <<< (Data_Frac_Bits-1);
+    localparam logic signed [Error_Width-1:0] E_MAX     = {1'b0, {(Error_Width-1){1'b1}}};
+    localparam logic signed [Error_Width-1:0] E_MIN     = {1'b1, {(Error_Width-1){1'b0}}};
 
-    logic signed [2*Data_Width:0]   diff, shifted;
+    logic signed [2*Data_Width-1:0] m_qa, m_ia;     // stage 1: yq*ai, yi*aq
+    logic signed [2*Data_Width:0]   diff_r;         // stage 2: m_qa - m_ia
+    logic signed [2*Data_Width:0]   shifted;
     logic signed [Error_Width-1:0]  e_next;
-    logic signed [2*Data_Width-1:0] m_qa, m_ia;     // yq*ai, yi*aq
-    logic                           v_m;
+    logic                           v_m, v_d;
 
-    //---------------------------------------------------- stage 1: m_qa = yq*ai, m_ia = yi*aq
-    always_ff @(posedge clk_i) begin      // no reset: absorbed into the DSP
+    //---------------------------------------------------- stage 1: multiply (no reset, absorbed into the DSP)
+    always_ff @(posedge clk_i) begin
         if (valid_i) begin
             m_qa <= yq_i * ai_i;
             m_ia <= yi_i * aq_i;
         end
     end
 
-    //---------------------------------------------------- stage 2: e = (m_qa - m_ia) >> Data_Frac_Bits
+    //---------------------------------------------------- stage 2: subtract
+    always_ff @(posedge clk_i) begin
+        if (v_m) begin
+            diff_r <= (2*Data_Width+1)'(m_qa) - (2*Data_Width+1)'(m_ia);
+        end
+    end
+
+    //---------------------------------------------------- stage 3: round + shift + saturate
     always_comb begin
-        diff    = (2*Data_Width+1)'(m_qa) - (2*Data_Width+1)'(m_ia);
-        shifted = (diff + HALF) >>> Data_Frac_Bits;
+        shifted = (diff_r + HALF) >>> Data_Frac_Bits;
         e_next  = shifted[Error_Width-1:0];
         if (shifted > $signed(E_MAX)) begin
             e_next = E_MAX;
@@ -51,22 +58,24 @@ module phase_error #(
         end
     end
 
-    //---------------------------------------------------- stage 3: output register
     always_ff @(posedge clk_i or negedge rst_ni) begin
         if (!rst_ni) begin
             v_m     <= 1'b0;
+            v_d     <= 1'b0;
             e_o     <= '0;
             valid_o <= 1'b0;
         end
         else if (mode_i == MODE_HOLD) begin
             v_m     <= 1'b0;
+            v_d     <= 1'b0;
             e_o     <= '0;
             valid_o <= 1'b0;
         end
         else begin
             v_m     <= valid_i;
-            valid_o <= v_m;
-            if (v_m) begin
+            v_d     <= v_m;
+            valid_o <= v_d;
+            if (v_d) begin
                 e_o <= e_next;
             end
         end
