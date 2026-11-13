@@ -15,6 +15,7 @@ module complex_mult #(
   input  logic signed [InWidth-1:0]  a_im_i,  // Imag part of A
   input  logic signed [InWidth-1:0]  b_re_i,  // Real part of B
   input  logic signed [InWidth-1:0]  b_im_i,  // Imag part of B
+  
   output logic signed [OutWidth-1:0] p_re_o,  // Real part of A*B
   output logic signed [OutWidth-1:0] p_im_o   // Imag part of A*B
 );
