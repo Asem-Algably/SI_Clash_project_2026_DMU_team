@@ -63,6 +63,11 @@ module parabolic_farrow_interpolator
     logic signed [DATA_IN_INTEGER_WIDTH-1 +2:-DATA_IN_FRACTIONAL_WIDTH] v1;
     logic signed [DATA_IN_INTEGER_WIDTH-1 +2:-DATA_IN_FRACTIONAL_WIDTH] v2;
 
+    logic signed [DATA_IN_INTEGER_WIDTH-1:-DATA_IN_FRACTIONAL_WIDTH] pre_v0;
+    logic signed [DATA_IN_INTEGER_WIDTH-1 +2:-DATA_IN_FRACTIONAL_WIDTH] pre_v1;
+    logic signed [DATA_IN_INTEGER_WIDTH-1 +2:-DATA_IN_FRACTIONAL_WIDTH] pre_v2;
+
+
     // i made a register for mu_i and mu_i_squared to avoid the timing issues of the multiplication and to make sure that the multiplication is done with the correct values of mu_i and mu_i_squared
     logic signed [0:-MU_WIDTH] mu_i_reg; // i have added 1 bit for the sign to make it in the format of Q1.N to meet the requiremets of multiplication
     logic signed [0:-DATA_OUT_FRACTIONAL_WIDTH] mu_i_squared_reg; 
@@ -87,7 +92,7 @@ module parabolic_farrow_interpolator
     logic [1:0] valid_sample_o_counter; // to count the number of valid samples to make sure that the registers till x2_half are filled with valid samples before starting the normal operation of the parabolic farrow interpolator
     logic valid_sample_o_counter_flag; // to indicate that the registers till x2_half are filled with valid samples and the normal operation of the parabolic farrow interpolator can start
 
-    logic valid_sample_i_reg1 ,valid_sample_i_reg2 ,valid_sample_i_reg3 ; // to delay the valid_sample_i signal by 4 clock cycles to match the delay of the output of the parabolic farrow interpolator
+    logic valid_sample_i_reg1 ,valid_sample_i_reg2 ,valid_sample_i_reg3, valid_sample_i_reg4 ; // to delay the valid_sample_i signal by 4 clock cycles to match the delay of the output of the parabolic farrow interpolator
 
 
     // ------------------------------------------------------------
@@ -142,12 +147,19 @@ module parabolic_farrow_interpolator
             v0 <= '0;
             v1 <= '0;
             v2 <= '0;
+            pre_v0 <= '0;
+            pre_v1 <= '0;
+            pre_v2 <= '0;
         end else begin  // no need to add if statement here since the samplese regesters are forsen when valid_sample_i is not active 
                         // so the values of the variables will be the same as the previous values when valid_sample_i is not active
                         // also this makes the routing more better
-            v0 <=  x1;
-            v1 <= -x3_half + x2_half + x2 - x1_half - x0_half ;
-            v2 <= +x3_half - x2_half - x1_half + x0_half ;
+            pre_v0 <= x1;
+            pre_v1 <= + x2 - x1_half - x0_half;
+            pre_v2 <= - x2_half - x1_half + x0_half;
+
+            v0 <= pre_v0;
+            v1 <= -x3_half + x2_half + pre_v1 ;
+            v2 <= +x3_half + pre_v2 ;
         end
     end
 
@@ -172,7 +184,7 @@ module parabolic_farrow_interpolator
             term2 <= '0;
             term3 <= '0;
         end else begin
-            term1 <= {v0[DATA_OUT_INTEGER_WIDTH-1 +2],v0[DATA_OUT_INTEGER_WIDTH-1 +2],v0, 4'b0000}; // the first two bits are the sign bit and the integer bit of the variable v0 and the last 4 bits are 0s to make it in the format of Q1.15 for addition requirements
+            term1 <= {v0[0],v0[0],v0, 4'b0000}; // the first two bits are the sign bit and the integer bit of the variable v0 and the last 4 bits are 0s to make it in the format of Q1.15 for addition requirements
             term2 <= term2_before_trancation [DATA_OUT_INTEGER_WIDTH-1 +2:-DATA_OUT_FRACTIONAL_WIDTH];
             term3 <= term3_before_trancation [DATA_OUT_INTEGER_WIDTH-1 +2:-DATA_OUT_FRACTIONAL_WIDTH];
         end     
@@ -222,12 +234,14 @@ module parabolic_farrow_interpolator
             valid_sample_i_reg1 <= '0;
             valid_sample_i_reg2 <= '0;
             valid_sample_i_reg3 <= '0;
+            valid_sample_i_reg4 <= '0;
             valid_sample_o <= '0;
         end else begin
             valid_sample_i_reg1 <= valid_sample_i_reg;
             valid_sample_i_reg2 <= valid_sample_i_reg1;
             valid_sample_i_reg3 <= valid_sample_i_reg2;
-            valid_sample_o <= valid_sample_i_reg3 & valid_sample_o_counter_flag; // the output will be valid only if the counter flag is set to 1 and the valid_sample_i_reg3 is 1
+            valid_sample_i_reg4 <= valid_sample_i_reg3;
+            valid_sample_o <= valid_sample_i_reg4 & valid_sample_o_counter_flag; // the output will be valid only if the counter flag is set to 1 and the valid_sample_i_reg4 is 1
         end     
     end
 

@@ -1,0 +1,5 @@
+set_property SRC_FILE_INFO {cfile:{K:/Digital_IC/IEEE SSCS AUSC ALEX/Si_clash_26/SI_Clash_project_2026_DMU_team/code/rtl/str/si_clash_26/si_clash_26.srcs/constrs_1/imports/lab 5/Constraints_basys3.xdc} rfile:{../../../si_clash_26.srcs/constrs_1/imports/lab 5/Constraints_basys3.xdc} id:1} [current_design]
+set_property src_info {type:XDC file:1 line:7 export:INPUT save:INPUT read:READ} [current_design]
+set_property -dict { PACKAGE_PIN W5   IOSTANDARD LVCMOS33 } [get_ports clk_i]
+set_property src_info {type:XDC file:1 line:67 export:INPUT save:INPUT read:READ} [current_design]
+set_property -dict { PACKAGE_PIN U18   IOSTANDARD LVCMOS33 } [get_ports rst_n_i]
