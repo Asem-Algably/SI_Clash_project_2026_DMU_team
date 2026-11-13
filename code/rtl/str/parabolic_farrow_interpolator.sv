@@ -65,8 +65,8 @@ module parabolic_farrow_interpolator
 
     // i made a register for mu_i and mu_i_squared to avoid the timing issues of the multiplication and to make sure that the multiplication is done with the correct values of mu_i and mu_i_squared
     logic signed [0:-MU_WIDTH] mu_i_reg; // i have added 1 bit for the sign to make it in the format of Q1.N to meet the requiremets of multiplication
-    logic signed [0:-MU_WIDTH * 2 ] mu_i_squared_reg; // the multiplication duples the number of bits in the fractional part of the result
-    logic [2*MU_WIDTH-1:0] mu_i_squared; // i have added this signal to make sure that the multiplication result is 20 bits and not 10 bits (the width of mu_i) to avoid losing the fractional part of the multiplication result
+    logic signed [0:-DATA_OUT_FRACTIONAL_WIDTH] mu_i_squared_reg; 
+    logic [(2*MU_WIDTH)-1:0] mu_i_squared; // i have added this signal to make sure that the multiplication result is 20 bits and not 10 bits (the width of mu_i) to avoid losing the fractional part of the multiplication result
 
     // ------------ terms of the equations of the parabolic farrow interpolator ------------
     // the final terms must be QM.15 to meet the requirements of the output of the parabolic farrow interpolator
@@ -76,7 +76,7 @@ module parabolic_farrow_interpolator
     localparam integer TERM2_BEFORE_TRANCATION_FRACTIONAL_WIDTH = ((MU_WIDTH) + (DATA_IN_FRACTIONAL_WIDTH) ); //term2_before_trancation =  mu_i_reg * v1;
     
     localparam integer TERM3_BEFORE_TRANCATION_INTEGER_WIDTH = (1) + (DATA_IN_INTEGER_WIDTH-1 +2 +1); //term3_before_trancation = mu_i_squared_reg * v2;
-    localparam integer TERM3_BEFORE_TRANCATION_FRACTIONAL_WIDTH = ((MU_WIDTH * 2 ) + (DATA_IN_FRACTIONAL_WIDTH) ); //term3_before_trancation = mu_i_squared_reg * v2;
+    localparam integer TERM3_BEFORE_TRANCATION_FRACTIONAL_WIDTH = ((DATA_OUT_FRACTIONAL_WIDTH) + (DATA_IN_FRACTIONAL_WIDTH) ); //term3_before_trancation = mu_i_squared_reg * v2;
 
     logic signed [DATA_OUT_INTEGER_WIDTH-1 +2:-DATA_OUT_FRACTIONAL_WIDTH] term1 , term2 , term3;
     logic signed [TERM2_BEFORE_TRANCATION_INTEGER_WIDTH-1:-TERM2_BEFORE_TRANCATION_FRACTIONAL_WIDTH] term2_before_trancation ;
@@ -159,7 +159,7 @@ module parabolic_farrow_interpolator
         end else begin 
             mu_i_reg <= {1'b0 , mu_i}; // i have added 1 bit for the sign to make it in the format of Q1.N to meet the requiremets of multiplication
                                      // the sign bit is 0 since mu_i is always positive
-            mu_i_squared_reg <= {1'b0 , mu_i_squared};
+            mu_i_squared_reg <= {1'b0 , mu_i_squared[DATA_OUT_FRACTIONAL_WIDTH-1:0]};
         end
     end
 
