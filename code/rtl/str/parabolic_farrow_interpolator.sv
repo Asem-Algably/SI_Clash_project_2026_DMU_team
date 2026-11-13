@@ -171,7 +171,7 @@ module parabolic_farrow_interpolator
         end else begin 
             mu_i_reg <= {1'b0 , mu_i}; // i have added 1 bit for the sign to make it in the format of Q1.N to meet the requiremets of multiplication
                                      // the sign bit is 0 since mu_i is always positive
-            mu_i_squared_reg <= {1'b0 , mu_i_squared[DATA_OUT_FRACTIONAL_WIDTH-1:0]};
+            mu_i_squared_reg <= {1'b0 , mu_i_squared[2*MU_WIDTH-1:2*MU_WIDTH-15]};
         end
     end
 
