@@ -1,0 +1,11 @@
+N_preamble        = 190
+N_payload         = 1200
+mod_type          = 1
+coarse_cfo_stored = 1089400
+str_lock_sym      = 54
+costas_lock_sym   = 189
+quad_k            = 1
+quad_unresolved   = 0
+excess_evm_pct    = 3.4219
+total_evm_pct     = 7.1641
+ser               = 0.000000
