@@ -1,30 +1,22 @@
 function [out, st] = step_wrapper_fsm(in, st, T)
-    % STEP_WRAPPER_FSM  Cycle-Accurate Top-Level Burst FSM & Output Stage (wrapper.md).
+    % STEP_WRAPPER_FSM  Cycle-Accurate Top-Level Burst FSM & Output Register Stage.
     %
     % 6-State Burst FSM:
-    %   - WAIT_BURST (0): Idle waiting for active in_sample_valid stream.
-    %   - ACQUIRE    (1): STR timing recovery acquisition. Advances when STR declares lock
-    %                     or when symbol counter reaches max_acq limit.
-    %   - COARSE_EST (2): Pulses coarse_start to trigger 32-symbol correlation window.
-    %                     Waits for coarse_valid from coarse CFO estimator.
-    %   - LOAD       (3): Coarse estimate is latched into NCO frequency word register.
-    %   - COSTAS_ACQ (4): Costas loop active in acquisition mode (forces QPSK slicer).
-    %                     Sign counters evaluate quadrant ambiguity. Pulses preamble_end
-    %                     when symbol count reaches N_preamble.
-    %   - TRACK      (5): Steady-state payload tracking with modulation-matched slicer.
+    %   WAIT_BURST (0) -> ACQUIRE (1) -> COARSE_EST (2) -> LOAD (3) -> COSTAS_ACQ (4) -> TRACK (5)
     %
-    % Output Stage:
-    %   - Latches fine CFO: fine_cfo_est = coarse_hold + costas_loop_integrator
-    %   - Generates top-level lock_detect = STR_lock AND Costas_public_lock
-    %   - Aligns derotated symbols through output register stage (ow_val, ow_i, ow_q).
+    % State Transitions (Dual Lock / Preamble Timeout):
+    %   - ACQUIRE -> COARSE_EST : str_lock || cnt >= 70 (pulses coarse_start)
+    %   - COARSE_EST -> LOAD    : coarse_valid
+    %   - LOAD -> COSTAS_ACQ    : next str_valid
+    %   - COSTAS_ACQ -> TRACK   : costas_lock || cnt >= 190 (pulses preamble_end)
 
     R   = T.rd;
     E   = T.enc.fsm;
-    Lo  = T.lat.wrap_out;
-    Lpe = T.wrap.pe_delay + 1;
+    Lo  = T.lat.wrap_out; % 1 cycle
+    Lpe = T.lat.derot + 1;
 
     % =====================================================================
-    % 1. ACTIVE-LOW RESET & REGISTERS INITIALIZATION (~rst_ni)
+    % 1. ACTIVE-LOW RESET (~rst_ni)
     % =====================================================================
     if ~in.rst_ni
         st.state    = uint8(E.WAIT_BURST);
@@ -56,38 +48,46 @@ function [out, st] = step_wrapper_fsm(in, st, T)
     new_cs    = false;
     new_pe    = false;
 
+    % =====================================================================
+    % 2. STATE MACHINE TRANSITIONS
+    % =====================================================================
     switch state
         case E.WAIT_BURST
             if in.in_sample_valid
                 new_state = E.ACQUIRE;
             end
+
         case E.ACQUIRE
+            % STR acquisition: advance when STR declares lock or 70-symbol budget expires
             if in.str_valid
-                if T.burst.fixed_start_sym > 0
-                    go = (cnt >= T.burst.fixed_start_sym);
-                else
-                    go = in.str_lock || (cnt >= T.burst.max_acq);
-                end
-                if go
+                if in.str_lock || (cnt >= T.preamble.N_A)
                     new_state = E.COARSE_EST;
-                    new_cs    = true;
+                    new_cs    = true; % Start coarse CFO correlation
                 end
             end
+
         case E.COARSE_EST
+            % Wait for 32-symbol correlation + 16-stage CORDIC IP done
             if in.coarse_valid
                 new_state = E.LOAD;
             end
+
         case E.LOAD
+            % Wait for next STR symbol to align derotator start
             if in.str_valid
                 new_state = E.COSTAS_ACQ;
             end
+
         case E.COSTAS_ACQ
-            % Transition when Costas declares lock OR when Costas preamble budget ends
-            if in.str_valid && (in.costas_lock || (cnt >= T.burst.N_pre))
+            % Costas pull-in & Phase C: advance to TRACK when 190-symbol preamble completes
+            if in.str_valid && (cnt >= T.N_preamble)
                 new_state = E.TRACK;
-                new_pe    = true;
+                new_pe    = true; % Pulse preamble_end to force quadrant ambiguity evaluation
             end
+
         case E.TRACK
+            % Steady-state payload tracking
+
         otherwise
             new_state = E.WAIT_BURST;
     end
@@ -95,6 +95,7 @@ function [out, st] = step_wrapper_fsm(in, st, T)
     st.state = uint8(new_state);
     st.cs    = new_cs;
 
+    % Determine Costas Loop Mode
     if new_state == E.COSTAS_ACQ
         st.mode = uint8(T.enc.mode.ACQ);
     elseif new_state == E.TRACK
@@ -102,22 +103,31 @@ function [out, st] = step_wrapper_fsm(in, st, T)
     else
         st.mode = uint8(T.enc.mode.HOLD);
     end
-    st.slicer_q = (new_state ~= E.TRACK);
-    st.pe_pipe  = [new_pe, st_old.pe_pipe(1:end-1)];
 
+    % Slicer QPSK Force Flag (true in all states except TRACK)
+    st.slicer_q = (new_state ~= E.TRACK);
+    st.pe_pipe  = [new_pe, st_old.pe_pipe(1 : end-1)];
+
+    % Latch Coarse CFO
     if in.coarse_valid
         st.cfo_hold(:) = T.fi(in.coarse_word, 'cfo');
     end
+
+    % Fine CFO: coarse_hold + costas_loop_integrator
     st.fine(:) = R(st_old.cfo_hold) + R(T.fi(in.costas_int, 'freq_w'));
     st.ld      = logical(in.str_lock) && logical(in.costas_lock);
 
-    st.ow_val  = [logical(in.derot_valid), st_old.ow_val(1:end-1)];
-    st.ow_i(:) = [R(T.fi(in.derot_i, 'rot_out')), R(st_old.ow_i(1:end-1))];
-    st.ow_q(:) = [R(T.fi(in.derot_q, 'rot_out')), R(st_old.ow_q(1:end-1))];
+    % 1-Cycle Output Register Stage
+    st.ow_val  = [logical(in.derot_valid), st_old.ow_val(1 : end-1)];
+    st.ow_i(:) = [R(T.fi(in.derot_i, 'rot_out')), R(st_old.ow_i(1 : end-1))];
+    st.ow_q(:) = [R(T.fi(in.derot_q, 'rot_out')), R(st_old.ow_q(1 : end-1))];
 
     out = wrap_drive_outputs(st);
 end
 
+% =========================================================================
+% LOCAL HELPER FUNCTIONS
+% =========================================================================
 function out = wrap_drive_outputs(st)
     out.out_sym_valid  = st.ow_val(end);
     out.out_sym_i      = st.ow_i(end);

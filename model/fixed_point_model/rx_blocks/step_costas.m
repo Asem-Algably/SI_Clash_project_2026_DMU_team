@@ -42,9 +42,9 @@ function [out, st] = step_costas(in, st, T)
         st.pa_word   = T.fi(0, 'phase');
         st.err_val   = false;
         st.err_reg   = T.fi(0, 'cos_e');
+        st.a_ref     = 0.0;
         st.ai        = T.fi(0, 'cos_a');
         st.aq        = T.fi(0, 'cos_a');
-        st.a_ref     = 0.0;
         st.sat_cnt   = 0;
 
         out = costas_drive_outputs(st, T);
@@ -97,7 +97,7 @@ function [out, st] = step_costas(in, st, T)
             st.err_reg(:) = e_raw;
 
             % PI Loop Filter (the ONLY block with saturation & anti-windup)
-            [v_pi, acc_new, sat_c] = fxp_costas_pi(R(e_raw), R(st_old.acc), C.kp{row}, C.ki{row}, C.max_v_pi, T);
+            [v_pi, acc_new, sat_c] = fxp_costas_pi(R(e_raw), R(st_old.acc), C.kp{row}, C.ki{row}, C.max_pi, T);
             st.acc(:) = acc_new;
             if sat_c
                 st.sat_cnt = st_old.sat_cnt + 1;
@@ -148,10 +148,8 @@ function [out, st] = step_costas(in, st, T)
                     st.unres  = false;
                     st.quad_q = q;
                     st.quad_k = k;
-                    if C.quad_enable
-                        new_pa_val  = true;
-                        new_pa_word = T.fi(k * 0.25, 'phase');
-                    end
+                    new_pa_val  = true;
+                    new_pa_word = T.fi(k * 0.25, 'phase');
                 end
                 st.corr_sent = ~st.unres;
                 st.lp        = init_costas_ld(T, C.lock_pub(row).m0);
@@ -169,6 +167,9 @@ function [out, st] = step_costas(in, st, T)
     out = costas_drive_outputs(st, T);
 end
 
+% =========================================================================
+% LOCAL HELPER FUNCTIONS
+% =========================================================================
 function out = costas_drive_outputs(st, T)
     out.freq_adj_valid_o  = st.pw_val(end);
     out.freq_adj_o        = T.fi(st.pw_pi(end), 'freq_w');

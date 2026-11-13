@@ -1,18 +1,24 @@
 function [out, st] = step_str(in, st, T)
-    % STEP_STR  Cycle-Accurate Fixed-Point Symbol Timing Recovery (str.md).
-    % All datapath registers use pure 2's-complement wrapping ('wrap'); saturation is used ONLY in the PI filter.
+    % STEP_STR  Cycle-Accurate Fixed-Point Symbol Timing Recovery Module.
+    %
+    % Self-contained hardware implementation of STR containing:
+    %   1. Modulo-1 NCO Counter & Controller (M reset = 0.75, W reset = 0.25)
+    %   2. 3-Tap Parabolic Farrow Interpolator (Horner MAC structure)
+    %   3. 4-Stage Strobe & Sample Pipeline Shift Register
+    %   4. Gardner Timing Error Detector (TED)
+    %   5. Saturating PI Loop Filter with Anti-Windup
+    %   6. Leaky Bucket Lock Detector
 
     R  = T.rd;
-    S  = T.str;
-    Lp = T.lat.str;
+    Lp = T.lat.str; % 4 cycles
 
     % =====================================================================
-    % 1. ACTIVE-LOW RESET & INITIALIZATION (~rst_ni)
+    % 1. ACTIVE-LOW RESET (~rst_ni)
     % =====================================================================
     if ~in.rst_ni
         st.Di      = T.fi(zeros(1, 3), 'in');             % 3 registers + input wire = 4-tap window
         st.Dq      = T.fi(zeros(1, 3), 'in');
-        st.M       = T.fi(0.75, 'M');                     % Reset value M = 0.75 (str.md Section 2)
+        st.M       = T.fi(0.75, 'M');                     % Reset value M = 0.75
         st.W       = T.fi(0.25, 'M');                     % Reset value W = 0.25
         st.pi_reg  = T.fi(0, 'str_pi', 'sat');            % PI output feeding controller (saturated)
         st.acc     = T.fi(0, 'str_pi', 'sat');            % PI integrator (saturated)
@@ -29,7 +35,7 @@ function [out, st] = step_str(in, st, T)
         st.sym_cnt = T.fi(0, 'cnt');
         st.sat_cnt = T.fi(0, 'cnt');
 
-        % Lumped Farrow interpolator pipeline (T.lat.str clocks)
+        % Lumped Farrow interpolator pipeline (Lp clocks)
         st.ip_cur  = false(1, Lp);
         st.ip_mid  = false(1, Lp);
         st.ip_yi   = T.fi(zeros(1, Lp), 'str_sym');
@@ -38,7 +44,7 @@ function [out, st] = step_str(in, st, T)
         st.ip_smp  = zeros(1, Lp);
 
         % Lock detector state (EMA + hysteresis + leaky bucket)
-        st.lock.m        = T.fi(S.lock.m0, 'lock_m');
+        st.lock.m        = T.fi(T.lock.str_m0, 'lock_m');
         st.lock.good     = false;
         st.lock.bucket   = T.fi(0, 'lock_b');
         st.lock.locked   = false;
@@ -51,13 +57,10 @@ function [out, st] = step_str(in, st, T)
         return;
     end
 
-    % =====================================================================
-    % 2. SNAPSHOT INTERNAL STATE (Read-Before-Write Safety)
-    % =====================================================================
     st_old = st;
 
     % =====================================================================
-    % 3. STROBE-GATED INPUT STAGE (Advances on s_axis_valid_i)
+    % 2. MODULO-1 NCO & INTERPOLATION (On Active Sample Valid)
     % =====================================================================
     new_cur = false;
     new_mid = false;
@@ -109,9 +112,9 @@ function [out, st] = step_str(in, st, T)
             mu_v = T.fi(R(eta) * T.c.k4 - (R(eta) * R(pm)) * T.c.k16m, 'mu');
             new_mu = mu_v;
 
-            % Evaluate Farrow interpolator over 4-sample window [D1, D2, D3, x_new]
-            new_yi = fxp_farrow_eval(R(st_old.Di(1)), R(st_old.Di(2)), R(st_old.Di(3)), xi, mu_v, T);
-            new_yq = fxp_farrow_eval(R(st_old.Dq(1)), R(st_old.Dq(2)), R(st_old.Dq(3)), xq, mu_v, T);
+            % Evaluate Parabolic Farrow interpolator over 4-sample window [D1, D2, D3, xi]
+            new_yi = farrow_eval(R(st_old.Di(1)), R(st_old.Di(2)), R(st_old.Di(3)), xi, mu_v, T);
+            new_yq = farrow_eval(R(st_old.Dq(1)), R(st_old.Dq(2)), R(st_old.Dq(3)), xq, mu_v, T);
         end
 
         % Shift 4-sample delay line and update modulo-1 counter M
@@ -121,7 +124,7 @@ function [out, st] = step_str(in, st, T)
     end
 
     % =====================================================================
-    % 4. CLOCK-RATE PIPELINE SHIFT (Advances on EVERY clk_i)
+    % 3. CLOCK-RATE PIPELINE SHIFT (Advances on EVERY clk_i)
     % =====================================================================
     st.ip_cur    = [new_cur,      st_old.ip_cur(1:end-1)];
     st.ip_mid    = [new_mid,      st_old.ip_mid(1:end-1)];
@@ -131,7 +134,7 @@ function [out, st] = step_str(in, st, T)
     st.ip_smp    = [cur_smp,      st_old.ip_smp(1:end-1)];
 
     % =====================================================================
-    % 5. STROBE SAMPLER, GARDNER TED, PI FILTER & LOCK DETECTOR (At Tail)
+    % 4. STROBE SAMPLER, GARDNER TED, PI FILTER & LOCK DETECTOR (At Tail)
     % =====================================================================
     tail_cur = st_old.ip_cur(end);
     tail_mid = st_old.ip_mid(end);
@@ -140,8 +143,8 @@ function [out, st] = step_str(in, st, T)
     yt_mu    = st_old.ip_mu(end);
     yt_smp   = st_old.ip_smp(end);
 
-    sym_valid  = false;
-    st.te_val  = false;
+    sym_valid = false;
+    st.te_val = false;
 
     if tail_mid
         st.mid_i(:) = yt_i;
@@ -160,35 +163,34 @@ function [out, st] = step_str(in, st, T)
         st.smp_reg    = yt_smp;
         st.t_phase    = ((yt_smp - 3) + double(yt_mu)) / T.sps - (cnt_new - 1);
 
-        % Gardner TED (pure wrap with guard bits in ted_d and ted_e)
+        % Gardner TED: e = Re{mid}*(Re{cur} - Re{prev}) + Im{mid}*(Im{cur} - Im{prev})
         d_i = T.fi(yt_i - R(st_old.cur_i), 'ted_d');
         d_q = T.fi(yt_q - R(st_old.cur_q), 'ted_d');
         e_t = T.fi(R(st_old.mid_i) * R(d_i) + R(st_old.mid_q) * R(d_q), 'ted_e');
         st.te_val  = true;
         st.te_e(:) = e_t;
 
-        % PI loop filter (the ONLY block with saturation & anti-windup)
-        [v_pi, acc_new, sat_f] = fxp_pi_step(R(e_t), R(st_old.acc), S.kp, S.ki, S.max_v_pi, T, 'str_pi');
+        % PI loop filter with saturation & conditional anti-windup
+        [v_pi, acc_new, sat_f] = str_pi_filter(e_t, st_old.acc, T.str.kp, T.str.ki, T.str.max_pi, T);
         st.acc(:)    = acc_new;
         st.pi_reg(:) = v_pi;
         if sat_f
             st.sat_cnt(:) = R(st_old.sat_cnt) + 1;
         end
 
-        if S.open_loop
-            st.W(:) = T.c.q25;
-        else
-            q25_s   = R(T.fi(T.c.q25, 'M_s'));
-            st.W(:) = T.fi(q25_s + R(v_pi), 'M');
-        end
+        q25_s   = R(T.fi(T.c.q25, 'M_s'));
+        st.W(:) = T.fi(q25_s + R(v_pi), 'M');
 
         % Continuous Hardware Lock Detector
-        st.lock = fxp_lock_step(st_old.lock, e_t, S.lock, cnt_new, T);
+        st.lock = str_lock_step(st_old.lock, e_t, cnt_new, T);
     end
 
     out = str_drive_outputs(st, sym_valid);
 end
 
+% =========================================================================
+% LOCAL HELPER FUNCTIONS
+% =========================================================================
 function out = str_drive_outputs(st, sym_valid)
     out.m_axis_valid_o  = sym_valid;
     out.m_axis_i_sym_o  = st.cur_i;
@@ -200,8 +202,8 @@ function out = str_drive_outputs(st, sym_valid)
     out.w_o             = st.W;
 end
 
-function y = fxp_farrow_eval(a, b, c, d, mu, T)
-    % 4-Tap Piecewise-Parabolic Farrow Interpolator (alpha = 0.5)
+function y = farrow_eval(a, b, c, d, mu, T)
+    % 3-Tap Parabolic Farrow Horner MAC (alpha = 0.5)
     % Hardware Datapath:
     %   v2 = 0.5 * (d - c - b + a)
     %   v1 = 0.5 * (3*c - d - b - a)
@@ -218,54 +220,55 @@ function y = fxp_farrow_eval(a, b, c, d, mu, T)
     y  = T.fi(R(h1) * mu + R(b),  'str_sym');
 end
 
-function [v, acc_next, sat] = fxp_pi_step(e, acc, Kp, Ki, lim, T, tname)
-    acc_c = T.fi(acc + Ki * e, tname, 'sat');
+function [v, acc_next, sat] = str_pi_filter(e, acc, Kp, Ki, lim, T)
+    R     = T.rd;
+    acc_c = T.fi(R(acc) + R(Ki) * R(e), 'str_pi', 'sat');
     if acc_c > lim
         acc_c(:) = lim;
     elseif acc_c < -lim
         acc_c(:) = -lim;
     end
-    v_raw = Kp * e + T.rd(acc_c);
+    v_raw = R(Kp) * R(e) + R(acc_c);
     sat   = false;
     if v_raw > lim
         sat = true;
-        v   = T.fi(lim, tname, 'sat');
-        if e > 0, acc_next = T.fi(acc, tname, 'sat'); else, acc_next = acc_c; end
+        v   = T.fi(lim, 'str_pi', 'sat');
+        if e > 0, acc_next = T.fi(acc, 'str_pi', 'sat'); else, acc_next = acc_c; end
     elseif v_raw < -lim
         sat = true;
-        v   = T.fi(-lim, tname, 'sat');
-        if e < 0, acc_next = T.fi(acc, tname, 'sat'); else, acc_next = acc_c; end
+        v   = T.fi(-lim, 'str_pi', 'sat');
+        if e < 0, acc_next = T.fi(acc, 'str_pi', 'sat'); else, acc_next = acc_c; end
     else
-        v        = T.fi(v_raw, tname, 'sat');
+        v        = T.fi(v_raw, 'str_pi', 'sat');
         acc_next = acc_c;
     end
 end
 
-function ld = fxp_lock_step(ld_old, e, p, sym_idx, T)
+function ld = str_lock_step(ld_old, e, sym_idx, T)
     R  = T.rd;
     ld = ld_old;
     a  = R(e);
     if a < 0, a = -a; end
     m_old   = R(ld_old.m);
     d       = a - m_old;
-    ld.m(:) = m_old + bitsra(d, p.ema_shift);
+    ld.m(:) = m_old + bitsra(d, T.lock.ema_shift);
 
     m_new = R(ld.m);
     if ld_old.good
-        if m_new > R(p.thr_exit),  ld.good = false; end
+        if m_new > R(T.lock.str_thr_exit),  ld.good = false; end
     else
-        if m_new < R(p.thr_enter), ld.good = true;  end
+        if m_new < R(T.lock.str_thr_enter), ld.good = true;  end
     end
 
     b_old = double(ld_old.bucket);
     if ld.good
-        b_new = min(b_old + 1, p.confirm);
+        b_new = min(b_old + 1, T.lock.str_confirm);
     else
         b_new = max(b_old - 2, 0);
     end
     ld.bucket(:) = b_new;
 
-    if b_new >= p.confirm
+    if b_new >= T.lock.str_confirm
         if ~ld_old.locked && isnan(ld_old.lock_sym)
             ld.lock_sym = sym_idx;
         end
