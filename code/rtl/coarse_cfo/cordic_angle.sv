@@ -1,12 +1,14 @@
 ////////////////////////////////////////////////////////////////////////////////
-// Author: Hadeer Ghoneim
-// Design: A cordic_angle module.
-// Date: 8-11-2026
-// Description: Iterative CORDIC atan2(y, x); output is a fraction of a turn.
+// Author:         Hadeer Ghoneim
+// Design:         A cordic_angle module.
+// Date:           8-11-2026
+// Description:    Iterative CORDIC atan2(y, x); output is a fraction of a turn.
+// Project Name:   Real-Time All-Digital Carrier & Timing Synchronization Unit
+// Organization:   Electronics Research Institute (ERI) - SI_CLASH Challenge
 ////////////////////////////////////////////////////////////////////////////////
 
 module cordic_angle #(
-    parameter int unsigned InWidth    = 40,  // Input vector width
+    parameter int unsigned InWidth    = 40,  // Input vector width come from the output width of accumulator
     parameter int unsigned OutWidth   = 24,  // Angle width (fraction of turn)
     parameter int unsigned Iterations = 16   // CORDIC iterations
   ) (
