@@ -63,9 +63,11 @@ module parabolic_farrow_interpolator
     logic signed [DATA_IN_INTEGER_WIDTH-1 +2:-DATA_IN_FRACTIONAL_WIDTH] v1;
     logic signed [DATA_IN_INTEGER_WIDTH-1 +2:-DATA_IN_FRACTIONAL_WIDTH] v2;
 
-    logic signed [DATA_IN_INTEGER_WIDTH-1:-DATA_IN_FRACTIONAL_WIDTH] pre_v0;
-    logic signed [DATA_IN_INTEGER_WIDTH-1 +2:-DATA_IN_FRACTIONAL_WIDTH] pre_v1;
-    logic signed [DATA_IN_INTEGER_WIDTH-1 +2:-DATA_IN_FRACTIONAL_WIDTH] pre_v2;
+    logic signed [DATA_IN_INTEGER_WIDTH-1:-DATA_IN_FRACTIONAL_WIDTH] pre_v0_part1;
+    logic signed [DATA_IN_INTEGER_WIDTH-1 +2:-DATA_IN_FRACTIONAL_WIDTH] pre_v1_part1;
+    logic signed [DATA_IN_INTEGER_WIDTH-1 +2:-DATA_IN_FRACTIONAL_WIDTH] pre_v1_part2;
+    logic signed [DATA_IN_INTEGER_WIDTH-1 +2:-DATA_IN_FRACTIONAL_WIDTH] pre_v2_part1;
+    logic signed [DATA_IN_INTEGER_WIDTH-1 +2:-DATA_IN_FRACTIONAL_WIDTH] pre_v2_part2;
 
 
     // i made a register for mu_i and mu_i_squared to avoid the timing issues of the multiplication and to make sure that the multiplication is done with the correct values of mu_i and mu_i_squared
@@ -147,19 +149,26 @@ module parabolic_farrow_interpolator
             v0 <= '0;
             v1 <= '0;
             v2 <= '0;
-            pre_v0 <= '0;
-            pre_v1 <= '0;
-            pre_v2 <= '0;
+
+            pre_v0_part1 <= '0;
+            pre_v1_part1 <= '0;
+            pre_v2_part1 <= '0;
+
+            pre_v1_part2 <= '0;
+            pre_v2_part2 <= '0;
         end else begin  // no need to add if statement here since the samplese regesters are forsen when valid_sample_i is not active 
                         // so the values of the variables will be the same as the previous values when valid_sample_i is not active
                         // also this makes the routing more better
-            pre_v0 <= x1;
-            pre_v1 <= + x2 - x1_half - x0_half;
-            pre_v2 <= - x2_half - x1_half + x0_half;
+            pre_v0_part1 <= x1;
+            v0 <= pre_v0_part1;
 
-            v0 <= pre_v0;
-            v1 <= -x3_half + x2_half + pre_v1 ;
-            v2 <= +x3_half + pre_v2 ;
+            pre_v1_part1 <= + x2 - x1_half - x0_half;
+            pre_v1_part2 <= -x3_half + x2_half;
+            v1 <= pre_v1_part2 + pre_v1_part1 ;
+
+            pre_v2_part1 <= - x2_half - x1_half + x0_half;
+            pre_v2_part2 <= +x3_half;
+            v2 <= pre_v2_part2 + pre_v2_part1 ;
         end
     end
 
@@ -197,7 +206,7 @@ module parabolic_farrow_interpolator
     always @(posedge clk_i or negedge rst_n_i ) begin
         if (!rst_n_i) begin
             y_o <= '0;
-        end else if (valid_sample_i_reg3 & valid_sample_o_counter_flag) begin // no need to update the output if it is not valid (this makes the design more power efficient)
+        end else if (valid_sample_i_reg4 & valid_sample_o_counter_flag) begin // no need to update the output if it is not valid (this makes the design more power efficient)
             y_o <= term1 + term2 + term3;
         end     
     end
@@ -236,7 +245,7 @@ module parabolic_farrow_interpolator
             valid_sample_i_reg3 <= '0;
             valid_sample_i_reg4 <= '0;
             valid_sample_o <= '0;
-        end else begin
+        end else if (valid_sample_o_counter_flag) begin
             valid_sample_i_reg1 <= valid_sample_i_reg;
             valid_sample_i_reg2 <= valid_sample_i_reg1;
             valid_sample_i_reg3 <= valid_sample_i_reg2;
