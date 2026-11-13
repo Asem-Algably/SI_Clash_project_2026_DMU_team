@@ -57,7 +57,7 @@ function str_out = run_str_subsystem(rx_samples, cfg, in_scale)
     y_mid_hold = 0.0;
     lock_state = init_lock_state(cfg.lock.str_m0);
 
-    max_syms    = max(ceil(N_samp / 2), 10);
+    max_syms    = max(ceil(N_samp / cfg.sps), 10);
     sym_out     = zeros(max_syms, 1);
     mu_log      = zeros(max_syms, 1);
     t_phase_log = zeros(max_syms, 1);
@@ -75,12 +75,12 @@ function str_out = run_str_subsystem(rx_samples, cfg, in_scale)
         [M_next, strobe, mu, mid_strobe, mu_mid] = modulo1_controller(M, W, cfg.str.mu_bits, cfg.str.mu_mode, cfg.str.W_nom);
 
         if mid_strobe
-            y_mid_hold = farrow_interpolator(buf4, mu_mid, in_scale);
+            y_mid_hold = farrow_interpolator(buf4, mu_mid);
         end
 
         if strobe
             sym_cnt = sym_cnt + 1;
-            y_cur   = farrow_interpolator(buf4, mu, in_scale);
+            y_cur   = farrow_interpolator(buf4, mu);
             e_ted   = gardner_ted(y_cur, y_prev, y_mid_hold);
 
             [v_pi, int_state, sat_flag] = pi_loop_filter(e_ted, int_state, Kp_fixed, Ki_fixed, max_v_pi);

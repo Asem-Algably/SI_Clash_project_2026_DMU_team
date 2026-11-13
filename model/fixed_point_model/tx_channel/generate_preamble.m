@@ -49,4 +49,6 @@ function preamble = generate_preamble(preamble_type, N_preamble, cfg)
             idx = (0 : N_preamble - 1).';
             preamble = d * (1 - 1j) .* ((-1) .^ idx);
     end
+    % Pure fixed-point preamble symbols: signed 16-bit Q2.14 (range [-2, +2))
+    preamble = fi(preamble, 1, 16, 14);
 end

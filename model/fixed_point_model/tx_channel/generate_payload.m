@@ -19,5 +19,6 @@ function [payload_syms, const] = generate_payload(mod_type, N_payload, seed, nor
     end
     const = get_constellation_map(mod_type, norm_mode);
     idx   = randi([1, const.M], N_payload, 1);
-    payload_syms = const.symbols(idx);
+    % Pure fixed-point constellation symbols: signed 16-bit Q2.14 (range [-2, +2))
+    payload_syms = fi(const.symbols(idx), 1, 16, 14);
 end

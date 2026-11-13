@@ -18,6 +18,11 @@ function setup_project(force_rebuild_mlx)
     end
     root_dir = fileparts(mfilename('fullpath'));
 
+    % Ensure MinGW-w64 compiler path is registered for MEX / fiaccel acceleration
+    if isempty(getenv('MW_MINGW64_LOC')) && exist('D:\w64devkit', 'dir')
+        setenv('MW_MINGW64_LOC', 'D:\w64devkit');
+    end
+
     folders = {
         'config', ...
         'tx_channel', ...

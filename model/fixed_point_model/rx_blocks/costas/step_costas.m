@@ -42,6 +42,8 @@ function [out, st] = step_costas(in, st, T)
         st.pa_word   = T.fi(0, 'phase');
         st.err_val   = false;
         st.err_reg   = T.fi(0, 'cos_e');
+        st.ai        = T.fi(0, 'cos_a');
+        st.aq        = T.fi(0, 'cos_a');
         st.a_ref     = 0.0;
         st.sat_cnt   = 0;
 
@@ -52,7 +54,11 @@ function [out, st] = step_costas(in, st, T)
     st_old   = st;
     mode     = double(in.mode_i);
     use_qpsk = (double(in.mod_type_i) == T.enc.mod.QPSK) || logical(in.slicer_qpsk_i);
-    row      = min(double(in.mod_type_i), 1) + 1;
+    if use_qpsk
+        row = 1;
+    else
+        row = min(double(in.mod_type_i), 1) + 1;
+    end
 
     new_pw_val  = false;
     new_pw_pi   = T.fi(0, 'cos_pi', 'sat');
@@ -73,6 +79,8 @@ function [out, st] = step_costas(in, st, T)
             yi = R(T.fi(in.s_axis_i_sym_i, 'rot_out'));
             yq = R(T.fi(in.s_axis_q_sym_i, 'rot_out'));
             [ai, aq] = fxp_slicer(yi, yq, true, C);
+            st.ai    = ai;
+            st.aq    = aq;
             st.a_ref = (double(ai) + 1j * double(aq)) / T.in_scale;
         end
     else
@@ -81,6 +89,8 @@ function [out, st] = step_costas(in, st, T)
             yq = R(T.fi(in.s_axis_q_sym_i, 'rot_out'));
 
             [ai, aq]      = fxp_slicer(yi, yq, use_qpsk, C);
+            st.ai         = ai;
+            st.aq         = aq;
             st.a_ref      = (double(ai) + 1j * double(aq)) / T.in_scale;
             e_raw         = T.fi(yq * R(ai) - yi * R(aq), 'cos_e');
             st.err_val    = true;

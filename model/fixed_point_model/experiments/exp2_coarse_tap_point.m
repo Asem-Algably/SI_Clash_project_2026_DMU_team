@@ -17,7 +17,7 @@ setup_project(false);
 
 cfg = get_default_config();
 cfo_sweep = linspace(-0.095, 0.095, 11);
-taps = {'interpolator', 'derotator'};
+taps = {'interpolator'};
 err_mat = zeros(numel(taps), numel(cfo_sweep));
 
 for t = 1:numel(taps)

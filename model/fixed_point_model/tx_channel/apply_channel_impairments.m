@@ -7,7 +7,7 @@ function [rx_in_q11, ch_info] = apply_channel_impairments(tx_waveform, cfg)
     %   5. Front-end /2 scaling (in_scale = 0.5, mapping QPSK range 2 and 16-QAM range 6 into [-1, +1))
     %      followed by ADC Q1.11 quantization and hard clipping to [-1, 1 - 2^-11].
 
-    tx_waveform = tx_waveform(:);
+    tx_waveform = double(tx_waveform(:));
     sps = cfg.sps;
     N   = numel(tx_waveform);
     pad = cfg.rrc_span * sps;
@@ -49,30 +49,26 @@ function [rx_in_q11, ch_info] = apply_channel_impairments(tx_waveform, cfg)
     % 4. RX Matched Root-Raised Cosine (RRC) Filter
     rx_matched = pulse_shape_rrc(rx_noisy, cfg.rrc_alpha, cfg.rrc_span, sps, 'rx');
 
-    % 5. External Front-End /2 Scaling (in_scale = 0.5) & ADC Q1.11 Clipping [-1, 1 - 2^-11]
+    % 5. Channel Clipping to [-2, 2 - 2^-11] before External Front-End /2 Scaling
+    scale_q11  = 2048; % 2^11
+    clip_min   = -2.0;
+    clip_max   = 2.0 - (1.0 / scale_q11);
+    re_matched = double(real(rx_matched));
+    im_matched = double(imag(rx_matched));
+    rx_re_cl   = min(max(re_matched, clip_min), clip_max);
+    rx_im_cl   = min(max(im_matched, clip_min), clip_max);
+    clip_count = sum((re_matched < clip_min) | (re_matched > clip_max)) + ...
+                 sum((im_matched < clip_min) | (im_matched > clip_max));
+
+    % External Front-End /2 Scaling (in_scale = 0.5) mapping into [-1, 1 - 2^-12]
     in_scale = 0.5;
     if isfield(cfg, 'in_scale')
         in_scale = cfg.in_scale;
     end
-    rx_scaled = rx_matched * in_scale;
+    rx_scaled = complex(rx_re_cl * in_scale, rx_im_cl * in_scale);
 
-    do_q11 = true;
-    if isfield(cfg, 'quantize_q11')
-        do_q11 = cfg.quantize_q11;
-    end
-
-    if do_q11
-        scale_q11  = 2048; % 2^11 for signed Q1.11 in [-1, 1 - 2^-11]
-        q_min      = -1.0;
-        q_max      = 1.0 - (1.0 / scale_q11);
-        re_q       = round(real(rx_scaled) * scale_q11) / scale_q11;
-        im_q       = round(imag(rx_scaled) * scale_q11) / scale_q11;
-        clip_count = sum((re_q < q_min) | (re_q > q_max)) + sum((im_q < q_min) | (im_q > q_max));
-        rx_in_q11  = min(max(re_q, q_min), q_max) + 1j * min(max(im_q, q_min), q_max);
-    else
-        rx_in_q11  = rx_scaled;
-        clip_count = 0;
-    end
+    % ADC output as pure fixed-point fi array: signed 12-bit Q1.11
+    rx_in_q11 = fi(rx_scaled, 1, 12, 11);
 
     ch_info.sig_pwr        = sig_pwr;
     ch_info.peak_axis      = max(max(abs(real(rx_scaled))), max(abs(imag(rx_scaled))));

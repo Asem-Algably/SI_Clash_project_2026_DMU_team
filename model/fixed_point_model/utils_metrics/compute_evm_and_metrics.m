@@ -6,7 +6,14 @@ function metrics = compute_evm_and_metrics(rx_out, tx_payload, cfg, measured_esn
     %   along with measured noise-floor EVM = 10^(-EsN0/20)*100 and excess EVM = sqrt(measured^2 - floor^2).
 
     tx_payload = tx_payload(:);
-    y_all = rx_out.out_sym_cplx(:);     % output is on the same (peak-normalised) scale as tx_payload
+    y_raw = rx_out.out_sym_cplx(:);
+
+    % Outer system scales back by multiplying by 2 (reversing front-end /2 ADC scaling)
+    if isfield(cfg, 'in_scale') && (cfg.in_scale > 0)
+        y_all = fi(y_raw / cfg.in_scale, 1, 16, 14);
+    else
+        y_all = fi(2.0 * y_raw, 1, 16, 14);
+    end
 
     N_total = numel(y_all);
     N_pay   = numel(tx_payload);
@@ -26,31 +33,81 @@ function metrics = compute_evm_and_metrics(rx_out, tx_payload, cfg, measured_esn
         end
     end
 
-    i0          = max(1, 1 - (N_pre + best_lag));
-    i1          = min(N_pay, max(1, N_total - N_pre - best_lag));
-    overlap_len = max(1, i1 - i0 + 1);
-    n_eval      = min(1000, min(overlap_len, min(numel(tx_payload), numel(y_all))));
-    n_eval      = max(1, n_eval);
+    % Output is compared strictly after lock acquisition is declared
+    lock_sym_idx = N_pre + best_lag + 1;
+    if isfield(rx_out, 'costas_lock_sym') && ~isnan(rx_out.costas_lock_sym) && (rx_out.costas_lock_sym > 0)
+        lock_sym_idx = max(lock_sym_idx, rx_out.costas_lock_sym);
+    elseif isfield(rx_out, 'lock_detect') && any(rx_out.lock_detect)
+        first_ld = find(rx_out.lock_detect, 1, 'first');
+        lock_sym_idx = max(lock_sym_idx, first_ld);
+    end
 
-    start_idx = max(1, i1 - n_eval + 1);
-    end_idx   = min(numel(tx_payload), start_idx + n_eval - 1);
-    pay_idx   = start_idx : end_idx;
+    start_pay_idx = max(1, lock_sym_idx - (N_pre + best_lag));
+    if start_pay_idx <= N_pay
+        avail_len = N_pay - start_pay_idx + 1;
+        n_eval    = min(1000, min(avail_len, max(0, N_total - (N_pre + best_lag + start_pay_idx - 1))));
+        if n_eval > 10
+            pay_idx  = start_pay_idx : (start_pay_idx + n_eval - 1);
+        else
+            i0       = max(1, 1 - (N_pre + best_lag));
+            i1       = min(N_pay, N_total - N_pre - best_lag);
+            if i1 >= i0
+                n_eval   = min(1000, i1 - i0 + 1);
+                pay_idx  = (i1 - n_eval + 1) : i1;
+            else
+                pay_idx  = [];
+            end
+        end
+    else
+        i0       = max(1, 1 - (N_pre + best_lag));
+        i1       = min(N_pay, N_total - N_pre - best_lag);
+        if i1 >= i0
+            n_eval   = min(1000, i1 - i0 + 1);
+            pay_idx  = (i1 - n_eval + 1) : i1;
+        else
+            pay_idx  = [];
+        end
+    end
 
-    idx_eval  = N_pre + best_lag + pay_idx;
-    idx_eval  = max(1, min(numel(y_all), idx_eval));
-    n_eval    = min(numel(pay_idx), numel(idx_eval));
+    idx_eval = N_pre + best_lag + pay_idx;
+    valid_mask = (idx_eval >= 1) & (idx_eval <= N_total) & (pay_idx >= 1) & (pay_idx <= N_pay);
+    pay_idx  = pay_idx(valid_mask);
+    idx_eval = idx_eval(valid_mask);
 
-    s_k       = tx_payload(pay_idx(1:n_eval));
-    y_k       = y_all(idx_eval(1:n_eval));
+    if isempty(idx_eval)
+        n_fb = min([50, N_total, N_pay]);
+        if n_fb > 0
+            idx_eval = (N_total - n_fb + 1) : N_total;
+            pay_idx  = (N_pay - n_fb + 1) : N_pay;
+        else
+            idx_eval = 1:min(N_total, N_pay);
+            pay_idx  = 1:min(N_total, N_pay);
+        end
+    end
+    n_eval = numel(pay_idx);
+    s_k = tx_payload(pay_idx);
+    y_k = y_all(idx_eval);
 
-    % Part 2b & 2c: e_k = y_k - s_k with denominators from actual transmitted symbols s_k
-    e_k    = y_k - s_k;
-    rms_e  = sqrt(mean(abs(e_k).^2));
-    rms_s  = sqrt(mean(abs(s_k).^2));
-    peak_s = max(abs(s_k));
+    % Part 2b & 2c: Fixed-point EVM computation using 32-bit error accumulator and fi square root
+    e_k   = y_k - s_k; % pure fi subtraction
+    e_re  = real(e_k);
+    e_im  = imag(e_k);
+    e_sq  = e_re .* e_re + e_im .* e_im;
+    sum_e = sum(fi(e_sq, 0, 32, 28));
+    mean_e = sum_e / n_eval;
+    rms_e = sqrt(fi(mean_e, 0, 32, 28));
 
-    metrics.evm_rms_pct  = 100 * (rms_e / rms_s);
-    metrics.evm_peak_pct = 100 * (rms_e / peak_s);
+    s_re  = real(s_k);
+    s_im  = imag(s_k);
+    s_sq  = s_re .* s_re + s_im .* s_im;
+    sum_s = sum(fi(s_sq, 0, 32, 28));
+    mean_s = sum_s / n_eval;
+    rms_s = sqrt(fi(mean_s, 0, 32, 28));
+    peak_s = sqrt(double(max(s_sq)));
+
+    % 16-bit Q8.8 fixed-point EVM percentages
+    metrics.evm_rms_pct  = fi((double(rms_e) / double(rms_s)) * 100, 0, 16, 8);
+    metrics.evm_peak_pct = fi((double(rms_e) / peak_s) * 100, 0, 16, 8);
     metrics.payload_lag  = best_lag;
     metrics.n_eval       = n_eval;
 
@@ -65,29 +122,32 @@ function metrics = compute_evm_and_metrics(rx_out, tx_payload, cfg, measured_esn
     metrics.measured_esn0_dB = measured_esn0_dB;
 
     if isfinite(measured_esn0_dB)
-        metrics.floor_rms_pct = 100 * (10^(-measured_esn0_dB / 20));
+        metrics.floor_rms_pct = fi(100 * (10^(-measured_esn0_dB / 20)), 0, 16, 8);
     else
-        metrics.floor_rms_pct = 0.0;
+        metrics.floor_rms_pct = fi(0.0, 0, 16, 8);
     end
-    metrics.excess_rms_pct  = sqrt(max(metrics.evm_rms_pct^2 - metrics.floor_rms_pct^2, 0.0));
-    metrics.floor_peak_pct  = metrics.floor_rms_pct * (rms_s / peak_s);
-    metrics.excess_peak_pct = sqrt(max(metrics.evm_peak_pct^2 - metrics.floor_peak_pct^2, 0.0));
+    d_evm_rms   = double(metrics.evm_rms_pct);
+    d_floor_rms = double(metrics.floor_rms_pct);
+    metrics.excess_rms_pct  = sqrt(max(d_evm_rms^2 - d_floor_rms^2, 0.0));
+    metrics.floor_peak_pct  = double(metrics.floor_rms_pct) * (double(rms_s) / double(peak_s));
+    d_evm_peak  = double(metrics.evm_peak_pct);
+    metrics.excess_peak_pct = sqrt(max(d_evm_peak^2 - metrics.floor_peak_pct^2, 0.0));
 
     norm_mode = 'peak';
     if isfield(cfg, 'norm_mode')
         norm_mode = cfg.norm_mode;
     end
 
-    dec_eval = zeros(n_eval, 1);
+    dec_eval = complex(zeros(n_eval, 1));
     for k = 1:n_eval
-        dec_eval(k) = qam_slicer(y_k(k), cfg.mod_type, norm_mode);
+        dec_eval(k) = qam_slicer(double(y_k(k)), cfg.mod_type, norm_mode);
     end
-    metrics.ser        = mean(abs(dec_eval - s_k) > 1e-4);
-    metrics.evm_dd_pct = 100 * (sqrt(mean(abs(y_k - dec_eval).^2)) / rms_s);
+    metrics.ser        = fi(sum(abs(dec_eval - double(s_k)) > 1e-4) / n_eval, 0, 16, 14);
+    metrics.evm_dd_pct = 100 * (sqrt(mean(abs(double(y_k) - dec_eval).^2)) / double(rms_s));
 
-    n_k        = (rx_out.str.sym_clk_idx(idx_eval) - 3) + rx_out.str.mu_log(idx_eval);
+    n_k        = (double(rx_out.str.sym_clk_idx(idx_eval)) - 3) + double(rx_out.str.mu_log(idx_eval));
     theta_true = 2 * pi * (cfg.cfo_norm / cfg.sps) * n_k + cfg.phase_offset;
-    theta_nco  = rx_out.nco_phase_log(idx_eval);
+    theta_nco  = 2 * pi * double(rx_out.nco_phase_log(idx_eval));
 
     ph_diff_rad  = angle(exp(1j * (theta_nco - theta_true)));
     bias_rad     = angle(mean(exp(1j * ph_diff_rad)));
@@ -96,10 +156,10 @@ function metrics = compute_evm_and_metrics(rx_out, tx_payload, cfg, measured_esn
     metrics.phase_bias_deg    = bias_rad * (180 / pi);
     metrics.phase_err_deg_rms = sqrt(mean(centered_rad.^2)) * (180 / pi);
 
-    t_tail                     = rx_out.str.t_phase_log(idx_eval);
+    t_tail                     = double(rx_out.str.t_phase_log(idx_eval));
     metrics.timing_jitter_Ts   = std(t_tail);
-    metrics.coarse_cfo_err_pct = 100 * abs(rx_out.coarse_cfo_est - cfg.cfo_norm);
-    metrics.fine_cfo_err_pct   = 100 * abs(rx_out.fine_cfo_est   - cfg.cfo_norm);
+    metrics.coarse_cfo_err_pct = 100 * abs(double(rx_out.coarse_cfo_est) - cfg.cfo_norm);
+    metrics.fine_cfo_err_pct   = 100 * abs(double(rx_out.fine_cfo_est)   - cfg.cfo_norm);
 
     metrics.str_lock_syms = -1;
     if ~isnan(rx_out.str_lock_sym), metrics.str_lock_syms = round(rx_out.str_lock_sym); end

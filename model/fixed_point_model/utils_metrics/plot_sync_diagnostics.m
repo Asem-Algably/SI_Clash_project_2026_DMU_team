@@ -14,8 +14,13 @@ function plot_sync_diagnostics(rx_out, metrics, cfg)
     tiledlayout(2, 2, 'Padding', 'compact', 'TileSpacing', 'compact');
 
     nexttile;
-    rx_tail = rx_out.out_sym_cplx(idx_t);
-    plot(real(rx_out.str.symbols(idx_t)), imag(rx_out.str.symbols(idx_t)), '.', ...
+    in_sc = 0.5;
+    if isfield(cfg, 'in_scale') && (cfg.in_scale > 0)
+        in_sc = cfg.in_scale;
+    end
+    rx_tail  = rx_out.out_sym_cplx(idx_t) / in_sc;
+    str_disp = rx_out.str.symbols(idx_t) / in_sc;
+    plot(real(str_disp), imag(str_disp), '.', ...
         'Color', [0.82 0.82 0.82], 'DisplayName', 'Pre-Derotator (STR Out)'); hold on;
     plot(real(rx_tail), imag(rx_tail), 'b.', 'MarkerSize', 6, 'DisplayName', 'Synced Payload');
     plot(real(const.symbols), imag(const.symbols), 'r+', 'MarkerSize', 10, 'LineWidth', 2, 'DisplayName', 'Ideal');

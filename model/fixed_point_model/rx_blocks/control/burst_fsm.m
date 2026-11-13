@@ -1,4 +1,4 @@
-function [fsm_next, costas_mode, preamble_end_pulse] = burst_fsm(fsm, in_valid, str_locked, N_AB, N_preamble)
+function [fsm_next, costas_mode, preamble_end_pulse] = burst_fsm(fsm, in_valid, str_locked, N_AB, N_preamble, costas_locked)
     % BURST_FSM  Top-level burst sequencing state machine (wrapper.md Section 4).
     %
     % State Machine Graph:
@@ -60,7 +60,11 @@ function [fsm_next, costas_mode, preamble_end_pulse] = burst_fsm(fsm, in_valid, 
 
         case 'COSTAS_ACQ'
             costas_mode = 'ACQ';
-            if fsm.sym_cnt >= N_preamble
+            costas_done = false;
+            if exist('costas_locked', 'var') && costas_locked
+                costas_done = true;
+            end
+            if (fsm.sym_cnt >= N_preamble) || costas_done
                 preamble_end_pulse   = true;
                 fsm_next.state       = 'TRACK';
                 fsm_next.state_timer = 1;

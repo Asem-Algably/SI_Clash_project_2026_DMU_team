@@ -29,7 +29,7 @@ cases_s1 = {
 };
 for c = 1:size(cases_s1, 1)
     y_v = cases_s1{c, 2}; L = numel(y_v);
-    d_out.out_sym_cplx    = y_v;
+    d_out.out_sym_cplx    = y_v * cfg_s1.in_scale;
     d_out.nco_phase_log   = zeros(L, 1);
     d_out.str.sym_clk_idx = (4:4:4*L).';
     d_out.str.mu_log      = zeros(L, 1);
@@ -55,7 +55,7 @@ for m = [0, 1]
     [pay, const] = generate_payload(m, 3000, 42);
     tx_w = pulse_shape_rrc(pay, cfg.rrc_alpha, cfg.rrc_span, cfg.sps, 'tx');
     for s = 1:numel(snrs)
-        cfg_t = cfg; cfg_t.snr_dB = snrs(s);
+        cfg_t = cfg; cfg_t.snr_dB = snrs(s); cfg_t.snr_def = 'esn0';
         meas = measure_es_n0(tx_w, cfg_t);
         st = 'FAIL'; if abs(meas - snrs(s)) <= 0.3, st = 'PASS'; end
         disp(sprintf('  %6s | Req = %2d dB | Measured Es/N0 = %6.2f dB (Diff = %+.2f dB) [%s]', ...
@@ -152,7 +152,7 @@ for m_type = [0, 1]
         rot_deg = rots(r_idx);
         rot_rad = rot_deg * (pi / 180);
         L = cfg_t6.N_preamble + 1200;
-        d_out.out_sym_cplx    = [zeros(cfg_t6.N_preamble, 1); pay_t6 * exp(-1j * rot_rad)];
+        d_out.out_sym_cplx    = [zeros(cfg_t6.N_preamble, 1); pay_t6 * exp(-1j * rot_rad)] * cfg_t6.in_scale;
         d_out.nco_phase_log   = rot_rad * ones(L, 1);
         d_out.str.sym_clk_idx = (4 : 4 : 4*L).';
         d_out.str.mu_log      = zeros(L, 1);

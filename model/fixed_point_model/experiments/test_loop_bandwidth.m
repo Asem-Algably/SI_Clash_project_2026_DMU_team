@@ -71,8 +71,8 @@ for s_idx = 1:3
     elseif s_idx == 2
         syms_in = generate_payload(1, 3000, 42);
     else
-        pre_full = generate_preamble('q4q2_q1', 268, cfg_m);
-        syms_in  = pre_full(1:260);
+        pre_full = generate_preamble('q4q2_q1', 268, []);
+        syms_in  = pre_full(1:min(260, numel(pre_full)));
     end
     tx_w = pulse_shape_rrc(syms_in, cfg_m.rrc_alpha, cfg_m.rrc_span, cfg_m.sps, 'tx');
     e_pair = zeros(1, 2);
@@ -104,7 +104,7 @@ function [Bn_T, overshoot_pct] = sim_linear_loop(Kp, Ki, K_ted, K_nco, pipe_dela
         else
             e_del = e_raw;
         end
-        [v_pi, int_st] = pi_loop_filter(e_del, int_st, Kp, Ki);
+        [v_pi, int_st] = pi_loop_filter(e_del, int_st, Kp, Ki, Inf);
         theta = theta + K_nco * v_pi;
     end
     Bn_T = 0.5 * sum(h.^2);
@@ -121,7 +121,7 @@ function [Bn_T, overshoot_pct] = sim_linear_loop(Kp, Ki, K_ted, K_nco, pipe_dela
         else
             e_del = e_raw;
         end
-        [v_pi, int_st] = pi_loop_filter(e_del, int_st, Kp, Ki);
+        [v_pi, int_st] = pi_loop_filter(e_del, int_st, Kp, Ki, Inf);
         theta = theta + K_nco * v_pi;
     end
     overshoot_pct = 100 * (max(y_step) - 1.0);

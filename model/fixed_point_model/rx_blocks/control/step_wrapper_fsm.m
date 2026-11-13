@@ -82,7 +82,8 @@ function [out, st] = step_wrapper_fsm(in, st, T)
                 new_state = E.COSTAS_ACQ;
             end
         case E.COSTAS_ACQ
-            if in.str_valid && (cnt >= T.burst.N_pre)
+            % Transition when Costas declares lock OR when Costas preamble budget ends
+            if in.str_valid && (in.costas_lock || (cnt >= T.burst.N_pre))
                 new_state = E.TRACK;
                 new_pe    = true;
             end

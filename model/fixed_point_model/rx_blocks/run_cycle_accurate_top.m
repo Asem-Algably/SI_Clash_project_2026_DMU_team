@@ -34,8 +34,10 @@ function [rx_out, lg, T] = run_cycle_accurate_top(in_sample_iq, in_sample_valid,
 
     rst_n_vec = [false(n_reset, 1); true(n_burst + n_tail, 1)];
     valid_vec = [false(n_reset, 1); in_sample_valid; false(n_tail, 1)];
-    smp_i_vec = [zeros(n_reset, 1); real(in_sample_iq); zeros(n_tail, 1)];
-    smp_q_vec = [zeros(n_reset, 1); imag(in_sample_iq); zeros(n_tail, 1)];
+    smp_i_vec = T.fi(zeros(N_clocks, 1), 'in');
+    smp_q_vec = T.fi(zeros(N_clocks, 1), 'in');
+    smp_i_vec(n_reset + 1 : n_reset + n_burst) = T.fi(real(in_sample_iq), 'in');
+    smp_q_vec(n_reset + 1 : n_reset + n_burst) = T.fi(imag(in_sample_iq), 'in');
 
     % =====================================================================
     % 1. INITIALIZE ALL HARDWARE MODULES & WIRES (Active-Low Reset)
@@ -53,35 +55,39 @@ function [rx_out, lg, T] = run_cycle_accurate_top(in_sample_iq, in_sample_valid,
     w.top_in.in_sample_q      = T.fi(0, 'in');
     w.top_in.mod_type         = cfg.mod_type;
 
-    % Preallocate cycle-level trace (lg) and symbol-level buffers
+    % Pipeline shift register for mod_type to match STR + Derotator latency
+    mod_pipe_len  = T.lat.str + T.lat.derot + 1;
+    mod_type_pipe = repmat(uint8(cfg.mod_type), 1, mod_pipe_len);
+
+    % Preallocate cycle-level trace (lg) and symbol-level buffers as pure fi / integer / boolean
     lg.str_valid    = false(N_clocks, 1);
-    lg.str_i        = zeros(N_clocks, 1);
-    lg.str_q        = zeros(N_clocks, 1);
+    lg.str_i        = T.fi(zeros(N_clocks, 1), 'str_sym');
+    lg.str_q        = T.fi(zeros(N_clocks, 1), 'str_sym');
     lg.str_lock     = false(N_clocks, 1);
     lg.coarse_valid = false(N_clocks, 1);
     lg.derot_valid  = false(N_clocks, 1);
     lg.out_valid    = false(N_clocks, 1);
-    lg.out_i        = zeros(N_clocks, 1);
-    lg.out_q        = zeros(N_clocks, 1);
+    lg.out_i        = T.fi(zeros(N_clocks, 1), 'rot_out');
+    lg.out_q        = T.fi(zeros(N_clocks, 1), 'rot_out');
     lg.lock_detect  = false(N_clocks, 1);
-    lg.fsm_state    = zeros(N_clocks, 1);
+    lg.fsm_state    = zeros(N_clocks, 1, 'uint8');
 
-    max_syms          = ceil(n_burst / 2) + 20;
-    str_syms          = zeros(max_syms, 1);
-    str_mu_log        = zeros(max_syms, 1);
+    max_syms          = ceil(n_burst / cfg.sps) + 20;
+    str_syms          = complex(T.fi(zeros(max_syms, 1), 'str_sym'));
+    str_mu_log        = T.fi(zeros(max_syms, 1), 'mu');
     str_t_phase_log   = zeros(max_syms, 1);
-    str_ted_log       = zeros(max_syms, 1);
-    str_W_log         = zeros(max_syms, 1);
-    str_v_pi_log      = zeros(max_syms, 1);
+    str_ted_log       = T.fi(zeros(max_syms, 1), 'ted_e');
+    str_W_log         = T.fi(zeros(max_syms, 1), 'M');
+    str_v_pi_log      = T.fi(zeros(max_syms, 1), 'str_pi');
     str_lock_log      = false(max_syms, 1);
-    str_lock_m_log    = zeros(max_syms, 1);
-    str_sym_clk_idx   = zeros(max_syms, 1);
+    str_lock_m_log    = T.fi(zeros(max_syms, 1), 'lock_m');
+    str_sym_clk_idx   = zeros(max_syms, 1, 'uint32');
 
-    derot_syms        = zeros(max_syms, 1);
-    slicer_syms       = zeros(max_syms, 1);
-    costas_err_log    = zeros(max_syms, 1);
-    nco_freq_log      = zeros(max_syms, 1);
-    nco_phase_log     = zeros(max_syms, 1);
+    derot_syms        = complex(T.fi(zeros(max_syms, 1), 'rot_out'));
+    slicer_syms       = complex(T.fi(zeros(max_syms, 1), 'rot_out'));
+    costas_err_log    = T.fi(zeros(max_syms, 1), 'cos_e');
+    nco_freq_log      = T.fi(zeros(max_syms, 1), 'freq_w');
+    nco_phase_log     = T.fi(zeros(max_syms, 1), 'phase');
     costas_lock_log   = false(max_syms, 1);
     costas_settle_log = false(max_syms, 1);
     sys_lock_log      = false(max_syms, 1);
@@ -107,6 +113,7 @@ function [rx_out, lg, T] = run_cycle_accurate_top(in_sample_iq, in_sample_valid,
         w_prev.top_in.in_sample_i      = T.fi(smp_i_vec(clk), 'in');
         w_prev.top_in.in_sample_q      = T.fi(smp_q_vec(clk), 'in');
         w_prev.top_in.mod_type         = cfg.mod_type;
+        mod_type_pipe                  = [uint8(w_prev.top_in.mod_type), mod_type_pipe(1:end-1)];
 
         str_in.rst_ni            = w_prev.top_in.rst_n;
         str_in.s_axis_valid_i    = w_prev.top_in.in_sample_valid;
@@ -117,22 +124,27 @@ function [rx_out, lg, T] = run_cycle_accurate_top(in_sample_iq, in_sample_valid,
 
         coarse_in.rst_ni         = w_prev.top_in.rst_n;
         coarse_in.start_i        = w_prev.wrap_out.coarse_start;
-        if strcmpi(cfg.coarse.tap_point, 'derotator')
-            coarse_in.s_axis_valid_i = w_prev.derot_out.m_axis_valid_o;
-            coarse_in.s_axis_i_sym_i = w_prev.derot_out.m_axis_i_sym_o;
-            coarse_in.s_axis_q_sym_i = w_prev.derot_out.m_axis_q_sym_o;
-        else
-            coarse_in.s_axis_valid_i = w_prev.str_out.m_axis_valid_o;
-            coarse_in.s_axis_i_sym_i = w_prev.str_out.m_axis_i_sym_o;
-            coarse_in.s_axis_q_sym_i = w_prev.str_out.m_axis_q_sym_o;
-        end
+        % Coarse CFO estimator is fed strictly from the STR output
+        coarse_in.s_axis_valid_i = w_prev.str_out.m_axis_valid_o;
+        coarse_in.s_axis_i_sym_i = w_prev.str_out.m_axis_i_sym_o;
+        coarse_in.s_axis_q_sym_i = w_prev.str_out.m_axis_q_sym_o;
         coarse_in.force_cfo_en_i = false;
         coarse_in.force_cfo_i    = 0;
 
+        % Wrapper FSM controls whether Derotator and Costas Loop are running (started after entering LOAD)
+        fsm_curr     = double(w_prev.wrap_out.fsm_state);
+        derot_active = (fsm_curr >= double(T.enc.fsm.LOAD));
+
         derot_in.rst_ni            = w_prev.top_in.rst_n;
-        derot_in.s_axis_valid_i    = w_prev.str_out.m_axis_valid_o;
-        derot_in.s_axis_i_sym_i    = w_prev.str_out.m_axis_i_sym_o;
-        derot_in.s_axis_q_sym_i    = w_prev.str_out.m_axis_q_sym_o;
+        if derot_active
+            derot_in.s_axis_valid_i    = w_prev.str_out.m_axis_valid_o;
+            derot_in.s_axis_i_sym_i    = w_prev.str_out.m_axis_i_sym_o;
+            derot_in.s_axis_q_sym_i    = w_prev.str_out.m_axis_q_sym_o;
+        else
+            derot_in.s_axis_valid_i    = false;
+            derot_in.s_axis_i_sym_i    = T.fi(0, 'str_sym');
+            derot_in.s_axis_q_sym_i    = T.fi(0, 'str_sym');
+        end
         derot_in.coarse_valid_i    = w_prev.coarse_out.m_axis_valid_o;
         derot_in.coarse_word_i     = w_prev.coarse_out.m_axis_cfo_o;
         derot_in.freq_adj_valid_i  = w_prev.costas_out.freq_adj_valid_o;
@@ -143,10 +155,16 @@ function [rx_out, lg, T] = run_cycle_accurate_top(in_sample_iq, in_sample_valid,
         derot_in.force_freq_i      = 0;
 
         costas_in.rst_ni         = w_prev.top_in.rst_n;
-        costas_in.s_axis_valid_i = w_prev.derot_out.m_axis_valid_o;
-        costas_in.s_axis_i_sym_i = w_prev.derot_out.m_axis_i_sym_o;
-        costas_in.s_axis_q_sym_i = w_prev.derot_out.m_axis_q_sym_o;
-        costas_in.mod_type_i     = w_prev.top_in.mod_type;
+        if derot_active
+            costas_in.s_axis_valid_i = w_prev.derot_out.m_axis_valid_o;
+            costas_in.s_axis_i_sym_i = w_prev.derot_out.m_axis_i_sym_o;
+            costas_in.s_axis_q_sym_i = w_prev.derot_out.m_axis_q_sym_o;
+        else
+            costas_in.s_axis_valid_i = false;
+            costas_in.s_axis_i_sym_i = T.fi(0, 'rot_out');
+            costas_in.s_axis_q_sym_i = T.fi(0, 'rot_out');
+        end
+        costas_in.mod_type_i     = mod_type_pipe(end);
         costas_in.mode_i         = w_prev.wrap_out.costas_mode;
         costas_in.slicer_qpsk_i  = w_prev.wrap_out.slicer_qpsk;
         costas_in.preamble_end_i = w_prev.wrap_out.preamble_end;
@@ -171,28 +189,29 @@ function [rx_out, lg, T] = run_cycle_accurate_top(in_sample_iq, in_sample_valid,
         w.top_in = w_prev.top_in;
 
         lg.str_valid(clk)    = w.str_out.m_axis_valid_o;
-        lg.str_i(clk)        = double(w.str_out.m_axis_i_sym_o);
-        lg.str_q(clk)        = double(w.str_out.m_axis_q_sym_o);
+        lg.str_i(clk)        = w.str_out.m_axis_i_sym_o;
+        lg.str_q(clk)        = w.str_out.m_axis_q_sym_o;
         lg.str_lock(clk)     = w.str_out.lock_o;
         lg.coarse_valid(clk) = w.coarse_out.m_axis_valid_o;
         lg.derot_valid(clk)  = w.derot_out.m_axis_valid_o;
         lg.out_valid(clk)    = w.wrap_out.out_sym_valid;
-        lg.out_i(clk)        = double(w.wrap_out.out_sym_i);
-        lg.out_q(clk)        = double(w.wrap_out.out_sym_q);
+        lg.out_i(clk)        = w.wrap_out.out_sym_i;
+        lg.out_q(clk)        = w.wrap_out.out_sym_q;
         lg.lock_detect(clk)  = w.wrap_out.lock_detect;
-        lg.fsm_state(clk)    = double(w.wrap_out.fsm_state);
+        lg.fsm_state(clk)    = uint8(w.wrap_out.fsm_state);
 
         if w.str_out.m_axis_valid_o
             n_str_sym = n_str_sym + 1;
-            str_syms(n_str_sym)        = (double(w.str_out.m_axis_i_sym_o) + 1j * double(w.str_out.m_axis_q_sym_o)) / in_scale;
-            str_mu_log(n_str_sym)      = double(w.str_out.mu_o);
+            str_syms(n_str_sym)        = complex(w.str_out.m_axis_i_sym_o, w.str_out.m_axis_q_sym_o);
+            str_mu_log(n_str_sym)      = w.str_out.mu_o;
             str_t_phase_log(n_str_sym) = st.str.t_phase;
-            str_ted_log(n_str_sym)     = double(w.str_out.ted_err_o);
-            str_W_log(n_str_sym)       = double(w.str_out.w_o);
-            str_v_pi_log(n_str_sym)    = double(st.str.pi_reg);
+            str_ted_log(n_str_sym)     = w.str_out.ted_err_o;
+            str_W_log(n_str_sym)       = w.str_out.w_o;
+            str_v_pi_log(n_str_sym)    = st.str.pi_reg;
             str_lock_log(n_str_sym)    = w.str_out.lock_o;
-            str_lock_m_log(n_str_sym)  = double(st.str.lock.m) / T.str.K_pre_sc;
-            str_sym_clk_idx(n_str_sym) = st.str.smp_reg;
+            str_lock_m_log(n_str_sym)  = st.str.lock.m;
+            str_sym_clk_idx(n_str_sym) = uint32(st.str.smp_reg);
+            derot_syms(n_str_sym)      = complex(T.fi(w.str_out.m_axis_i_sym_o, 'rot_out'), T.fi(w.str_out.m_axis_q_sym_o, 'rot_out'));
         end
 
         if w.coarse_out.m_axis_valid_o && isnan(load_sym_idx)
@@ -201,17 +220,17 @@ function [rx_out, lg, T] = run_cycle_accurate_top(in_sample_iq, in_sample_valid,
         end
 
         if w.derot_out.m_axis_valid_o
-            n_derot_sym = n_derot_sym + 1;
-            derot_syms(n_derot_sym)    = double(w.derot_out.m_axis_i_sym_o) + 1j * double(w.derot_out.m_axis_q_sym_o);
-            nco_freq_log(n_derot_sym)  = double(w.derot_out.freq_word_o);
-            nco_phase_log(n_derot_sym) = w.derot_out.phase_rad_o;
-            fsm_idx                    = min(max(double(w.wrap_out.fsm_state) + 1, 1), 6);
+            n_derot_sym = n_str_sym;
+            derot_syms(n_derot_sym)    = complex(w.derot_out.m_axis_i_sym_o, w.derot_out.m_axis_q_sym_o);
+            nco_freq_log(n_derot_sym)  = w.derot_out.freq_word_o;
+            nco_phase_log(n_derot_sym) = w.derot_out.phase_o;
+            fsm_idx                    = min(max(uint8(w.wrap_out.fsm_state) + 1, uint8(1)), uint8(6));
             fsm_state_log(n_derot_sym) = T.enc.fsm_names(fsm_idx);
         end
 
         if w_prev.derot_out.m_axis_valid_o && n_derot_sym >= 1
-            slicer_syms(n_derot_sym)       = st.costas.a_ref;
-            costas_err_log(n_derot_sym)    = double(w.costas_out.err_o);
+            slicer_syms(n_derot_sym)       = complex(st.costas.ai, st.costas.aq);
+            costas_err_log(n_derot_sym)    = w.costas_out.err_o;
             costas_settle_log(n_derot_sym) = w.costas_out.internal_lock_o;
             costas_lock_log(n_derot_sym)   = w.costas_out.lock_o;
             sys_lock_log(n_derot_sym)      = w.str_out.lock_o && w.costas_out.lock_o;
@@ -231,8 +250,8 @@ function [rx_out, lg, T] = run_cycle_accurate_top(in_sample_iq, in_sample_valid,
     % =====================================================================
     % 3. TRIM SYMBOL ARRAYS & RESTORE DISPLAY SCALE (* 2 FOR DOWNSTREAM SCORER)
     % =====================================================================
-    N_sym       = min(n_str_sym, n_derot_sym);
-    out_display = derot_syms(1:N_sym) / in_scale;
+    N_sym       = n_str_sym;
+    out_raw     = derot_syms(1:N_sym);
 
     str_res.symbols     = str_syms(1:N_sym);
     str_res.mu_log      = str_mu_log(1:N_sym);
@@ -244,7 +263,7 @@ function [rx_out, lg, T] = run_cycle_accurate_top(in_sample_iq, in_sample_valid,
     str_res.lock_m_log  = str_lock_m_log(1:N_sym);
     str_res.sym_clk_idx = str_sym_clk_idx(1:N_sym);
     str_res.lock_sym    = st.str.lock.lock_sym;
-    str_res.sat_count   = double(st.str.sat_cnt);
+    str_res.sat_count   = uint32(st.str.sat_cnt);
 
     costas_lock_trim = costas_lock_log(1:N_sym);
     first_pub_lock   = find(costas_lock_trim, 1, 'first');
@@ -256,15 +275,15 @@ function [rx_out, lg, T] = run_cycle_accurate_top(in_sample_iq, in_sample_valid,
         pub_lock_from_load  = first_pub_lock - load_sym_idx;
     end
 
-    rx_out.out_sym_i             = real(out_display);
-    rx_out.out_sym_q             = imag(out_display);
-    rx_out.out_sym_cplx          = out_display;
-    rx_out.q11_clip_count        = 0;
-    rx_out.q15_clip_count        = 0;
+    rx_out.out_sym_i             = real(out_raw);
+    rx_out.out_sym_q             = imag(out_raw);
+    rx_out.out_sym_cplx          = out_raw;
+    rx_out.q11_clip_count        = uint32(0);
+    rx_out.q15_clip_count        = uint32(0);
     rx_out.slicer_sym            = slicer_syms(1:N_sym);
     rx_out.out_sym_valid         = true(N_sym, 1);
-    rx_out.coarse_cfo_est        = double(w.wrap_out.coarse_cfo_est);
-    rx_out.fine_cfo_est          = double(w.wrap_out.fine_cfo_est);
+    rx_out.coarse_cfo_est        = w.wrap_out.coarse_cfo_est;
+    rx_out.fine_cfo_est          = w.wrap_out.fine_cfo_est;
     rx_out.lock_detect           = sys_lock_log(1:N_sym);
     rx_out.str                   = str_res;
     rx_out.costas_err            = costas_err_log(1:N_sym);
@@ -279,7 +298,7 @@ function [rx_out, lg, T] = run_cycle_accurate_top(in_sample_iq, in_sample_valid,
     rx_out.costas_settle_sym     = costas_settle_sym;
     rx_out.costas_lock_sym       = pub_lock_from_start;
     rx_out.costas_lock_from_load = pub_lock_from_load;
-    rx_out.quad_counts           = [double(st.costas.cnt_i), double(st.costas.cnt_q)];
+    rx_out.quad_counts           = [st.costas.cnt_i, st.costas.cnt_q];
     rx_out.quad_m                = st.costas.quad_q;
     rx_out.quad_k                = st.costas.quad_k;
     rx_out.quad_unresolved       = st.costas.unres || (~st.costas.reported);

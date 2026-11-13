@@ -1,4 +1,4 @@
-function y = farrow_interpolator(buf4, mu, in_scale)
+function y = farrow_interpolator(buf4, mu)
     % FARROW_INTERPOLATOR  Piecewise-Parabolic Farrow Interpolator via Horner's Rule.
     %
     % Mathematical Derivation (alpha = 0.5):
@@ -24,9 +24,9 @@ function y = farrow_interpolator(buf4, mu, in_scale)
     % Outputs:
     %   y - Complex interpolated symbol at fractional interval mu
 
-    % Saturation limits scaled by front-end in_scale (0.5 when wrapper >>1 is active)
-    v_max = 8.0 * in_scale; % Q4.12 internal headroom (+3 MSB over Q1.x)
-    y_max = 2.0 * in_scale; % Q2.14 output headroom   (+1 MSB over Q1.x)
+    % Saturation limits for native datapath
+    v_max = 4.0; % Internal Horner headroom
+    y_max = 1.0; % Output symbol headroom
 
     a = buf4(1);
     b = buf4(2);

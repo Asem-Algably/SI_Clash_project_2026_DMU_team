@@ -50,8 +50,7 @@ function cfg = get_default_config()
     cfg.str.max_v_pi     = 0.035;            % PI filter saturation limit on |W - 0.25|
     cfg.str.open_loop    = false;
 
-    % --- Coarse CFO Estimator Settings (coarse_cfo.md) ---
-    cfg.coarse.tap_point       = 'interpolator';
+    % --- Coarse CFO Estimator Settings (coarse_cfo.md: tapped strictly after STR) ---
     cfg.coarse.win_len         = 32;         % 32-symbol window [R.116: 32..128 sym]
     cfg.coarse.cordic_iter     = 16;         % 16-stage vectoring CORDIC
     cfg.coarse.angle_mode      = 'cordic';
@@ -83,7 +82,7 @@ function cfg = get_default_config()
     % --- Fixed-Point Hardware Latencies (Clock Cycles) ---
     cfg.fxp.round_default = 'Floor';         % RTL truncation
     cfg.fxp.lat.str       = 4;               % Farrow interpolator pipeline latency
-    cfg.fxp.lat.coarse    = 12;              % CORDIC pipeline latency
+    cfg.fxp.lat.coarse    = 16;              % CORDIC pipeline latency (16 iterations in cordic_angle.sv)
     cfg.fxp.lat.derot     = 2;               % Derotator LUT + complex multiplier latency
     cfg.fxp.lat.costas    = 1;               % Costas PI filter register latency
     cfg.fxp.lat.wrap_out  = 1;               % Wrapper output register stage latency

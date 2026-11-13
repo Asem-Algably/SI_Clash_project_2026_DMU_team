@@ -34,13 +34,18 @@ function [sig_out, h_rrc] = pulse_shape_rrc(sig_in, alpha, span, sps, mode)
         end
     end
     h_rrc = h_rrc / sqrt(sum(h_rrc.^2));
+    % Quantize RRC filter coefficients to signed 16-bit Q1.15
+    h_rrc_fi = fi(h_rrc, 1, 16, 15);
 
     if strcmpi(mode, 'tx')
-        up_sig = zeros(numel(sig_in) * sps, 1);
-        up_sig(1:sps:end) = sig_in * sqrt(sps);
-        sig_out = conv(up_sig, h_rrc, 'same');
+        up_sig = complex(zeros(numel(sig_in) * sps, 1));
+        up_sig(1:sps:end) = double(sig_in) * sqrt(sps);
+        sig_conv = conv(up_sig, double(h_rrc_fi), 'same');
+        sig_out  = fi(sig_conv, 1, 16, 14);
     elseif strcmpi(mode, 'rx')
-        sig_out = conv(sig_in, h_rrc / sqrt(sps), 'same');
+        h_rx_fi  = fi(double(h_rrc_fi) / sqrt(sps), 1, 16, 15);
+        sig_conv = conv(double(sig_in), double(h_rx_fi), 'same');
+        sig_out  = fi(sig_conv, 1, 16, 14);
     else
         error('Mode must be tx or rx.');
     end
