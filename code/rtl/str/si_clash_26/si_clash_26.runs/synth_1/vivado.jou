@@ -1,0 +1,24 @@
+#-----------------------------------------------------------
+# Vivado v2025.1 (64-bit)
+# SW Build 6140274 on Thu May 22 00:12:29 MDT 2025
+# IP Build 6138677 on Thu May 22 03:10:11 MDT 2025
+# SharedData Build 6139179 on Tue May 20 17:58:58 MDT 2025
+# Start of session at: Fri Nov 13 22:53:34 2026
+# Process ID         : 17188
+# Current directory  : K:/Digital_IC/IEEE SSCS AUSC ALEX/Si_clash_26/SI_Clash_project_2026_DMU_team/code/rtl/str/si_clash_26/si_clash_26.runs/synth_1
+# Command line       : vivado.exe -log parabolic_farrow_interpolator.vds -product Vivado -mode batch -messageDb vivado.pb -notrace -source parabolic_farrow_interpolator.tcl
+# Log file           : K:/Digital_IC/IEEE SSCS AUSC ALEX/Si_clash_26/SI_Clash_project_2026_DMU_team/code/rtl/str/si_clash_26/si_clash_26.runs/synth_1/parabolic_farrow_interpolator.vds
+# Journal file       : K:/Digital_IC/IEEE SSCS AUSC ALEX/Si_clash_26/SI_Clash_project_2026_DMU_team/code/rtl/str/si_clash_26/si_clash_26.runs/synth_1\vivado.jou
+# Running On         : DESKTOP-UO99HG5
+# Platform           : Windows Server 2016 or Windows 10
+# Operating System   : 19045
+# Processor Detail   : Intel(R) Core(TM) i5-4200M CPU @ 2.50GHz
+# CPU Frequency      : 2494 MHz
+# CPU Physical cores : 2
+# CPU Logical cores  : 4
+# Host memory        : 12792 MB
+# Swap memory        : 15060 MB
+# Total Virtual      : 27852 MB
+# Available Virtual  : 5246 MB
+#-----------------------------------------------------------
+source parabolic_farrow_interpolator.tcl -notrace
