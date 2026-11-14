@@ -1,20 +1,47 @@
-# Single-file TB runner — all TBs listed, exactly ONE uncommented at a time.
-#
-# HOW TO USE:
-#   1. Open this file in a text editor (Notepad++, VS Code, etc.)
-#   2. Comment out ALL the "do run_tb_<name>.do" lines EXCEPT the one you want
-#   3. Save
-#   4. In QuestaSim console:  do run_one_tb.do
-#   5. The selected TB launches in GUI with waves added automatically
-#
-# Each section is self-contained: compile + vsim + wave add + run
-# Just uncomment the ONE you want to run.
-#
-# NOTE: Run "do compile_all.do" ONCE before this (compiles all RTL + TBs).
+# ============================================================================
+# QuestaSim / ModelSim Full Integration Simulation Automation Script
+# Project: SI-CLASH Real-Time Digital Synchronizer
+# Usage:   In QuestaSim prompt: do code/scripts/questa/run_sync_system_top.do
+# ============================================================================
 
-# ============================================================================
-# TB 6: tb_sync_system_top
-# ============================================================================
+vlib work
+vmap work work
+
+echo "=========================================="
+echo "Compiling SI-CLASH Synchronizer RTL & TB..."
+echo "=========================================="
+
+vlog +acc -sv \
+  code/rtl/str/gardner_ted_estimator.sv \
+  code/rtl/str/modulo_1_controller.sv \
+  code/rtl/str/parabolic_farrow_interpolator.sv \
+  code/rtl/str/pI_loop.sv \
+  code/rtl/str/str_top.sv \
+  code/rtl/coarse_cfo/reset_sync.sv \
+  code/rtl/coarse_cfo/complex_mult.sv \
+  code/rtl/coarse_cfo/accumulator.sv \
+  code/rtl/coarse_cfo/cordic_angle.sv \
+  code/rtl/coarse_cfo/coarse_cfo_core.sv \
+  code/rtl/coarse_cfo/coarse_cfo_axi_wrapper.sv \
+  +incdir+code/rtl/derotator code/rtl/derotator/lut_rom.sv \
+  +incdir+code/rtl/derotator code/rtl/derotator/quadrant_rotator.sv \
+  +incdir+code/rtl/derotator code/rtl/derotator/input_pipeline.sv \
+  +incdir+code/rtl/derotator code/rtl/derotator/complex_multiplier.sv \
+  +incdir+code/rtl/derotator code/rtl/derotator/Freq_word.sv \
+  +incdir+code/rtl/derotator code/rtl/derotator/NCO_accumulator.sv \
+  +incdir+code/rtl/derotator code/rtl/derotator/derotator.sv \
+  code/rtl/costas/slicer.sv \
+  code/rtl/costas/phase_error.sv \
+  code/rtl/costas/pi_filter.sv \
+  code/rtl/costas/lock_detector.sv \
+  code/rtl/costas/quad_check.sv \
+  code/rtl/costas/costas_top.sv \
+  code/rtl/costas/err_align.sv \
+  code/rtl/top/burst_ctrl.sv \
+  code/rtl/top/dft_mux.sv \
+  code/rtl/top/sync_system_top.sv \
+  code/tb/top/tb_sync_system_top.sv
+
 echo "=========================================="
 echo "Running tb_sync_system_top (full integration)"
 echo "=========================================="
