@@ -34,11 +34,11 @@ module costas_top #(
     parameter int                      Lock_Confirm_Count     = 12,
     parameter int                      Lock_Min_Symbols       = 15,
     parameter logic [Error_Width-1:0]  Lock_Init_Error        = 16'd8192,
-    parameter logic [Error_Width-1:0]  Lock_Enter_Thresh_Qpsk = 16'd2064,
-    parameter logic [Error_Width-1:0]  Lock_Exit_Thresh_Qpsk  = 16'd3277,
-    parameter logic [Error_Width-1:0]  Lock_Enter_Thresh_Qam  = 16'd1147,
-    parameter logic [Error_Width-1:0]  Lock_Exit_Thresh_Qam   = 16'd1820,
-
+    // Fixed (2x scale for QPSK, 2x for QAM):
+    parameter logic [Error_Width-1:0]  Lock_Enter_Thresh_Qpsk = 16'd4096,  // was 2064
+    parameter logic [Error_Width-1:0]  Lock_Exit_Thresh_Qpsk  = 16'd5500,  // was 3277
+    parameter logic [Error_Width-1:0]  Lock_Enter_Thresh_Qam  = 16'd2300,  // was 1147
+    parameter logic [Error_Width-1:0]  Lock_Exit_Thresh_Qam   = 16'd3650,  // was 1820
     // Internal lock detector parameters
     parameter int                      Lock_Int_Confirm_Count = 8,
     parameter logic [Error_Width-1:0]  Lock_Int_Enter_Thresh  = 16'd3600,
@@ -184,8 +184,7 @@ module costas_top #(
         .int_o     (int_o)
     );
 
-    assign freq_adj_valid_o = (mode_i != MODE_HOLD);
-
+    assign freq_adj_valid_o = pi_valid_unused; 
     // ------------------------------------------------ Lock Detectors + Quad Check
     logic done, quad_unres;
     logic lock_int, lock_pub;
