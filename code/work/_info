@@ -1,0 +1,443 @@
+m255
+K4
+z2
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+Z0 dC:/Users/Asem/Desktop/si clash/rx_sync_project/code
+vaccumulator
+Z1 DXx6 sv_std 3 std 0 22 9oUSJO;AeEaW`l:M@^WG92
+Z2 !s110 1794634434
+!i10b 1
+!s100 Xc_Kg;5RMzPO2HzaY@kH<3
+IIZQU_>lZHK]1[U_8Fzam22
+S1
+R0
+Z3 w1794634364
+8rtl/coarse_cfo/accumulator.sv
+Frtl/coarse_cfo/accumulator.sv
+!i122 0
+L0 8 41
+Z4 VDg1SIo80bB@j0V0VzS_@n1
+Z5 OL;L;2021.1;73
+r1
+!s85 0
+31
+Z6 !s108 1794634433.000000
+!s107 rtl/top/wrapper_fsm.sv|rtl/top/top_wrapper.sv|rtl/costas/slicer.sv|rtl/costas/quad_check.sv|rtl/costas/pi_filter.sv|rtl/costas/phase_error.sv|rtl/costas/lock_detector.sv|rtl/costas/costas_top.sv|rtl/derotator/*.sv|rtl/coarse_cfo/reset_sync.sv|rtl/coarse_cfo/cordic_angle.sv|rtl/coarse_cfo/complex_mult.sv|rtl/coarse_cfo/coarse_cfo_core.sv|rtl/coarse_cfo/coarse_cfo_axi_wrapper.sv|rtl/coarse_cfo/accumulator.sv|rtl/str/top.sv|rtl/str/pI_loop.sv|rtl/str/parabolic_farrow_interpolator.sv|rtl/str/modulo_1_controller.sv|rtl/str/gardner_ted_estimator.sv|
+Z7 !s90 +acc|-sv|rtl/str/gardner_ted_estimator.sv|rtl/str/modulo_1_controller.sv|rtl/str/parabolic_farrow_interpolator.sv|rtl/str/pI_loop.sv|rtl/str/top.sv|rtl/coarse_cfo/accumulator.sv|rtl/coarse_cfo/coarse_cfo_axi_wrapper.sv|rtl/coarse_cfo/coarse_cfo_core.sv|rtl/coarse_cfo/complex_mult.sv|rtl/coarse_cfo/cordic_angle.sv|rtl/coarse_cfo/reset_sync.sv|rtl/derotator/*.sv|rtl/costas/costas_top.sv|rtl/costas/lock_detector.sv|rtl/costas/phase_error.sv|rtl/costas/pi_filter.sv|rtl/costas/quad_check.sv|rtl/costas/slicer.sv|rtl/top/top_wrapper.sv|rtl/top/wrapper_fsm.sv|
+!i113 0
+Z8 o+acc -sv -L mtiAvm -L mtiRnm -L mtiOvm -L mtiUvm -L mtiUPF -L infact
+Z9 tCvgOpt 0
+vcoarse_cfo_axi_wrapper
+R1
+R2
+!i10b 1
+!s100 TFP[<ekZ_n^XFKkgi?HlI1
+IWem^oD4@31C41mh07igSI3
+S1
+R0
+R3
+8rtl/coarse_cfo/coarse_cfo_axi_wrapper.sv
+Frtl/coarse_cfo/coarse_cfo_axi_wrapper.sv
+!i122 0
+L0 7 187
+R4
+R5
+r1
+!s85 0
+31
+R6
+Z10 !s107 rtl/top/wrapper_fsm.sv|rtl/top/top_wrapper.sv|rtl/costas/slicer.sv|rtl/costas/quad_check.sv|rtl/costas/pi_filter.sv|rtl/costas/phase_error.sv|rtl/costas/lock_detector.sv|rtl/costas/costas_top.sv|rtl/derotator/*.sv|rtl/coarse_cfo/reset_sync.sv|rtl/coarse_cfo/cordic_angle.sv|rtl/coarse_cfo/complex_mult.sv|rtl/coarse_cfo/coarse_cfo_core.sv|rtl/coarse_cfo/coarse_cfo_axi_wrapper.sv|rtl/coarse_cfo/accumulator.sv|rtl/str/top.sv|rtl/str/pI_loop.sv|rtl/str/parabolic_farrow_interpolator.sv|rtl/str/modulo_1_controller.sv|rtl/str/gardner_ted_estimator.sv|
+R7
+!i113 0
+R8
+R9
+vcoarse_cfo_core
+R1
+R2
+!i10b 1
+!s100 f<6lT>fPWA:Cdm7;zn8:J2
+Iaa<iiUAQhaUBKeg@7zSHQ2
+S1
+R0
+R3
+8rtl/coarse_cfo/coarse_cfo_core.sv
+Frtl/coarse_cfo/coarse_cfo_core.sv
+!i122 0
+L0 9 147
+R4
+R5
+r1
+!s85 0
+31
+R6
+R10
+R7
+!i113 0
+R8
+R9
+vcomplex_mult
+R1
+R2
+!i10b 1
+!s100 0OzQ3GL2QP]1j_LeG>`F[1
+IkP9zk0LjnVIATYDFVcA=D3
+S1
+R0
+R3
+8rtl/coarse_cfo/complex_mult.sv
+Frtl/coarse_cfo/complex_mult.sv
+!i122 0
+L0 8 31
+R4
+R5
+r1
+!s85 0
+31
+R6
+R10
+R7
+!i113 0
+R8
+R9
+vcordic_angle
+R1
+R2
+!i10b 1
+!s100 <6LG96>[i3`z5l31<Pfn21
+I]jgXI3Az[hjQFLh^^8Z0V0
+S1
+R0
+R3
+8rtl/coarse_cfo/cordic_angle.sv
+Frtl/coarse_cfo/cordic_angle.sv
+!i122 0
+L0 8 151
+R4
+R5
+r1
+!s85 0
+31
+R6
+R10
+R7
+!i113 0
+R8
+R9
+vgardner_ted_estimator
+R1
+R2
+!i10b 1
+!s100 BfmEa=AQFc96nc;6S_^aV2
+ImoAUP2]<8T<EO1W8jR?mY0
+S1
+R0
+Z11 w1794634356
+8rtl/str/gardner_ted_estimator.sv
+Frtl/str/gardner_ted_estimator.sv
+!i122 0
+L0 10 67
+R4
+R5
+r1
+!s85 0
+31
+R6
+R10
+R7
+!i113 0
+R8
+R9
+vlock_detector
+R1
+R2
+!i10b 1
+!s100 Eb64oKE3DlR@lRIFC`oa@1
+I_5hZgGI2abW6DX;YnXk=D1
+S1
+R0
+R11
+8rtl/costas/lock_detector.sv
+Frtl/costas/lock_detector.sv
+!i122 0
+L0 8 110
+R4
+R5
+r1
+!s85 0
+31
+R6
+R10
+R7
+!i113 0
+R8
+R9
+vmodulo_1_controller
+R1
+R2
+!i10b 1
+!s100 SG9H;NYVZJ`LdQ]bPzVI32
+IKW`Y^kDaH02;3Nm6aYmAS3
+S1
+R0
+R11
+8rtl/str/modulo_1_controller.sv
+Frtl/str/modulo_1_controller.sv
+!i122 0
+L0 10 150
+R4
+R5
+r1
+!s85 0
+31
+R6
+R10
+R7
+!i113 0
+R8
+R9
+vparabolic_farrow_interpolator
+R1
+R2
+!i10b 1
+!s100 a2?<EMHfV:1D^?zHBEW`00
+IdVkzG:@QKSaZkkmD<2W0`1
+S1
+R0
+R11
+8rtl/str/parabolic_farrow_interpolator.sv
+Frtl/str/parabolic_farrow_interpolator.sv
+!i122 0
+L0 10 228
+R4
+R5
+r1
+!s85 0
+31
+R6
+R10
+R7
+!i113 0
+R8
+R9
+vphase_error
+R1
+R2
+!i10b 1
+!s100 `mC:PkCilb7c2Q^:QXOce3
+I77?^7f;7XMcZ;4Ok;^<I`1
+S1
+R0
+R11
+8rtl/costas/phase_error.sv
+Frtl/costas/phase_error.sv
+!i122 0
+L0 8 77
+R4
+R5
+r1
+!s85 0
+31
+R6
+R10
+R7
+!i113 0
+R8
+R9
+vpi_filter
+R1
+R2
+!i10b 1
+!s100 oB2YVUEVMEY9Z9VFh[92n2
+In_hL;>VQ?d5?gYcjI0>`U1
+S1
+R0
+R11
+8rtl/costas/pi_filter.sv
+Frtl/costas/pi_filter.sv
+!i122 0
+L0 16 136
+R4
+R5
+r1
+!s85 0
+31
+R6
+R10
+R7
+!i113 0
+R8
+R9
+vpI_loop
+R1
+R2
+!i10b 1
+!s100 @a]Fjko0bmIbgT^@4Ni?g2
+I=:0g_0XdhAED2gA:1LAYA2
+S1
+R0
+R11
+8rtl/str/pI_loop.sv
+Frtl/str/pI_loop.sv
+!i122 0
+L0 10 103
+R4
+R5
+r1
+!s85 0
+31
+R6
+R10
+R7
+!i113 0
+R8
+R9
+np@i_loop
+vquad_check
+R1
+R2
+!i10b 1
+!s100 Vf:Z??1:VYX?:]kGLzD^n2
+IVV>icb32TYa8fBR7abcd51
+S1
+R0
+R11
+8rtl/costas/quad_check.sv
+Frtl/costas/quad_check.sv
+!i122 0
+L0 8 109
+R4
+R5
+r1
+!s85 0
+31
+R6
+R10
+R7
+!i113 0
+R8
+R9
+vreset_sync
+R1
+R2
+!i10b 1
+!s100 f`e8HQXJYi;0lzR6V<FN<0
+IHNnA^2O;kC[modFeK_o]]0
+S1
+R0
+R3
+8rtl/coarse_cfo/reset_sync.sv
+Frtl/coarse_cfo/reset_sync.sv
+!i122 0
+L0 10 19
+R4
+R5
+r1
+!s85 0
+31
+R6
+R10
+R7
+!i113 0
+R8
+R9
+vslicer
+R1
+R2
+!i10b 1
+!s100 i9B:fAbgSM^NJN;@PYVVF0
+I@nlRXAk=mTB?K=ABh`j_F3
+S1
+R0
+R11
+8rtl/costas/slicer.sv
+Frtl/costas/slicer.sv
+!i122 0
+L0 8 54
+R4
+R5
+r1
+!s85 0
+31
+R6
+R10
+R7
+!i113 0
+R8
+R9
+vtop
+R1
+R2
+!i10b 1
+!s100 AGLm[=`fmEN<a97nhbe<_2
+IHKVZ>EKQ@`l3FXK<n?iie0
+S1
+R0
+R11
+8rtl/str/top.sv
+Frtl/str/top.sv
+!i122 0
+L0 1 193
+R4
+R5
+r1
+!s85 0
+31
+R6
+R10
+R7
+!i113 0
+R8
+R9
+vtop_wrapper
+R1
+R2
+!i10b 1
+!s100 2H`G66flOnBg@O:e3OYTZ0
+IUH[7^5ol2Jh5^8lcP0T6:0
+S1
+R0
+w1794634427
+8rtl/top/top_wrapper.sv
+Frtl/top/top_wrapper.sv
+!i122 0
+L0 14 256
+R4
+R5
+r1
+!s85 0
+31
+R6
+R10
+R7
+!i113 0
+R8
+R9
+vwrapper_fsm
+R1
+R2
+!i10b 1
+!s100 I089>QC0[<8U1>FlV`NFX0
+I6ciAjZ2:21=<^6iS0G^cZ0
+S1
+R0
+w1794634414
+8rtl/top/wrapper_fsm.sv
+Frtl/top/wrapper_fsm.sv
+!i122 0
+L0 25 210
+R4
+R5
+r1
+!s85 0
+31
+R6
+R10
+R7
+!i113 0
+R8
+R9

@@ -4,8 +4,11 @@ Source of truth for every value: the golden model (`model/`, files under `rx_blo
 
 ## 1. Overview
 
-The STR takes the I/Q samples (4 per symbol) and outputs one interpolated symbol per symbol period. It is **always running**:
-it has no ready signal and does not look at the burst FSM. The interpolator is pipelined, so samples flow through continuously.
+The STR takes the I/Q samples (4 per symbol) and outputs one interpolated symbol per symbol period. It uses an STR-only clock-enable scheme:
+`ce_str = s_axis_valid_i | flush_active`.
+When `ce_str = 0` (idle clock / gap), the entire STR datapath and all internal state registers freeze (delay line, modulo-1 counter, Farrow interpolator, $\mu$ pipeline, strobe sampler, Gardner TED, loop filter integrator, and lock detector).
+Its pipelines shift strictly on `ce_str`, guaranteeing that STR loop delay is constant in samples and its output symbol sequence is bit-identical for any input valid pattern.
+The output strobe `m_axis_valid_o` is a registered single-clock pulse per symbol that is actively cleared to `0` on any clock where `ce_str = 0` (the only register exempt from freezing). Output data registers hold their value.
 
 ```mermaid
 flowchart LR
@@ -42,6 +45,7 @@ Ports are plain valid streams with separate I and Q ports. There is no `ready` (
 | `clk_i`                        | in  | 1                           | Clock                                                              |
 | `rst_ni`                       | in  | 1                           | Active-low reset                                                   |
 | `s_axis_valid_i`               | in  | 1                           | One high pulse per input sample                                    |
+| `flush_active_i`               | in  | 1                           | Flush enable from wrapper FSM (`ce_str = s_axis_valid_i \| flush_active_i`) |
 | `s_axis_i_sample_i`            | in  | 12, signed Q1.11            | Input sample, I                                                    |
 | `s_axis_q_sample_i`            | in  | 12, signed Q1.11            | Input sample, Q                                                    |
 | `loop_gain_i`                  | in  | 8                           | Gain select from the top-level port (encoding TBD)                 |
