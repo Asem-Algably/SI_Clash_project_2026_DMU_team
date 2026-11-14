@@ -78,6 +78,8 @@ module sync_system_top #(
   output logic signed [CoarseWidth-1:0]   coarse_cfo_est,
   output logic signed [PhaseWidth-1:0]    fine_cfo_est,
   output logic                            lock_detect,
+  output logic                            flush_active,
+  output logic [7:0]                      valid_during_flush,
   output logic [31:0]                     dft_obs_data
 );
 
@@ -135,13 +137,35 @@ module sync_system_top #(
   logic [15:0][31:0] dft_obs_bus;
 
   // -------------------------------------------------------------------------
-  // Reset synchronizer
+  // Reset synchronizer & Soft-Reset generation
   // -------------------------------------------------------------------------
+  logic flush_rst;
+  logic rst_n_eff;
+
   reset_sync u_reset_sync (
     .clk_i (clk),
     .rst_ni(rst_n),
     .rst_no(rst_n_sync)
   );
+
+  assign rst_n_eff = rst_n_sync & ~flush_rst;
+
+  // Repeat pad sample buffer feeding STR during FLUSH
+  logic signed [InSampleWidth-1:0] last_in_i, last_in_q;
+  logic signed [InSampleWidth-1:0] str_in_i, str_in_q;
+
+  always_ff @(posedge clk or negedge rst_n_sync) begin
+    if (!rst_n_sync) begin
+      last_in_i <= '0;
+      last_in_q <= '0;
+    end else if (in_sample_valid) begin
+      last_in_i <= in_sample_i;
+      last_in_q <= in_sample_q;
+    end
+  end
+
+  assign str_in_i = flush_active ? last_in_i : in_sample_i;
+  assign str_in_q = flush_active ? last_in_q : in_sample_q;
 
   // -------------------------------------------------------------------------
   // STR: Symbol Timing Recovery (str_top.sv)
@@ -151,10 +175,11 @@ module sync_system_top #(
   // -------------------------------------------------------------------------
   str_top u_str (
     .clk_i            (clk),
-    .rst_ni           (rst_n_sync),
+    .rst_ni           (rst_n_eff),
     .s_axis_valid_i   (in_sample_valid),
-    .s_axis_i_sample_i(in_sample_i),
-    .s_axis_q_sample_i(in_sample_q),
+    .flush_active_i   (flush_active),
+    .s_axis_i_sample_i(str_in_i),
+    .s_axis_q_sample_i(str_in_q),
     .loop_gain_i      (loop_gain),
     .m_axis_valid_o   (str_valid),
     .m_axis_i_sym_o   (str_sym_i),
@@ -178,7 +203,7 @@ module sync_system_top #(
     .AccWidth (40)
   ) u_coarse_cfo (
     .clk_i          (clk),
-    .rst_ni         (rst_n_sync),
+    .rst_ni         (rst_n_eff),
     .start_i        (coarse_start),
     .s_axis_valid_i (str_valid),
     .s_axis_i_sym_i (str_sym_i),
@@ -201,7 +226,7 @@ module sync_system_top #(
     .Coarse_Shift(PhaseWidth - CoarseWidth)
   ) u_derotator (
     .clk_i            (clk),
-    .rst_ni           (rst_n_sync),
+    .rst_ni           (rst_n_eff),
     .s_axis_valid_i   (str_valid),
     .s_axis_i_sym_i   (str_sym_i),
     .s_axis_q_sym_i   (str_sym_q),
@@ -222,13 +247,10 @@ module sync_system_top #(
 
   // -------------------------------------------------------------------------
   // Costas Loop (slicer + phase error + PI filter + lock detector + quad check)
-  // costas_top has its own internal reset synchronizer; feeding the already
-  // synchronized rst_n_sync is harmless (it just adds two extra cycles to the
-  // deassert path).
   // -------------------------------------------------------------------------
   costas_top u_costas (
     .clk_i            (clk),
-    .rst_ni           (rst_n_sync),
+    .rst_ni           (rst_n_eff),
     .s_axis_valid_i   (derot_valid),
     .s_axis_i_sym_i   (derot_sym_i),
     .s_axis_q_sym_i   (derot_sym_q),
@@ -251,7 +273,7 @@ module sync_system_top #(
   );
 
   // -------------------------------------------------------------------------
-  // Burst FSM
+  // Burst FSM & Watchdog Controller
   // -------------------------------------------------------------------------
   burst_ctrl #(
     .NA1      (NA1),
@@ -261,16 +283,20 @@ module sync_system_top #(
     .CostasAcq  (CostasAcq),
     .CostasTrack(CostasTrack)
   ) u_burst_ctrl (
-    .clk_i          (clk),
-    .rst_ni         (rst_n_sync),
-    .start_of_burst_i(start_of_burst),
-    .str_lock_i     (str_lock),
-    .coarse_valid_i (coarse_valid),
-    .sym_strobe_i   (str_valid),
-    .coarse_start_o (coarse_start),
-    .costas_mode_o  (costas_mode),
-    .preamble_end_o (preamble_end),
-    .state_o        (fsm_state)
+    .clk_i               (clk),
+    .rst_ni              (rst_n_sync),
+    .start_of_burst_i    (start_of_burst),
+    .in_sample_valid_i   (in_sample_valid),
+    .str_lock_i          (str_lock),
+    .coarse_valid_i      (coarse_valid),
+    .sym_strobe_i        (str_valid),
+    .coarse_start_o      (coarse_start),
+    .costas_mode_o       (costas_mode),
+    .preamble_end_o      (preamble_end),
+    .state_o             (fsm_state),
+    .flush_active_o      (flush_active),
+    .flush_rst_o         (flush_rst),
+    .valid_during_flush_o(valid_during_flush)
   );
 
   // -------------------------------------------------------------------------

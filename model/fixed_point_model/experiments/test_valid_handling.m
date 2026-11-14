@@ -120,9 +120,17 @@ function test_valid_handling()
     % =====================================================================
     fprintf('[TEST F] Running Hardware Protocol Assertions...\n');
     % Assertion 1: STR valid pulse must never be high when ce_str = 0
-    clks_frozen = find(~val_gapped);
-    if ~isempty(clks_frozen)
-        assert(~any(res_g.rx_out.cycle_log.str_valid(clks_frozen)), ...
+    % In run_cycle_accurate_top, n_reset = 4. Simulation clock = sample_idx + 4.
+    n_rst = 4;
+    gapped_clks_frozen = n_rst + find(~val_gapped);
+    flush_clks = find(res_g.rx_out.cycle_log.flush_active);
+    if isempty(flush_clks)
+        clks_ce_zero = gapped_clks_frozen;
+    else
+        clks_ce_zero = gapped_clks_frozen(gapped_clks_frozen < min(flush_clks));
+    end
+    if ~isempty(clks_ce_zero)
+        assert(~any(res_g.rx_out.cycle_log.str_valid(clks_ce_zero)), ...
             'Test F failed: STR valid was high while frozen (ce_str = 0)!');
     end
 
