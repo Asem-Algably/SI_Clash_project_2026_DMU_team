@@ -104,26 +104,29 @@ function export_test_vectors(out_dir)
     metrics = compute_evm_and_metrics(rx_out, tx_payload_fi, cfg);
 
     % ---------------------------------------------------------------
-    % 5. Write .hex files
+    % 5. Write .hex files (properly quantized to stored integer values)
     % ---------------------------------------------------------------
     fprintf('[3/3] Writing vectors to %s\n', out_dir);
 
-    % Input samples: Q1.11 (12-bit signed)
-    write_hex(fullfile(out_dir, 'preamble_i.hex'), real(rx_samples_fi), 12);
-    write_hex(fullfile(out_dir, 'preamble_q.hex'), imag(rx_samples_fi), 12);
+    % Input samples: Q1.11 (12-bit signed, 11 fractional bits)
+    write_hex(fullfile(out_dir, 'preamble_i.hex'), ...
+              double(storedInteger(real(rx_samples_fi))), 12);
+    write_hex(fullfile(out_dir, 'preamble_q.hex'), ...
+              double(storedInteger(imag(rx_samples_fi))), 12);
 
-    % Expected RTL output: Q1.15 (16-bit signed)
-    % GM internally uses Q1.14 -> multiply by 2 to match Q1.15
+    % Expected RTL output: Q1.15 (16-bit signed, 15 fractional bits)
+    % GM internally uses sQ1.14 -> stored integer has 14 frac bits, multiply by 2 for Q1.15
     write_hex(fullfile(out_dir, 'expected_out_i.hex'), ...
-              2 * double(rx_out.out_sym_i), 16);
+              2 * double(storedInteger(rx_out.out_sym_i)), 16);
     write_hex(fullfile(out_dir, 'expected_out_q.hex'), ...
-              2 * double(rx_out.out_sym_q), 16);
+              2 * double(storedInteger(rx_out.out_sym_q)), 16);
 
     % Ideal physical symbols: Q1.15 (for EVM reference)
+    % tx_payload_fi has 14 frac bits -> multiply by 2 for Q1.15
     write_hex(fullfile(out_dir, 'expected_ideal_i.hex'), ...
-              double(real(tx_payload_fi)) * 2^15, 16);
+              2 * double(storedInteger(real(tx_payload_fi))), 16);
     write_hex(fullfile(out_dir, 'expected_ideal_q.hex'), ...
-              double(imag(tx_payload_fi)) * 2^15, 16);
+              2 * double(storedInteger(imag(tx_payload_fi))), 16);
 
     % ---------------------------------------------------------------
     % 6. Write metrics file (text)
