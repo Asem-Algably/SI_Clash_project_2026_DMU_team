@@ -54,6 +54,7 @@ function [rx_out, lg, T] = run_cycle_accurate_top(in_sample_iq, in_sample_valid,
     lg.out_q        = zeros(N_clocks, 1);
     lg.lock_detect  = false(N_clocks, 1);
     lg.fsm_state    = zeros(N_clocks, 1, 'uint8');
+    lg.flush_active = false(N_clocks, 1);
 
     max_syms        = ceil(n_burst / cfg.sps) + 20;
     str_syms        = complex(T.fi(zeros(max_syms, 1), 'str_sym'));
@@ -79,6 +80,8 @@ function [rx_out, lg, T] = run_cycle_accurate_top(in_sample_iq, in_sample_valid,
     n_derot_sym     = 0;
     load_sym_idx    = NaN;
     coarse_done_sym = NaN;
+    last_smp_i      = T.fi(0, 'in');
+    last_smp_q      = T.fi(0, 'in');
 
     % =====================================================================
     % 2. MAIN HARDWARE CLOCK LOOP (1 Iteration = 1 Rising Clock Edge)
@@ -93,16 +96,37 @@ function [rx_out, lg, T] = run_cycle_accurate_top(in_sample_iq, in_sample_valid,
         w_prev.top_in.mod_type        = cfg.mod_type;
         mod_type_pipe                 = [uint8(w_prev.top_in.mod_type), mod_type_pipe(1:end-1)];
 
+        if w_prev.top_in.in_sample_valid
+            last_smp_i = w_prev.top_in.in_sample_i;
+            last_smp_q = w_prev.top_in.in_sample_q;
+        end
+
+        flush_active = isfield(w_prev.wrap_out, 'flush_active') && logical(w_prev.wrap_out.flush_active);
+        flush_rst    = isfield(w_prev.wrap_out, 'flush_rst')    && logical(w_prev.wrap_out.flush_rst);
+        rst_ni_eff   = w_prev.top_in.rst_n && ~flush_rst;
+
         % Connect STR inputs
-        str_in.rst_ni            = w_prev.top_in.rst_n;
-        str_in.s_axis_valid_i    = w_prev.top_in.in_sample_valid;
-        str_in.s_axis_i_sample_i = w_prev.top_in.in_sample_i;
-        str_in.s_axis_q_sample_i = w_prev.top_in.in_sample_q;
-        str_in.force_w_en_i      = false;
-        str_in.force_w_i         = 0.25;
+        str_in.rst_ni       = rst_ni_eff;
+        str_in.flush_active = flush_active;
+        if flush_active
+            str_in.s_axis_valid_i = false;
+            if isfield(cfg, 'valid') && isfield(cfg.valid, 'flush_fill') && strcmpi(cfg.valid.flush_fill, 'zero')
+                str_in.s_axis_i_sample_i = T.fi(0, 'in');
+                str_in.s_axis_q_sample_i = T.fi(0, 'in');
+            else
+                str_in.s_axis_i_sample_i = last_smp_i;
+                str_in.s_axis_q_sample_i = last_smp_q;
+            end
+        else
+            str_in.s_axis_valid_i    = w_prev.top_in.in_sample_valid;
+            str_in.s_axis_i_sample_i = w_prev.top_in.in_sample_i;
+            str_in.s_axis_q_sample_i = w_prev.top_in.in_sample_q;
+        end
+        str_in.force_w_en_i = false;
+        str_in.force_w_i    = 0.25;
 
         % Connect Coarse CFO inputs (fed strictly from STR output)
-        coarse_in.rst_ni         = w_prev.top_in.rst_n;
+        coarse_in.rst_ni         = rst_ni_eff;
         coarse_in.start_i        = w_prev.wrap_out.coarse_start;
         coarse_in.s_axis_valid_i = w_prev.str_out.m_axis_valid_o;
         coarse_in.s_axis_i_sym_i = w_prev.str_out.m_axis_i_sym_o;
@@ -115,7 +139,7 @@ function [rx_out, lg, T] = run_cycle_accurate_top(in_sample_iq, in_sample_valid,
         derot_active = (fsm_curr >= double(T.enc.fsm.LOAD));
 
         % Connect Derotator inputs
-        derot_in.rst_ni            = w_prev.top_in.rst_n;
+        derot_in.rst_ni            = rst_ni_eff;
         if derot_active
             derot_in.s_axis_valid_i = w_prev.str_out.m_axis_valid_o;
             derot_in.s_axis_i_sym_i = w_prev.str_out.m_axis_i_sym_o;
@@ -133,7 +157,7 @@ function [rx_out, lg, T] = run_cycle_accurate_top(in_sample_iq, in_sample_valid,
         derot_in.phase_adj_i       = w_prev.costas_out.phase_adj_o;
 
         % Connect Costas Loop inputs
-        costas_in.rst_ni         = w_prev.top_in.rst_n;
+        costas_in.rst_ni         = rst_ni_eff;
         if derot_active
             costas_in.s_axis_valid_i = w_prev.derot_out.m_axis_valid_o;
             costas_in.s_axis_i_sym_i = w_prev.derot_out.m_axis_i_sym_o;
@@ -149,7 +173,7 @@ function [rx_out, lg, T] = run_cycle_accurate_top(in_sample_iq, in_sample_valid,
         costas_in.preamble_end_i = w_prev.wrap_out.preamble_end;
 
         % Connect Wrapper FSM inputs
-        wrap_in.rst_ni          = w_prev.top_in.rst_n;
+        wrap_in.rst_ni          = rst_ni_eff;
         wrap_in.in_sample_valid = w_prev.top_in.in_sample_valid;
         wrap_in.str_valid       = w_prev.str_out.m_axis_valid_o;
         wrap_in.str_lock        = w_prev.str_out.lock_o;
@@ -181,6 +205,7 @@ function [rx_out, lg, T] = run_cycle_accurate_top(in_sample_iq, in_sample_valid,
         lg.out_q(clk)        = double(w.wrap_out.out_sym_q);
         lg.lock_detect(clk)  = w.wrap_out.lock_detect;
         lg.fsm_state(clk)    = uint8(w.wrap_out.fsm_state);
+        lg.flush_active(clk) = flush_active;
 
         % Log STR Symbols
         if w.str_out.m_axis_valid_o
@@ -270,5 +295,6 @@ function [rx_out, lg, T] = run_cycle_accurate_top(in_sample_iq, in_sample_valid,
     rx_out.quad_counts           = [st.costas.cnt_i, st.costas.cnt_q];
     rx_out.quad_k                = st.costas.quad_k;
     rx_out.quad_unresolved       = st.costas.unres || (~st.costas.reported);
+    rx_out.valid_during_flush    = w.wrap_out.valid_during_flush;
     rx_out.cycle_log             = lg;
 end

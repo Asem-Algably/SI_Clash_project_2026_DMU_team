@@ -50,17 +50,40 @@ function [out, st] = step_str(in, st, T)
         st.lock.locked   = false;
         st.lock.lock_sym = NaN;
 
-        st.te_val  = false;
-        st.te_e    = T.fi(0, 'ted_e');
+        st.out_valid = false;
+        st.te_val    = false;
+        st.te_e      = T.fi(0, 'ted_e');
 
-        out = str_drive_outputs(st, false);
+        out = str_drive_outputs(st);
         return;
     end
 
     st_old = st;
 
     % =====================================================================
-    % 2. MODULO-1 NCO & INTERPOLATION (On Active Sample Valid)
+    % 2. STR CLOCK ENABLE (ce_str = s_axis_valid_i | flush_active)
+    % =====================================================================
+    flush_active = isfield(in, 'flush_active') && logical(in.flush_active);
+    valid_scheme = ~isfield(T, 'valid') || ~isfield(T.valid, 'enable') || logical(T.valid.enable);
+
+    if valid_scheme
+        ce_str = logical(in.s_axis_valid_i) || flush_active;
+    else
+        ce_str = true;
+    end
+
+    % When ce_str = 0: STR is completely frozen.
+    % Only st.out_valid clears to false (registered pulse); all data registers hold.
+    if ~ce_str
+        st = st_old;
+        st.out_valid = false;
+        st.te_val    = false;
+        out = str_drive_outputs(st);
+        return;
+    end
+
+    % =====================================================================
+    % 3. MODULO-1 NCO & INTERPOLATION (On ce_str)
     % =====================================================================
     new_cur = false;
     new_mid = false;
@@ -69,62 +92,60 @@ function [out, st] = step_str(in, st, T)
     new_mu  = st_old.mu_reg;
     cur_smp = st_old.smp_cnt;
 
-    if in.s_axis_valid_i
-        cur_smp    = st_old.smp_cnt + 1;
-        st.smp_cnt = cur_smp;
+    cur_smp    = st_old.smp_cnt + 1;
+    st.smp_cnt = cur_smp;
 
-        xi = R(T.fi(in.s_axis_i_sample_i, 'in'));
-        xq = R(T.fi(in.s_axis_q_sample_i, 'in'));
+    xi = R(T.fi(in.s_axis_i_sample_i, 'in'));
+    xq = R(T.fi(in.s_axis_q_sample_i, 'in'));
 
-        W_use = st_old.W;
-        if in.force_w_en_i
-            W_use = T.fi(in.force_w_i, 'M');
-        end
-
-        % Pure fi two-region Modulo-1 boundary check using 25-bit signed wire M_s
-        M_s   = R(T.fi(st_old.M, 'M_s'));
-        W_s   = R(T.fi(W_use,    'M_s'));
-        q25_s = R(T.fi(T.c.q25,  'M_s'));
-        q75_s = R(T.fi(T.c.q75,  'M_s'));
-
-        in_mid_old = (M_s >= q25_s) && (M_s < q75_s);
-        M_next_val = T.fi(M_s - W_s, 'M');
-        M_next_s   = R(T.fi(M_next_val, 'M_s'));
-        in_mid_new = (M_next_s >= q25_s) && (M_next_s < q75_s);
-
-        if in_mid_old && ~in_mid_new
-            new_cur = true;
-            eta_raw = M_s - q25_s;
-        elseif ~in_mid_old && in_mid_new
-            new_mid = true;
-            if M_s >= q75_s
-                eta_raw = M_s - q75_s;
-            else
-                eta_raw = M_s + q25_s;
-            end
-        else
-            eta_raw = T.fi(0, 'M_s');
-        end
-
-        if new_cur || new_mid
-            eta  = T.fi(eta_raw, 'eta');
-            pm   = T.fi(R(st_old.pi_reg), 'pi_mu');
-            mu_v = T.fi(R(eta) * T.c.k4 - (R(eta) * R(pm)) * T.c.k16m, 'mu');
-            new_mu = mu_v;
-
-            % Evaluate Parabolic Farrow interpolator over 4-sample window [D1, D2, D3, xi]
-            new_yi = farrow_eval(R(st_old.Di(1)), R(st_old.Di(2)), R(st_old.Di(3)), xi, mu_v, T);
-            new_yq = farrow_eval(R(st_old.Dq(1)), R(st_old.Dq(2)), R(st_old.Dq(3)), xq, mu_v, T);
-        end
-
-        % Shift 4-sample delay line and update modulo-1 counter M
-        st.Di(:) = [R(st_old.Di(2:3)), xi];
-        st.Dq(:) = [R(st_old.Dq(2:3)), xq];
-        st.M(:)  = M_next_val;
+    W_use = st_old.W;
+    if in.force_w_en_i
+        W_use = T.fi(in.force_w_i, 'M');
     end
 
+    % Pure fi two-region Modulo-1 boundary check using 25-bit signed wire M_s
+    M_s   = R(T.fi(st_old.M, 'M_s'));
+    W_s   = R(T.fi(W_use,    'M_s'));
+    q25_s = R(T.fi(T.c.q25,  'M_s'));
+    q75_s = R(T.fi(T.c.q75,  'M_s'));
+
+    in_mid_old = (M_s >= q25_s) && (M_s < q75_s);
+    M_next_val = T.fi(M_s - W_s, 'M');
+    M_next_s   = R(T.fi(M_next_val, 'M_s'));
+    in_mid_new = (M_next_s >= q25_s) && (M_next_s < q75_s);
+
+    if in_mid_old && ~in_mid_new
+        new_cur = true;
+        eta_raw = M_s - q25_s;
+    elseif ~in_mid_old && in_mid_new
+        new_mid = true;
+        if M_s >= q75_s
+            eta_raw = M_s - q75_s;
+        else
+            eta_raw = M_s + q25_s;
+        end
+    else
+        eta_raw = T.fi(0, 'M_s');
+    end
+
+    if new_cur || new_mid
+        eta  = T.fi(eta_raw, 'eta');
+        pm   = T.fi(R(st_old.pi_reg), 'pi_mu');
+        mu_v = T.fi(R(eta) * T.c.k4 - (R(eta) * R(pm)) * T.c.k16m, 'mu');
+        new_mu = mu_v;
+
+        % Evaluate Parabolic Farrow interpolator over 4-sample window [D1, D2, D3, xi]
+        new_yi = farrow_eval(R(st_old.Di(1)), R(st_old.Di(2)), R(st_old.Di(3)), xi, mu_v, T);
+        new_yq = farrow_eval(R(st_old.Dq(1)), R(st_old.Dq(2)), R(st_old.Dq(3)), xq, mu_v, T);
+    end
+
+    % Shift 4-sample delay line and update modulo-1 counter M
+    st.Di(:) = [R(st_old.Di(2:3)), xi];
+    st.Dq(:) = [R(st_old.Dq(2:3)), xq];
+    st.M(:)  = M_next_val;
+
     % =====================================================================
-    % 3. CLOCK-RATE PIPELINE SHIFT (Advances on EVERY clk_i)
+    % 4. CLOCK-RATE PIPELINE SHIFT (Advances on ce_str)
     % =====================================================================
     st.ip_cur    = [new_cur,      st_old.ip_cur(1:end-1)];
     st.ip_mid    = [new_mid,      st_old.ip_mid(1:end-1)];
@@ -134,7 +155,7 @@ function [out, st] = step_str(in, st, T)
     st.ip_smp    = [cur_smp,      st_old.ip_smp(1:end-1)];
 
     % =====================================================================
-    % 4. STROBE SAMPLER, GARDNER TED, PI FILTER & LOCK DETECTOR (At Tail)
+    % 5. STROBE SAMPLER, GARDNER TED, PI FILTER & LOCK DETECTOR (At Tail)
     % =====================================================================
     tail_cur = st_old.ip_cur(end);
     tail_mid = st_old.ip_mid(end);
@@ -143,8 +164,8 @@ function [out, st] = step_str(in, st, T)
     yt_mu    = st_old.ip_mu(end);
     yt_smp   = st_old.ip_smp(end);
 
-    sym_valid = false;
-    st.te_val = false;
+    st.out_valid = tail_cur;
+    st.te_val    = false;
 
     if tail_mid
         st.mid_i(:) = yt_i;
@@ -152,7 +173,6 @@ function [out, st] = step_str(in, st, T)
     end
 
     if tail_cur
-        sym_valid     = true;
         st.prev_i(:)  = R(st_old.cur_i);
         st.prev_q(:)  = R(st_old.cur_q);
         st.cur_i(:)   = yt_i;
@@ -185,14 +205,14 @@ function [out, st] = step_str(in, st, T)
         st.lock = str_lock_step(st_old.lock, e_t, cnt_new, T);
     end
 
-    out = str_drive_outputs(st, sym_valid);
+    out = str_drive_outputs(st);
 end
 
 % =========================================================================
 % LOCAL HELPER FUNCTIONS
 % =========================================================================
-function out = str_drive_outputs(st, sym_valid)
-    out.m_axis_valid_o  = sym_valid;
+function out = str_drive_outputs(st)
+    out.m_axis_valid_o  = st.out_valid;
     out.m_axis_i_sym_o  = st.cur_i;
     out.m_axis_q_sym_o  = st.cur_q;
     out.lock_o          = st.lock.locked;

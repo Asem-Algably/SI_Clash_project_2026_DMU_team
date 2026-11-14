@@ -28,11 +28,15 @@ function [out, st] = step_wrapper_fsm(in, st, T)
         st.cfo_hold = T.fi(0, 'cfo');
         st.fine     = T.fi(0, 'freq_w');
         st.ld       = false;
-        st.ow_val   = false(1, Lo);
-        st.ow_i     = T.fi(zeros(1, Lo), 'rot_out');
-        st.ow_q     = T.fi(zeros(1, Lo), 'rot_out');
+        st.ow_val             = false(1, Lo);
+        st.ow_i               = T.fi(zeros(1, Lo), 'rot_out');
+        st.ow_q               = T.fi(zeros(1, Lo), 'rot_out');
+        st.idle_cnt           = 0;
+        st.flush_cnt          = 0;
+        st.flush_rst          = false;
+        st.valid_during_flush = 0;
 
-        out = wrap_drive_outputs(st);
+        out = wrap_drive_outputs(st, E);
         return;
     end
 
@@ -47,12 +51,17 @@ function [out, st] = step_wrapper_fsm(in, st, T)
     new_state = state;
     new_cs    = false;
     new_pe    = false;
+    st.flush_rst = false;
+
+    valid_scheme = isfield(T, 'valid') && isfield(T.valid, 'enable') && logical(T.valid.enable);
 
     % =====================================================================
     % 2. STATE MACHINE TRANSITIONS
     % =====================================================================
     switch state
         case E.WAIT_BURST
+            st.idle_cnt  = 0;
+            st.flush_cnt = 0;
             if in.in_sample_valid
                 new_state = E.ACQUIRE;
             end
@@ -88,8 +97,34 @@ function [out, st] = step_wrapper_fsm(in, st, T)
         case E.TRACK
             % Steady-state payload tracking
 
+        case E.FLUSH
+            % Draining in-flight pipeline symbols for F clock cycles
+            st.flush_cnt = st_old.flush_cnt + 1;
+            if in.in_sample_valid
+                st.valid_during_flush = st_old.valid_during_flush + 1;
+            end
+            if st_old.flush_cnt >= T.valid.flush_clocks
+                new_state    = E.WAIT_BURST;
+                st.flush_rst = true; % Single-cycle soft-reset pulse to re-arm all modules
+                st.idle_cnt  = 0;
+                st.flush_cnt = 0;
+            end
+
         otherwise
             new_state = E.WAIT_BURST;
+    end
+
+    % Always-on Idle Watchdog (active during burst states)
+    if valid_scheme && (state >= E.ACQUIRE) && (state <= E.TRACK)
+        if ~in.in_sample_valid
+            st.idle_cnt = st_old.idle_cnt + 1;
+            if st.idle_cnt >= T.valid.idle_timeout
+                new_state    = E.FLUSH;
+                st.flush_cnt = 0;
+            end
+        else
+            st.idle_cnt = 0;
+        end
     end
 
     st.state = uint8(new_state);
@@ -122,22 +157,25 @@ function [out, st] = step_wrapper_fsm(in, st, T)
     st.ow_i(:) = [R(T.fi(in.derot_i, 'rot_out')), R(st_old.ow_i(1 : end-1))];
     st.ow_q(:) = [R(T.fi(in.derot_q, 'rot_out')), R(st_old.ow_q(1 : end-1))];
 
-    out = wrap_drive_outputs(st);
+    out = wrap_drive_outputs(st, E);
 end
 
 % =========================================================================
 % LOCAL HELPER FUNCTIONS
 % =========================================================================
-function out = wrap_drive_outputs(st)
-    out.out_sym_valid  = st.ow_val(end);
-    out.out_sym_i      = st.ow_i(end);
-    out.out_sym_q      = st.ow_q(end);
-    out.coarse_cfo_est = st.cfo_hold;
-    out.fine_cfo_est   = st.fine;
-    out.lock_detect    = st.ld;
-    out.coarse_start   = st.cs;
-    out.costas_mode    = st.mode;
-    out.slicer_qpsk    = st.slicer_q;
-    out.preamble_end   = st.pe_pipe(end);
-    out.fsm_state      = st.state;
+function out = wrap_drive_outputs(st, E)
+    out.out_sym_valid      = st.ow_val(end);
+    out.out_sym_i          = st.ow_i(end);
+    out.out_sym_q          = st.ow_q(end);
+    out.coarse_cfo_est     = st.cfo_hold;
+    out.fine_cfo_est       = st.fine;
+    out.lock_detect        = st.ld;
+    out.coarse_start       = st.cs;
+    out.costas_mode        = st.mode;
+    out.slicer_qpsk        = st.slicer_q;
+    out.preamble_end       = st.pe_pipe(end);
+    out.fsm_state          = st.state;
+    out.flush_active       = (st.state == E.FLUSH);
+    out.flush_rst          = st.flush_rst;
+    out.valid_during_flush = st.valid_during_flush;
 end

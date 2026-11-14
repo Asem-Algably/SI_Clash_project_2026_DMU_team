@@ -52,7 +52,10 @@ else
 end
 fprintf('------------------------------------------------------------\n');
 
-% 6. Optional Diagnostic Plot (if interactive display available)
+% 6. Export Hardware Parameters & Register Specifications for RTL
+export_hardware_parameters(cfg);
+
+% 7. Optional Diagnostic Plot (if interactive display available)
 if usejava('jvm') && usejava('awt') && ~batchStartupOptionUsed
     plot_sync_diagnostics(rx_out, metrics, cfg);
 end

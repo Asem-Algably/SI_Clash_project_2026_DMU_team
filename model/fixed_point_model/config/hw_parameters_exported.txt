@@ -1,67 +1,97 @@
 ==================================================================================================================
-  SI-CLASH HARDWARE PARAMETER & REGISTER EXPORT REPORT (For RTL / Hardware Designers)
+  SI-CLASH MASTER SYNCHRONIZER HARDWARE PARAMETERS & REGISTER EXPORT REPORT
+  Target Architecture: Pure Fixed-Point Cycle-Accurate Digital Synchronizer (RTL Reference)
 ==================================================================================================================
-  Modulation Type : 16-QAM (mod_type = 1)
-  Normalisation   : peak
-  Input Scale (g) : 0.5000 (Wrapper >>1 shift at input, <<1 shift at output)
-  Preamble Sched  : N_A = 84, N_B = 40, N_C = 40 (Total = 164 symbols)
-------------------------------------------------------------------------------------------------------------------
-  1. FIXED-POINT PI LOOP FILTER GAINS (True Fixed-Point Stored Integer & Hex)
-------------------------------------------------------------------------------------------------------------------
-  STR Loop Filter (str.md | Bn_Ts = 0.010, zeta = 0.707):
-    STR Kp    (uQ-1.25, 24-bit) : Real =   0.02134582 | Int =     716247 | RTL Hex = 24'h0AEDD7
-    STR Ki    (uQ-7.31, 24-bit) : Real =   0.00028467 | Int =     611321 | RTL Hex = 24'h0953F9
-
-  Costas Loop Filter (costas.md | Bn_Ts = 0.025, zeta = 0.707, Single Fixed Gain):
-    Costas Kp (uQ2.22, 24-bit) : Real =   0.03216553 | Int =     134912 | RTL Hex = 24'h020F00
-    Costas Ki (uQ-5.29, 24-bit) : Real =   0.00107240 | Int =     575738 | RTL Hex = 24'h08C8FA
+  System Clock (F_clk)      : 125.00 MHz [R.101]
+  Samples Per Symbol (sps)  : 4 samples/symbol [R.102]
+  Symbol Rate (R_sym)       : 31.25 MSps [R.103]
+  Default Modulation        : 16-QAM (mod_type = 1) [R.107]
+  Front-End Scale (/2)      : 0.5000 (maps [-2, +2) to [-1, 1 - 2^-11) Q1.11 at input)
+  Preamble Schedule         : A1 (STR) = 70, A2 (CFO) = 40, B (Costas) = 30, C (Quad) = 50 (Total = 190 syms)
 
 ------------------------------------------------------------------------------------------------------------------
-  2. LOCK DETECTOR & QUADRANT THRESHOLDS (True Fixed-Point Stored Integer & Hex)
+  1. VALID SIGNAL, WATCHDOG & FLUSH TIMING SPECIFICATION
+------------------------------------------------------------------------------------------------------------------
+  Hardware Valid Enable     : 1 (STR clock-enabled via ce_str = s_axis_valid_i | flush_active)
+  Idle Watchdog Timeout     : 14 consecutive invalid clocks (triggers FLUSH state)
+  Flush Fill Mode           : repeat (samples fed to STR during FLUSH)
+  Flush Safety Margin       : 4 clock cycles
+  Derived Flush Duration (F): 15 clock cycles
+    Formula : F = sps (4) + lat.str (4) + lat.derot (2) + lat.wrap_out (1) + margin (4) = 15 clocks
+  Downstream Pipeline Action: Free-running on wall clock; soft-reset clears all modules at end of FLUSH (F clocks)
+
+------------------------------------------------------------------------------------------------------------------
+  2. FIXED-POINT PI LOOP FILTER GAINS (Stored Integer & Verilog Hex Literals)
+------------------------------------------------------------------------------------------------------------------
+  STR Loop Filter (str.md | Bn_Ts = 0.010, zeta = 0.707, K_nco = 4.0):
+    STR Kp    (uQ-1.25, 24-bit) : Real =   0.02134582 | Stored Int =     716247 | RTL Hex = 24'h0AEDD7
+    STR Ki    (uQ-7.31, 24-bit) : Real =   0.00028467 | Stored Int =     611321 | RTL Hex = 24'h0953F9
+    STR Saturation Limit   : +-0.0350 (anti-windup saturation)
+
+  Costas Loop Filter (costas.md | 16-QAM | Bn_Ts = 0.025, zeta = 0.707, K_nco = 2*pi):
+    Costas Kp (uQ2.22, 24-bit) : Real =   0.03250861 | Stored Int =     136351 | RTL Hex = 24'h02149F
+    Costas Ki (uQ-5.29, 24-bit) : Real =   0.00108384 | Stored Int =     581881 | RTL Hex = 24'h08E0F9
+    Costas Saturation Limit: +-0.1200 (anti-windup saturation)
+
+------------------------------------------------------------------------------------------------------------------
+  3. LOCK DETECTOR & QUADRANT AMBIGUITY SPECIFICATION
 ------------------------------------------------------------------------------------------------------------------
   STR Lock Detector (str.md | ema_shift = 4, confirm_cnt = 20):
-    str_thr_enter    (sQ4.18, 23-bit) : Real =   0.194313 | Int =      50938 | RTL Hex = 23'h00C6FA
-    str_thr_exit     (sQ4.18, 23-bit) : Real =   0.485786 | Int =     127346 | RTL Hex = 23'h01F172
+    str_thr_enter    (sQ4.18, 23-bit) : Real =   0.194313 | Stored Int =      50938 | RTL Hex = 23'h00C6FA
+    str_thr_exit     (sQ4.18, 23-bit) : Real =   0.485786 | Stored Int =     127346 | RTL Hex = 23'h01F172
 
-  Costas Lock Detector (costas.md | ema_shift = 4, confirm_cnt = 12, sgn_cnt = [-16..+15]):
-    costas_thr_enter (sQ4.18, 23-bit) : Real =   0.055557 | Int =      14564 | RTL Hex = 23'h0038E4
-    costas_thr_exit  (sQ4.18, 23-bit) : Real =   0.083332 | Int =      21845 | RTL Hex = 23'h005555
+  Costas Lock Detector (costas.md | 16-QAM | ema_shift = 4, confirm_cnt = 12):
+    costas_thr_enter (sQ4.18, 23-bit) : Real =   0.055557 | Stored Int =      14564 | RTL Hex = 23'h0038E4
+    costas_thr_exit  (sQ4.18, 23-bit) : Real =   0.083332 | Stored Int =      21845 | RTL Hex = 23'h005555
+  Costas Sign Counters     : 5-bit signed saturating up/down counters in [-16, +15]
 
 ------------------------------------------------------------------------------------------------------------------
-  3. HARDWARE REGISTER & BUS BIT-WIDTHS [Signed, WordLength, FractionLength]
+  4. HARDWARE PIPELINE LATENCIES (Clock Cycles)
 ------------------------------------------------------------------------------------------------------------------
-  Bus Name   | Fixed-Point Spec             | Q-Format   | Subsystem & Hardware Signal Description
-  --------------------------------------------------------------------------------------------------------------
-  in         | [Signed  , WL=12, FL=11] | sQ0.11     | [Top / STR In]       Input I/Q sample port (in_sample_i/q) after wrapper >>1 shift
-  fv         | [Signed  , WL=16, FL=12] | sQ3.12     | [STR Farrow]         Farrow polynomial coefficients v1, v2 (4-tap sum with +3 MSB guard bits)
-  fh         | [Signed  , WL=17, FL=13] | sQ3.13     | [STR Farrow]         Farrow Horner MAC intermediate stage register (v2*mu + v1)
-  str_sym    | [Signed  , WL=16, FL=14] | sQ1.14     | [STR -> Derot/CFO]   Interpolated I/Q symbol output from Farrow filter (m_axis_i/q_sym_o)
-  M          | [Unsigned, WL=24, FL=24] | uQ0.24     | [STR Controller]     Modulo-1 decrementing timing phase counter M and step register W (wraps mod 1)
-  M_s        | [Signed  , WL=25, FL=24] | sQ0.24     | [STR Controller]     Signed 25-bit combinational difference wire (M - W, M - 0.25, M - 0.75)
-  eta        | [Signed  , WL=19, FL=18] | sQ0.18     | [STR Controller]     Distance above strobe boundary (M - 0.25 for cur_strobe, M - 0.75 for mid_strobe)
-  pi_mu      | [Signed  , WL=18, FL=17] | sQ0.17     | [STR Controller]     STR PI loop filter output routed to linear mu multiplier (4*eta - 16*eta*pi)
-  mu         | [Signed  , WL=12, FL=10] | sQ1.10     | [STR Farrow]         10-bit unsigned fractional interpolation interval mu in [0, 1)
-  ted_d      | [Signed  , WL=17, FL=14] | sQ2.14     | [STR Gardner TED]    Symbol difference wire (Re/Im{cur} - Re/Im{prev})
-  ted_e      | [Signed  , WL=25, FL=21] | sQ3.21     | [STR Gardner TED]    Timing error detector output e = mid_I*(cur_I-prev_I) + mid_Q*(cur_Q-prev_Q)
-  str_pi     | [Signed  , WL=26, FL=28] | sQ-3.28    | [STR PI Filter]      STR loop filter integrator register and saturated control output v_pi
-  str_kp     | [Unsigned, WL=24, FL=25] | uQ-1.25    | [STR PI Filter]      STR proportional gain constant Kp
-  str_ki     | [Unsigned, WL=24, FL=31] | uQ-7.31    | [STR PI Filter]      STR integral gain constant Ki
-  cprod      | [Signed  , WL=22, FL=19] | sQ2.19     | [Coarse CFO]         Lag-4 delayed-conjugate product r[n] * conj(r[n-4])
-  cacc       | [Signed  , WL=30, FL=21] | sQ8.21     | [Coarse CFO]         Correlation window complex accumulator (sums N_win - 4 products)
-  cx         | [Signed  , WL=32, FL=22] | sQ9.22     | [Coarse CFO CORDIC]  16-stage vectoring CORDIC X and Y coordinate registers
-  cz         | [Signed  , WL=28, FL=26] | sQ1.26     | [Coarse CFO CORDIC]  16-stage vectoring CORDIC angle accumulator Z and atan LUT (in turns)
-  cfo        | [Signed  , WL=24, FL=24] | sQ-1.24    | [Coarse CFO Out]     Estimated coarse CFO word (m_axis_cfo_o = Z >> 2, in turns/symbol)
-  lut        | [Unsigned, WL=16, FL=16] | uQ0.16     | [Derotator LUT]      Quarter-wave sine LUT entry (4096 x 16-bit unsigned ROM)
-  phase      | [Unsigned, WL=32, FL=32] | uQ0.32     | [Derotator NCO]      32-bit wrapping NCO phase accumulator theta (binary radians / turns)
-  freq_w     | [Signed  , WL=32, FL=32] | sQ-1.32    | [Derotator / Top]    32-bit signed NCO frequency word (coarse_cfo + costas_adj) and fine_cfo_est
-  rot_out    | [Signed  , WL=16, FL=14] | sQ1.14     | [Derotator / Top Out] Derotated I/Q output symbol (out_sym_i/q, Q1.15 before external <<1 shift)
-  cos_a      | [Signed  , WL=16, FL=14] | sQ1.14     | [Costas Slicer]      Hard-decision QPSK / 16-QAM slicer output levels (+-d, +-3d) and 2d threshold
-  cos_e      | [Signed  , WL=22, FL=19] | sQ2.19     | [Costas Phase Det]   Decision-directed phase error e = y_Q * a_I - y_I * a_Q
-  cos_pi     | [Signed  , WL=27, FL=28] | sQ-2.28    | [Costas PI Filter]   Costas loop filter integrator register (int_o) and output (freq_adj_o)
-  cos_kp     | [Unsigned, WL=24, FL=22] | uQ2.22     | [Costas PI Filter]   Costas proportional gain constant Kp
-  cos_ki     | [Unsigned, WL=24, FL=29] | uQ-5.29    | [Costas PI Filter]   Costas integral gain constant Ki
-  sgn_cnt    | [Signed  , WL= 5, FL= 0] | sQ4.0      | [Costas Quad Check]  5-bit signed saturating I/Q slicer sign counters (-16 to +15) in Phase C
-  cnt        | [Unsigned, WL=16, FL= 0] | uQ16.0     | [Wrapper / Control]  16-bit unsigned symbol counter for burst FSM and coarse window timing
-  lock_m     | [Signed  , WL=23, FL=18] | sQ4.18     | [Lock Detectors]     EMA moving-average register m <- m + (|e| - m)*2^-4 for STR and Costas lock
-  lock_b     | [Unsigned, WL= 8, FL= 0] | uQ8.0      | [Lock Detectors]     8-bit unsigned leaky-bucket confirmation counter (+1 good, -2 bad)
+  STR Farrow Interpolator   :  4 cycles (Parabolic Horner MAC pipeline)
+  Gardner TED Pipeline      :  1 cycle
+  STR PI Filter Register    :  1 cycle
+  Coarse CFO CORDIC IP      : 16 cycles (16 vectoring iterations)
+  Derotator (LUT + Mult)    :  2 cycles (1 LUT read + 1 complex mult)
+  Costas PI Filter Register :  1 cycle
+  Top Wrapper Output Stage  :  1 cycle
+  Steady-State Latency      :  7 cycles (lat.str + lat.derot + lat.wrap_out <= 64 [R.106])
+
+------------------------------------------------------------------------------------------------------------------
+  5. HARDWARE REGISTER MAP, BUS WIDTHS & FIXED-POINT FORMATS
+------------------------------------------------------------------------------------------------------------------
+  Register   | Type Spec [S, WL, FL] | Format     | RTL Hardware Function
+  -----------+----------------------+------------+--------------------------------------------------------
+  in         | [Signed  , WL=12, FL=11] | sQ0.11     | [ADC In]         Input I/Q sample (in_sample_i/q) after /2 scale, in [-1, 1 - 2^-11]
+  fv         | [Signed  , WL=16, FL=12] | sQ3.12     | [STR Farrow]     Parabolic Farrow polynomial coeffs v1, v2
+  fh         | [Signed  , WL=17, FL=13] | sQ3.13     | [STR Farrow]     Parabolic Farrow Horner MAC intermediate stage
+  str_sym    | [Signed  , WL=16, FL=14] | sQ1.14     | [STR Sym Out]    Interpolated I/Q symbol (m_axis_i/q_sym_o)
+  M          | [Unsigned, WL=24, FL=24] | uQ0.24     | [STR Controller] Modulo-1 phase counter M and step register W
+  M_s        | [Signed  , WL=25, FL=24] | sQ0.24     | [STR Controller] Signed 25-bit Modulo-1 difference wire
+  eta        | [Signed  , WL=19, FL=18] | sQ0.18     | [STR Controller] Distance above strobe boundary (M - 0.25 / M - 0.75)
+  pi_mu      | [Signed  , WL=18, FL=17] | sQ0.17     | [STR Controller] Loop filter output feeding linear mu multiplier
+  mu         | [Signed  , WL=12, FL=10] | sQ1.10     | [STR Farrow]     10-bit unsigned fractional interval mu in [0, 1)
+  ted_d      | [Signed  , WL=17, FL=14] | sQ2.14     | [STR TED]        Symbol difference wire (cur - prev)
+  ted_e      | [Signed  , WL=25, FL=21] | sQ3.21     | [STR TED]        Gardner TED error output e = mid_I*d_I + mid_Q*d_Q
+  str_pi     | [Signed  , WL=26, FL=28] | sQ-3.28    | [STR PI Filter]  STR loop filter integrator and output (saturating)
+  str_kp     | [Unsigned, WL=24, FL=25] | uQ-1.25    | [STR PI Filter]  STR proportional loop gain Kp
+  str_ki     | [Unsigned, WL=24, FL=31] | uQ-7.31    | [STR PI Filter]  STR integral loop gain Ki
+  cprod      | [Signed  , WL=22, FL=19] | sQ2.19     | [Coarse CFO]     Lag-4 conjugate product r[n] * conj(r[n-4])
+  cacc       | [Signed  , WL=30, FL=21] | sQ8.21     | [Coarse CFO]     Correlation window complex accumulator (32 symbols)
+  cx         | [Signed  , WL=32, FL=22] | sQ9.22     | [Coarse CORDIC]  16-stage vectoring CORDIC X, Y coordinates
+  cz         | [Signed  , WL=28, FL=26] | sQ1.26     | [Coarse CORDIC]  16-stage CORDIC angle accumulator Z (turns)
+  cfo        | [Signed  , WL=24, FL=24] | sQ-1.24    | [Coarse CFO Out] Estimated coarse frequency word (turns/symbol)
+  lut        | [Unsigned, WL=16, FL=16] | uQ0.16     | [Derotator LUT]  Quarter-wave sine LUT entry (4096 x 16-bit)
+  phase      | [Unsigned, WL=32, FL=32] | uQ0.32     | [Derotator NCO]  32-bit wrapping NCO phase accumulator theta (turns)
+  freq_w     | [Signed  , WL=32, FL=32] | sQ-1.32    | [Derotator NCO]  32-bit signed NCO frequency word (turns/symbol)
+  rot_out    | [Signed  , WL=16, FL=14] | sQ1.14     | [Derotator Out]  Derotated I/Q symbol before external *2 scale
+  cos_a      | [Signed  , WL=16, FL=14] | sQ1.14     | [Costas Slicer]  Hard-decision slicer levels (+-d, +-3d)
+  cos_e      | [Signed  , WL=22, FL=19] | sQ2.19     | [Costas Phase]   Decision-directed phase error e = y_Q*a_I - y_I*a_Q
+  cos_pi     | [Signed  , WL=27, FL=28] | sQ-2.28    | [Costas PI]      Costas loop filter integrator and output (saturating)
+  cos_kp     | [Unsigned, WL=24, FL=22] | uQ2.22     | [Costas PI]      Costas proportional loop gain Kp
+  cos_ki     | [Unsigned, WL=24, FL=29] | uQ-5.29    | [Costas PI]      Costas integral loop gain Ki
+  sgn_cnt    | [Signed  , WL= 5, FL= 0] | sQ4.0      | [Costas Quad]    5-bit signed saturating quadrant counters (-16..+15)
+  cnt        | [Unsigned, WL=16, FL= 0] | uQ16.0     | [Wrapper]        16-bit unsigned symbol counter
+  lock_m     | [Signed  , WL=23, FL=18] | sQ4.18     | [Lock Detectors] EMA moving-average register for lock detection
+  lock_b     | [Unsigned, WL= 8, FL= 0] | uQ8.0      | [Lock Detectors] Leaky-bucket confirmation counter
 ==================================================================================================================

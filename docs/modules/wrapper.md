@@ -121,29 +121,39 @@ Block-level registers are listed in the module documents.
 
 ## 4. FSM
 
-The burst FSM (`burst_fsm.m`) controls the Costas mode and the coarse start. It advances once per STR symbol.
-It does not control the STR, which always runs.
+The burst FSM (`step_wrapper_fsm.m`) controls the Costas mode, coarse CFO estimator activation, and burst lifetime.
+It advances on valid symbol strobes from the STR, while an always-on (wall-clock) idle watchdog monitors `in_sample_valid` to detect inter-burst gaps and trigger a draining `Flush` cycle.
 
-| State       | Meaning                                           | Costas mode |
-| ----------- | ------------------------------------------------- | ----------- |
-| `WaitBurst` | Idle, waiting for valid samples                   | HOLD        |
-| `Acquire`   | STR settling                                      | HOLD        |
-| `CoarseEst` | Collecting `win_len` symbols for the estimator    | HOLD        |
-| `Load`      | Coarse word sent to the derotator (one symbol)    | HOLD        |
-| `CostasAcq` | Decision-directed loop running, waiting to settle | ACQ         |
-| `Track`     | Normal operation                                  | TRACK       |
+| State       | State ID | Meaning                                           | Costas mode | Timeout / Duration                               |
+| ----------- | -------- | ------------------------------------------------- | ----------- | ------------------------------------------------ |
+| `WaitBurst` | 0        | Idle, waiting for first valid input sample        | HOLD        | Indefinite until `in_sample_valid == 1`          |
+| `Acquire`   | 1        | STR settling during Phase A of preamble           | HOLD        | `max_acq` symbols (default ~92-100 symbols)      |
+| `CoarseEst` | 2        | Collecting `win_len` symbols for coarse CFO       | HOLD        | `coarse.win_len` = 64 symbols                    |
+| `Load`      | 3        | Coarse word loaded into derotator frequency reg   | HOLD        | 1 symbol                                         |
+| `CostasAcq` | 4        | Costas acquisition & quadrant resolve (Phase B/C) | ACQ         | Up to `N_preamble` (default 180 symbols total)   |
+| `Track`     | 5        | Decision-directed tracking across payload         | TRACK       | Active until burst ends / gap detected           |
+| `Flush`     | 6        | Draining in-flight pipeline samples after gap     | HOLD        | $F = 15$ clock cycles (`cfg.valid.flush_clocks`)  |
 
-| From        | To          | Condition                                                                                                 |
-| ----------- | ----------- | --------------------------------------------------------------------------------------------------------- |
-| `WaitBurst` | `Acquire`   | Valid input                                                                                               |
-| `Acquire`   | `CoarseEst` | STR locked, or symbol count >= `max_acq`; or, if `fixed_start_sym` > 0, symbol count >= `fixed_start_sym` |
-| `CoarseEst` | `Load`      | coarse estimator reported it's value                                                                      |
-| `Load`      | `CostasAcq` | Next symbol                                                                                               |
-| `CostasAcq` | `Track`     | Symbol count >= `N_preamble`. `quad_unresolved` is set if no phase correction was sent by then.           |
-| any         | `WaitBurst` | after a reset signal is asserted                                                                          |
+| From                    | To          | Condition / Trigger                                                      | Timeout Value / Boundary                              |
+| ----------------------- | ----------- | ------------------------------------------------------------------------ | ----------------------------------------------------- |
+| `WaitBurst`             | `Acquire`   | First sample with `in_sample_valid == 1`                                 | —                                                     |
+| `Acquire`               | `CoarseEst` | `str_lock == 1` OR `symbol_count >= max_acq`                             | `max_acq = max(N_A + N_B - win_len - 4, 20)` symbols |
+| `CoarseEst`             | `Load`      | Coarse estimator done (`coarse_valid == 1`)                              | `win_len = 64` symbols                                |
+| `Load`                  | `CostasAcq` | Next symbol valid strobe                                                 | 1 symbol                                              |
+| `CostasAcq`             | `Track`     | `symbol_count >= N_preamble`                                             | `N_preamble` = 180 symbols (or `N_A + N_B + N_C`)     |
+| Active (1-5)            | `Flush`     | Idle watchdog: consecutive invalid clocks `idle_count >= idle_timeout`   | `idle_timeout` = 14 clock cycles                      |
+| `Flush`                 | `WaitBurst` | Draining counter `flush_count >= flush_clocks` (asserts `flush_rst = 1`) | `flush_clocks` = 15 clock cycles                      |
+| any                     | `WaitBurst` | Hardware active-low reset `rst_n == 0` asserted                          | Immediate (asynchronous / synchronous reset)          |
 
 `max_acq = max(N_A + N_B - win_len - 4, 20)`. Reset state: `WaitBurst`. Illegal encodings return to `WaitBurst`.
-Typical durations: TBD (from the schedule sweep).
+
+### Idle Watchdog and Pipeline Drain (`Flush`)
+1. **Always-On Watchdog:** Counts consecutive clock cycles with `in_sample_valid == 0` during active-burst states (1 through 5). Any valid sample resets the count to 0. Shorter gaps (< 14 clocks) simply freeze the STR without resetting receiver state.
+2. **Flush Drain ($F$ Clocks):** When `idle_count == idle_timeout`, the FSM enters `Flush`. For $F = \text{sps} + \text{lat.str} + \text{lat.derot} + \text{lat.wrap\_out} + \text{flush\_margin} = 4 + 4 + 2 + 1 + 4 = 15$ clocks:
+   - `flush_active` is asserted to keep `ce_str = 1` and clock downstream blocks.
+   - The STR input is fed the last accepted sample (or zero, per `flush_fill`).
+   - All in-flight symbols drain out of the STR, derotator, Costas, and wrapper output registers.
+3. **Soft Reset:** Upon reaching $F$ clocks, the wrapper pulses `flush_rst = 1` for 1 clock cycle, returning all loop integrators, NCO phase words, lock detectors, and FSM counters to initial reset state, and enters `WaitBurst` armed for the next burst.
 
 ## 5. Configuration constants
 

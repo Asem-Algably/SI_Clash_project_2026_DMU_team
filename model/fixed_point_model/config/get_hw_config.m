@@ -210,7 +210,8 @@ function cfg = get_hw_config()
     cfg.enc.fsm.LOAD       = 3;
     cfg.enc.fsm.COSTAS_ACQ = 4;
     cfg.enc.fsm.TRACK      = 5;
-    cfg.enc.fsm_names      = ["WAIT_BURST", "ACQUIRE", "COARSE_EST", "LOAD", "COSTAS_ACQ", "TRACK"];
+    cfg.enc.fsm.FLUSH      = 6;
+    cfg.enc.fsm_names      = ["WAIT_BURST", "ACQUIRE", "COARSE_EST", "LOAD", "COSTAS_ACQ", "TRACK", "FLUSH"];
 
     cfg.enc.mode.HOLD      = 0;
     cfg.enc.mode.ACQ       = 1;
@@ -218,6 +219,17 @@ function cfg = get_hw_config()
 
     cfg.enc.mod.QPSK       = 0;
     cfg.enc.mod.QAM16      = 1;
+
+    % =====================================================================
+    % 11. VALID SIGNAL, WATCHDOG & FLUSH HANDLING SPECIFICATION
+    % =====================================================================
+    cfg.valid.enable           = true;       % Hardware valid-handling & STR clock enable
+    cfg.valid.idle_timeout     = 14;         % Consecutive invalid sample clocks to trigger FLUSH
+    cfg.valid.flush_fill       = 'repeat';   % Pad sample fill mode: 'repeat' (default) or 'zero'
+    cfg.valid.flush_margin     = 4;          % Safety margin clocks added to flush duration F
+    cfg.valid.drop_pad_symbols = false;      % Drain shuts down via soft-reset before pad reaches output
+    % Derived F: worst-case wait for next strobe (sps) + STR latency + derotator + wrap_out + margin
+    cfg.valid.flush_clocks     = cfg.sps + cfg.lat.str + cfg.lat.derot + cfg.lat.wrap_out + cfg.valid.flush_margin; % 15 clocks
 end
 
 % --- Helper Functions ---
