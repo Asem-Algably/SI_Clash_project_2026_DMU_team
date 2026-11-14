@@ -63,11 +63,11 @@ the derotator output.
 
 **Start-up sequence.**
 
-1. The STR runs from the first sample. The wrapper waits for `str_lock` (or a symbol count).
-2. The wrapper starts the coarse estimator (`start_i`). After about 64 symbols it sends its word once to the derotator.
-3. The wrapper puts the Costas loop in ACQ mode. It sends frequency corrections to the derotator every symbol.
-4. Once its internal lock is high, the Costas loop counts the slicer signs in two 5-bit counters. When one counter is full, it sends the initial phase correction once to the derotator.
-5. At the end of the preamble the wrapper pulses `preamble_end` to the Costas loop. If no counter is full yet, the Costas loop evaluates the quadrant at once from the current signs and sends the correction, without waiting. The wrapper then switches to TRACK. After the correction the public Costas lock can be declared.
+1. The STR runs from the first sample. The wrapper waits for `str_lock` (or timeout at 70 symbols).
+2. The wrapper starts the coarse estimator (`start_i`). It correlates over 32 symbols and evaluates angle in 16 cycles (budget: 40 symbols), then sends its word once to the derotator.
+3. The wrapper transitions through `Load` (1 symbol) and puts the Costas loop in ACQ mode (Phase B, 30 symbols). It sends frequency corrections to the derotator every symbol.
+4. In Phase C (50 symbols), once its internal lock is high, the Costas loop counts the slicer signs in two 5-bit counters. When one counter is full, it sends the initial phase correction once to the derotator.
+5. At the end of the preamble (symbol 190) the wrapper pulses `preamble_end` to the Costas loop. If no counter is full yet, the Costas loop evaluates the quadrant at once from the current signs and sends the correction, without waiting. The wrapper then switches to TRACK. After the correction the public Costas lock can be declared.
 
 ```mermaid
 sequenceDiagram
@@ -93,15 +93,16 @@ sequenceDiagram
   K->>W: public lock after the correction
 ```
 
-**Preamble (model, `q4q2_q1`).** Unit amplitude `d` (1 for peak norm, 1/sqrt(2) for rms norm). Q3 (-1-1j) is never sent.
+**Preamble (190 symbols total).** Unit amplitude `d` (1 for peak norm, 1/sqrt(2) for rms norm).
 
-| Phase | Length (default) | Content                              | Purpose                                          |
-| ----- | ---------------- | ------------------------------------ | ------------------------------------------------ |
-| A     | 100              | `d(1-j)(-1)^n`: alternates Q4 and Q2 | STR settling, coarse CFO (period 2)              |
-| B     | 60               | same pattern                         | Margin; the Costas settles after the coarse load |
-| C     | 20               | repeat `[Q2, Q4, Q1, Q4]`            | Quadrant reference: Q3 is empty                  |
+| Phase | State | Length (symbols) | Cumulative | Content | Purpose |
+| ----- | ----- | ---------------- | ---------- | ------- | ------- |
+| **A1** | `Acquire` | **70** | 70 | `d(1-j)(-1)^n`: alternates Q4 and Q2 | STR timing acquisition & lock |
+| **A2** | `CoarseEst` | **40** | 110 | `d(1-j)(-1)^n`: alternates Q4 and Q2 | Coarse CFO lag-4 correlation (32 syms) + CORDIC (16 cycles) |
+| **B** | `CostasAcq` (Pull-in) | **30** | 140 | `d(1-j)(-1)^n`: alternates Q4 and Q2 | Costas carrier phase pull-in & fine frequency tracking |
+| **C** | `CostasAcq` (Ambiguity) | **50** | 190 | repeat `[Q1, Q2, Q1, Q4]` | Quadrant ambiguity resolution via 5-bit sign counters |
 
-The default total is 180 symbols. The schedule is ours to define (see section 7, R.122).
+The total preamble length is strictly **190 symbols**.
 
 **Quadrant check (ambiguity resolution).** The decision-directed loop locks to one of four angles. The check runs inside the Costas loop
 (`costas.md`, section 3): two 5-bit counters of the slicer signs, filled while the loop is locked, point to Q1 after a correct lock, and to `Q(1 + k)` when the
@@ -121,48 +122,42 @@ Block-level registers are listed in the module documents.
 
 ## 4. FSM
 
-The burst FSM (`step_wrapper_fsm.m`) controls the Costas mode, coarse CFO estimator activation, and burst lifetime.
-It advances on valid symbol strobes from the STR, while an always-on (wall-clock) idle watchdog monitors `in_sample_valid` to detect inter-burst gaps and trigger a draining `Flush` cycle.
+The burst FSM (`step_wrapper_fsm.m`) controls the Costas mode and the coarse CFO start trigger. It advances once per STR symbol.
+It does not control the STR, which always runs.
 
-| State       | State ID | Meaning                                           | Costas mode | Timeout / Duration                               |
-| ----------- | -------- | ------------------------------------------------- | ----------- | ------------------------------------------------ |
-| `WaitBurst` | 0        | Idle, waiting for first valid input sample        | HOLD        | Indefinite until `in_sample_valid == 1`          |
-| `Acquire`   | 1        | STR settling during Phase A of preamble           | HOLD        | `max_acq` symbols (default ~92-100 symbols)      |
-| `CoarseEst` | 2        | Collecting `win_len` symbols for coarse CFO       | HOLD        | `coarse.win_len` = 64 symbols                    |
-| `Load`      | 3        | Coarse word loaded into derotator frequency reg   | HOLD        | 1 symbol                                         |
-| `CostasAcq` | 4        | Costas acquisition & quadrant resolve (Phase B/C) | ACQ         | Up to `N_preamble` (default 180 symbols total)   |
-| `Track`     | 5        | Decision-directed tracking across payload         | TRACK       | Active until burst ends / gap detected           |
-| `Flush`     | 6        | Draining in-flight pipeline samples after gap     | HOLD        | $F = 15$ clock cycles (`cfg.valid.flush_clocks`)  |
+| State       | Meaning                                                      | Costas mode | Preamble Phase | Duration / Timeout Budget |
+| ----------- | ------------------------------------------------------------ | ----------- | -------------- | ------------------------- |
+| `WaitBurst` | Idle, waiting for valid samples                              | HOLD        | —              | Unlimited (until valid)   |
+| `Acquire`   | STR timing recovery & lock settling                          | HOLD        | Phase A1       | 70 symbols (max timeout)  |
+| `CoarseEst` | Coarse CFO lag-4 correlation (32 syms) + CORDIC IP (16 cyc)  | HOLD        | Phase A2       | 40 symbols (max timeout)  |
+| `Load`      | Coarse word loaded into derotator                            | HOLD        | Transition     | 1 symbol                  |
+| `CostasAcq` | Costas carrier pull-in (Phase B) & quadrant check (Phase C)  | ACQ         | Phase B + C    | 80 symbols (30 + 50)      |
+| `Track`     | Steady-state payload tracking                                | TRACK       | Payload        | Until burst completion    |
 
-| From                    | To          | Condition / Trigger                                                      | Timeout Value / Boundary                              |
-| ----------------------- | ----------- | ------------------------------------------------------------------------ | ----------------------------------------------------- |
-| `WaitBurst`             | `Acquire`   | First sample with `in_sample_valid == 1`                                 | —                                                     |
-| `Acquire`               | `CoarseEst` | `str_lock == 1` OR `symbol_count >= max_acq`                             | `max_acq = max(N_A + N_B - win_len - 4, 20)` symbols |
-| `CoarseEst`             | `Load`      | Coarse estimator done (`coarse_valid == 1`)                              | `win_len = 64` symbols                                |
-| `Load`                  | `CostasAcq` | Next symbol valid strobe                                                 | 1 symbol                                              |
-| `CostasAcq`             | `Track`     | `symbol_count >= N_preamble`                                             | `N_preamble` = 180 symbols (or `N_A + N_B + N_C`)     |
-| Active (1-5)            | `Flush`     | Idle watchdog: consecutive invalid clocks `idle_count >= idle_timeout`   | `idle_timeout` = 14 clock cycles                      |
-| `Flush`                 | `WaitBurst` | Draining counter `flush_count >= flush_clocks` (asserts `flush_rst = 1`) | `flush_clocks` = 15 clock cycles                      |
-| any                     | `WaitBurst` | Hardware active-low reset `rst_n == 0` asserted                          | Immediate (asynchronous / synchronous reset)          |
+| From        | To          | Trigger (Normal Transition)                                   | Timeout Value (Preamble State Length)                          | Transition Logic & Actions                                                                                                  |
+| ----------- | ----------- | ------------------------------------------------------------- | -------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| `WaitBurst` | `Acquire`   | `in_sample_valid` asserted                                    | N/A (waits for burst start)                                    | `in_sample_valid == 1`                                                                                                      |
+| `Acquire`   | `CoarseEst` | `str_lock` asserted                                           | **70 symbols** (Phase A1 budget)                               | `str_lock \|\| (sym_cnt >= 70)`. Pulses `coarse_start = 1` to begin lag-4 correlation.                                      |
+| `CoarseEst` | `Load`      | `coarse_valid` asserted (32-sym correlation + 16-cyc CORDIC)  | **40 symbols** (Phase A2 budget, timeout at symbol 110)        | `coarse_valid \|\| (sym_cnt >= 110)`. Latches `coarse_word` into derotator frequency register.                              |
+| `Load`      | `CostasAcq` | Next symbol strobe (`str_valid`)                              | **1 symbol**                                                   | Next STR symbol strobe. Transitions to `CostasAcq` and activates Costas in `ACQ` mode.                                      |
+| `CostasAcq` | `Track`     | Preamble complete (`sym_cnt >= N_preamble`)                   | **80 symbols** (Phase B: 30 syms + Phase C: 50 syms; sym 190)  | `sym_cnt >= N_preamble` (190). Pulses `preamble_end_i = 1` to force quadrant ambiguity evaluation, sets Costas to `TRACK`.  |
+| `any`       | `WaitBurst` | `!rst_n` asserted                                             | N/A                                                            | `rst_n == 0` (active-low asynchronous reset).                                                                               |
 
-`max_acq = max(N_A + N_B - win_len - 4, 20)`. Reset state: `WaitBurst`. Illegal encodings return to `WaitBurst`.
-
-### Idle Watchdog and Pipeline Drain (`Flush`)
-1. **Always-On Watchdog:** Counts consecutive clock cycles with `in_sample_valid == 0` during active-burst states (1 through 5). Any valid sample resets the count to 0. Shorter gaps (< 14 clocks) simply freeze the STR without resetting receiver state.
-2. **Flush Drain ($F$ Clocks):** When `idle_count == idle_timeout`, the FSM enters `Flush`. For $F = \text{sps} + \text{lat.str} + \text{lat.derot} + \text{lat.wrap\_out} + \text{flush\_margin} = 4 + 4 + 2 + 1 + 4 = 15$ clocks:
-   - `flush_active` is asserted to keep `ce_str = 1` and clock downstream blocks.
-   - The STR input is fed the last accepted sample (or zero, per `flush_fill`).
-   - All in-flight symbols drain out of the STR, derotator, Costas, and wrapper output registers.
-3. **Soft Reset:** Upon reaching $F$ clocks, the wrapper pulses `flush_rst = 1` for 1 clock cycle, returning all loop integrators, NCO phase words, lock detectors, and FSM counters to initial reset state, and enters `WaitBurst` armed for the next burst.
+Reset state: `WaitBurst`. Illegal encodings return to `WaitBurst`.
 
 ## 5. Configuration constants
 
-| Constant            | Value                                    | Source                                      |
-| ------------------- | ---------------------------------------- | ------------------------------------------- |
-| `N_A`, `N_B`, `N_C` | 100, 60, 20(180total)                    | `get_default_config.m`; schedule still open |
-| `coarse.win_len`    | 64                                       | `get_default_config.m`                      |
-| `norm_mode`         | peak (interim); rms is switchable        | `get_default_config.m`                      |
-| `snr_def`           | `esn0` (interim); `sample` is switchable | `get_default_config.m`                      |
+| Constant                      | Value                                    | Source                                      |
+| ----------------------------- | ---------------------------------------- | ------------------------------------------- |
+| `N_A1` (STR Acquire)          | 70 symbols                               | `get_hw_config.m`                           |
+| `N_A2` / `N_cfo` (Coarse CFO) | 40 symbols                               | `get_hw_config.m`                           |
+| `N_B` (Costas Pull-in)        | 30 symbols                               | `get_hw_config.m`                           |
+| `N_C` (Quadrant Resolution)   | 50 symbols                               | `get_hw_config.m`                           |
+| `N_preamble`                  | 190 symbols (70 + 40 + 30 + 50)          | `get_hw_config.m`                           |
+| `coarse.win_len`              | 32 symbols (Lag = 4)                     | `get_hw_config.m`                           |
+| `coarse.cordic_iter`          | 16 stages (16 clock cycles)              | `cordic_angle.sv` / `get_hw_config.m`       |
+| `norm_mode`                   | peak (hardcoded $\pm 1$ QPSK, $\pm 1/3, \pm 1$ 16-QAM) | `get_hw_config.m`    |
+| `snr_def`                     | `sample` / `esn0`                        | `get_hw_config.m`                           |
 
 ## 6. Verification plan
 

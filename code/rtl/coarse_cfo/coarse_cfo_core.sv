@@ -1,9 +1,11 @@
 ////////////////////////////////////////////////////////////////////////////////
-// Author: Hadeer Ghoneim
-// Design: A coarse_cfo_core module.
-// Date: 9-11-2026
-// Description: Coarse CFO estimator, lag D = 4, window 32 symbols.
-//              Computes R = sum(r[n] * conj(r[n-4])), then angle(R) >> 2.
+// Author:         Hadeer Ghoneim
+// Design:         A coarse_cfo_core module.
+// Date:           9-11-2026
+// Description:    Coarse CFO estimator, lag D = 4, window 32 symbols.
+//                 Computes R = sum(r[n] * conj(r[n-4])), then angle(R) >> 2.
+// Project Name:   Real-Time All-Digital Carrier & Timing Synchronization Unit
+// Organization:   Electronics Research Institute (ERI) - SI_CLASH Challenge
 ////////////////////////////////////////////////////////////////////////////////
 
 module coarse_cfo_core #(

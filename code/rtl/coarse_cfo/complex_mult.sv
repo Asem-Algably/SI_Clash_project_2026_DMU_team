@@ -1,8 +1,10 @@
 ////////////////////////////////////////////////////////////////////////////////
-// Author: Hadeer Ghoneim
-// Design: A complex multiplier module.
-// Date: 6-11-2026
-// Description: Multiply each number to its conjugate for the coarse CFO estimator.
+// Author:         Hadeer Ghoneim
+// Design:         A complex multiplier module.
+// Date:           6-11-2026
+// Description:    Multiply each number to its conjugate for the coarse CFO estimator.
+// Project Name:   Real-Time All-Digital Carrier & Timing Synchronization Unit
+// Organization:   Electronics Research Institute (ERI) - SI_CLASH Challenge
 ////////////////////////////////////////////////////////////////////////////////
 
 module complex_mult #(
@@ -13,6 +15,7 @@ module complex_mult #(
   input  logic signed [InWidth-1:0]  a_im_i,  // Imag part of A
   input  logic signed [InWidth-1:0]  b_re_i,  // Real part of B
   input  logic signed [InWidth-1:0]  b_im_i,  // Imag part of B
+  
   output logic signed [OutWidth-1:0] p_re_o,  // Real part of A*B
   output logic signed [OutWidth-1:0] p_im_o   // Imag part of A*B
 );
@@ -34,5 +37,12 @@ module complex_mult #(
 
   assign p_im_o = {{(OutWidth-2*InWidth){prod_ri[2*InWidth-1]}}, prod_ri} +
                   {{(OutWidth-2*InWidth){prod_ir[2*InWidth-1]}}, prod_ir};
+  
+  // Real Part Calculation: (Real * Real) - (Imag * Imag)
+  // To prevent overflow during subtraction, both 32-bit products are 
+  // sign-extended to 33 bits (OutWidth) BEFORE the subtraction.
+  // 33-(2*16) = 1 : Sign Extend from product by replicating its MSB to the sign bit
+  // sign bit merged with the product output which has width of (2*16)-1 = 31
+  // one more bit for overflow
 
 endmodule 

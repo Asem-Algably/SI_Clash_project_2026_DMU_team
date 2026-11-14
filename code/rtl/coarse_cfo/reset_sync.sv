@@ -1,8 +1,10 @@
 ////////////////////////////////////////////////////////////////////////////////
-// Author: Hadeer Ghoneim
-// Design: A reset_sync module.
-// Date: 6-11-2026
-// Description: reset for top module.
+// Author:         Hadeer Ghoneim
+// Design:         A reset_sync module.
+// Date:           6-11-2026
+// Description:    reset for top module.
+// Project Name:   Real-Time All-Digital Carrier & Timing Synchronization Unit
+// Organization:   Electronics Research Institute (ERI) - SI_CLASH Challenge
 ////////////////////////////////////////////////////////////////////////////////
 
 
