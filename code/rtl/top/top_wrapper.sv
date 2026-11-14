@@ -19,7 +19,7 @@ module top_wrapper #(
     parameter int PREAMBLE_N_A     = 70,   // Phase A1 STR acquire budget
     parameter int PREAMBLE_TOTAL   = 190,  // Total preamble budget
     parameter int IDLE_TIMEOUT     = 14,   // Consecutive invalid clocks before FLUSH
-    parameter int FLUSH_CLOCKS     = 15    // Pipeline drain duration F
+    parameter int FLUSH_CLOCKS     = 16    // Pipeline drain duration F
 )(
     input  logic                                clk_i,
     input  logic                                rst_ni,

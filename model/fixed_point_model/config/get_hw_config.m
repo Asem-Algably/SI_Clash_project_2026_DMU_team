@@ -45,8 +45,8 @@ function cfg = get_hw_config()
     cfg.lat.str_pi       = 1;                % STR PI filter registered accumulator
     cfg.lat.str          = cfg.lat.farrow;   % STR module strobe alignment latency
     cfg.lat.coarse       = 16;               % 16-stage vectoring CORDIC IP latency
-    cfg.lat.derot        = 2;                % 1 LUT read cycle + 1 complex multiplier cycle
-    cfg.lat.costas       = 1;                % Costas PI filter registered accumulator
+    cfg.lat.derot        = 3;                % 1 LUT read cycle + 2 complex multiplier pipeline cycles
+    cfg.lat.costas       = 5;                % Costas loop feedback delay (2 detector + 3 PI filter)
     cfg.lat.wrap_out     = 1;                % Top wrapper output register stage
     cfg.lat.top_total    = cfg.lat.str + cfg.lat.derot + cfg.lat.wrap_out;
 
@@ -229,7 +229,7 @@ function cfg = get_hw_config()
     cfg.valid.flush_margin     = 4;          % Safety margin clocks added to flush duration F
     cfg.valid.drop_pad_symbols = false;      % Drain shuts down via soft-reset before pad reaches output
     % Derived F: worst-case wait for next strobe (sps) + STR latency + derotator + wrap_out + margin
-    cfg.valid.flush_clocks     = cfg.sps + cfg.lat.str + cfg.lat.derot + cfg.lat.wrap_out + cfg.valid.flush_margin; % 15 clocks
+    cfg.valid.flush_clocks     = cfg.sps + cfg.lat.str + cfg.lat.derot + cfg.lat.wrap_out + cfg.valid.flush_margin; % 16 clocks
 end
 
 % --- Helper Functions ---

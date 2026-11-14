@@ -25,9 +25,9 @@ module top (
     // Parameters
     localparam int MU_WIDTH = 10;
     localparam int EMA_SHIFT = 4;
-    localparam logic [31:0] LOCK_THR_ENTER = 32'h0010_0000;
-    localparam logic [31:0] LOCK_THR_EXIT  = 32'h0020_0000;
-    localparam int LOCK_CONFIRM_CNT = 16;
+    localparam logic [31:0] LOCK_THR_ENTER = 32'h0637_D000; // 0.194313 in Q3.29
+    localparam logic [31:0] LOCK_THR_EXIT  = 32'h0F8B_9000; // 0.485786 in Q3.29
+    localparam int LOCK_CONFIRM_CNT = 20;
 
     // Signals
     logic [MU_WIDTH-1:0]  mu;

@@ -19,7 +19,7 @@ module burst_ctrl #(
   parameter int unsigned NA2          = 40,
   parameter int unsigned NPreamble    = 190,
   parameter int unsigned IDLE_TIMEOUT = 14,  // Consecutive invalid clocks to trigger Flush
-  parameter int unsigned FLUSH_CLOCKS = 15,  // Pipeline drain clocks F
+  parameter int unsigned FLUSH_CLOCKS = 16,  // Pipeline drain clocks F
 
   // Costas mode encoding (must match costas_top.sv)
   parameter logic [1:0]  CostasHold  = 2'b00,

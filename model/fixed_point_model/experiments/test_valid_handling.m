@@ -155,15 +155,17 @@ function test_valid_handling()
         [rx_k13, val_k13] = inject_gaps(rx_s_16, pcfg_k13);
         res_sw = run_sim_instance(rx_k13, val_k13, cfg_sw, tx_p_16);
 
-        % If timeout <= 13, it will prematurely trigger FLUSH on the 13-clock stall!
-        premature_flush = any(res_sw.rx_out.cycle_log.fsm_state == cfg.enc.fsm.FLUSH);
+        % Mid-burst clocks (excluding trailing idle tail)
+        n_burst_clks = 4 + numel(rx_k13);
+        premature_flush = any(res_sw.rx_out.cycle_log.fsm_state(1:n_burst_clks) == cfg.enc.fsm.FLUSH);
         if ~premature_flush && (double(res_sw.metrics.ser) == 0)
             if isnan(min_pass_timeout)
                 min_pass_timeout = to_val;
             end
-            status_str = 'PASS';
+            status_str = sprintf('PASS (Mid-burst Flush = 0, SER = %.4f)', double(res_sw.metrics.ser));
         else
-            status_str = 'TRIGGERED_FLUSH (Too small for K=13)';
+            status_str = sprintf('TRIGGERED_FLUSH (Mid-burst Flush = %d, SER = %.4f, Too small for K=13)', ...
+                premature_flush, double(res_sw.metrics.ser));
         end
         fprintf('  idle_timeout = %2d -> %s\n', to_val, status_str);
     end

@@ -51,10 +51,12 @@ module gardner_ted_estimator (
 
   // -------------------------------------------------------------------------
   // 2. Sequential Logic (Pipeline for Timing Closure)
-  // Delays the valid signal by 2 cycles to match the math latency.
+  // Delays the valid signal to match register update and math latency.
   // Uses Non-Blocking Assignments (<=) to avoid race conditions.
   // -------------------------------------------------------------------------
   logic valid_q; // Register to hold the delayed valid signal
+  logic signed [32:0] error_scaled;
+  assign error_scaled = (error_sum + 34'sd1) >>> 1; // Align from Q4.30 to sQ3.29
 
   always_ff @(posedge clk_i or negedge rst_ni) begin
     if (!rst_ni) begin
@@ -62,13 +64,12 @@ module gardner_ted_estimator (
       error_o       <= '0; // Reset: clear output error
       error_valid_o <= '0; // Reset: clear output valid
     end else if (ce_i) begin
-      valid_q       <= valid_i;    // Delay valid_i by 1 cycle 
-      error_valid_o <= valid_q;    // Delay valid_q by another cycle (Total 2 cycles delay)
+      valid_q       <= valid_i;    // Delay valid_i by 1 cycle to align with sample registers
+      error_valid_o <= valid_q;    // Assert error valid when error_o is registered
       
-      // Only capture the error_sum when the delayed valid signal is high
-      // This prevents the output from updating when there's no new data.
+      // Capture the scaled error when valid_q is high
       if (valid_q) begin
-        error_o <= error_sum[31:0]; // Truncate 34-bit sum to 32-bit output
+        error_o <= error_scaled[31:0]; // 32-bit sQ3.29 signed error
       end
     end
   end

@@ -357,11 +357,21 @@ module sync_system_top #(
   );
 
   // -------------------------------------------------------------------------
-  // Top-level outputs
+  // Top-level outputs (1-cycle registered output stage: wrap_out = 1)
   // -------------------------------------------------------------------------
-  assign out_sym_i     = derot_sym_i;
-  assign out_sym_q     = derot_sym_q;
-  assign out_sym_valid = derot_valid;
+  always_ff @(posedge clk or negedge rst_n_eff) begin
+    if (!rst_n_eff) begin
+      out_sym_valid <= 1'b0;
+      out_sym_i     <= '0;
+      out_sym_q     <= '0;
+    end else begin
+      out_sym_valid <= derot_valid;
+      if (derot_valid) begin
+        out_sym_i   <= derot_sym_i;
+        out_sym_q   <= derot_sym_q;
+      end
+    end
+  end
 
   assign coarse_cfo_est = coarse_est;
 

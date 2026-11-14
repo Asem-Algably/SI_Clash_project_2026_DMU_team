@@ -16,8 +16,8 @@
   Idle Watchdog Timeout     : 14 consecutive invalid clocks (triggers FLUSH state)
   Flush Fill Mode           : repeat (samples fed to STR during FLUSH)
   Flush Safety Margin       : 4 clock cycles
-  Derived Flush Duration (F): 15 clock cycles
-    Formula : F = sps (4) + lat.str (4) + lat.derot (2) + lat.wrap_out (1) + margin (4) = 15 clocks
+  Derived Flush Duration (F): 16 clock cycles
+    Formula : F = sps (4) + lat.str (4) + lat.derot (3) + lat.wrap_out (1) + margin (4) = 16 clocks
   Downstream Pipeline Action: Free-running on wall clock; soft-reset clears all modules at end of FLUSH (F clocks)
 
 ------------------------------------------------------------------------------------------------------------------
@@ -29,8 +29,8 @@
     STR Saturation Limit   : +-0.0350 (anti-windup saturation)
 
   Costas Loop Filter (costas.md | 16-QAM | Bn_Ts = 0.025, zeta = 0.707, K_nco = 2*pi):
-    Costas Kp (uQ2.22, 24-bit) : Real =   0.03250861 | Stored Int =     136351 | RTL Hex = 24'h02149F
-    Costas Ki (uQ-5.29, 24-bit) : Real =   0.00108384 | Stored Int =     581881 | RTL Hex = 24'h08E0F9
+    Costas Kp (uQ2.22, 24-bit) : Real =   0.02807570 | Stored Int =     117758 | RTL Hex = 24'h01CBFE
+    Costas Ki (uQ-5.29, 24-bit) : Real =   0.00093604 | Stored Int =     502533 | RTL Hex = 24'h07AB05
     Costas Saturation Limit: +-0.1200 (anti-windup saturation)
 
 ------------------------------------------------------------------------------------------------------------------
@@ -52,10 +52,10 @@
   Gardner TED Pipeline      :  1 cycle
   STR PI Filter Register    :  1 cycle
   Coarse CFO CORDIC IP      : 16 cycles (16 vectoring iterations)
-  Derotator (LUT + Mult)    :  2 cycles (1 LUT read + 1 complex mult)
-  Costas PI Filter Register :  1 cycle
+  Derotator (LUT + Mult)    :  3 cycles (1 LUT read + 2 complex mult stages)
+  Costas Feedback Latency   :  5 cycles (2 phase error + 3 PI filter stages)
   Top Wrapper Output Stage  :  1 cycle
-  Steady-State Latency      :  7 cycles (lat.str + lat.derot + lat.wrap_out <= 64 [R.106])
+  Steady-State Latency      :  8 cycles (lat.str + lat.derot + lat.wrap_out <= 64 [R.106])
 
 ------------------------------------------------------------------------------------------------------------------
   5. HARDWARE REGISTER MAP, BUS WIDTHS & FIXED-POINT FORMATS

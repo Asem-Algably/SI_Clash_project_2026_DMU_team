@@ -120,8 +120,8 @@ function export_hardware_parameters(cfg, filename)
     fprintf(fid, '  Gardner TED Pipeline      : %2d cycle\n', cfg.lat.ted);
     fprintf(fid, '  STR PI Filter Register    : %2d cycle\n', cfg.lat.str_pi);
     fprintf(fid, '  Coarse CFO CORDIC IP      : %2d cycles (16 vectoring iterations)\n', cfg.lat.coarse);
-    fprintf(fid, '  Derotator (LUT + Mult)    : %2d cycles (1 LUT read + 1 complex mult)\n', cfg.lat.derot);
-    fprintf(fid, '  Costas PI Filter Register : %2d cycle\n', cfg.lat.costas);
+    fprintf(fid, '  Derotator (LUT + Mult)    : %2d cycles (1 LUT read + 2 complex mult stages)\n', cfg.lat.derot);
+    fprintf(fid, '  Costas Feedback Latency   : %2d cycles (2 phase error + 3 PI filter stages)\n', cfg.lat.costas);
     fprintf(fid, '  Top Wrapper Output Stage  : %2d cycle\n', cfg.lat.wrap_out);
     fprintf(fid, '  Steady-State Latency      : %2d cycles (lat.str + lat.derot + lat.wrap_out <= 64 [R.106])\n', cfg.lat.top_total);
     fprintf(fid, '\n');

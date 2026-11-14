@@ -26,7 +26,7 @@ module wrapper_fsm #(
     parameter int PREAMBLE_N_A    = 70,   // STR Phase A1 symbol budget
     parameter int PREAMBLE_TOTAL  = 190,  // Total preamble symbols (Phase A1+A2+B+C)
     parameter int IDLE_TIMEOUT    = 14,   // Consecutive invalid clocks before FLUSH
-    parameter int FLUSH_CLOCKS    = 15,   // Pipeline drain clocks F = sps + lat.str + lat.derot + lat.wrap + margin
+    parameter int FLUSH_CLOCKS    = 16,   // Pipeline drain clocks F = sps + lat.str + lat.derot + lat.wrap + margin
     parameter int PE_PIPE_DEPTH   = 3     // Latency pipeline for preamble_end pulse (derot + 1)
 )(
     input  logic        clk_i,

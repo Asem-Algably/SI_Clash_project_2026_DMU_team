@@ -16,7 +16,8 @@ module accumulator #(
   //if used 6 bit for 64 (2^6) window lengh + 33 bit width input = 39
   // and one or two more bits for fixed point addition overflow = 40 total
   
-  parameter int unsigned WinLen   = 32   // Window length in symbols (number of symbols to sum)
+  parameter int unsigned WinLen   = 32,  // Window length in symbols (number of symbols to sum)
+  parameter int unsigned Lag      = 4    // Delay line priming lag (symbols to skip)
 ) (
   input  logic                       clk_i,     // Clock
   input  logic                       rst_ni,    // Async reset, active low
@@ -29,14 +30,9 @@ module accumulator #(
   output logic                       valid_o    // valid output pulse
 );
 
-  localparam int unsigned CountWidth = $clog2(WinLen);
-  // Parameterized counter width to 5 registers
-  // $clog2 calculates the minimum number of bits needed to represent WinLen.
-  // For WinLen = 32, $clog2(32) = 5 bits  (2^5) = 32 and for WinLen = 64 , (2^5) = 64
-  // if changed window lengh to 64 the counter width will be 6 registers
-  // local parameter because it is a drived parameter depends on a main parameter
+  localparam int unsigned CountWidth = $clog2(WinLen + 1);
 
-  // number of registered flip flops to store the current symbol count and track the accumulation window.
+  // Registered flip flops to store the current symbol count and track the accumulation window.
   logic [CountWidth-1:0] count_q;  // Symbols accumulated so far
 
   always_ff @(posedge clk_i or negedge rst_ni) begin
@@ -48,14 +44,16 @@ module accumulator #(
       out_re_o <= '0;                   // Clear at burst end
       out_im_o <= '0;                   // Clear at burst end
       count_q  <= '0;                   // Clear counter
-    end else if (valid_i && (count_q < WinLen - 1)) begin
-      out_re_o <= out_re_o + in_re_i;   // Accumulate real part
-      out_im_o <= out_im_o + in_im_i;   // Accumulate imag part
+    end else if (valid_i && (count_q < WinLen)) begin
+      if (count_q >= Lag) begin
+        out_re_o <= out_re_o + in_re_i; // Accumulate real part once delay line is primed
+        out_im_o <= out_im_o + in_im_i; // Accumulate imag part once delay line is primed
+      end
       count_q  <= count_q + 1'b1;       // Advance counter
     end
   end
 
-  assign valid_o = (count_q == WinLen - 1);
+  assign valid_o = (count_q == WinLen);
   // Valid is edge-detect for single pulse.
   // Flag to indicate the accumulation window is complete.
   // Hardware counts from 0, so the final (32nd) sample is at index 31 (WinLen - 1).

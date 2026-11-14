@@ -27,7 +27,7 @@ module coarse_cfo_core #(
 );
 
   // Parameterized counter width to 5 registers
-  localparam int unsigned SymCountWidth = $clog2(WinLen);
+  localparam int unsigned SymCountWidth = $clog2(WinLen + 1);
 
   // Symbol counter for the window
   logic [SymCountWidth-1:0] sym_count_q;
@@ -37,7 +37,7 @@ module coarse_cfo_core #(
       sym_count_q <= '0;                     // Reset counter
     end else if (!start_i) begin
       sym_count_q <= '0;                     // Clear at burst end
-    end else if (s_axis_valid_i && (sym_count_q < WinLen - 1)) begin
+    end else if (s_axis_valid_i && (sym_count_q < WinLen)) begin
       sym_count_q <= sym_count_q + 1'b1;     // Advance on symbol strobe
     end
   end
@@ -88,7 +88,8 @@ module coarse_cfo_core #(
   accumulator #(
     .InWidth (33),           // 32-bit input
     .AccWidth(AccWidth),     // 40-bit accumulator
-    .WinLen  (WinLen)        // 32 symbols
+    .WinLen  (WinLen),       // 32 symbols
+    .Lag     (Lag)           // 4 symbols priming
   ) u_accumulator (
     .clk_i   (clk_i),                  // Clock
     .rst_ni  (rst_ni),                 // Reset
