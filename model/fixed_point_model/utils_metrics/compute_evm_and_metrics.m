@@ -1,4 +1,4 @@
-function metrics = compute_evm_and_metrics(rx_out, tx_payload_fi, cfg)
+function metrics = compute_evm_and_metrics(rx_out, tx_payload_fi, cfg, measured_esn0_dB)
     % COMPUTE_EVM_AND_METRICS  Fixed-Point EVM & Performance Metric Scorer.
     %
     % Scales output by * 2 (restoring original scale), evaluates strictly on the
@@ -6,6 +6,12 @@ function metrics = compute_evm_and_metrics(rx_out, tx_payload_fi, cfg)
     %   - Excess EVM (primary metric): sqrt(max(EVM_total^2 - EVM_floor^2, 0))
     %   - Total EVM (RMS) and Floor EVM
     %   - Symbol Error Rate (SER)
+    %
+    % Inputs:
+    %   rx_out            - Synchronizer output struct from run_cycle_accurate_top
+    %   tx_payload_fi     - Reference transmitted payload symbols
+    %   cfg               - Synchronizer hardware configuration struct
+    %   measured_esn0_dB  - (Optional) Measured Es/N0 in dB. If omitted, computed from cfg.
 
     tx_payload = tx_payload_fi(:);
     y_raw      = rx_out.out_sym_cplx(:);
@@ -64,7 +70,13 @@ function metrics = compute_evm_and_metrics(rx_out, tx_payload_fi, cfg)
     rms_s = sqrt(fi(sum_s / n_eval, 0, 32, 28));
 
     % Es/N0 and Theoretical Floor EVM
-    esn0_dB = cfg.snr_dB + 10 * log10(cfg.sps); % 18 + 6.02 = 24.02 dB
+    if nargin >= 4 && ~isempty(measured_esn0_dB) && isfinite(measured_esn0_dB)
+        esn0_dB = double(measured_esn0_dB);
+    elseif isfield(cfg, 'snr_def') && strcmpi(cfg.snr_def, 'sample')
+        esn0_dB = cfg.snr_dB + 10 * log10(cfg.sps);
+    else
+        esn0_dB = cfg.snr_dB;
+    end
     floor_pct_d = 100.0 * (10^(-esn0_dB / 20.0));
 
     % Format as 16-Bit Q8.8 Fixed-Point Percentages
@@ -101,6 +113,15 @@ function metrics = compute_evm_and_metrics(rx_out, tx_payload_fi, cfg)
     metrics.fine_cfo_err   = abs(double(rx_out.fine_cfo_est)   - cfg.cfo_norm);
     metrics.str_lock_sym   = rx_out.str_lock_sym;
     metrics.costas_lock_sym= rx_out.costas_lock_sym;
+
+    % Timing Jitter (RMS in symbol periods Ts, R.111 target <= 0.02 Ts)
+    if isfield(rx_out, 'str') && isfield(rx_out.str, 't_phase_log') && ~isempty(rx_out.str.t_phase_log)
+        t_tail = double(rx_out.str.t_phase_log(idx_eval));
+        metrics.timing_jitter_Ts = std(t_tail);
+    else
+        metrics.timing_jitter_Ts = NaN;
+    end
+    metrics.pass_str_jitter = (metrics.timing_jitter_Ts <= 0.0200);
 end
 
 function a = slice_qam16_pt(y)

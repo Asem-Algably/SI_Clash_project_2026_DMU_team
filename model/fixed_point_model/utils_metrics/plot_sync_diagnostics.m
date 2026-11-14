@@ -45,7 +45,11 @@ function plot_sync_diagnostics(rx_out, metrics, cfg)
     plot(1:N_sym, double(rx_out.str.ted_log), 'Color', [0.85 0.33 0.10]);
     ylabel('Gardner TED Error');
     grid on;
-    title(sprintf('STR Tracking (Lock @ Sym %d)', round(metrics.str_lock_sym)));
+    if isfield(metrics, 'timing_jitter_Ts') && ~isnan(metrics.timing_jitter_Ts)
+        title(sprintf('STR Tracking (Lock @ Sym %d, Jitter = %.4f T_s)', round(metrics.str_lock_sym), metrics.timing_jitter_Ts));
+    else
+        title(sprintf('STR Tracking (Lock @ Sym %d)', round(metrics.str_lock_sym)));
+    end
     xlabel('Symbol Index');
 
     % Panel 3: Carrier Frequency Tracking

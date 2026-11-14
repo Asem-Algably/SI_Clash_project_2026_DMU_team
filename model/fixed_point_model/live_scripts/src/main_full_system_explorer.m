@@ -19,31 +19,36 @@ end
 setup_project(false);
 
 %% 1. Configure Full-Burst Simulation (QPSK or 16-QAM)
-cfg = get_default_config();
+cfg = get_hw_config();
 cfg.mod_type        = 1;             % 0 = QPSK, 1 = 16-QAM
-cfg.norm_mode       = 'peak';        % 'peak' (default) or 'rms'
-cfg.snr_def         = 'sample';      % 'sample' (default) or 'esn0'
-cfg.str.interp_type = 'parabolic';   % Parabolic Farrow interpolator
 cfg.snr_dB          = 18.0;          % Requested SNR (dB)
 cfg.tau_offset      = 0.35;          % Fractional timing skew in Ts
 cfg.cfo_norm        = 0.065;         % +6.5% Rsym Carrier Frequency Offset
 cfg.phase_offset    = 115*(pi/180);  % Arbitrary initial carrier phase (tests quadrant recovery)
-cfg.preamble_type   = 'q4q2_q1';     % Three-phase blind preamble [Q1, Q2, Q4, Q1]
 
 %% 2. Generate Burst Frame, RRC Pulse Shaping & Channel / ADC Front-End (/2 & Q1.11 Clip)
-preamble_syms = generate_preamble(cfg.preamble_type, cfg.N_preamble, cfg);
-[payload_syms, const] = generate_payload(cfg.mod_type, cfg.N_payload, cfg.seed, cfg.norm_mode);
-tx_syms     = [preamble_syms; payload_syms];
-tx_waveform = pulse_shape_rrc(tx_syms, cfg.rrc_alpha, cfg.rrc_span, cfg.sps, 'tx');
-meas_esn0   = measure_es_n0(tx_waveform, cfg);
-
-% apply_channel_impairments applies /2 scaling (in_scale = 0.5) and Q1.11 ADC clipping [-1, 1 - 2^-11]
-[rx_in_q11, ch_info] = apply_channel_impairments(tx_waveform, cfg);
-in_valid = true(size(rx_in_q11));
+[rx_samples, tx_payload, frame_info] = generate_frame(cfg);
+in_valid = true(size(rx_samples));
 
 %% 3. Run Cycle-Accurate Fixed-Point Synchronizer & Print Specification Report
-rx_out  = run_cycle_accurate_top(rx_in_q11, in_valid, cfg);
-metrics = compute_evm_and_metrics(rx_out, payload_syms, cfg, meas_esn0);
+rx_out  = run_cycle_accurate_top(rx_samples, in_valid, cfg);
+metrics = compute_evm_and_metrics(rx_out, tx_payload, cfg);
 
-print_spec_report(rx_out, metrics, cfg, ch_info);
+fprintf('------------------------------------------------------------\n');
+fprintf('  SYNCHRONIZER PERFORMANCE REPORT\n');
+fprintf('------------------------------------------------------------\n');
+fprintf('  PRIMARY METRIC - Excess EVM : %8.4f %%\n', double(metrics.evm_excess_pct));
+fprintf('  Total EVM (RMS)             : %8.4f %%\n', double(metrics.evm_total_pct));
+fprintf('  Floor EVM (Es/N0=%.2fdB)   : %8.4f %%\n', metrics.esn0_dB, double(metrics.evm_floor_pct));
+fprintf('  Symbol Error Rate (SER)     : %8.4f\n', double(metrics.ser));
+fprintf('  STR Timing Jitter (RMS)     : %8.4f Ts (Target: <= 0.0200)\n', metrics.timing_jitter_Ts);
+fprintf('  STR Lock Symbol             : %8.0f\n', double(metrics.str_lock_sym));
+fprintf('  Coarse CFO Done Symbol      : %8.0f\n', double(rx_out.coarse_done_sym));
+fprintf('  Costas Public Lock Symbol   : %8.0f\n', double(metrics.costas_lock_sym));
+fprintf('  Quadrant Ambiguity k        : %8.0f (unres=%d)\n', double(rx_out.quad_k), rx_out.quad_unresolved);
+fprintf('  Coarse CFO Estimate (turns) : %+8.5f (True: %+8.5f)\n', double(rx_out.coarse_cfo_est), cfg.cfo_norm);
+fprintf('  Fine CFO Estimate (turns)   : %+8.5f (Error: %8.5f)\n', double(rx_out.fine_cfo_est), metrics.fine_cfo_err);
+fprintf('  Evaluated Payload Symbols   : %8d\n', metrics.n_eval);
+fprintf('------------------------------------------------------------\n');
+
 plot_sync_diagnostics(rx_out, metrics, cfg);

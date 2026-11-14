@@ -36,6 +36,7 @@ fprintf('  PRIMARY METRIC - Excess EVM : %8.4f %%\n', double(metrics.evm_excess_
 fprintf('  Total EVM (RMS)             : %8.4f %%\n', double(metrics.evm_total_pct));
 fprintf('  Floor EVM (Es/N0=%.2fdB)   : %8.4f %%\n', metrics.esn0_dB, double(metrics.evm_floor_pct));
 fprintf('  Symbol Error Rate (SER)     : %8.4f\n', double(metrics.ser));
+fprintf('  STR Timing Jitter (RMS)     : %8.4f Ts (Target: <= 0.0200)\n', metrics.timing_jitter_Ts);
 fprintf('  STR Lock Symbol             : %8.0f\n', double(metrics.str_lock_sym));
 fprintf('  Coarse CFO Done Symbol      : %8.0f\n', double(rx_out.coarse_done_sym));
 fprintf('  Costas Public Lock Symbol   : %8.0f\n', double(metrics.costas_lock_sym));
