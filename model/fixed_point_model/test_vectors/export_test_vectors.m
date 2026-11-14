@@ -11,7 +11,7 @@
 %
 % Output: <script_dir>/generated/vectors/
 
-function export_test_vectors(out_dir)
+function export_test_vectors(out_dir, N_payload)
     % ---------------------------------------------------------------
     % 1. Locate script directory
     % ---------------------------------------------------------------
@@ -91,6 +91,9 @@ function export_test_vectors(out_dir)
     fprintf('\n=== Export Test Vectors ===\n\n');
 
     cfg = get_hw_config();
+    if nargin >= 2 && ~isempty(N_payload)
+        cfg.N_payload = N_payload;
+    end
 
     fprintf('[1/3] Generating frame...\n');
     [rx_samples_fi, tx_payload_fi, ~] = generate_frame(cfg);
