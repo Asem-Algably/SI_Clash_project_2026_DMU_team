@@ -2,7 +2,7 @@
 
 module tb_derotator;
 
-  localparam int MAX_VECS = 10000;
+  localparam int MAX_VECS = 20000;
   logic [171:0] vec_mem [0:MAX_VECS-1];
   logic [3:0]   v_val, v_cval, v_fval, v_pval, v_exp_val;
 

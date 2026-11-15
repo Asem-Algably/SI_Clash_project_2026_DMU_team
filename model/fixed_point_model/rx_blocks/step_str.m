@@ -140,9 +140,22 @@ function [out, st] = step_str(in, st, T)
     end
 
     if new_cur || new_mid
-        eta  = T.fi(eta_raw, 'eta');
-        pm   = T.fi(R(st_old.pi_reg), 'pi_mu');
-        mu_v = T.fi(R(eta) * T.c.k4 - (R(eta) * R(pm)) * T.c.k16m, 'mu');
+        % Exact hardware-aligned 24-bit mu calculation matching modulo_1_controller.sv
+        eta_raw_val = double(storedInteger(eta_raw));
+        eta_4x      = eta_raw_val * 4;
+        pi_val      = bitsra(double(storedInteger(st_old.pi_reg)), 4);
+        eta_pi_mult = eta_raw_val * pi_val;
+        term2       = bitsra(eta_pi_mult, 20);
+        mu_full     = eta_4x - term2;
+        if mu_full < 0
+            mu_int = 0;
+        elseif mu_full >= 2^24
+            mu_int = 1023;
+        else
+            mu_int = floor(mu_full / (2^14));
+        end
+        mu_v = T.fi(0, 'mu');
+        mu_v.int = int32(mu_int);
         new_mu = mu_v;
 
         % Evaluate Parabolic Farrow interpolator over 4-sample window [D1, D2, D3, xi]

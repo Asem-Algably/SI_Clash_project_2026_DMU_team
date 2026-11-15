@@ -2,7 +2,7 @@
 
 module tb_str_top;
 
-  localparam int MAX_VECS = 10000;
+  localparam int MAX_VECS = 20000;
   logic [71:0] vec_mem [0:MAX_VECS-1];
   logic [3:0]  v_in_val, v_flush, v_exp_val, v_exp_lock;
 
@@ -100,8 +100,10 @@ module tb_str_top;
       in_valid  = v_in_val[0];
       flush_act = v_flush[0];
 
+
       @(posedge clk);
       #1; // Post-clock check
+
 
       if (out_valid) begin
         rtl_strobe_cnt++;

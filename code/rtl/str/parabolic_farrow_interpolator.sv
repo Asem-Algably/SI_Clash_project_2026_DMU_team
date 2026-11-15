@@ -119,14 +119,7 @@ module parabolic_farrow_interpolator #(
         if (!rst_n_i) begin
             y_o <= '0;
         end else if (valid_sample_i) begin
-            // Saturate to 16-bit signed Q1.15 [-32768, 32767]
-            if (y_full > 20'sd32767) begin
-                y_o <= 16'sh7FFF;
-            end else if (y_full < -20'sd32768) begin
-                y_o <= 16'sh8000;
-            end else begin
-                y_o <= y_full[15:0];
-            end
+            y_o <= y_full[15:0];
         end
     end
 

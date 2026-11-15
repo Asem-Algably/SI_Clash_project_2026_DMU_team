@@ -2,7 +2,7 @@
 
 module tb_coarse_cfo_core;
 
-  localparam int MAX_VECS = 10000;
+  localparam int MAX_VECS = 20000;
   logic [67:0] vec_mem [0:MAX_VECS-1];
   logic [3:0]  v_val, v_start, v_exp_val;
 
