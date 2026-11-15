@@ -217,7 +217,7 @@ function [rx_out, lg, T] = run_cycle_accurate_top(in_sample_iq, in_sample_valid,
             str_W_log(n_str_sym)       = w.str_out.w_o;
             str_v_pi_log(n_str_sym)    = st.str.pi_reg;
             str_lock_log(n_str_sym)    = w.str_out.lock_o;
-            str_lock_m_log(n_str_sym)  = st.str.lock.m;
+            str_lock_m_log(n_str_sym)  = st.str.lock.m_val_r;
             str_sym_clk_idx(n_str_sym) = uint32(st.str.smp_reg);
             derot_syms(n_str_sym)      = complex(T.fi(w.str_out.m_axis_i_sym_o, 'rot_out'), T.fi(w.str_out.m_axis_q_sym_o, 'rot_out'));
         end

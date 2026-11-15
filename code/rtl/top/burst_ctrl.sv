@@ -65,6 +65,8 @@ module burst_ctrl #(
   logic [7:0]  flush_cnt_q, flush_cnt_d;
   logic [7:0]  valid_during_flush_q, valid_during_flush_d;
   logic        flush_rst_q, flush_rst_d;
+  logic [3:0]  pe_pipe_q;
+  logic        preamble_end_raw;
 
   // --------------------------------------------------------------------------
   // Combinational next-state logic
@@ -80,7 +82,7 @@ module burst_ctrl #(
 
     coarse_start_o       = 1'b0;
     costas_mode_o        = CostasHold;
-    preamble_end_o       = 1'b0;
+    preamble_end_raw     = 1'b0;
 
     unique case (state_q)
       // ----------------------------------------------------------------
@@ -97,9 +99,14 @@ module burst_ctrl #(
       StAcquire: begin
         if (sym_strobe_i) begin
           sym_cnt_d = sym_cnt_q + 1'b1;
+          if (sym_cnt_q + 1'b1 >= NA1) begin
+            state_d        = StCoarseEst;
+            coarse_start_o = 1'b1;
+          end
         end
-        if (str_lock_i || (sym_cnt_q >= (NA1 - 1))) begin
-          state_d = StCoarseEst;
+        if (str_lock_i) begin
+          state_d        = StCoarseEst;
+          coarse_start_o = 1'b1;
         end
       end
 
@@ -108,14 +115,22 @@ module burst_ctrl #(
         coarse_start_o = 1'b1;
         if (sym_strobe_i) begin
           sym_cnt_d = sym_cnt_q + 1'b1;
+          if (sym_cnt_q + 1'b1 >= (NA1 + NA2)) begin
+            state_d = StLoad;
+          end
         end
-        if (coarse_valid_i || (sym_cnt_q >= (NA1 + NA2 - 1))) begin
-          state_d = StLoad;
+        if (coarse_valid_i) begin
+          if (sym_strobe_i) begin
+            state_d = StCostasAcq;
+          end else begin
+            state_d = StLoad;
+          end
         end
       end
 
       // ----------------------------------------------------------------
       StLoad: begin
+        // Wait for next STR symbol strobe to align derotator start (wrapper.md)
         if (sym_strobe_i) begin
           state_d   = StCostasAcq;
           sym_cnt_d = sym_cnt_q + 1'b1;
@@ -127,17 +142,19 @@ module burst_ctrl #(
         costas_mode_o = CostasAcq;
         if (sym_strobe_i) begin
           sym_cnt_d = sym_cnt_q + 1'b1;
-        end
-
-        if (sym_cnt_q >= (NPreamble - 35)) begin
-          state_d        = StTrack;
-          preamble_end_o = 1'b1;
+          if (sym_cnt_q + 1'b1 >= NPreamble) begin
+            state_d          = StTrack;
+            preamble_end_raw = 1'b1;
+          end
         end
       end
 
       // ----------------------------------------------------------------
       StTrack: begin
         costas_mode_o = CostasTrack;
+        if (sym_strobe_i) begin
+          sym_cnt_d = sym_cnt_q + 1'b1;
+        end
       end
 
       // ----------------------------------------------------------------
@@ -176,9 +193,9 @@ module burst_ctrl #(
   end
 
   // --------------------------------------------------------------------------
-  // Sequential state register
+  // Sequential state register (Synchronous Reset)
   // --------------------------------------------------------------------------
-  always_ff @(posedge clk_i or negedge rst_ni) begin
+  always_ff @(posedge clk_i) begin
     if (!rst_ni) begin
       state_q              <= StWaitBurst;
       sym_cnt_q            <= '0;
@@ -186,6 +203,7 @@ module burst_ctrl #(
       flush_cnt_q          <= '0;
       valid_during_flush_q <= '0;
       flush_rst_q          <= 1'b0;
+      pe_pipe_q            <= '0;
     end else begin
       state_q              <= state_d;
       sym_cnt_q            <= sym_cnt_d;
@@ -193,6 +211,7 @@ module burst_ctrl #(
       flush_cnt_q          <= flush_cnt_d;
       valid_during_flush_q <= valid_during_flush_d;
       flush_rst_q          <= flush_rst_d;
+      pe_pipe_q            <= {pe_pipe_q[2:0], preamble_end_raw};
     end
   end
 
@@ -201,5 +220,6 @@ module burst_ctrl #(
   assign flush_active_o       = (state_q == StFlush);
   assign flush_rst_o          = flush_rst_q;
   assign valid_during_flush_o = valid_during_flush_q;
+  assign preamble_end_o       = pe_pipe_q[3];
 
 endmodule

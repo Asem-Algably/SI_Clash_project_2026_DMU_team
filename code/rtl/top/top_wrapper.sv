@@ -62,7 +62,7 @@ module top_wrapper #(
     logic signed [DATA_IN_WIDTH-1:0] str_i_sample;
     logic signed [DATA_IN_WIDTH-1:0] str_q_sample;
 
-    always_ff @(posedge clk_i or negedge rst_ni) begin
+    always_ff @(posedge clk_i) begin
         if (!rst_ni) begin
             last_i_sample_q <= '0;
             last_q_sample_q <= '0;
@@ -128,7 +128,7 @@ module top_wrapper #(
         .force_cfo_i    (24'd0)
     );
 
-    always_ff @(posedge clk_i or negedge rst_eff_n) begin
+    always_ff @(posedge clk_i) begin
         if (!rst_eff_n) begin
             coarse_word_held <= '0;
         end else if (coarse_valid) begin
@@ -252,7 +252,7 @@ module top_wrapper #(
     // =========================================================================
     // 7. 1-Cycle Output Register Stage
     // =========================================================================
-    always_ff @(posedge clk_i or negedge rst_eff_n) begin
+    always_ff @(posedge clk_i) begin
         if (!rst_eff_n) begin
             m_axis_valid_o <= 1'b0;
             m_axis_i_sym_o <= '0;

@@ -1,75 +1,74 @@
-////////////////////////////////////////////////////////////////////////////////
-// Author: Abd El-Rhman Khalifa
-// Co_Author: Hadeer Ghoneim
-// Design: Gardner Timing Error Detector (TED) module.
-// Date: 12-11-2026
-// Description: Calculates the timing error using the Gardner algorithm.
-//              e = mid_I * (cur_I - prev_I) + mid_Q * (cur_Q - prev_Q)
-////////////////////////////////////////////////////////////////////////////////
+// Design Name:  Gardner Timing Error Detector (gardner_ted_estimator)
+// Project:      Real-Time All-Digital Carrier and Timing Synchronization Unit
+// Organization: Electronics Research Institute (ERI) - CLASH Challenge
+//
+// Calculates the timing error using the Gardner TED algorithm:
+//   e = mid_I * (cur_I - prev_I) + mid_Q * (cur_Q - prev_Q)
+// Inputs are signed 16-bit Q1.15 (sQ1.15).
+// 2-Stage Pipelined Architecture (Latency = 2 clock cycles):
+//   Stage 1: Register multiplier products i_mid * diff_I and q_mid * diff_Q
+//   Stage 2: Register product sum, round to sQ3.21, and sign-extend to 32 bits
+// Resets are purely synchronous (active-low rst_ni).
 
 module gardner_ted_estimator (
-  // ------------ control signals ------------
-  input  logic               clk_i,      // System clock
-  input  logic               rst_ni,     // Asynchronous active-low reset
-  input  logic               ce_i,       // Clock enable (ce_str)
-  input  logic               valid_i,    // Valid input pulses
+  input  logic               clk_i,
+  input  logic               rst_ni,        // Synchronous active-low reset
+  input  logic               ce_i,          // Clock enable (ce_str)
+  input  logic               valid_i,       // Current strobe strobe_d
 
-  // ------------ inputs ------------
-  input  logic signed [15:0] i_mid_i,    // I-channel mid-symbol sample
-  input  logic signed [15:0] q_mid_i,    // Q-channel mid-symbol sample
-  input  logic signed [15:0] i_cur_i,    // I-channel current symbol sample
-  input  logic signed [15:0] q_cur_i,    // Q-channel current symbol sample
-  input  logic signed [15:0] i_prev_i,   // I-channel previous symbol sample
-  input  logic signed [15:0] q_prev_i,   // Q-channel previous symbol sample
+  input  logic signed [15:0] i_mid_i,       // sQ1.15 mid-symbol sample
+  input  logic signed [15:0] q_mid_i,       // sQ1.15 mid-symbol sample
+  input  logic signed [15:0] i_cur_i,       // sQ1.15 current symbol sample (i_y)
+  input  logic signed [15:0] q_cur_i,       // sQ1.15 current symbol sample (q_y)
+  input  logic signed [15:0] i_prev_i,      // sQ1.15 previous symbol sample (i_cur register)
+  input  logic signed [15:0] q_prev_i,      // sQ1.15 previous symbol sample (q_cur register)
 
-  // ------------ outputs ------------
-  output logic signed [31:0] error_o,        // Calculated timing error
-  output logic               error_valid_o   // Valid pulse for the output error
+  output logic signed [31:0] error_o,       // 32-bit signed error (sQ3.21 format)
+  output logic               error_valid_o  // 1-cycle strobe when error_o updates (latency = 2)
 );
 
-  // Internal signals for combinational calculations
-  logic signed [16:0] i_diff, q_diff;    // 17-bit to hold the difference (prevents underflow)
-  logic signed [32:0] i_prod, q_prod;    // 33-bit to hold the product of 16-bit * 17-bit
-  logic signed [33:0] error_sum;         // 34-bit to hold the final sum (prevents overflow)
+  // -------------------------------------------------------------------------
+  // Stage 1: Differences and Registered Multiplier Products (1 clock cycle)
+  // -------------------------------------------------------------------------
+  logic signed [16:0] i_diff, q_diff;
+  assign i_diff = i_cur_i - i_prev_i;
+  assign q_diff = q_cur_i - q_prev_i;
 
-  // -------------------------------------------------------------------------
-  // 1. Combinational Logic (Pure Math)
-  // Calculates the error equation without any clock delay.
-  // -------------------------------------------------------------------------
-  always_comb begin
-    // Calculate the difference between current and previous samples
-    i_diff = i_cur_i - i_prev_i; 
-    q_diff = q_cur_i - q_prev_i;
-    
-    // Multiply the mid-sample by the difference (Gardner algorithm)
-    i_prod = i_mid_i * i_diff;
-    q_prod = q_mid_i * q_diff;
-    
-    // Sum the I and Q branches to get the final error
-    error_sum = i_prod + q_prod;
+  logic signed [32:0] i_prod_q, q_prod_q; // 33-bit sQ3.30 products
+  logic               v_stg1_q;
+
+  always_ff @(posedge clk_i) begin
+    if (!rst_ni) begin
+      v_stg1_q <= 1'b0;
+      i_prod_q <= '0;
+      q_prod_q <= '0;
+    end else if (ce_i) begin
+      v_stg1_q <= valid_i;
+      if (valid_i) begin
+        i_prod_q <= i_mid_i * i_diff;
+        q_prod_q <= q_mid_i * q_diff;
+      end
+    end
   end
 
   // -------------------------------------------------------------------------
-  // 2. Sequential Logic (Pipeline for Timing Closure)
-  // Delays the valid signal to match register update and math latency.
-  // Uses Non-Blocking Assignments (<=) to avoid race conditions.
+  // Stage 2: Summation, Quantization to sQ3.21, and Output Register (2 clocks)
   // -------------------------------------------------------------------------
-  logic valid_q; // Register to hold the delayed valid signal
-  logic signed [32:0] error_scaled;
-  assign error_scaled = (error_sum + 34'sd1) >>> 1; // Align from Q4.30 to sQ3.29
+  logic signed [33:0] error_sum;      // 34-bit sQ4.30
+  logic signed [24:0] error_q21;      // 25-bit sQ3.21
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin
+  assign error_sum = i_prod_q + q_prod_q;
+  // Pure wire truncation matching MATLAB step_str.m
+  assign error_q21 = error_sum >>> 9;
+
+  always_ff @(posedge clk_i) begin
     if (!rst_ni) begin
-      valid_q       <= '0; // Reset: clear valid flag
-      error_o       <= '0; // Reset: clear output error
-      error_valid_o <= '0; // Reset: clear output valid
+      error_valid_o <= 1'b0;
+      error_o       <= '0;
     end else if (ce_i) begin
-      valid_q       <= valid_i;    // Delay valid_i by 1 cycle to align with sample registers
-      error_valid_o <= valid_q;    // Assert error valid when error_o is registered
-      
-      // Capture the scaled error when valid_q is high
-      if (valid_q) begin
-        error_o <= error_scaled[31:0]; // 32-bit sQ3.29 signed error
+      error_valid_o <= v_stg1_q;
+      if (v_stg1_q) begin
+        error_o <= {{7{error_q21[24]}}, error_q21};
       end
     end
   end

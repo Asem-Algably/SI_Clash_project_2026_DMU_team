@@ -81,7 +81,7 @@ function export_sine_lut(out_path)
     catch
         stored = round(double(lut_fi) * 2^16);
     end
-    lut_q15 = max(0, min(32767, round(stored / 2)));
+    lut_q15 = max(0, min(32767, stored));
 
     fid = fopen(out_path, 'w');
     if fid <= 0

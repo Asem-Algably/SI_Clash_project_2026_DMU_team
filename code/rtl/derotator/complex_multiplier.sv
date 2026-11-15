@@ -36,8 +36,7 @@ module complex_multiplier #(
     output logic                        m_axis_valid_o
 );
     localparam int PW = 2*DataWidth;                       // product width
-    localparam int SW = PW + 1;                    // sum width (for rounding)
-    localparam logic signed [SW-1:0] RND = SW'(1) <<< (Frac-1);  // half an LSB of the output
+    localparam int SW = PW + 1;                    // sum width (for truncation/saturation)
     localparam logic signed [DataWidth-1:0]  MAXV =  {1'b0, {(DataWidth-1){1'b1}}};
     localparam logic signed [DataWidth-1:0]  MINV =  {1'b1, {(DataWidth-1){1'b0}}};
 
@@ -45,7 +44,7 @@ module complex_multiplier #(
     logic                 valid;
 
     // Valid strobe pipeline, 2 clocks, aligned with the data stages below
-    always_ff @(posedge clk_i or negedge rst_ni) begin
+    always_ff @(posedge clk_i) begin
         if (!rst_ni) begin
             valid        <= 1'b0;
             m_axis_valid_o <= 1'b0;
@@ -65,10 +64,10 @@ module complex_multiplier #(
         end
     end
 
-    // Stage 2 helper: round half up (add half an LSB, then shift right by Frac) and saturate
+    // Stage 2 helper: pure wire truncation (shift right by Frac) and saturate
     function automatic logic signed [DataWidth-1:0] rnd_sat(input logic signed [SW-1:0] v);
         logic signed [SW-1:0] r;
-        r = (v + RND) >>> Frac;
+        r = v >>> Frac;
         if      (r > SW'(MAXV)) return MAXV;
         else if (r < SW'(MINV)) return MINV;
         else                    return r[DataWidth-1:0]; // in range: keep the lower DataWidth bits

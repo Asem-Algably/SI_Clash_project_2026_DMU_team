@@ -48,14 +48,9 @@ module coarse_cfo_axi_wrapper #(
   output logic [31:0] dft_obs_data                    // DFT observation
 );
 
-  // Synchronize the reset
-  logic rst_n_sync;  // Synchronized reset
-
-  reset_sync u_reset_sync (
-    .clk_i (s00_axi_aclk),     // AXI clock
-    .rst_ni(s00_axi_aresetn),  // AXI reset
-    .rst_no(rst_n_sync)        // Synchronized reset
-  );
+  // Synchronous reset
+  logic rst_n_sync;
+  assign rst_n_sync = s00_axi_aresetn;
 
   // Coarse CFO core interface
   logic signed [23:0] cfo_est;   // Estimate from core
@@ -115,7 +110,7 @@ module coarse_cfo_axi_wrapper #(
   logic [CSlvAxiDataWidth-1:0] slv_reg1_q;  // Reg 1: Force Enable
   logic [CSlvAxiDataWidth-1:0] slv_reg2_q;  // Reg 2: Force Value
 
-  always_ff @(posedge s00_axi_aclk or negedge s00_axi_aresetn) begin
+  always_ff @(posedge s00_axi_aclk) begin
     if (!s00_axi_aresetn) begin
       aw_ready_q <= 1'b0;
       w_ready_q  <= 1'b0;
@@ -161,7 +156,7 @@ module coarse_cfo_axi_wrapper #(
   logic [CSlvAxiDataWidth-1:0] r_data_q;
   logic [1:0]                  r_resp_q;
 
-  always_ff @(posedge s00_axi_aclk or negedge s00_axi_aresetn) begin
+  always_ff @(posedge s00_axi_aclk) begin
     if (!s00_axi_aresetn) begin
       ar_ready_q <= 1'b0;
       r_valid_q  <= 1'b0;

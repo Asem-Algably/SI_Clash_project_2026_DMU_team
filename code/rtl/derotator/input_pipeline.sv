@@ -22,7 +22,7 @@ module input_pipeline #(
 );
 
     // Valid is reset, so no output is flagged valid after reset
-    always_ff @(posedge clk_i or negedge rst_ni) begin
+    always_ff @(posedge clk_i) begin
         if (!rst_ni) begin
             valid_o <= 1'b0;
         end else begin

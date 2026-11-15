@@ -21,7 +21,6 @@ module phase_error #(
     output logic                          valid_o
 );
     localparam logic        [1:0]             MODE_HOLD = 2'b00;
-    localparam logic signed [2*Data_Width:0]  HALF      = 1 <<< (Data_Frac_Bits-1);
     localparam logic signed [Error_Width-1:0] E_MAX     = {1'b0, {(Error_Width-1){1'b1}}};
     localparam logic signed [Error_Width-1:0] E_MIN     = {1'b1, {(Error_Width-1){1'b0}}};
 
@@ -46,9 +45,9 @@ module phase_error #(
         end
     end
 
-    //---------------------------------------------------- stage 3: round + shift + saturate
+    //---------------------------------------------------- stage 3: pure truncation + saturate
     always_comb begin
-        shifted = (diff_r + HALF) >>> Data_Frac_Bits;
+        shifted = diff_r >>> Data_Frac_Bits;
         e_next  = shifted[Error_Width-1:0];
         if (shifted > $signed(E_MAX)) begin
             e_next = E_MAX;
@@ -58,7 +57,7 @@ module phase_error #(
         end
     end
 
-    always_ff @(posedge clk_i or negedge rst_ni) begin
+    always_ff @(posedge clk_i) begin
         if (!rst_ni) begin
             v_m     <= 1'b0;
             v_d     <= 1'b0;

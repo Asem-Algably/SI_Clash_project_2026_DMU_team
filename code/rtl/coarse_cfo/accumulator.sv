@@ -32,24 +32,41 @@ module accumulator #(
 
   localparam int unsigned CountWidth = $clog2(WinLen + 1);
 
-  // Registered flip flops to store the current symbol count and track the accumulation window.
-  logic [CountWidth-1:0] count_q;  // Symbols accumulated so far
+  // Registered flip-flops to store the current symbol count and track the accumulation window.
+  logic [CountWidth-1:0] count_q;       // Symbols accumulated so far
+  logic                  active_q;      // Accumulation in progress
+  logic                  start_prev_q;  // Previous start_i state for edge detection
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin
+  always_ff @(posedge clk_i) begin
     if (!rst_ni) begin
-      out_re_o <= '0;                   // Reset sum
-      out_im_o <= '0;                   // Reset sum
-      count_q  <= '0;                   // Reset counter
-    end else if (!start_i) begin
-      out_re_o <= '0;                   // Clear at burst end
-      out_im_o <= '0;                   // Clear at burst end
-      count_q  <= '0;                   // Clear counter
-    end else if (valid_i && (count_q < WinLen)) begin
-      if (count_q >= Lag) begin
-        out_re_o <= out_re_o + in_re_i; // Accumulate real part once delay line is primed
-        out_im_o <= out_im_o + in_im_i; // Accumulate imag part once delay line is primed
+      out_re_o     <= '0;
+      out_im_o     <= '0;
+      count_q      <= '0;
+      active_q     <= 1'b0;
+      start_prev_q <= 1'b0;
+    end else begin
+      start_prev_q <= start_i;
+
+      // Start trigger on rising edge of start_i (matching MATLAB step_coarse_cfo.m)
+      if (start_i && !start_prev_q) begin
+        active_q <= 1'b1;
+        out_re_o <= '0;
+        out_im_o <= '0;
+        if (valid_i) begin
+          count_q <= 1'b1;
+        end else begin
+          count_q <= '0;
+        end
+      end else if (active_q && valid_i && (count_q < WinLen)) begin
+        if (count_q >= Lag) begin
+          out_re_o <= out_re_o + in_re_i; // Accumulate real part once delay line is primed
+          out_im_o <= out_im_o + in_im_i; // Accumulate imag part once delay line is primed
+        end
+        count_q <= count_q + 1'b1;
+        if (count_q + 1'b1 == WinLen) begin
+          active_q <= 1'b0; // Auto-clear on window completion
+        end
       end
-      count_q  <= count_q + 1'b1;       // Advance counter
     end
   end
 

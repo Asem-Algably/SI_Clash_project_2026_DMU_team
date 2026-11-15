@@ -29,8 +29,8 @@
     STR Saturation Limit   : +-0.0350 (anti-windup saturation)
 
   Costas Loop Filter (costas.md | 16-QAM | Bn_Ts = 0.025, zeta = 0.707, K_nco = 2*pi):
-    Costas Kp (uQ2.22, 24-bit) : Real =   0.02807570 | Stored Int =     117758 | RTL Hex = 24'h01CBFE
-    Costas Ki (uQ-5.29, 24-bit) : Real =   0.00093604 | Stored Int =     502533 | RTL Hex = 24'h07AB05
+    Costas Kp (uQ2.22, 24-bit) : Real =   0.02364254 | Stored Int =      99164 | RTL Hex = 24'h01835C
+    Costas Ki (uQ-5.29, 24-bit) : Real =   0.00078825 | Stored Int =     423186 | RTL Hex = 24'h067512
     Costas Saturation Limit: +-0.1200 (anti-windup saturation)
 
 ------------------------------------------------------------------------------------------------------------------
@@ -51,9 +51,9 @@
   STR Farrow Interpolator   :  4 cycles (Parabolic Horner MAC pipeline)
   Gardner TED Pipeline      :  1 cycle
   STR PI Filter Register    :  1 cycle
-  Coarse CFO CORDIC IP      : 16 cycles (16 vectoring iterations)
+  Coarse CFO CORDIC IP      : 20 cycles (16 vectoring iterations)
   Derotator (LUT + Mult)    :  3 cycles (1 LUT read + 2 complex mult stages)
-  Costas Feedback Latency   :  5 cycles (2 phase error + 3 PI filter stages)
+  Costas Feedback Latency   :  6 cycles (2 phase error + 3 PI filter stages)
   Top Wrapper Output Stage  :  1 cycle
   Steady-State Latency      :  8 cycles (lat.str + lat.derot + lat.wrap_out <= 64 [R.106])
 
@@ -65,13 +65,13 @@
   in         | [Signed  , WL=12, FL=11] | sQ0.11     | [ADC In]         Input I/Q sample (in_sample_i/q) after /2 scale, in [-1, 1 - 2^-11]
   fv         | [Signed  , WL=16, FL=12] | sQ3.12     | [STR Farrow]     Parabolic Farrow polynomial coeffs v1, v2
   fh         | [Signed  , WL=17, FL=13] | sQ3.13     | [STR Farrow]     Parabolic Farrow Horner MAC intermediate stage
-  str_sym    | [Signed  , WL=16, FL=14] | sQ1.14     | [STR Sym Out]    Interpolated I/Q symbol (m_axis_i/q_sym_o)
+  str_sym    | [Signed  , WL=16, FL=15] | sQ0.15     | [STR Sym Out]    Interpolated I/Q symbol (m_axis_i/q_sym_o)
   M          | [Unsigned, WL=24, FL=24] | uQ0.24     | [STR Controller] Modulo-1 phase counter M and step register W
   M_s        | [Signed  , WL=25, FL=24] | sQ0.24     | [STR Controller] Signed 25-bit Modulo-1 difference wire
   eta        | [Signed  , WL=19, FL=18] | sQ0.18     | [STR Controller] Distance above strobe boundary (M - 0.25 / M - 0.75)
   pi_mu      | [Signed  , WL=18, FL=17] | sQ0.17     | [STR Controller] Loop filter output feeding linear mu multiplier
   mu         | [Signed  , WL=12, FL=10] | sQ1.10     | [STR Farrow]     10-bit unsigned fractional interval mu in [0, 1)
-  ted_d      | [Signed  , WL=17, FL=14] | sQ2.14     | [STR TED]        Symbol difference wire (cur - prev)
+  ted_d      | [Signed  , WL=17, FL=15] | sQ1.15     | [STR TED]        Symbol difference wire (cur - prev)
   ted_e      | [Signed  , WL=25, FL=21] | sQ3.21     | [STR TED]        Gardner TED error output e = mid_I*d_I + mid_Q*d_Q
   str_pi     | [Signed  , WL=26, FL=28] | sQ-3.28    | [STR PI Filter]  STR loop filter integrator and output (saturating)
   str_kp     | [Unsigned, WL=24, FL=25] | uQ-1.25    | [STR PI Filter]  STR proportional loop gain Kp
@@ -81,11 +81,11 @@
   cx         | [Signed  , WL=32, FL=22] | sQ9.22     | [Coarse CORDIC]  16-stage vectoring CORDIC X, Y coordinates
   cz         | [Signed  , WL=28, FL=26] | sQ1.26     | [Coarse CORDIC]  16-stage CORDIC angle accumulator Z (turns)
   cfo        | [Signed  , WL=24, FL=24] | sQ-1.24    | [Coarse CFO Out] Estimated coarse frequency word (turns/symbol)
-  lut        | [Unsigned, WL=16, FL=16] | uQ0.16     | [Derotator LUT]  Quarter-wave sine LUT entry (4096 x 16-bit)
+  lut        | [Signed  , WL=16, FL=15] | sQ0.15     | [Derotator LUT]  Quarter-wave sine LUT entry (4096 x 16-bit)
   phase      | [Unsigned, WL=32, FL=32] | uQ0.32     | [Derotator NCO]  32-bit wrapping NCO phase accumulator theta (turns)
   freq_w     | [Signed  , WL=32, FL=32] | sQ-1.32    | [Derotator NCO]  32-bit signed NCO frequency word (turns/symbol)
-  rot_out    | [Signed  , WL=16, FL=14] | sQ1.14     | [Derotator Out]  Derotated I/Q symbol before external *2 scale
-  cos_a      | [Signed  , WL=16, FL=14] | sQ1.14     | [Costas Slicer]  Hard-decision slicer levels (+-d, +-3d)
+  rot_out    | [Signed  , WL=16, FL=15] | sQ0.15     | [Derotator Out]  Derotated I/Q symbol before external *2 scale
+  cos_a      | [Signed  , WL=16, FL=15] | sQ0.15     | [Costas Slicer]  Hard-decision slicer levels (+-d, +-3d)
   cos_e      | [Signed  , WL=22, FL=19] | sQ2.19     | [Costas Phase]   Decision-directed phase error e = y_Q*a_I - y_I*a_Q
   cos_pi     | [Signed  , WL=27, FL=28] | sQ-2.28    | [Costas PI]      Costas loop filter integrator and output (saturating)
   cos_kp     | [Unsigned, WL=24, FL=22] | uQ2.22     | [Costas PI]      Costas proportional loop gain Kp

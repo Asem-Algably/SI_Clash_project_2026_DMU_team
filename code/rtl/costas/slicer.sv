@@ -21,7 +21,7 @@ module slicer #(
     output logic                         sgn_q_pos_o            // Sign Q (1=pos)
 );
     localparam logic [1:0] MOD_QAM16 = 2'b01;
-    localparam logic signed [Data_Width-1:0] D3 = 3 * Qam_Level;     // 3d
+    localparam logic signed [Data_Width-1:0] D3 = Qpsk_Level;        // 3d (outer level = +-0.5 in Q1.15 = 16384)
     localparam logic signed [Data_Width-1:0] T2 = 2 * Qam_Level;     // 2d boundary
 
     logic use_qam;

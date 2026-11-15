@@ -37,8 +37,7 @@ module pi_filter #(
     localparam int MW = Error_Width + Gain_Width;                           // Multiplier width (Q1.39)
     localparam int SW = Phase_Width + 2;                                    // Sum width (Q1.34)
     localparam int SHIFT = Error_Frac_Bits + Gain_Frac_Bits - Phase_Width;  // Shift right to align to Q0.32
-    localparam logic signed [MW-1:0] ROUND = (SHIFT > 0) ? (MW'(1) <<< ((SHIFT > 0) ? (SHIFT-1) : 0)) : '0;
-
+    // Pure wire truncation: no rounding adder offset per architecture specification
     // ---------------------------------------------------------------- stage 1 (multiply + sign detection)
     logic signed [MW-1:0] p_prop_r, p_int_r;
     logic e_pos_1, e_neg_1;
@@ -46,8 +45,8 @@ module pi_filter #(
 
     always_ff @(posedge clk_i) begin
         if (valid_i) begin
-            p_prop_r <= e_i * $signed({1'b0, kp_i}) + ROUND;
-            p_int_r  <= e_i * $signed({1'b0, ki_i}) + ROUND;
+            p_prop_r <= e_i * $signed({1'b0, kp_i});
+            p_int_r  <= e_i * $signed({1'b0, ki_i});
             e_pos_1  <= !e_i[Error_Width-1] && (e_i != '0);
             e_neg_1  <= e_i[Error_Width-1];
         end
@@ -62,7 +61,7 @@ module pi_filter #(
 
     always_comb begin
         max_ext  = SW'(Max_Pi_Output);
-        p_int_s  = SW'(p_int_r >>> SHIFT);               // align to Q0.32 (rounding is in ROUND)
+        p_int_s  = SW'(p_int_r >>> SHIFT);               // align to Q0.32 via pure truncation
 
         acc_sum  = SW'(acc_reg) + p_int_s;
         acc_cand = acc_sum;
@@ -92,7 +91,7 @@ module pi_filter #(
     end
 
     // ---------------------------------------------------------------- control / state registers
-    always_ff @(posedge clk_i or negedge rst_ni) begin
+    always_ff @(posedge clk_i) begin
         if (!rst_ni) begin
             v1        <= 1'b0;
             v2        <= 1'b0;

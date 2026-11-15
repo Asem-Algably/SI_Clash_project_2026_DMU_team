@@ -43,16 +43,27 @@ function [out, st] = step_str(in, st, T)
         st.ip_mu   = T.fi(zeros(1, Lp), 'mu');
         st.ip_smp  = zeros(1, Lp);
 
-        % Lock detector state (EMA + hysteresis + leaky bucket)
-        st.lock.m        = T.fi(T.lock.str_m0, 'lock_m');
-        st.lock.good     = false;
-        st.lock.bucket   = T.fi(0, 'lock_b');
+        % Lock detector state matching lock_detector.sv (3-stage pipeline)
+        st.lock.v1       = false;
+        st.lock.v2       = false;
+        st.lock.e_abs_r  = 0;
+        st.lock.m_acc    = uint32(254691) * 16; % AW'(Init_Error) << Alpha_Shift
+        st.lock.m_val_r  = uint32(254691);
+        st.lock.sym_cnt  = 0;
+        st.lock.bucket   = 0;
         st.lock.locked   = false;
+        st.lock.locked_q = false;
         st.lock.lock_sym = NaN;
 
         st.out_valid = false;
         st.te_val    = false;
         st.te_e      = T.fi(0, 'ted_e');
+
+        % Hardware feedback pipeline (cfg.lat.ted = 2, cfg.lat.str_pi = 2)
+        st.pipe_ted_val = false(1, 2);
+        st.pipe_ted_e   = T.fi(zeros(1, 2), 'ted_e');
+        st.pipe_pi_val  = false(1, 2);
+        st.pipe_pi      = T.fi(zeros(1, 2), 'str_pi', 'sat');
 
         out = str_drive_outputs(st);
         return;
@@ -183,26 +194,55 @@ function [out, st] = step_str(in, st, T)
         st.smp_reg    = yt_smp;
         st.t_phase    = ((yt_smp - 3) + double(yt_mu)) / T.sps - (cnt_new - 1);
 
-        % Gardner TED: e = Re{mid}*(Re{cur} - Re{prev}) + Im{mid}*(Im{cur} - Im{prev})
+        % Gardner TED input difference using current symbol yt_i and previous symbol st_old.cur_i
         d_i = T.fi(yt_i - R(st_old.cur_i), 'ted_d');
         d_q = T.fi(yt_q - R(st_old.cur_q), 'ted_d');
-        e_t = T.fi(R(st_old.mid_i) * R(d_i) + R(st_old.mid_q) * R(d_q), 'ted_e');
-        st.te_val  = true;
-        st.te_e(:) = e_t;
+        e_calc = T.fi(R(st_old.mid_i) * R(d_i) + R(st_old.mid_q) * R(d_q), 'ted_e');
+    else
+        e_calc = T.fi(0, 'ted_e');
+    end
+
+    % ---------------------------------------------------------------------
+    % TED 2-Stage Pipeline (cfg.lat.ted = 2)
+    % ---------------------------------------------------------------------
+    st.pipe_ted_val = [tail_cur, st_old.pipe_ted_val(1)];
+    st.pipe_ted_e   = [e_calc,   R(st_old.pipe_ted_e(1))];
+
+    ted_val_stg2 = st_old.pipe_ted_val(2);
+    ted_e_stg2   = R(st_old.pipe_ted_e(2));
+
+    st.te_val = ted_val_stg2;
+    if ted_val_stg2
+        st.te_e(:) = ted_e_stg2;
 
         % PI loop filter with saturation & conditional anti-windup
-        [v_pi, acc_new, sat_f] = str_pi_filter(e_t, st_old.acc, T.str.kp, T.str.ki, T.str.max_pi, T);
+        [v_pi, acc_new, sat_f] = str_pi_filter(ted_e_stg2, st_old.acc, T.str.kp, T.str.ki, T.str.max_pi, T);
         st.acc(:)    = acc_new;
-        st.pi_reg(:) = v_pi;
+        pi_calc      = v_pi;
         if sat_f
             st.sat_cnt(:) = R(st_old.sat_cnt) + 1;
         end
+    else
+        pi_calc = T.fi(0, 'str_pi', 'sat');
+    end
 
-        q25_s   = R(T.fi(T.c.q25, 'M_s'));
-        st.W(:) = T.fi(q25_s + R(v_pi), 'M');
+    % Continuous Hardware Lock Detector (matches lock_detector.sv cycle-by-cycle)
+    st.lock = str_lock_hw_step(st_old.lock, ted_val_stg2, ted_e_stg2, double(st.sym_cnt), T);
+    st.lock.locked_q = st_old.lock.locked; % 1-cycle registered lock output matching RTL locked_o flip-flop
 
-        % Continuous Hardware Lock Detector
-        st.lock = str_lock_step(st_old.lock, e_t, cnt_new, T);
+    % ---------------------------------------------------------------------
+    % PI Loop Filter 2-Stage Pipeline (cfg.lat.str_pi = 2, total loop delay = 4)
+    % ---------------------------------------------------------------------
+    st.pipe_pi_val = [ted_val_stg2, st_old.pipe_pi_val(1)];
+    st.pipe_pi     = [pi_calc,      R(st_old.pipe_pi(1))];
+
+    pi_val_stg2 = st_old.pipe_pi_val(2);
+    pi_stg2     = R(st_old.pipe_pi(2));
+
+    if pi_val_stg2
+        st.pi_reg(:) = pi_stg2;
+        q25_s        = R(T.fi(T.c.q25, 'M_s'));
+        st.W(:)      = T.fi(q25_s + R(pi_stg2), 'M');
     end
 
     out = str_drive_outputs(st);
@@ -215,7 +255,7 @@ function out = str_drive_outputs(st)
     out.m_axis_valid_o  = st.out_valid;
     out.m_axis_i_sym_o  = st.cur_i;
     out.m_axis_q_sym_o  = st.cur_q;
-    out.lock_o          = st.lock.locked;
+    out.lock_o          = st.lock.locked_q;
     out.ted_err_valid_o = st.te_val;
     out.ted_err_o       = st.te_e;
     out.mu_o            = st.mu_reg;
@@ -264,36 +304,64 @@ function [v, acc_next, sat] = str_pi_filter(e, acc, Kp, Ki, lim, T)
     end
 end
 
-function ld = str_lock_step(ld_old, e, sym_idx, T)
-    R  = T.rd;
+function ld = str_lock_hw_step(ld_old, valid_i, e_in, sym_idx, T)
     ld = ld_old;
-    a  = R(e);
-    if a < 0, a = -a; end
-    m_old   = R(ld_old.m);
-    d       = a - m_old;
-    ld.m(:) = m_old + bitsra(d, T.lock.ema_shift);
 
-    m_new = R(ld.m);
-    if ld_old.good
-        if m_new > R(T.lock.str_thr_exit),  ld.good = false; end
-    else
-        if m_new < R(T.lock.str_thr_enter), ld.good = true;  end
-    end
-
-    b_old = double(ld_old.bucket);
-    if ld.good
-        b_new = min(b_old + 1, T.lock.str_confirm);
-    else
-        b_new = max(b_old - 2, 0);
-    end
-    ld.bucket(:) = b_new;
-
-    if b_new >= T.lock.str_confirm
-        if ~ld_old.locked && isnan(ld_old.lock_sym)
-            ld.lock_sym = sym_idx;
+    % Stage 1: Absolute error calculation (|e|)
+    if valid_i
+        e_val = bitsra(double(storedInteger(e_in)), 3);
+        if e_val < 0
+            e_abs = -e_val;
+        else
+            e_abs = e_val;
         end
-        ld.locked = true;
-    elseif b_new == 0
-        ld.locked = false;
+        ld.e_abs_r = mod(e_abs, 2^23);
+    end
+
+    % Clock-rate pipeline progression
+    ld.v1 = valid_i;
+    ld.v2 = ld_old.v1;
+
+    % Stage 2: EMA update (on v1)
+    if ld_old.v1
+        shift_val = floor(double(ld_old.m_acc) / 16);
+        m_next = double(ld_old.m_acc) + double(ld_old.e_abs_r) - shift_val;
+        m_next = max(0, min(m_next, 2^27 - 1));
+        ld.m_acc = uint32(m_next);
+        ld.m_val_r = uint32(floor(m_next / 16));
+        if ld_old.sym_cnt < 1
+            ld.sym_cnt = ld_old.sym_cnt + 1;
+        end
+    end
+
+    % Stage 3: Hysteresis comparison and leaky bucket (on v2)
+    if ld_old.v2
+        if ld_old.locked
+            thr = 127346; % LOCK_THR_EXIT
+        else
+            thr = 50938;  % LOCK_THR_ENTER
+        end
+
+        idx_ok = (ld_old.sym_cnt >= 0);
+        good = (double(ld_old.m_val_r) < thr) && idx_ok;
+
+        b_old = ld_old.bucket;
+        if good
+            b_new = min(b_old + 1, 20);
+        elseif b_old >= 2
+            b_new = b_old - 2;
+        else
+            b_new = 0;
+        end
+        ld.bucket = b_new;
+
+        if b_new >= 20
+            if ~ld_old.locked && isnan(ld_old.lock_sym)
+                ld.lock_sym = sym_idx;
+            end
+            ld.locked = true;
+        elseif b_new == 0
+            ld.locked = false;
+        end
     end
 end

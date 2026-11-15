@@ -137,24 +137,19 @@ module sync_system_top #(
   logic [15:0][31:0] dft_obs_bus;
 
   // -------------------------------------------------------------------------
-  // Reset synchronizer & Soft-Reset generation
+  // Synchronous Reset & Soft-Reset generation
   // -------------------------------------------------------------------------
   logic flush_rst;
   logic rst_n_eff;
 
-  reset_sync u_reset_sync (
-    .clk_i (clk),
-    .rst_ni(rst_n),
-    .rst_no(rst_n_sync)
-  );
-
-  assign rst_n_eff = rst_n_sync & ~flush_rst;
+  assign rst_n_sync = rst_n;
+  assign rst_n_eff  = rst_n_sync & ~flush_rst;
 
   // Repeat pad sample buffer feeding STR during FLUSH
   logic signed [InSampleWidth-1:0] last_in_i, last_in_q;
   logic signed [InSampleWidth-1:0] str_in_i, str_in_q;
 
-  always_ff @(posedge clk or negedge rst_n_sync) begin
+  always_ff @(posedge clk) begin
     if (!rst_n_sync) begin
       last_in_i <= '0;
       last_in_q <= '0;
@@ -217,6 +212,10 @@ module sync_system_top #(
   // -------------------------------------------------------------------------
   // Derotator (NCO + quarter-wave ROM + quadrant rotator + complex mult)
   // -------------------------------------------------------------------------
+  // Gated derotator valid input (active during CostasAcq and Track)
+  logic str_valid_gated;
+  assign str_valid_gated = str_valid & (fsm_state >= 3'd4);
+
   derotator #(
     .Width       (PhaseWidth),
     .Phase_Bits  (12),
@@ -227,7 +226,7 @@ module sync_system_top #(
   ) u_derotator (
     .clk_i            (clk),
     .rst_ni           (rst_n_eff),
-    .s_axis_valid_i   (str_valid),
+    .s_axis_valid_i   (str_valid_gated),
     .s_axis_i_sym_i   (str_sym_i),
     .s_axis_q_sym_i   (str_sym_q),
     .coarse_valid_i   (coarse_valid),
@@ -248,13 +247,24 @@ module sync_system_top #(
   // -------------------------------------------------------------------------
   // Costas Loop (slicer + phase error + PI filter + lock detector + quad check)
   // -------------------------------------------------------------------------
+  // 8-stage pipeline delay for mod_type matching STR + Derotator latency (4 + 3 + 1)
+  logic [1:0] mod_type_pipe [0:7];
+  always_ff @(posedge clk) begin
+    if (!rst_n_sync) begin
+      for (int i = 0; i < 8; i++) mod_type_pipe[i] <= '0;
+    end else begin
+      mod_type_pipe[0] <= mod_type;
+      for (int i = 1; i < 8; i++) mod_type_pipe[i] <= mod_type_pipe[i-1];
+    end
+  end
+
   costas_top u_costas (
     .clk_i            (clk),
     .rst_ni           (rst_n_eff),
     .s_axis_valid_i   (derot_valid),
     .s_axis_i_sym_i   (derot_sym_i),
     .s_axis_q_sym_i   (derot_sym_q),
-    .mod_type_i       (mod_type),
+    .mod_type_i       (mod_type_pipe[7]),
     .costas_gain_i    (costas_loop_gain),
     .mode_i           (costas_mode),
     .slicer_qpsk_i    (slicer_qpsk),
@@ -357,21 +367,11 @@ module sync_system_top #(
   );
 
   // -------------------------------------------------------------------------
-  // Top-level outputs (1-cycle registered output stage: wrap_out = 1)
+  // Top-level outputs: direct wire assignment from derotator registered outputs
   // -------------------------------------------------------------------------
-  always_ff @(posedge clk or negedge rst_n_eff) begin
-    if (!rst_n_eff) begin
-      out_sym_valid <= 1'b0;
-      out_sym_i     <= '0;
-      out_sym_q     <= '0;
-    end else begin
-      out_sym_valid <= derot_valid;
-      if (derot_valid) begin
-        out_sym_i   <= derot_sym_i;
-        out_sym_q   <= derot_sym_q;
-      end
-    end
-  end
+  assign out_sym_valid = derot_valid;
+  assign out_sym_i     = derot_sym_i;
+  assign out_sym_q     = derot_sym_q;
 
   assign coarse_cfo_est = coarse_est;
 
