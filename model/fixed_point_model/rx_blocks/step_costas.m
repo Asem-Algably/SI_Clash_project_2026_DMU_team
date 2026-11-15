@@ -26,9 +26,11 @@ function [out, st] = step_costas(in, st, T)
     % 1. ACTIVE-LOW RESET & REGISTERS INITIALIZATION (~rst_ni)
     % =====================================================================
     if ~in.rst_ni
-        st.acc       = T.fi(0, 'cos_pi', 'sat');
+        st.acc       = T.fi(0, 'freq_w');
         st.pw_val    = false(1, Lc);
-        st.pw_pi     = T.fi(zeros(1, Lc), 'cos_pi', 'sat');
+        st.pw_pi     = T.fi(zeros(1, Lc), 'freq_w');
+        st.sat_pos   = false;
+        st.sat_neg   = false;
         st.li        = init_costas_ld(T, C.lock_int(1).m0);
         st.lp        = init_costas_ld(T, C.lock_pub(1).m0);
         st.cnt_i     = T.fi(0, 'sgn_cnt', 'sat');
@@ -61,7 +63,7 @@ function [out, st] = step_costas(in, st, T)
     end
 
     new_pw_val  = false;
-    new_pw_pi   = T.fi(0, 'cos_pi', 'sat');
+    new_pw_pi   = T.fi(0, 'freq_w');
     new_pa_val  = false;
     new_pa_word = T.fi(0, 'phase');
     st.err_val  = false;
@@ -75,6 +77,9 @@ function [out, st] = step_costas(in, st, T)
         st.reported  = false;
         st.corr_sent = false;
         st.unres     = false;
+        st.sat_pos   = false;
+        st.sat_neg   = false;
+        st.acc(:)    = T.fi(0, 'freq_w');
         if in.s_axis_valid_i
             yi = R(T.fi(in.s_axis_i_sym_i, 'rot_out'));
             yq = R(T.fi(in.s_axis_q_sym_i, 'rot_out'));
@@ -92,14 +97,55 @@ function [out, st] = step_costas(in, st, T)
             st.ai         = ai;
             st.aq         = aq;
             st.a_ref      = (double(ai) + 1j * double(aq)) / T.in_scale;
-            e_raw         = T.fi(yq * R(ai) - yi * R(aq), 'cos_e');
+
+            % Phase Error Detector matching phase_error.sv
+            yi_int = int64(storedInteger(yi));
+            yq_int = int64(storedInteger(yq));
+            ai_int = int64(storedInteger(ai));
+            aq_int = int64(storedInteger(aq));
+
+            m_qa = yq_int * ai_int;
+            m_ia = yi_int * aq_int;
+            diff_r = m_qa - m_ia;
+            % Pure wire truncation matching phase_error.sv
+            shifted = bitsra(diff_r, 15);
+            if shifted > 32767
+                e_int = int64(32767);
+            elseif shifted < -32768
+                e_int = int64(-32768);
+            else
+                e_int = shifted;
+            end
+            e_raw = T.fi(double(e_int) * (2^-15), 'cos_e');
             st.err_val    = true;
             st.err_reg(:) = e_raw;
 
-            % PI Loop Filter (the ONLY block with saturation & anti-windup)
-            [v_pi, acc_new, sat_c] = fxp_costas_pi(R(e_raw), R(st_old.acc), C.kp{row}, C.ki{row}, C.max_pi, T);
-            st.acc(:) = acc_new;
-            if sat_c
+            % Select loop gains matching costas_top.sv
+            if mode == T.enc.mode.ACQ
+                kp_int = int64(220364);
+                ki_int = int64(7347);
+            else
+                if use_qpsk
+                    kp_int = int64(220364);
+                    ki_int = int64(7347);
+                else
+                    kp_int = int64(396656);
+                    ki_int = int64(13224);
+                end
+            end
+
+            % PI Loop Filter matching pi_filter.sv (pure truncation, no rounding)
+            sat_pos_prev = isfield(st_old, 'sat_pos') && logical(st_old.sat_pos);
+            sat_neg_prev = isfield(st_old, 'sat_neg') && logical(st_old.sat_neg);
+            acc_cur_int  = int64(storedInteger(st_old.acc));
+
+            [v_pi, acc_new, sat_pos, sat_neg] = fxp_costas_pi(...
+                e_int, acc_cur_int, kp_int, ki_int, sat_pos_prev, sat_neg_prev, T);
+
+            st.acc(:)    = acc_new;
+            st.sat_pos   = sat_pos;
+            st.sat_neg   = sat_neg;
+            if sat_pos || sat_neg
                 st.sat_cnt = st_old.sat_cnt + 1;
             end
             new_pw_val = true;
@@ -204,27 +250,54 @@ function a = slice_4pam_fxp(y, C)
     end
 end
 
-function [v, acc_next, sat] = fxp_costas_pi(e, acc, Kp, Ki, lim, T)
-    acc_c = T.fi(acc + Ki * e, 'cos_pi', 'sat');
-    if acc_c > lim
-        acc_c(:) = lim;
-    elseif acc_c < -lim
-        acc_c(:) = -lim;
-    end
-    v_raw = Kp * e + T.rd(acc_c);
-    sat   = false;
-    if v_raw > lim
-        sat = true;
-        v   = T.fi(lim, 'cos_pi', 'sat');
-        if e > 0, acc_next = T.fi(acc, 'cos_pi', 'sat'); else, acc_next = acc_c; end
-    elseif v_raw < -lim
-        sat = true;
-        v   = T.fi(-lim, 'cos_pi', 'sat');
-        if e < 0, acc_next = T.fi(acc, 'cos_pi', 'sat'); else, acc_next = acc_c; end
+function [v, acc_next, sat_pos, sat_neg] = fxp_costas_pi(e_int, acc_int, Kp_int, Ki_int, sat_pos_prev, sat_neg_prev, T)
+    % Bit-exact integer modeling of pi_filter.sv (pure truncation, no rounding)
+    p_prop_r = e_int * Kp_int;
+    p_int_r  = e_int * Ki_int;
+
+    SHIFT = 7;
+    p_prop_s = bitsra(p_prop_r, SHIFT);
+    p_int_s  = bitsra(p_int_r, SHIFT);
+
+    max_pi = int64(515396075); % 32'sh1EB8_51EB (0.12 * 2^32)
+
+    acc_sum = acc_int + p_int_s;
+    if acc_sum > max_pi
+        acc_cand = max_pi;
+    elseif acc_sum < -max_pi
+        acc_cand = -max_pi;
     else
-        v        = T.fi(v_raw, 'cos_pi', 'sat');
-        acc_next = acc_c;
+        acc_cand = acc_sum;
     end
+
+    e_pos_1 = (e_int > 0);
+    e_neg_1 = (e_int < 0);
+    freeze  = (sat_pos_prev && e_pos_1) || (sat_neg_prev && e_neg_1);
+
+    if ~freeze
+        acc_next_int = acc_cand;
+    else
+        acc_next_int = acc_int;
+    end
+
+    v_sum = acc_next_int + p_prop_s;
+    if v_sum > max_pi
+        v_int   = max_pi;
+        sat_pos = true;
+        sat_neg = false;
+    elseif v_sum < -max_pi
+        v_int   = -max_pi;
+        sat_pos = false;
+        sat_neg = true;
+    else
+        v_int   = v_sum;
+        sat_pos = false;
+        sat_neg = false;
+    end
+
+    % Convert 32-bit Q0.32 integer to fi('freq_w')
+    v = T.fi(double(v_int) * (2^-32), 'freq_w');
+    acc_next = T.fi(double(acc_next_int) * (2^-32), 'freq_w');
 end
 
 function ld = init_costas_ld(T, m0)

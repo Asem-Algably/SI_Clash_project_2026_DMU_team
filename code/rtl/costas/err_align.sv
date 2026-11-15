@@ -55,7 +55,7 @@ module err_align #(
       logic signed [TedWidth-1:0] ted_err_pipe [StrDelay];
       logic                       ted_vld_pipe [StrDelay];
 
-      always_ff @(posedge clk_i or negedge rst_ni) begin
+      always_ff @(posedge clk_i) begin
         if (!rst_ni) begin
           for (int unsigned i = 0; i < StrDelay; i++) begin
             ted_err_pipe[i] <= '0;
@@ -87,7 +87,7 @@ module err_align #(
       logic signed [CostasWidth-1:0] costas_err_pipe [CostasDelay];
       logic                          costas_vld_pipe [CostasDelay];
 
-      always_ff @(posedge clk_i or negedge rst_ni) begin
+      always_ff @(posedge clk_i) begin
         if (!rst_ni) begin
           for (int unsigned i = 0; i < CostasDelay; i++) begin
             costas_err_pipe[i] <= '0;

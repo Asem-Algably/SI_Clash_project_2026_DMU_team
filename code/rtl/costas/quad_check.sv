@@ -69,7 +69,7 @@ module quad_check #(
         neg_q = cnt_q_next[4];                                                  // Extract sign Q
     end
 
-    always_ff @(posedge clk_i or negedge rst_ni) begin
+    always_ff @(posedge clk_i) begin
         if (!rst_ni) begin
             cnt_i_q           <= '0;
             cnt_q_q           <= '0;

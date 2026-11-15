@@ -10,7 +10,7 @@ function [out, st] = step_derotator(in, st, T)
 
     R  = T.rd;
     D  = T.derot;
-    Ld = T.lat.derot; % 2 cycles
+    Ld = T.lat.derot + 1; % 4 entries = 3 cycles delay to match RTL derotator.sv pipeline
 
     % =====================================================================
     % 1. ACTIVE-LOW RESET (~rst_ni)
@@ -61,8 +61,8 @@ function [out, st] = step_derotator(in, st, T)
         [new_yi, new_yq] = lut_derotate(xr, xi, st_old.theta, D, T);
         new_valid = true;
 
-        % Advance NCO Phase by Frequency Word
-        theta_nx = T.fi(R(theta_nx) + fw_cur, 'phase');
+        % Advance NCO Phase by Registered Frequency Word (matching RTL freq_word_o 1-clock register)
+        theta_nx = T.fi(R(theta_nx) + st_old.fw, 'phase');
     end
 
     % One-Cycle Initial Quadrant Phase Ambiguity Correction (k * pi/2)
@@ -109,7 +109,7 @@ function [yi, yq] = lut_derotate(xr, xi, theta, D, T)
         otherwise, ur = -xi; ui =  xr;
     end
 
-    % Complex Multiply: (ur + j*ui) * (c0 - j*s0)
-    yi = T.fi(ur * c0 + ui * s0, 'rot_out', 'wrap_n');
-    yq = T.fi(ui * c0 - ur * s0, 'rot_out', 'wrap_n');
+    % Complex Multiply: (ur + j*ui) * (c0 - j*s0) (pure wire truncation matching RTL)
+    yi = T.fi(ur * c0 + ui * s0, 'rot_out');
+    yq = T.fi(ui * c0 - ur * s0, 'rot_out');
 end

@@ -76,7 +76,7 @@ module wrapper_fsm #(
     // =========================================================================
     // 1. Symbol Counter & Preamble Pipeline
     // =========================================================================
-    always_ff @(posedge clk_i or negedge rst_ni) begin
+    always_ff @(posedge clk_i) begin
         if (!rst_ni) begin
             sym_cnt_q <= '0;
         end else if (state_q == ST_WAIT_BURST) begin
@@ -165,7 +165,7 @@ module wrapper_fsm #(
     // =========================================================================
     // 3. Sequential Control Registers
     // =========================================================================
-    always_ff @(posedge clk_i or negedge rst_ni) begin
+    always_ff @(posedge clk_i) begin
         if (!rst_ni) begin
             state_q          <= ST_WAIT_BURST;
             idle_cnt_q       <= '0;

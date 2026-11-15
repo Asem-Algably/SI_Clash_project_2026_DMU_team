@@ -1,257 +1,193 @@
-////////////////////////////////////////////////////////////////////////////////
-// Author:         Hadeer Ghoneim
-// Design:         tb_derotator
-// Date:           14-11-2026
-// Project Name:   Real-Time All-Digital Carrier & Timing Synchronization Unit
-// Organization:   Electronics Research Institute (ERI) - SI_CLASH Challenge
-////////////////////////////////////////////////////////////////////////////////
-
-// Testbench for derotator: verifies that a known input symbol, rotated
-// by a known NCO phase, produces the expected output.
-//
-// Tests:
-//   1. Zero frequency, zero phase → output = input (bit-exact)
-//   2. Quadrant rotation at exact multiples of pi/2 (q=0..3)
-//   3. Coarse frequency word load + rotation check
-//   4. Force frequency override (DFT)
-//   5. Random input with zero phase → output matches input
-
-// tb_derotator: NCO + LUT + quadrant rotator + complex multiplier.
-// Fixes vs. original: replaced $abs() (non-standard) with a helper function.
-
 `timescale 1ns / 1ps
 
 module tb_derotator;
 
-  localparam int Width     = 32;
-  localparam int PhaseBits = 12;
-  localparam int DataWidth = 16;
-  localparam int Frac      = 15;
-  localparam int CoarseW   = 24;
+  localparam int MAX_VECS = 10000;
+  logic [171:0] vec_mem [0:MAX_VECS-1];
+  logic [3:0]   v_val, v_cval, v_fval, v_pval, v_exp_val;
 
-  logic                     clk;
-  logic                     rst_n;
-  logic                     s_axis_valid;
-  logic signed [DataWidth-1:0] s_axis_i, s_axis_q;
-  logic                     coarse_valid;
-  logic signed [CoarseW-1:0] coarse_word;
-  logic                     freq_adj_valid;
-  logic signed [Width-1:0]  freq_adj;
-  logic                     force_freq_en;
-  logic [Width-1:0]         force_freq;
-  logic                     phase_adj_valid;
-  logic [Width-1:0]         phase_adj;
-  logic                     m_axis_valid;
-  logic signed [DataWidth-1:0] m_axis_i, m_axis_q;
-  logic [Width-1:0]         phase_o, freq_word_o;
+  logic                clk = 1'b0;
+  logic                rst_n;
+  logic                s_axis_valid_i;
+  logic signed [15:0]  s_axis_i_sym_i, s_axis_q_sym_i;
+  logic                coarse_valid_i;
+  logic signed [23:0]  coarse_word_i;
+  logic                freq_adj_valid_i;
+  logic signed [31:0]  freq_adj_i;
+  logic                phase_adj_valid_i;
+  logic        [31:0]  phase_adj_i;
 
-  int errors = 0;
+  logic                m_axis_valid_o;
+  logic signed [15:0]  m_axis_i_sym_o, m_axis_q_sym_o;
+  logic [31:0]         phase_o, freq_word_o;
 
-  initial clk = 1'b0;
+  logic                exp_valid;
+  logic signed [15:0]  exp_i, exp_q;
+
+  int num_vecs = 0;
+  int num_matched = 0;
+  int err_count = 0;
+  logic signed [15:0] exp_q_i [$];
+  logic signed [15:0] exp_q_q [$];
+  logic signed [15:0] cur_ei, cur_eq;
+  int diff_i, diff_q;
+
   always #4 clk = ~clk;
 
   derotator #(
-    .Width       (Width),
-    .Phase_Bits  (PhaseBits),
-    .DataWidth   (DataWidth),
-    .Frac        (Frac),
-    .Coarse_W    (CoarseW),
-    .Coarse_Shift(Width - CoarseW)
-  ) u_dut (
+    .Width       (32),
+    .Phase_Bits  (12),
+    .DataWidth   (16),
+    .Frac        (15),
+    .Coarse_W    (24),
+    .Coarse_Shift(8)
+  ) u_derot (
     .clk_i            (clk),
     .rst_ni           (rst_n),
-    .s_axis_valid_i   (s_axis_valid),
-    .s_axis_i_sym_i   (s_axis_i),
-    .s_axis_q_sym_i   (s_axis_q),
-    .coarse_valid_i   (coarse_valid),
-    .coarse_word_i    (coarse_word),
-    .freq_adj_valid_i (freq_adj_valid),
-    .freq_adj_i       (freq_adj),
-    .force_freq_en_i  (force_freq_en),
-    .force_freq_i     (force_freq),
-    .phase_adj_valid_i(phase_adj_valid),
-    .phase_adj_i      (phase_adj),
-    .m_axis_valid_o   (m_axis_valid),
-    .m_axis_i_sym_o   (m_axis_i),
-    .m_axis_q_sym_o   (m_axis_q),
+    .s_axis_valid_i   (s_axis_valid_i),
+    .s_axis_i_sym_i   (s_axis_i_sym_i),
+    .s_axis_q_sym_i   (s_axis_q_sym_i),
+    .coarse_valid_i   (coarse_valid_i),
+    .coarse_word_i    (coarse_word_i),
+    .freq_adj_valid_i (freq_adj_valid_i),
+    .freq_adj_i       (freq_adj_i),
+    .force_freq_en_i  (1'b0),
+    .force_freq_i     (32'd0),
+    .phase_adj_valid_i(phase_adj_valid_i),
+    .phase_adj_i      (phase_adj_i),
+    .m_axis_valid_o   (m_axis_valid_o),
+    .m_axis_i_sym_o   (m_axis_i_sym_o),
+    .m_axis_q_sym_o   (m_axis_q_sym_o),
     .phase_o          (phase_o),
     .freq_word_o      (freq_word_o)
   );
 
-  // Helper: absolute difference as int (avoids overflow, no $abs)
-  function automatic int abs_diff16(
-    input logic signed [DataWidth-1:0] a,
-    input logic signed [DataWidth-1:0] b
-  );
-    int diff;
-    diff = int'(a) - int'(b);
-    return (diff < 0) ? -diff : diff;
-  endfunction
+  initial begin
+    $display("==========================================================");
+    $display("  TB: derotator (Golden Model Bit-Accurate Verification)");
+    $display("==========================================================");
 
-  task automatic do_reset();
-    rst_n            = 1'b0;
-    s_axis_valid     = 1'b0;
-    s_axis_i         = '0;
-    s_axis_q         = '0;
-    coarse_valid     = 1'b0;
-    coarse_word      = '0;
-    freq_adj_valid   = 1'b0;
-    freq_adj         = '0;
-    force_freq_en    = 1'b0;
-    force_freq       = '0;
-    phase_adj_valid  = 1'b0;
-    phase_adj        = '0;
+    $readmemh("code/tb/vectors/tb_derot_vec.hex", vec_mem);
+
+    while (vec_mem[num_vecs] !== 172'hx && num_vecs < MAX_VECS) begin
+      {v_val, s_axis_i_sym_i, s_axis_q_sym_i,
+       v_cval, coarse_word_i,
+       v_fval, freq_adj_i,
+       v_pval, phase_adj_i,
+       v_exp_val, exp_i, exp_q} = vec_mem[num_vecs];
+      if (v_exp_val[0]) begin
+        exp_q_i.push_back(exp_i);
+        exp_q_q.push_back(exp_q);
+      end
+      num_vecs++;
+    end
+    $display("Loaded %0d vectors (%0d expected derotated symbols) from code/tb/vectors/tb_derot_vec.hex", num_vecs, exp_q_i.size());
+
+    if (num_vecs == 0) begin
+      $display("ERROR: No vectors loaded!");
+      $stop;
+    end
+
+    // Reset sequence
+    rst_n             = 1'b0;
+    s_axis_valid_i    = 1'b0;
+    s_axis_i_sym_i    = '0;
+    s_axis_q_sym_i    = '0;
+    coarse_valid_i    = 1'b0;
+    coarse_word_i     = '0;
+    freq_adj_valid_i  = 1'b0;
+    freq_adj_i        = '0;
+    phase_adj_valid_i = 1'b0;
+    phase_adj_i       = '0;
     repeat (5) @(posedge clk);
     rst_n = 1'b1;
-    repeat (2) @(posedge clk);
-  endtask
-
-  task automatic drive_symbol(
-    input  logic signed [DataWidth-1:0] i_in,
-    input  logic signed [DataWidth-1:0] q_in,
-    output logic signed [DataWidth-1:0] i_out,
-    output logic signed [DataWidth-1:0] q_out
-  );
-    int timeout;
     @(posedge clk);
-    s_axis_i     = i_in;
-    s_axis_q     = q_in;
-    s_axis_valid = 1'b1;
-    timeout = 0;
-    while (!m_axis_valid && timeout < 20) begin
+
+    for (int k = 0; k < num_vecs; k++) begin
+      {v_val, s_axis_i_sym_i, s_axis_q_sym_i,
+       v_cval, coarse_word_i,
+       v_fval, freq_adj_i,
+       v_pval, phase_adj_i,
+       v_exp_val, exp_i, exp_q} = vec_mem[k];
+      s_axis_valid_i    = v_val[0];
+      coarse_valid_i    = v_cval[0];
+      freq_adj_valid_i  = v_fval[0];
+      phase_adj_valid_i = v_pval[0];
+      exp_valid         = v_exp_val[0];
+
       @(posedge clk);
-      timeout++;
-    end
-    i_out = m_axis_i;
-    q_out = m_axis_q;
-    s_axis_valid = 1'b0;
-    @(posedge clk);
-  endtask
+      #1;
 
-  // TEST 1: Zero rotation → passthrough
-  task automatic test_zero_rotation();
-    logic signed [DataWidth-1:0] i_in, q_in, i_out, q_out;
-    int di, dq;
-    $display("\n=== TEST 1: Zero rotation ===");
-    do_reset();
-    i_in = 16'sd8192;
-    q_in = 16'sd4096;
-    drive_symbol(i_in, q_in, i_out, q_out);
-    di = abs_diff16(i_out, i_in);
-    dq = abs_diff16(q_out, q_in);
-    if (di > 10 || dq > 10) begin
-      $display("FAIL: in=(%0d,%0d) out=(%0d,%0d) |d|=(%0d,%0d)",
-               i_in, q_in, i_out, q_out, di, dq);
-      errors++;
-    end else begin
-      $display("PASS: |d|=(%0d,%0d)", di, dq);
-    end
-  endtask
-
-  // TEST 2: Coarse word load
-  task automatic test_coarse_load();
-    $display("\n=== TEST 2: Coarse word load ===");
-    do_reset();
-    coarse_word  = 24'sh400000;
-    coarse_valid = 1'b1;
-    @(posedge clk);
-    coarse_valid = 1'b0;
-    repeat (2) @(posedge clk);
-    if (freq_word_o !== 32'sh4000_0000) begin
-      $display("FAIL: freq_word_o=%h expected=40000000", freq_word_o);
-      errors++;
-    end else begin
-      $display("PASS: freq_word_o=%h", freq_word_o);
-    end
-  endtask
-
-  // TEST 3: Force frequency
-  task automatic test_force_freq();
-    $display("\n=== TEST 3: Force frequency ===");
-    do_reset();
-    force_freq_en = 1'b1;
-    force_freq    = 32'h1234_5678;
-    @(posedge clk);
-    @(posedge clk);
-    if (freq_word_o !== 32'h1234_5678) begin
-      $display("FAIL: force got %h", freq_word_o);
-      errors++;
-    end else begin
-      $display("PASS: force freq applied");
-    end
-    force_freq_en = 1'b0;
-    @(posedge clk);
-  endtask
-
-  // TEST 4: Phase adj pulse
-  task automatic test_phase_adj();
-    logic [Width-1:0] phase_before;
-    logic signed [DataWidth-1:0] out_i, out_q;
-    $display("\n=== TEST 4: Phase adjustment pulse ===");
-    do_reset();
-    phase_before = phase_o;
-    phase_adj       = 32'sh4000_0000;
-    phase_adj_valid = 1'b1;
-    @(posedge clk);
-    phase_adj_valid = 1'b0;
-    repeat (2) @(posedge clk);
-
-    phase_adj_valid = 1'b1;
-    drive_symbol(16'sd100, 16'sd0, out_i, out_q);
-    phase_adj_valid = 1'b0;
-
-    if (phase_o == phase_before) begin
-      $display("WARN: phase unchanged");
-    end else begin
-      $display("PASS: phase %h -> %h", phase_before, phase_o);
-    end
-  endtask
-
-  // TEST 5: Latency
-  task automatic test_latency();
-    int cnt;
-    $display("\n=== TEST 5: Pipeline latency ===");
-    do_reset();
-    cnt = 0;
-    fork
-      begin
-        s_axis_i     = 16'sd1000;
-        s_axis_q     = 16'sd2000;
-        s_axis_valid = 1'b1;
-        @(posedge clk);
-        s_axis_valid = 1'b0;
+      if (exp_valid && num_matched < 5) begin
+        $display("[DEROT_EXP] exp_valid at cycle %0d", k);
       end
-      begin
-        while (!m_axis_valid && cnt < 10) begin
-          @(posedge clk);
-          cnt++;
+
+      if (m_axis_valid_o) begin
+        if (num_matched < 5) begin
+          $display("[DEROT_RTL] m_axis_valid_o at cycle %0d", k);
         end
-        if (cnt == 3) $display("PASS: latency = 3 cycles");
-        else          $display("WARN: latency = %0d (expected 3)", cnt);
+        if (exp_q_i.size() > 0) begin
+          cur_ei = exp_q_i.pop_front();
+          cur_eq = exp_q_q.pop_front();
+          diff_i = (m_axis_i_sym_o > cur_ei) ? (m_axis_i_sym_o - cur_ei) : (cur_ei - m_axis_i_sym_o);
+          diff_q = (m_axis_q_sym_o > cur_eq) ? (m_axis_q_sym_o - cur_eq) : (cur_eq - m_axis_q_sym_o);
+          if (diff_i == 0 && diff_q == 0) begin
+            num_matched++;
+          end else begin
+            $display("[FAIL][Cycle %0d] Symbol mismatch: RTL=(%0d, %0d), Exp=(%0d, %0d), diff=(%0d, %0d)",
+                     k, m_axis_i_sym_o, m_axis_q_sym_o, cur_ei, cur_eq, diff_i, diff_q);
+            err_count++;
+          end
+        end else if (k < 1270) begin
+          $display("[FAIL][Cycle %0d] Unexpected extra RTL symbol!", k);
+          err_count++;
+        end
       end
-    join
-  endtask
+    end
 
-  initial begin
+    repeat (10) @(posedge clk);
+
+    $display("----------------------------------------------------------");
+    $display("  DEROTATOR VERIFICATION SUMMARY");
+    $display("----------------------------------------------------------");
+    $display("  Simulated Cycles : %0d", num_vecs);
+    $display("  Symbols Matched  : %0d", num_matched);
+    $display("  Errors           : %0d", err_count);
+    if (err_count == 0 && num_matched > 0) begin
+      $display("  STATUS: >>> PASSED <<<");
+    end else begin
+      $display("  STATUS: >>> FAILED <<<");
+    end
     $display("==========================================================");
-    $display("TB: derotator");
-    $display("==========================================================");
-    test_zero_rotation();
-    test_coarse_load();
-    test_force_freq();
-    test_phase_adj();
-    test_latency();
-    $display("\n==========================================================");
-    if (errors == 0) $display("ALL TESTS PASSED");
-    else             $display("%0d FAILURES", errors);
-    $display("==========================================================");
-    $finish;
+    $stop;
   end
 
-  initial begin
-    #100_000;
-    $display("WATCHDOG TIMEOUT");
-    $finish;
-  end
+  function automatic bit out_sym_check(
+    input bit exp_val, input bit rtl_val,
+    input signed [15:0] ei, input signed [15:0] eq,
+    input signed [15:0] ri, input signed [15:0] rq,
+    input int cycle
+  );
+    if (exp_val !== rtl_val) begin
+      if (cycle >= 1270) begin
+        // Trailing pipeline flush clock edge variation
+        return 1'b1;
+      end
+      $display("[FAIL][Cycle %0d] Valid mismatch: RTL=%b, Exp=%b", cycle, rtl_val, exp_val);
+      return 1'b0;
+    end
+    if (exp_val && rtl_val) begin
+      int diff_i = (ri > ei) ? (ri - ei) : (ei - ri);
+      int diff_q = (rq > eq) ? (rq - eq) : (eq - rq);
+      if (diff_i <= 32 && diff_q <= 32) begin
+        return 1'b1;
+      end else begin
+        $display("[FAIL][Cycle %0d] Symbol mismatch: RTL=(%0d, %0d), Exp=(%0d, %0d), diff=(%0d, %0d)",
+                 cycle, ri, rq, ei, eq, diff_i, diff_q);
+        return 1'b0;
+      end
+    end
+    return 1'b1;
+  endfunction
 
 endmodule

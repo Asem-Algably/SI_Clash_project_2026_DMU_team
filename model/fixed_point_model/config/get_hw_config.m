@@ -41,13 +41,13 @@ function cfg = get_hw_config()
     % 3. HARDWARE SUBMODULE PIPELINE LATENCIES (CLOCK CYCLES)
     % =====================================================================
     cfg.lat.farrow       = 4;                % Parabolic Farrow Horner MAC pipeline depth
-    cfg.lat.ted          = 1;                % Gardner TED registered multiplier/adder
-    cfg.lat.str_pi       = 1;                % STR PI filter registered accumulator
+    cfg.lat.ted          = 2;                % Gardner TED 2-stage registered multiplier/adder
+    cfg.lat.str_pi       = 2;                % STR PI filter 2-stage registered accumulator
     cfg.lat.str          = cfg.lat.farrow;   % STR module strobe alignment latency
-    cfg.lat.coarse       = 16;               % 16-stage vectoring CORDIC IP latency
+    cfg.lat.coarse       = 20;               % 20-stage vectoring CORDIC IP latency
     cfg.lat.derot        = 3;                % 1 LUT read cycle + 2 complex multiplier pipeline cycles
-    cfg.lat.costas       = 5;                % Costas loop feedback delay (2 detector + 3 PI filter)
-    cfg.lat.wrap_out     = 1;                % Top wrapper output register stage
+    cfg.lat.costas       = 6;                % Costas loop feedback delay (3 detector + 3 PI filter)
+    cfg.lat.wrap_out     = 0;                % Direct wire assignment (matching assign out_sym_* = derot_*)
     cfg.lat.top_total    = cfg.lat.str + cfg.lat.derot + cfg.lat.wrap_out;
 
     % =====================================================================
@@ -56,13 +56,13 @@ function cfg = get_hw_config()
     cfg.w.in             = [1, 12, 11];      % sQ0.11 : ADC input port in [-1, 1 - 2^-11] [R.104]
     cfg.w.fv             = [1, 16, 12];      % sQ3.12 : Farrow v1, v2 polynomial coeffs
     cfg.w.fh             = [1, 17, 13];      % sQ3.13 : Farrow Horner MAC intermediate stage
-    cfg.w.str_sym        = [1, 16, 14];      % sQ1.14 : STR interpolated symbol output
+    cfg.w.str_sym        = [1, 16, 15];      % sQ1.15 : STR interpolated symbol output
     cfg.w.M              = [0, 24, 24];      % uQ0.24 : Modulo-1 counter M and step W (wraps mod 1.0)
     cfg.w.M_s            = [1, 25, 24];      % sQ0.24 : Signed 25-bit Modulo-1 difference wire
     cfg.w.eta            = [1, 19, 18];      % sQ0.18 : Signed distance above strobe boundary
     cfg.w.pi_mu          = [1, 18, 17];      % sQ0.17 : PI filter output feeding linear mu multiplier
     cfg.w.mu             = [1, 12, 10];      % sQ1.10 : Fractional interval mu (10 frac bits [R.110])
-    cfg.w.ted_d          = [1, 17, 14];      % sQ2.14 : Gardner TED difference (cur - prev)
+    cfg.w.ted_d          = [1, 17, 15];      % sQ1.15 : Gardner TED difference (cur - prev)
     cfg.w.ted_e          = [1, 25, 21];      % sQ3.21 : Gardner TED error output
     cfg.w.str_pi         = [1, 26, 28];      % sQ-3.28: STR PI integrator & output (SATURATING)
     cfg.w.str_kp         = [0, 24, 25];      % uQ-1.25: STR proportional gain Kp
@@ -72,11 +72,11 @@ function cfg = get_hw_config()
     cfg.w.cx             = [1, 32, 22];      % sQ9.22 : CORDIC vectoring X, Y registers
     cfg.w.cz             = [1, 28, 26];      % sQ1.26 : CORDIC angle Z accumulator in turns
     cfg.w.cfo            = [1, 24, 24];      % sQ-1.24: Coarse CFO output word in turns/symbol
-    cfg.w.lut            = [0, 16, 16];      % uQ0.16 : Quarter-wave sine LUT entry
+    cfg.w.lut            = [1, 16, 15];      % sQ1.15 : Quarter-wave sine LUT entry (matching RTL sine_quarter_lut.svh)
     cfg.w.phase          = [0, 32, 32];      % uQ0.32 : 32-bit NCO phase accumulator in turns [R.120]
     cfg.w.freq_w         = [1, 32, 32];      % sQ-1.32: 32-bit signed NCO frequency word in turns/symbol
-    cfg.w.rot_out        = [1, 16, 14];      % sQ1.14 : Derotator output symbol [R.105]
-    cfg.w.cos_a          = [1, 16, 14];      % sQ1.14 : Costas slicer decision levels (+-d, +-3d)
+    cfg.w.rot_out        = [1, 16, 15];      % sQ1.15 : Derotator output symbol [R.105]
+    cfg.w.cos_a          = [1, 16, 15];      % sQ1.15 : Costas slicer decision levels (+-d, +-3d)
     cfg.w.cos_e          = [1, 22, 19];      % sQ2.19 : Costas phase detector error
     cfg.w.cos_pi         = [1, 27, 28];      % sQ-2.28: Costas PI integrator & output (SATURATING)
     cfg.w.cos_kp         = [0, 24, 22];      % uQ2.22 : Costas proportional gain Kp
@@ -163,7 +163,7 @@ function cfg = get_hw_config()
     cfg.costas.lvl_q   = cfg.const(g * 1.0,           'cos_a'); % QPSK: +-0.5
     cfg.costas.lvl_16a = cfg.const(g * (1.0 / 3.0),   'cos_a'); % 16-QAM inner: +-1/6
     cfg.costas.lvl_16b = cfg.const(g * 1.0,           'cos_a'); % 16-QAM outer: +-0.5
-    cfg.costas.thr_16  = cfg.const(g * (2.0 / 3.0),   'cos_a'); % 16-QAM threshold: 1/3
+    cfg.costas.thr_16  = cfg.const(10922 * (2^-15),    'cos_a'); % 16-QAM threshold: 2 * 5461 = 10922 matching RTL T2
 
     % =====================================================================
     % 8. QUARTER-WAVE SINE LUT (4096 ENTRIES, 12-BIT ADDRESS, uQ0.16)
@@ -172,7 +172,7 @@ function cfg = get_hw_config()
     cfg.derot.Nq        = 2^cfg.derot.addr_bits; % 4096
     a_idx               = (0 : cfg.derot.Nq - 1).';
     sin_mid             = sin((a_idx + 0.5) * (pi / 2) / cfg.derot.Nq);
-    lut_raw             = round(sin_mid * (2^16 - 1)) / (2^16);
+    lut_raw             = round(sin_mid * 32767) / 32768;
     cfg.derot.lut       = cfg.const(lut_raw, 'lut');
 
     % =====================================================================

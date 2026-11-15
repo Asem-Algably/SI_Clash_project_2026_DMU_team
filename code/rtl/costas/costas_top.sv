@@ -18,33 +18,32 @@ module costas_top #(
     parameter logic signed [Data_Width-1:0]  Qpsk_Level    = 16'sd16384,
     parameter logic signed [Data_Width-1:0]  Qam_Level     = 16'sd5461,
 
-    // Loop gains - ACQ (preamble): Bn_Ts ~ 0.035
-    parameter logic [Gain_Width-1:0] Kp_Acq  = 24'd419700,
-    parameter logic [Gain_Width-1:0] Ki_Acq  = 24'd19600,
-
-    // Loop gains - TRACK (payload): Bn_Ts = 0.015, zeta = 0.707, pipe_delay = 2
-    // computed from compute_loop_gains.m (Q0.24)
-    parameter logic [Gain_Width-1:0] Kp_Qpsk = 24'd180428,   // K_ted = 0.5
-    parameter logic [Gain_Width-1:0] Ki_Qpsk = 24'd3609,
-    parameter logic [Gain_Width-1:0] Kp_Qam  = 24'd324771,   // K_ted = 10*(1/6)^2
-    parameter logic [Gain_Width-1:0] Ki_Qam  = 24'd6497,
+    // Delay-compensated Costas loop filter gains (uQ0.24, Gain_Frac_Bits = 24)
+    // Preamble & QPSK: Kp = 220364 (24'h035CD4), Ki = 7347 (24'h001CB3)
+    // 16-QAM payload:  Kp = 396656 (24'h060D70), Ki = 13224 (24'h0033A8)
+    parameter logic [Gain_Width-1:0] Kp_Acq  = 24'd220364,
+    parameter logic [Gain_Width-1:0] Ki_Acq  = 24'd7347,
+    parameter logic [Gain_Width-1:0] Kp_Qpsk = 24'd220364,
+    parameter logic [Gain_Width-1:0] Ki_Qpsk = 24'd7347,
+    parameter logic [Gain_Width-1:0] Kp_Qam  = 24'd396656,
+    parameter logic [Gain_Width-1:0] Ki_Qam  = 24'd13224,
 
     // Public lock detector parameters
     parameter int                      Lock_Alpha_Shift       = 4,
     parameter int                      Lock_Confirm_Count     = 12,
     parameter int                      Lock_Min_Symbols       = 15,
     parameter logic [Error_Width-1:0]  Lock_Init_Error        = 16'd8192,
-    // Fixed (2x scale for QPSK, 2x for QAM):
-    parameter logic [Error_Width-1:0]  Lock_Enter_Thresh_Qpsk = 16'd4096,  // was 2064
-    parameter logic [Error_Width-1:0]  Lock_Exit_Thresh_Qpsk  = 16'd5500,  // was 3277
-    parameter logic [Error_Width-1:0]  Lock_Enter_Thresh_Qam  = 16'd2300,  // was 1147
-    parameter logic [Error_Width-1:0]  Lock_Exit_Thresh_Qam   = 16'd3650,  // was 1820
+    // Nominal Q1.15 lock thresholds matching golden model:
+    parameter logic [Error_Width-1:0]  Lock_Enter_Thresh_Qpsk = 16'd3277,
+    parameter logic [Error_Width-1:0]  Lock_Exit_Thresh_Qpsk  = 16'd4915,
+    parameter logic [Error_Width-1:0]  Lock_Enter_Thresh_Qam  = 16'd1820,
+    parameter logic [Error_Width-1:0]  Lock_Exit_Thresh_Qam   = 16'd2731,
     // Internal lock detector parameters
-    parameter int                      Lock_Int_Confirm_Count = 8,
-    parameter logic [Error_Width-1:0]  Lock_Int_Enter_Thresh  = 16'd3600,
-    parameter logic [Error_Width-1:0]  Lock_Int_Exit_Thresh   = 16'd5000,
-    parameter int                      Lock_Int_Min_Symbols   = 4,
-    parameter logic [Error_Width-1:0]  Lock_Int_Init_Error    = 16'd4000
+    parameter int                      Lock_Int_Confirm_Count = 12,
+    parameter logic [Error_Width-1:0]  Lock_Int_Enter_Thresh  = 16'd3277,
+    parameter logic [Error_Width-1:0]  Lock_Int_Exit_Thresh   = 16'd4915,
+    parameter int                      Lock_Int_Min_Symbols   = 0,
+    parameter logic [Error_Width-1:0]  Lock_Int_Init_Error    = 16'd5734
 )(
     input  logic                          clk_i,
     input  logic                          rst_ni,
@@ -73,19 +72,9 @@ module costas_top #(
     localparam logic [1:0] MODE_ACQ  = 2'b01;
     localparam logic [1:0] MOD_QAM16 = 2'b01;
 
-    // -------------------------------------- Reset Synchronizer (Async Assert, Sync Deassert)
-    logic rst_meta_n, rst_sync_n;
-
-    always_ff @(posedge clk_i or negedge rst_ni) begin
-        if (!rst_ni) begin
-            rst_meta_n <= 1'b0;
-            rst_sync_n <= 1'b0;
-        end
-        else begin
-            rst_meta_n <= 1'b1;
-            rst_sync_n <= rst_meta_n;
-        end
-    end
+    // -------------------------------------- Synchronous Reset
+    logic rst_sync_n;
+    assign rst_sync_n = rst_ni;
 
     // ------------------------------------------------ Slicer Subsystem
     logic signed [Data_Width-1:0] ai, aq;
@@ -108,7 +97,7 @@ module costas_top #(
     );
 
     // Pipeline delay to align signs with phase_error output valid
-    always_ff @(posedge clk_i or negedge rst_sync_n) begin
+    always_ff @(posedge clk_i) begin
         if (!rst_sync_n) begin
             sgn_i_pos_q <= 1'b0;
             sgn_q_pos_q <= 1'b0;
@@ -138,6 +127,28 @@ module costas_top #(
 
         thr_enter = use_qam ? Lock_Enter_Thresh_Qam : Lock_Enter_Thresh_Qpsk;
         thr_exit  = use_qam ? Lock_Exit_Thresh_Qam  : Lock_Exit_Thresh_Qpsk;
+    end
+
+    // Pipeline kp/ki by 3 stages to match phase_error pipeline depth
+    logic [Gain_Width-1:0] kp_d1, kp_d2, kp_d3;
+    logic [Gain_Width-1:0] ki_d1, ki_d2, ki_d3;
+
+    always_ff @(posedge clk_i) begin
+        if (!rst_sync_n) begin
+            kp_d1 <= Kp_Acq;
+            kp_d2 <= Kp_Acq;
+            kp_d3 <= Kp_Acq;
+            ki_d1 <= Ki_Acq;
+            ki_d2 <= Ki_Acq;
+            ki_d3 <= Ki_Acq;
+        end else begin
+            kp_d1 <= kp;
+            kp_d2 <= kp_d1;
+            kp_d3 <= kp_d2;
+            ki_d1 <= ki;
+            ki_d2 <= ki_d1;
+            ki_d3 <= ki_d2;
+        end
     end
 
     // ------------------------------------------------ Phase Error Subsystem
@@ -177,8 +188,8 @@ module costas_top #(
         .mode_i    (mode_i),
         .valid_i   (e_valid),
         .e_i       (e),
-        .kp_i      (kp),
-        .ki_i      (ki),
+        .kp_i      (kp_d3),
+        .ki_i      (ki_d3),
         .freq_adj_o(freq_adj_o),
         .valid_o   (pi_valid_unused),
         .int_o     (int_o)
@@ -187,7 +198,7 @@ module costas_top #(
     assign freq_adj_valid_o = pi_valid_unused; 
     // ------------------------------------------------ Lock Detectors + Quad Check
     logic done, quad_unres;
-    logic lock_int, lock_pub;
+    logic lock_int, lock_int_comb, lock_pub;
 
     lock_detector #(
         .Error_Width       (Error_Width),
@@ -203,7 +214,8 @@ module costas_top #(
         .e_i        (e),
         .thr_enter_i(Lock_Int_Enter_Thresh),
         .thr_exit_i (Lock_Int_Exit_Thresh),
-        .locked_o   (lock_int)
+        .locked_o   (lock_int),
+        .lock_comb_o(lock_int_comb)
     );
 
     quad_check #(
@@ -215,7 +227,7 @@ module costas_top #(
         .valid_i          (e_valid),
         .sgn_i_pos_i      (sgn_i_pos_q),
         .sgn_q_pos_i      (sgn_q_pos_q),
-        .lock_i           (lock_int),
+        .lock_i           (lock_int_comb),
         .preamble_end_i   (preamble_end_i),
         .phase_adj_valid_o(phase_adj_valid_o),
         .phase_adj_o      (phase_adj_o),
@@ -237,6 +249,7 @@ module costas_top #(
         .e_i        (e),
         .thr_enter_i(thr_enter),
         .thr_exit_i (thr_exit),
+        .lock_comb_o(),
         .locked_o   (lock_pub)
     );
 

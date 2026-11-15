@@ -9,20 +9,21 @@ function [out, st] = step_coarse_cfo(in, st, T)
     %   5. 16-Cycle CORDIC IP Pipeline Shift Register
 
     R  = T.rd;
-    Lc = T.lat.coarse; % 16 cycles
+    Lc = T.lat.coarse; % 20 entries = 19 clock cycles delay, matching RTL cordic_angle
 
     % =====================================================================
     % 1. ACTIVE-LOW RESET (~rst_ni)
     % =====================================================================
     if ~in.rst_ni
-        st.Di     = T.fi(zeros(1, 4), 'str_sym');
-        st.Dq     = T.fi(zeros(1, 4), 'str_sym');
-        st.active = false;
-        st.cnt    = T.fi(0, 'cnt');
-        st.Ar     = T.fi(0, 'cacc');
-        st.Ai     = T.fi(0, 'cacc');
-        st.cf_val = false(1, Lc);
-        st.cf_w   = T.fi(zeros(1, Lc), 'cfo');
+        st.Di         = T.fi(zeros(1, 4), 'str_sym');
+        st.Dq         = T.fi(zeros(1, 4), 'str_sym');
+        st.active     = false;
+        st.start_prev = false;
+        st.cnt        = T.fi(0, 'cnt');
+        st.Ar         = T.fi(0, 'cacc');
+        st.Ai         = T.fi(0, 'cacc');
+        st.cf_val     = false(1, Lc);
+        st.cf_w       = T.fi(zeros(1, Lc), 'cfo');
 
         out.m_axis_valid_o = false;
         out.m_axis_cfo_o   = st.cf_w(end);
@@ -37,8 +38,10 @@ function [out, st] = step_coarse_cfo(in, st, T)
     new_valid = false;
     new_word  = T.fi(0, 'cfo');
 
-    % Start Trigger from Wrapper FSM
-    if in.start_i
+    % Rising-edge trigger on start_i (supports level enable from burst_ctrl)
+    start_prev = isfield(st_old, 'start_prev') && logical(st_old.start_prev);
+    st.start_prev = logical(in.start_i);
+    if in.start_i && ~start_prev
         act = true;
         cnt = 0;
         Ar  = R(T.fi(0, 'cacc'));
@@ -97,35 +100,34 @@ end
 function f = cordic_angle_solver(x, y, T)
     % 16-Stage Vectoring CORDIC Angle Evaluation matching RTL cordic_angle.sv.
     % Evaluates angle in fraction-of-turn, then divides by lag D=4.
-    R   = T.rd;
-    x_i = R(x);
-    y_i = R(y);
+    x_int = int64(storedInteger(x));
+    y_int = int64(storedInteger(y));
 
     % Save original signs and take absolute values
-    sign_x = (x_i < 0);
-    sign_y = (y_i < 0);
-    if sign_x, x_q = -x_i; else, x_q = x_i; end
-    if sign_y, y_q = -y_i; else, y_q = y_i; end
+    sign_x = (x_int < 0);
+    sign_y = (y_int < 0);
+    if sign_x, x_q = -x_int; else, x_q = x_int; end
+    if sign_y, y_q = -y_int; else, y_q = y_int; end
 
-    % Precalculated atan table in fraction of a turn: atan(2^-i) / (2*pi)
-    atan_lut = [ ...
-        0.12500000000000, 0.07378647873726, 0.03897950346387, 0.01978087955577, ...
-        0.00992837373801, 0.00496883162235, 0.00248499292864, 0.00124256860000, ...
-        0.00062129334080, 0.00031064780000, 0.00015532405780, 0.00007766204850, ...
-        0.00003883102670, 0.00001941551370, 0.00000970775700, 0.00000485387850];
+    % Precalculated atan table matching cordic_angle.sv atan_lut
+    atan_lut_int = int64([ ...
+        2097152, 1237935, 653967, 331868, ...
+        166564,   83364,  41688,  20844, ...
+         10422,    5211,   2605,   1302, ...
+           651,     325,    162,     81 ]);
 
-    z_q = 0.0;
+    z_q = int64(0);
     for i = 0:15
         dx = bitsra(y_q, i);
         dy = bitsra(x_q, i);
         if y_q > 0
             x_q = x_q + dx;
             y_q = y_q - dy;
-            z_q = z_q + atan_lut(i + 1);
+            z_q = z_q + atan_lut_int(i + 1);
         else
             x_q = x_q - dx;
             y_q = y_q + dy;
-            z_q = z_q - atan_lut(i + 1);
+            z_q = z_q - atan_lut_int(i + 1);
         end
     end
 
@@ -135,12 +137,15 @@ function f = cordic_angle_solver(x, y, T)
     elseif ~sign_x && sign_y
         angle_o = -z_q;
     elseif sign_x && ~sign_y
-        angle_o = 0.5 - z_q;
+        angle_o = int64(8388607) - z_q;
     else
-        angle_o = -0.5 + z_q;
+        angle_o = -int64(8388607) + z_q;
     end
 
-    % Divide by lag D=4 => turns per symbol: cfo = angle_o / 4 in sQ-1.24
-    cfo_turns = angle_o / 4.0;
+    % Divide by lag D=4 matching coarse_cfo_core.sv: angle_out >>> 2
+    cfo_int = bitsra(angle_o, 2);
+
+    % Convert 24-bit integer (2^24 = 1 turn) to fi('cfo')
+    cfo_turns = double(cfo_int) * (2^-24);
     f = T.fi(cfo_turns, 'cfo');
 end

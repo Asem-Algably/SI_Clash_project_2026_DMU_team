@@ -42,7 +42,7 @@ module NCO_accumulator #(
     logic phase_adj_pulse;
 
     // Delay phase_adj_valid_i by one clock, for the rising-edge detect below
-    always_ff @(posedge clk_i or negedge rst_ni)begin
+    always_ff @(posedge clk_i)begin
         if(!rst_ni)begin
             phase_adj_valid_q <= 0;
         end
@@ -60,7 +60,7 @@ module NCO_accumulator #(
 
     // Phase accumulator, updated every clock. The carry out is dropped on purpose: the phase
     // wraps at 2^Acc_W, which is one full turn.
-    always_ff @(posedge clk_i or negedge rst_ni)begin
+    always_ff @(posedge clk_i)begin
         if (!rst_ni)begin
          phase_o <= '0;
         end

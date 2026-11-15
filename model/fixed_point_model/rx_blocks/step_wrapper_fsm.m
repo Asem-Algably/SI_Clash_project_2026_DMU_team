@@ -28,9 +28,15 @@ function [out, st] = step_wrapper_fsm(in, st, T)
         st.cfo_hold = T.fi(0, 'cfo');
         st.fine     = T.fi(0, 'freq_w');
         st.ld       = false;
-        st.ow_val             = false(1, Lo);
-        st.ow_i               = T.fi(zeros(1, Lo), 'rot_out');
-        st.ow_q               = T.fi(zeros(1, Lo), 'rot_out');
+        if Lo == 0
+            st.ow_val = false;
+            st.ow_i   = T.fi(0, 'rot_out');
+            st.ow_q   = T.fi(0, 'rot_out');
+        else
+            st.ow_val = false(1, Lo);
+            st.ow_i   = T.fi(zeros(1, Lo), 'rot_out');
+            st.ow_q   = T.fi(zeros(1, Lo), 'rot_out');
+        end
         st.idle_cnt           = 0;
         st.flush_cnt          = 0;
         st.flush_rst          = false;
@@ -67,16 +73,15 @@ function [out, st] = step_wrapper_fsm(in, st, T)
             end
 
         case E.ACQUIRE
-            % STR acquisition: advance when STR declares lock or 70-symbol budget expires
-            if in.str_valid
-                if in.str_lock || (cnt >= T.preamble.N_A)
-                    new_state = E.COARSE_EST;
-                    new_cs    = true; % Start coarse CFO correlation
-                end
+            % STR acquisition: advance immediately when STR declares lock, or when 70-symbol budget expires
+            if in.str_lock || (in.str_valid && (cnt >= T.preamble.N_A))
+                new_state = E.COARSE_EST;
+                new_cs    = true; % Start coarse CFO correlation
             end
 
         case E.COARSE_EST
-            % Wait for 32-symbol correlation + 16-stage CORDIC IP done
+            new_cs = true; % Maintain coarse_start high during COARSE_EST matching RTL burst_ctrl
+            % Wait for 32-symbol correlation + 20-stage CORDIC IP done
             if in.coarse_valid
                 new_state = E.LOAD;
             end
@@ -152,10 +157,16 @@ function [out, st] = step_wrapper_fsm(in, st, T)
     st.fine(:) = R(st_old.cfo_hold) + R(T.fi(in.costas_int, 'freq_w'));
     st.ld      = logical(in.str_lock) && logical(in.costas_lock);
 
-    % 1-Cycle Output Register Stage
-    st.ow_val  = [logical(in.derot_valid), st_old.ow_val(1 : end-1)];
-    st.ow_i(:) = [R(T.fi(in.derot_i, 'rot_out')), R(st_old.ow_i(1 : end-1))];
-    st.ow_q(:) = [R(T.fi(in.derot_q, 'rot_out')), R(st_old.ow_q(1 : end-1))];
+    % Output Stage (Direct wire or register)
+    if Lo == 0
+        st.ow_val = logical(in.derot_valid);
+        st.ow_i   = R(T.fi(in.derot_i, 'rot_out'));
+        st.ow_q   = R(T.fi(in.derot_q, 'rot_out'));
+    else
+        st.ow_val  = [logical(in.derot_valid), st_old.ow_val(1 : end-1)];
+        st.ow_i(:) = [R(T.fi(in.derot_i, 'rot_out')), R(st_old.ow_i(1 : end-1))];
+        st.ow_q(:) = [R(T.fi(in.derot_q, 'rot_out')), R(st_old.ow_q(1 : end-1))];
+    end
 
     out = wrap_drive_outputs(st, E);
 end

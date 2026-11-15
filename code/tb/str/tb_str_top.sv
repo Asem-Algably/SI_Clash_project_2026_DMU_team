@@ -1,33 +1,15 @@
-////////////////////////////////////////////////////////////////////////////////
-// Author:         Hadeer Ghoneim
-// Design:         tb_str_top
-// Date:           14-11-2026
-// Project Name:   Real-Time All-Digital Carrier & Timing Synchronization Unit
-// Organization:   Electronics Research Institute (ERI) - SI_CLASH Challenge
-////////////////////////////////////////////////////////////////////////////////
-
-
-// tb_str_top: standalone STR test (before integration).
-//
-// Feeds 800 input samples (200 QPSK symbols × 4 sps) at a constant rate.
-// Expects ~200 output symbols with valid pulses.
-//
-// If this TB fails:
-//   - STR is broken internally → debug top.sv
-// If this TB passes but tb_sync_system_top fails:
-//   - Integration issue → check connections, reset, or scaling
-
 `timescale 1ns / 1ps
 
 module tb_str_top;
 
-  localparam int NumSamples = 800;
-  localparam int Sps        = 4;
-  localparam int ExpectedSyms = NumSamples / Sps;   // 200
+  localparam int MAX_VECS = 10000;
+  logic [71:0] vec_mem [0:MAX_VECS-1];
+  logic [3:0]  v_in_val, v_flush, v_exp_val, v_exp_lock;
 
   logic                clk = 1'b0;
   logic                rst_n;
   logic                in_valid;
+  logic                flush_act;
   logic signed [11:0]  in_i, in_q;
 
   logic                out_valid;
@@ -38,15 +20,30 @@ module tb_str_top;
   logic [9:0]          mu_o;
   logic [15:0]         w_o;
 
-  int in_valid_cnt  = 0;
-  int out_valid_cnt = 0;
+  logic                exp_valid;
+  logic signed [15:0]  exp_i, exp_q;
+  logic                exp_lock;
 
-  always #4 clk = ~clk;
+  int num_vecs = 0;
+  int num_syms_matched = 0;
+  int num_syms_mismatched = 0;
+  int err_count = 0;
+  int diff_i, diff_q;
+  int rtl_strobe_cnt = 0;
+
+  // Queue to hold expected symbols from the golden model
+  logic signed [15:0] exp_queue_i[$];
+  logic signed [15:0] exp_queue_q[$];
+  logic signed [15:0] cur_exp_i, cur_exp_q;
+  int total_exp_syms = 0;
+
+  always #4 clk = ~clk; // 125 MHz clock
 
   str_top u_str (
     .clk_i            (clk),
     .rst_ni           (rst_n),
     .s_axis_valid_i   (in_valid),
+    .flush_active_i   (flush_act),
     .s_axis_i_sample_i(in_i),
     .s_axis_q_sample_i(in_q),
     .loop_gain_i      (8'd0),
@@ -62,94 +59,104 @@ module tb_str_top;
     .force_w_i        (16'd0)
   );
 
-  always_ff @(posedge clk) begin
-    if (in_valid)  in_valid_cnt  <= in_valid_cnt + 1;
-    if (out_valid) out_valid_cnt <= out_valid_cnt + 1;
-  end
-
-  // Print first 10 output symbols for debug
-  always_ff @(posedge clk) begin
-    if (out_valid && out_valid_cnt < 10) begin
-      $display("[%0t] OUT #%0d: (%0d, %0d) mu=%0d W=%0d lock=%0b",
-               $time, out_valid_cnt, out_i, out_q, mu_o, $signed(w_o), lock_o);
-    end
-  end
-
   initial begin
     $display("==========================================================");
-    $display("TB: str_top (standalone)");
+    $display("  TB: str_top (Golden Model Verification)");
     $display("==========================================================");
 
-    rst_n    = 1'b0;
-    in_valid = 1'b0;
-    in_i     = '0;
-    in_q     = '0;
-    repeat (10) @(posedge clk);
-    rst_n = 1'b1;
-    repeat (10) @(posedge clk);
+    // Read vector file
+    $readmemh("code/tb/vectors/tb_str_vec.hex", vec_mem);
 
-    // Drive alternating QPSK symbols every 4 samples
-    // Pattern: Q1 = (+,+), Q4 = (+,-), Q1, Q4, ... (matches preamble phase A1)
-    // Q1.11 amplitude: 1447 (0.707 × 2047)
-    $display("\nDriving %0d samples (%0d QPSK symbols @ %0d sps)...",
-             NumSamples, ExpectedSyms, Sps);
-    for (int k = 0; k < NumSamples; k++) begin
-      if ((k / Sps) % 2 == 0) begin
-        // Q1 (preamble phase A1 even)
-        in_i = 12'sd1447;
-        in_q = 12'sd1447;
-      end else begin
-        // Q4 (preamble phase A1 odd)
-        in_i = 12'sd1447;
-        in_q = -12'sd1447;
+    // Count actual vectors loaded and preload expected symbols
+    while (vec_mem[num_vecs] !== 72'hx && num_vecs < MAX_VECS) begin
+      {v_in_val, in_i, in_q, v_flush, v_exp_val, exp_i, exp_q, v_exp_lock} = vec_mem[num_vecs];
+      if (v_exp_val[0]) begin
+        exp_queue_i.push_back(exp_i);
+        exp_queue_q.push_back(exp_q);
       end
-      in_valid = 1'b1;
+      num_vecs++;
+    end
+    total_exp_syms = exp_queue_i.size();
+    $display("Loaded %0d vectors (%0d expected strobed symbols) from code/tb/vectors/tb_str_vec.hex", num_vecs, total_exp_syms);
+
+    if (num_vecs == 0) begin
+      $display("ERROR: No vectors loaded! Check file path.");
+      $stop;
+    end
+
+    // Reset sequence (Synchronous Reset)
+    rst_n     = 1'b0;
+    in_valid  = 1'b0;
+    flush_act = 1'b0;
+    in_i      = '0;
+    in_q      = '0;
+    repeat (5) @(posedge clk);
+    rst_n = 1'b1;
+    @(posedge clk);
+
+    // Clock-by-clock vector replay
+    for (int k = 0; k < num_vecs; k++) begin
+      {v_in_val, in_i, in_q, v_flush, v_exp_val, exp_i, exp_q, v_exp_lock} = vec_mem[k];
+      in_valid  = v_in_val[0];
+      flush_act = v_flush[0];
+
       @(posedge clk);
-      in_valid = 1'b0;
-      repeat (Sps - 1) @(posedge clk);
+      #1; // Post-clock check
+
+      if (out_valid) begin
+        rtl_strobe_cnt++;
+        if (rtl_strobe_cnt <= 10) begin
+          $display("[STR_RTL] Strobe %0d at Cycle %0d: out=(%0d,%0d)", rtl_strobe_cnt, k, out_i, out_q);
+        end
+        if (exp_queue_i.size() > 0) begin
+          cur_exp_i = exp_queue_i.pop_front();
+          cur_exp_q = exp_queue_q.pop_front();
+
+          diff_i = (out_i > cur_exp_i) ? (out_i - cur_exp_i) : (cur_exp_i - out_i);
+          diff_q = (out_q > cur_exp_q) ? (out_q - cur_exp_q) : (cur_exp_q - out_q);
+
+          if (diff_i != 0 || diff_q != 0) begin
+            $display("[NONZERO_STR_DIFF][Strobe %0d / Cycle %0d] RTL=(%0d, %0d), Exp=(%0d, %0d) diff=(%0d, %0d)",
+                     rtl_strobe_cnt, k, out_i, out_q, cur_exp_i, cur_exp_q, diff_i, diff_q);
+          end
+          if (diff_i == 0 && diff_q == 0) begin
+            num_syms_matched++;
+          end else begin
+            $display("[FAIL][Strobe %0d / Cycle %0d] Symbol mismatch: RTL=(%0d, %0d), Exp=(%0d, %0d) diff=(%0d, %0d)",
+                     rtl_strobe_cnt, k, out_i, out_q, cur_exp_i, cur_exp_q, diff_i, diff_q);
+            num_syms_mismatched++;
+            err_count++;
+          end
+        end else begin
+          $display("[FAIL][Strobe %0d / Cycle %0d] Extra unexpected RTL strobe! (Expected FIFO empty)", rtl_strobe_cnt, k);
+          err_count++;
+        end
+      end
     end
 
-    // Drain
-    repeat (200) @(posedge clk);
+    repeat (10) @(posedge clk);
 
-    $display("\n==========================================================");
-    $display("RESULTS");
-    $display("==========================================================");
-    $display("  Input valid pulses  : %0d", in_valid_cnt);
-    $display("  Output valid pulses : %0d", out_valid_cnt);
-    $display("  STR lock            : %0b", lock_o);
-    $display("  W (loop filter)     : %0d (hex %h)", $signed(w_o), w_o);
-    $display("  mu (last)           : %0d", mu_o);
-    $display("  Last TED error      : %0d", $signed(ted_err_o));
+    if (exp_queue_i.size() > 0) begin
+      $display("[FAIL] %0d expected symbols were not produced by RTL!", exp_queue_i.size());
+      err_count += exp_queue_i.size();
+    end
 
-    // Sanity check
-    if (out_valid_cnt < 100) begin
-      $display("\nFAIL: only %0d output symbols (expected ~%0d)",
-               out_valid_cnt, ExpectedSyms);
-      $display("     STR is broken. Debug str_top.sv with waves.");
-    end else if (out_valid_cnt > ExpectedSyms + 50) begin
-      $display("\nWARN: %0d output symbols (more than expected %0d)",
-               out_valid_cnt, ExpectedSyms);
-      $display("     STR may be emitting extra strobes.");
+    $display("----------------------------------------------------------");
+    $display("  STR VERIFICATION SUMMARY");
+    $display("----------------------------------------------------------");
+    $display("  Total Simulated Cycles : %0d", num_vecs);
+    $display("  Expected Symbols       : %0d", total_exp_syms);
+    $display("  RTL Strobes Produced   : %0d", rtl_strobe_cnt);
+    $display("  Symbols Matched        : %0d", num_syms_matched);
+    $display("  Symbols Mismatched     : %0d", num_syms_mismatched);
+    $display("  Total Errors           : %0d", err_count);
+    if (err_count == 0 && num_syms_matched == total_exp_syms && total_exp_syms > 0) begin
+      $display("  STATUS: >>> PASSED (100%% Symbol Match to Golden Model) <<<");
     end else begin
-      $display("\nPASS: %0d output symbols (~%0d expected)",
-               out_valid_cnt, ExpectedSyms);
+      $display("  STATUS: >>> FAILED <<<");
     end
-
-    if (lock_o) begin
-      $display("PASS: STR lock asserted");
-    end else begin
-      $display("WARN: STR lock never asserted (may need more symbols or tuning)");
-    end
-
     $display("==========================================================");
-    $finish;
-  end
-
-  initial begin
-    #5_000_000;
-    $display("WATCHDOG TIMEOUT");
-    $finish;
+    $stop;
   end
 
 endmodule

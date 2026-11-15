@@ -51,13 +51,13 @@ module freq_word #(
     // Last valid correction from the Costas loop, held until the next freq_adj_valid_i
     logic signed [Width-1:0] adj_reg;
 
-    always_ff @(posedge clk_i or negedge rst_ni) begin
+    always_ff @(posedge clk_i) begin
         if (!rst_ni)               adj_reg <= '0;
         else if (freq_adj_valid_i) adj_reg <= freq_adj_i;
     end
 
     // Coarse word register, loaded on coarse_valid_i with the scaled value (see coarse_ext)
-    always_ff @(posedge clk_i or negedge rst_ni)begin
+    always_ff @(posedge clk_i)begin
         if(!rst_ni)begin
             coarse_reg <= '0;
         end
@@ -75,7 +75,7 @@ module freq_word #(
     end
 
     // Output register with the DFT override: force_freq_en_i has priority over the normal path
-    always_ff @(posedge clk_i or negedge rst_ni) begin
+    always_ff @(posedge clk_i) begin
         if (!rst_ni) begin
             freq_word_o <= '0;
         end else if (force_freq_en_i) begin
