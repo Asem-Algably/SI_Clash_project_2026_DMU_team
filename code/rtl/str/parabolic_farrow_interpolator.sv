@@ -30,11 +30,11 @@ module parabolic_farrow_interpolator #(
 );
 
     // -------------------------------------------------------------------------
-    // Stage 0: 5-tap delay line for past samples [s5, s4, s3, s2, s1]
-    // Window [a, b, c, d] = [s5_q (t-3), s4_q (t-2), s3_q (t-1), s2_q (t)]
-    // Perfectly aligns with 1-cycle registered mu_o and timing strobe from modulo_1_controller.
+    // Stage 0: 7-tap delay line for past samples [s7..s1]
+    // Window [a, b, c, d] = [s7_q (t-5), s6_q (t-4), s5_q (t-3), s4_q (t-2)]
+    // Aligns with the 3-stage pipelined (+2 cycle delay) mu_o and timing strobe from modulo_1_controller.
     // -------------------------------------------------------------------------
-    logic signed [11:0] s1_q, s2_q, s3_q, s4_q, s5_q;
+    logic signed [11:0] s1_q, s2_q, s3_q, s4_q, s5_q, s6_q, s7_q;
 
     always_ff @(posedge clk_i) begin
         if (!rst_n_i) begin
@@ -43,12 +43,16 @@ module parabolic_farrow_interpolator #(
             s3_q <= '0;
             s4_q <= '0;
             s5_q <= '0;
+            s6_q <= '0;
+            s7_q <= '0;
         end else if (valid_sample_i) begin
             s1_q <= x_i;
             s2_q <= s1_q;
             s3_q <= s2_q;
             s4_q <= s3_q;
             s5_q <= s4_q;
+            s6_q <= s5_q;
+            s7_q <= s6_q;
         end
     end
 
@@ -56,10 +60,10 @@ module parabolic_farrow_interpolator #(
     // Stage 1: Polynomial coefficients v1, v2 and aligned b, mu
     // -------------------------------------------------------------------------
     logic signed [15:0] a12, b12, c12, d12;
-    assign a12 = {{3{s5_q[11]}}, s5_q, 1'b0}; // sQ3.12 (sample t-3, oldest sample a)
-    assign b12 = {{3{s4_q[11]}}, s4_q, 1'b0}; // sQ3.12 (sample t-2, center sample b)
-    assign c12 = {{3{s3_q[11]}}, s3_q, 1'b0}; // sQ3.12 (sample t-1, forward sample c)
-    assign d12 = {{3{s2_q[11]}}, s2_q, 1'b0}; // sQ3.12 (sample t, newest sample d)
+    assign a12 = {{3{s7_q[11]}}, s7_q, 1'b0}; // sQ3.12 (sample t-5, oldest sample a)
+    assign b12 = {{3{s6_q[11]}}, s6_q, 1'b0}; // sQ3.12 (sample t-4, center sample b)
+    assign c12 = {{3{s5_q[11]}}, s5_q, 1'b0}; // sQ3.12 (sample t-3, forward sample c)
+    assign d12 = {{3{s4_q[11]}}, s4_q, 1'b0}; // sQ3.12 (sample t-2, newest sample d)
 
     logic signed [15:0] v2_q; // sQ3.12
     logic signed [15:0] v1_q; // sQ3.12
@@ -124,17 +128,17 @@ module parabolic_farrow_interpolator #(
     end
 
     // -------------------------------------------------------------------------
-    // Valid pipeline: 4 clock cycles
+    // Valid pipeline: 6 clock cycles
     // -------------------------------------------------------------------------
-    logic [3:0] val_pipe;
+    logic [5:0] val_pipe;
     always_ff @(posedge clk_i) begin
         if (!rst_n_i) begin
             val_pipe <= '0;
         end else begin
-            val_pipe <= {val_pipe[2:0], valid_sample_i};
+            val_pipe <= {val_pipe[4:0], valid_sample_i};
         end
     end
 
-    assign valid_sample_o = val_pipe[3];
+    assign valid_sample_o = val_pipe[5];
 
 endmodule

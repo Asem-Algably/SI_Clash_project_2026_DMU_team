@@ -23,21 +23,26 @@ function metrics = compute_evm_and_metrics(rx_out, tx_payload_fi, cfg, measured_
     N_pay   = numel(tx_payload);
     N_pre   = cfg.N_preamble; % 190
 
+    % In the synchronizer datapath, STR emits 1 initial transient strobe at startup
+    % before the 190 preamble symbol strobes. Therefore, preamble symbols occupy
+    % indices 2:(1 + N_pre) = 2:191, and payload symbol 1 is at index 192.
+    pre_offset = N_pre + 1; % 191
+
     % Exclude preamble and evaluate strictly after lock is declared
-    lock_sym_idx = N_pre + 1;
+    lock_sym_idx = pre_offset;
     if isfield(rx_out, 'costas_lock_sym') && ~isnan(rx_out.costas_lock_sym) && (rx_out.costas_lock_sym > 0)
         lock_sym_idx = max(lock_sym_idx, round(rx_out.costas_lock_sym));
     elseif isfield(rx_out, 'lock_detect') && any(rx_out.lock_detect)
         lock_sym_idx = max(lock_sym_idx, find(rx_out.lock_detect, 1, 'first'));
     end
 
-    start_pay_idx = max(1, lock_sym_idx - N_pre);
+    start_pay_idx = max(1, lock_sym_idx - pre_offset);
     if start_pay_idx > N_pay
         start_pay_idx = 1;
     end
 
     pay_idx  = start_pay_idx : N_pay;
-    idx_eval = N_pre + pay_idx;
+    idx_eval = pre_offset + pay_idx;
 
     valid_mask = (idx_eval >= 1) & (idx_eval <= N_total) & (pay_idx >= 1) & (pay_idx <= N_pay);
     pay_idx    = pay_idx(valid_mask);

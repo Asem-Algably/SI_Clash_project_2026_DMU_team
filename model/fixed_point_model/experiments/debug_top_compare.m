@@ -19,7 +19,8 @@ r0.rst_ni = false;
 [w.costas_out, st.costas]  = step_costas(r0, [], T);
 [w.wrap_out,   st.wrapper] = step_wrapper_fsm(r0, [], T);
 
-mod_type_pipe = repmat(uint8(cfg.mod_type), 1, 8);
+mod_pipe_len  = cfg.lat.str + cfg.lat.derot + 1;
+mod_type_pipe = repmat(uint8(cfg.mod_type), 1, mod_pipe_len);
 
 for clk = 1:800
     w_prev = w;

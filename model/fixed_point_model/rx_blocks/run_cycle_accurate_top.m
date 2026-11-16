@@ -83,6 +83,11 @@ function [rx_out, lg, T] = run_cycle_accurate_top(in_sample_iq, in_sample_valid,
     last_smp_i      = T.fi(0, 'in');
     last_smp_q      = T.fi(0, 'in');
 
+    latched_quad_counts = [0, 0];
+    latched_quad_k      = NaN;
+    latched_quad_unres  = true;
+    quad_latched        = false;
+
     % =====================================================================
     % 2. MAIN HARDWARE CLOCK LOOP (1 Iteration = 1 Rising Clock Edge)
     % =====================================================================
@@ -245,6 +250,14 @@ function [rx_out, lg, T] = run_cycle_accurate_top(in_sample_iq, in_sample_valid,
             costas_lock_log(n_derot_sym) = w.costas_out.lock_o;
             sys_lock_log(n_derot_sym)    = w.str_out.lock_o && w.costas_out.lock_o;
         end
+
+        % Latch Quadrant Resolution Decision when first reported during burst
+        if st.costas.reported && ~quad_latched
+            latched_quad_counts = [double(st.costas.cnt_i), double(st.costas.cnt_q)];
+            latched_quad_k      = st.costas.quad_k;
+            latched_quad_unres  = st.costas.unres;
+            quad_latched        = true;
+        end
     end
 
     % =====================================================================
@@ -292,9 +305,15 @@ function [rx_out, lg, T] = run_cycle_accurate_top(in_sample_iq, in_sample_valid,
     rx_out.load_sym_idx          = load_sym_idx;
     rx_out.costas_lock_sym       = pub_lock_from_start;
     rx_out.costas_lock_from_load = pub_lock_from_load;
-    rx_out.quad_counts           = [st.costas.cnt_i, st.costas.cnt_q];
-    rx_out.quad_k                = st.costas.quad_k;
-    rx_out.quad_unresolved       = st.costas.unres || (~st.costas.reported);
+    if quad_latched
+        rx_out.quad_counts       = latched_quad_counts;
+        rx_out.quad_k            = latched_quad_k;
+        rx_out.quad_unresolved   = latched_quad_unres;
+    else
+        rx_out.quad_counts       = [st.costas.cnt_i, st.costas.cnt_q];
+        rx_out.quad_k            = st.costas.quad_k;
+        rx_out.quad_unresolved   = st.costas.unres || (~st.costas.reported);
+    end
     rx_out.valid_during_flush    = w.wrap_out.valid_during_flush;
     rx_out.cycle_log             = lg;
 end

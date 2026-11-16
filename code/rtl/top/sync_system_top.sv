@@ -247,14 +247,14 @@ module sync_system_top #(
   // -------------------------------------------------------------------------
   // Costas Loop (slicer + phase error + PI filter + lock detector + quad check)
   // -------------------------------------------------------------------------
-  // 8-stage pipeline delay for mod_type matching STR + Derotator latency (4 + 3 + 1)
-  logic [1:0] mod_type_pipe [0:7];
+  // 10-stage pipeline delay for mod_type matching STR + Derotator latency (6 + 3 + 1)
+  logic [1:0] mod_type_pipe [0:9];
   always_ff @(posedge clk) begin
     if (!rst_n_sync) begin
-      for (int i = 0; i < 8; i++) mod_type_pipe[i] <= '0;
+      for (int i = 0; i < 10; i++) mod_type_pipe[i] <= '0;
     end else begin
       mod_type_pipe[0] <= mod_type;
-      for (int i = 1; i < 8; i++) mod_type_pipe[i] <= mod_type_pipe[i-1];
+      for (int i = 1; i < 10; i++) mod_type_pipe[i] <= mod_type_pipe[i-1];
     end
   end
 
@@ -264,7 +264,7 @@ module sync_system_top #(
     .s_axis_valid_i   (derot_valid),
     .s_axis_i_sym_i   (derot_sym_i),
     .s_axis_q_sym_i   (derot_sym_q),
-    .mod_type_i       (mod_type_pipe[7]),
+    .mod_type_i       (mod_type_pipe[9]),
     .costas_gain_i    (costas_loop_gain),
     .mode_i           (costas_mode),
     .slicer_qpsk_i    (slicer_qpsk),

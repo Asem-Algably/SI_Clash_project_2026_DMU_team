@@ -69,20 +69,71 @@ module modulo_1_controller #(
 
     // -------------------------------------------------------------------------
     // Fractional Delay mu calculation: mu = 4*eta - 16*eta*pi
-    // eta is uQ0.24. 4*eta is eta <<< 2 (uQ0.22 integer equivalent).
+    // 3-Stage Pipelined Architecture (2 Cuts) to achieve 200 MHz timing closure:
+    //   Stage 1 (Cut 1): Register eta_raw, pi_i, eta_4x, and strobe flags (AREG=1, BREG=1)
+    //   Stage 2 (Cut 2): Register cascaded DSP product eta_pi_mult_q & strobes (PREG=1)
+    //   Stage 3: Subtraction, saturation clamping, and registered outputs (mu_reg, strobes)
     // -------------------------------------------------------------------------
-    logic [23:0] eta_4x;
-    assign eta_4x = eta_raw <<< 2; // 4 * eta (uQ0.24)
 
-    logic signed [47:0] eta_pi_mult;
-    assign eta_pi_mult = $signed({1'b0, eta_raw}) * pi_i; // uQ0.24 * sQ-1.24 = sQ-1.48
+    // -------------------------------------------------------------------------
+    // Stage 1 Registers (Cut 1: DSP Inputs)
+    // -------------------------------------------------------------------------
+    logic [23:0]        eta_raw_q;
+    logic signed [23:0] pi_q;
+    logic [23:0]        eta_4x_q1;
+    logic               strobe_cur_q1;
+    logic               strobe_mid_q1;
 
-    // 16 * eta * pi: eta_pi_mult has 48 fractional bits. Multiplying by 16 and formatting to 24 frac bits gives >>> 20
+    always_ff @(posedge clk_i) begin
+        if (!rst_ni) begin
+            m_q           <= M_INIT;
+            eta_raw_q     <= '0;
+            pi_q          <= '0;
+            eta_4x_q1     <= '0;
+            strobe_cur_q1 <= 1'b0;
+            strobe_mid_q1 <= 1'b0;
+        end else if (valid_sample_i) begin
+            m_q           <= m_next;
+            eta_raw_q     <= eta_raw;
+            pi_q          <= pi_i;
+            eta_4x_q1     <= eta_raw <<< 2; // 4 * eta (uQ0.24)
+            strobe_cur_q1 <= new_cur;
+            strobe_mid_q1 <= new_mid;
+        end
+    end
+
+    // -------------------------------------------------------------------------
+    // Stage 2 Registers (Cut 2: DSP Output)
+    // -------------------------------------------------------------------------
+    logic signed [47:0] eta_pi_mult_q;
+    logic [23:0]        eta_4x_q2;
+    logic               strobe_cur_q2;
+    logic               strobe_mid_q2;
+
+    always_ff @(posedge clk_i) begin
+        if (!rst_ni) begin
+            eta_pi_mult_q <= '0;
+            eta_4x_q2     <= '0;
+            strobe_cur_q2 <= 1'b0;
+            strobe_mid_q2 <= 1'b0;
+        end else if (valid_sample_i) begin
+            // 24x24 DSP multiplier: uQ0.24 * sQ-1.24 = sQ-1.48
+            eta_pi_mult_q <= $signed({1'b0, eta_raw_q}) * pi_q;
+            eta_4x_q2     <= eta_4x_q1;
+            strobe_cur_q2 <= strobe_cur_q1;
+            strobe_mid_q2 <= strobe_mid_q1;
+        end
+    end
+
+    // -------------------------------------------------------------------------
+    // Stage 3: Arithmetic, Saturation, and Output Registers
+    // -------------------------------------------------------------------------
+    // 16 * eta * pi: eta_pi_mult_q has 48 fractional bits. Shift right by 20 gives 24 frac bits
     logic signed [23:0] term2;
-    assign term2 = 24'(eta_pi_mult >>> 20); // Signed arithmetic shift aligned with uQ0.24
+    assign term2 = 24'(eta_pi_mult_q >>> 20); // Signed arithmetic shift aligned with uQ0.24
 
     logic signed [24:0] mu_full;
-    assign mu_full = $signed({1'b0, eta_4x}) - $signed({{1{term2[23]}}, term2});
+    assign mu_full = $signed({1'b0, eta_4x_q2}) - $signed({{1{term2[23]}}, term2});
 
     logic [MU_WIDTH-1:0] mu_calc;
     always_comb begin
@@ -97,21 +148,19 @@ module modulo_1_controller #(
     end
 
     // -------------------------------------------------------------------------
-    // Sequential State Registers (Synchronous Reset)
+    // Sequential Output Registers (Synchronous Reset, Gated by valid_sample_i)
     // -------------------------------------------------------------------------
     logic [MU_WIDTH-1:0] mu_reg;
 
     always_ff @(posedge clk_i) begin
         if (!rst_ni) begin
-            m_q              <= M_INIT;
             mid_strobe_o     <= 1'b0;
             current_strobe_o <= 1'b0;
             mu_reg           <= '0;
         end else if (valid_sample_i) begin
-            m_q              <= m_next;
-            mid_strobe_o     <= new_mid;
-            current_strobe_o <= new_cur;
-            if (new_cur || new_mid) begin
+            mid_strobe_o     <= strobe_mid_q2;
+            current_strobe_o <= strobe_cur_q2;
+            if (strobe_cur_q2 || strobe_mid_q2) begin
                 mu_reg <= mu_calc;
             end
         end

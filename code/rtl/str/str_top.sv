@@ -3,8 +3,8 @@
 // Organization: Electronics Research Institute (ERI) - CLASH Challenge
 //
 // Structural top level of the STR subsystem:
-//   1. Parabolic Farrow Interpolators (I and Q branches, 4 cycles latency, sQ1.15)
-//   2. 4-Stage Strobe Alignment Pipeline
+//   1. Parabolic Farrow Interpolators (I and Q branches, 6 cycles latency, sQ1.15)
+//   2. 6-Cycle Total Strobe Alignment Pipeline
 //   3. Gardner Timing Error Detector (sQ3.21)
 //   4. Proportional-Integral (PI) Loop Filter
 //   5. Modulo-1 NCO Controller
@@ -84,14 +84,16 @@ module str_top (
     );
 
     // -------------------------------------------------------------------------
-    // 2. Strobe Alignment Pipeline (3 shift stages = 4 cycles total latency)
+    // 2. Strobe Alignment Pipeline (6 cycles total latency = 3 modulo stages + 3 interpolator stages)
     //    Cycle 0: sample x_i at input, modulo_1_controller calculates new_cur/mu
-    //    Cycle 1: modulo_1_controller outputs registered current_strobe / mu;
-    //             interpolator captures [s1, s2, s3, s4] = [t, t-1, t-2, t-3]
-    //    Cycle 2: pipe[0] asserts; interpolator registers Stage 1 (v1, v2)
-    //    Cycle 3: pipe[1] asserts; interpolator registers Stage 2 (h1)
-    //    Cycle 4: pipe[2] asserts = curr_strobe_d; interpolator registers Stage 3 (y_o)
-    //             m_axis_valid_o and m_axis_*_sym_o are valid at Cycle 4 (matching Golden Model)
+    //    Cycle 1: modulo_1_controller Cut 1 registers (DSP inputs: eta_raw_q, pi_q)
+    //    Cycle 2: modulo_1_controller Cut 2 registers (DSP output: eta_pi_mult_q)
+    //    Cycle 3: modulo_1_controller Stage 3 outputs registered current_strobe / mu_reg;
+    //             interpolator captures [s4, s5, s6, s7] = [t-2, t-3, t-4, t-5]
+    //    Cycle 4: pipe[0] asserts; interpolator registers Stage 1 (v1, v2)
+    //    Cycle 5: pipe[1] asserts; interpolator registers Stage 2 (h1)
+    //    Cycle 6: pipe[2] asserts = curr_strobe_d; interpolator registers Stage 3 (y_o)
+    //             m_axis_valid_o and m_axis_*_sym_o are valid at Cycle 6 (matching Golden Model)
     // -------------------------------------------------------------------------
     logic [3:0] mid_strobe_pipe, curr_strobe_pipe;
     always_ff @(posedge clk_i) begin
