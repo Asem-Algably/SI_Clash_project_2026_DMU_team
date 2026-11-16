@@ -16,8 +16,8 @@
   Idle Watchdog Timeout     : 14 consecutive invalid clocks (triggers FLUSH state)
   Flush Fill Mode           : repeat (samples fed to STR during FLUSH)
   Flush Safety Margin       : 4 clock cycles
-  Derived Flush Duration (F): 16 clock cycles
-    Formula : F = sps (4) + lat.str (4) + lat.derot (3) + lat.wrap_out (1) + margin (4) = 16 clocks
+  Derived Flush Duration (F): 17 clock cycles
+    Formula : F = sps (4) + lat.str (6) + lat.derot (3) + lat.wrap_out (0) + margin (4) = 17 clocks
   Downstream Pipeline Action: Free-running on wall clock; soft-reset clears all modules at end of FLUSH (F clocks)
 
 ------------------------------------------------------------------------------------------------------------------
@@ -48,14 +48,14 @@
 ------------------------------------------------------------------------------------------------------------------
   4. HARDWARE PIPELINE LATENCIES (Clock Cycles)
 ------------------------------------------------------------------------------------------------------------------
-  STR Farrow Interpolator   :  4 cycles (Parabolic Horner MAC pipeline)
-  Gardner TED Pipeline      :  1 cycle
-  STR PI Filter Register    :  1 cycle
+  STR Farrow Interpolator   :  6 cycles (Parabolic Horner MAC pipeline)
+  Gardner TED Pipeline      :  2 cycle
+  STR PI Filter Register    :  2 cycle
   Coarse CFO CORDIC IP      : 20 cycles (16 vectoring iterations)
   Derotator (LUT + Mult)    :  3 cycles (1 LUT read + 2 complex mult stages)
   Costas Feedback Latency   :  6 cycles (2 phase error + 3 PI filter stages)
-  Top Wrapper Output Stage  :  1 cycle
-  Steady-State Latency      :  8 cycles (lat.str + lat.derot + lat.wrap_out <= 64 [R.106])
+  Top Wrapper Output Stage  :  0 cycle
+  Steady-State Latency      :  9 cycles (lat.str + lat.derot + lat.wrap_out <= 64 [R.106])
 
 ------------------------------------------------------------------------------------------------------------------
   5. HARDWARE REGISTER MAP, BUS WIDTHS & FIXED-POINT FORMATS

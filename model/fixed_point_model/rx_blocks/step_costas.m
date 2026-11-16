@@ -48,6 +48,7 @@ function [out, st] = step_costas(in, st, T)
         st.ai        = T.fi(0, 'cos_a');
         st.aq        = T.fi(0, 'cos_a');
         st.sat_cnt   = 0;
+        st.sym_cnt   = 0;
 
         out = costas_drive_outputs(st, T);
         return;
@@ -81,6 +82,7 @@ function [out, st] = step_costas(in, st, T)
         st.sat_neg   = false;
         st.acc(:)    = T.fi(0, 'freq_w');
         if in.s_axis_valid_i
+            st.sym_cnt = st_old.sym_cnt + 1;
             yi = R(T.fi(in.s_axis_i_sym_i, 'rot_out'));
             yq = R(T.fi(in.s_axis_q_sym_i, 'rot_out'));
             [ai, aq] = fxp_slicer(yi, yq, true, C);
@@ -90,6 +92,7 @@ function [out, st] = step_costas(in, st, T)
         end
     else
         if in.s_axis_valid_i
+            st.sym_cnt = st_old.sym_cnt + 1;
             yi = R(T.fi(in.s_axis_i_sym_i, 'rot_out'));
             yq = R(T.fi(in.s_axis_q_sym_i, 'rot_out'));
 

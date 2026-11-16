@@ -2,7 +2,7 @@
 
 module tb_costas_top;
 
-  localparam int MAX_VECS = 10000;
+  localparam int MAX_VECS = 20000;
   logic [123:0] vec_mem [0:MAX_VECS-1];
   logic [3:0]   v_val, v_mode, v_pe, v_mod, v_exp_fval, v_exp_pval, v_exp_lock;
 

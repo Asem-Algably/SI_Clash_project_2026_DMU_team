@@ -40,15 +40,15 @@ function cfg = get_hw_config()
     % =====================================================================
     % 3. HARDWARE SUBMODULE PIPELINE LATENCIES (CLOCK CYCLES)
     % =====================================================================
-    cfg.lat.farrow       = 4;                % Parabolic Farrow Horner MAC pipeline depth
+    cfg.lat.farrow       = 6;                % Parabolic Farrow Horner MAC pipeline depth (2 cuts + 4 horner)
     cfg.lat.ted          = 2;                % Gardner TED 2-stage registered multiplier/adder
     cfg.lat.str_pi       = 2;                % STR PI filter 2-stage registered accumulator
-    cfg.lat.str          = cfg.lat.farrow;   % STR module strobe alignment latency
+    cfg.lat.str          = cfg.lat.farrow;   % STR module strobe alignment latency (6 cycles)
     cfg.lat.coarse       = 20;               % 20-stage vectoring CORDIC IP latency
     cfg.lat.derot        = 3;                % 1 LUT read cycle + 2 complex multiplier pipeline cycles
     cfg.lat.costas       = 6;                % Costas loop feedback delay (3 detector + 3 PI filter)
     cfg.lat.wrap_out     = 0;                % Direct wire assignment (matching assign out_sym_* = derot_*)
-    cfg.lat.top_total    = cfg.lat.str + cfg.lat.derot + cfg.lat.wrap_out;
+    cfg.lat.top_total    = cfg.lat.str + cfg.lat.derot + cfg.lat.wrap_out; % 9 cycles
 
     % =====================================================================
     % 4. HARDWARE BUS WIDTHS [Signed, WordLength, FractionLength]

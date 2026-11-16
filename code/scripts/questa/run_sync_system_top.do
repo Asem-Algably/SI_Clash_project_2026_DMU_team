@@ -17,7 +17,6 @@ vlog +acc -sv \
   code/rtl/str/parabolic_farrow_interpolator.sv \
   code/rtl/str/pI_loop.sv \
   code/rtl/str/str_top.sv \
-  code/rtl/coarse_cfo/reset_sync.sv \
   code/rtl/coarse_cfo/complex_mult.sv \
   code/rtl/coarse_cfo/accumulator.sv \
   code/rtl/coarse_cfo/cordic_angle.sv \

@@ -57,7 +57,8 @@ function export_block_test_vectors(N_payload_in)
 
     last_smp_i = T.fi(0, 'in');
     last_smp_q = T.fi(0, 'in');
-    mod_type_pipe = repmat(uint8(cfg.mod_type), 1, 8);
+    mod_pipe_len  = cfg.lat.str + cfg.lat.derot + 1;
+    mod_type_pipe = repmat(uint8(cfg.mod_type), 1, mod_pipe_len);
 
     fprintf('  Simulating %d clock cycles...\n', N_clocks);
 
