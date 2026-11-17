@@ -80,4 +80,4 @@ module accumulator #(
   // the final sample will be received when the counter reaches its MAXIMUM value: (WinLen - 1).
   // When this condition is true, valid_o asserts high (Level) to indicate the window is full.
 
-endmodule : accumulator
+endmodule
