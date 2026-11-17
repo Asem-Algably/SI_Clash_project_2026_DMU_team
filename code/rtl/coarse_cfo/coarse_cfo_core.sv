@@ -32,7 +32,7 @@ module coarse_cfo_core #(
   // Symbol counter for the window
   logic [SymCountWidth-1:0] sym_count_q;
 
-  always_ff @(posedge clk_i) begin
+  always_ff @(posedge clk_i or negedge rst_ni) begin
     if (!rst_ni) begin
       sym_count_q <= '0;                     // Reset counter
     end else if (!start_i) begin
@@ -46,7 +46,7 @@ module coarse_cfo_core #(
   logic signed [DataWidth-1:0] re_delay_q [Lag];  // Real delay samples
   logic signed [DataWidth-1:0] im_delay_q [Lag];  // Imag delay samples
 
-  always_ff @(posedge clk_i) begin
+  always_ff @(posedge clk_i or negedge rst_ni) begin
     if (!rst_ni) begin
       for (int k = 0; k < Lag; k++) begin
         re_delay_q[k] <= '0;                 // Clear real delay
@@ -64,7 +64,7 @@ module coarse_cfo_core #(
     end
   end
 
-  // Complex multiply r[n] * conj(r[n-Lag]) - 32-bit output
+  // Complex multiply r[n] * conj(r[n-Lag]) - 33-bit output
   logic signed [32:0] mult_re;  // Product real
   logic signed [32:0] mult_im;  // Product imag
 
@@ -106,7 +106,7 @@ module coarse_cfo_core #(
   logic acc_done_q;      // Previous value
   logic acc_done_pulse;  // Rising-edge pulse
 
-  always_ff @(posedge clk_i) begin
+  always_ff @(posedge clk_i or negedge rst_ni) begin
     if (!rst_ni) begin
       acc_done_q <= 1'b0;              // Clear
     end else begin
@@ -138,7 +138,7 @@ module coarse_cfo_core #(
   logic signed [23:0] cfo_q;       // Held estimate
   logic               cfo_valid_q; // Held valid
 
-  always_ff @(posedge clk_i) begin
+  always_ff @(posedge clk_i or negedge rst_ni) begin
     if (!rst_ni) begin
       cfo_q       <= '0;              // Clear
       cfo_valid_q <= 1'b0;            // Clear
