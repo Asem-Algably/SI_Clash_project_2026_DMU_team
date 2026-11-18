@@ -14,26 +14,39 @@ module coarse_cfo_core #(
   parameter int unsigned WinLen    = 32,  // Symbols per window
   parameter int unsigned AccWidth  = 40   // Accumulator width
 ) (
-  input  logic                        clk_i,           // Clock
-  input  logic                        rst_ni,          // Async reset, active low
-  input  logic                        start_i,         // Start a new window
-  input  logic                        s_axis_valid_i,  // Symbol strobe
+  input  logic                       clk_i,           // Clock
+  input  logic                       rst_ni,          // Async reset, active low
+  input  logic                       start_i,         // Start a new window
+  input  logic                       s_axis_valid_i,  // Symbol strobe
   input  logic signed [DataWidth-1:0] s_axis_i_sym_i, // I symbol in
   input  logic signed [DataWidth-1:0] s_axis_q_sym_i, // Q symbol in
-  output logic                        m_axis_valid_o,  // One-pulse estimate ready
-  output logic signed [23:0]          m_axis_cfo_o,    // Estimate out
-  input  logic                        force_cfo_en_i,  // Force override enable
-  input  logic [23:0]                 force_cfo_i      // Forced value (DFT)
+  output logic                       m_axis_valid_o,  // One-pulse estimate ready
+  output logic signed [23:0]         m_axis_cfo_o,    // Estimate out
+  input  logic                       force_cfo_en_i,  // Force override enable
+  input  logic [23:0]                force_cfo_i      // Forced value (DFT)
 );
 
-  // NOTE: The symbol counter was removed because the counter logic 
-  // is handled entirely inside the accumulator module (Area Optimization).
+  // Parameterized counter width to 5 registers
+  localparam int unsigned SymCountWidth = $clog2(WinLen + 1);
+
+  // Symbol counter for the window
+  logic [SymCountWidth-1:0] sym_count_q;
+
+  always_ff @(posedge clk_i) begin
+    if (!rst_ni) begin
+      sym_count_q <= '0;                     // Reset counter
+    end else if (!start_i) begin
+      sym_count_q <= '0;                     // Clear at burst end
+    end else if (s_axis_valid_i && (sym_count_q < WinLen)) begin
+      sym_count_q <= sym_count_q + 1'b1;     // Advance on symbol strobe
+    end
+  end
 
   // Delay line; last stage stores the conjugate
   logic signed [DataWidth-1:0] re_delay_q [Lag];  // Real delay samples
   logic signed [DataWidth-1:0] im_delay_q [Lag];  // Imag delay samples
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin
+  always_ff @(posedge clk_i) begin
     if (!rst_ni) begin
       for (int k = 0; k < Lag; k++) begin
         re_delay_q[k] <= '0;                 // Clear real delay
@@ -51,13 +64,13 @@ module coarse_cfo_core #(
     end
   end
 
-  // Complex multiply r[n] * conj(r[n-Lag]) - 33-bit output
+  // Complex multiply r[n] * conj(r[n-Lag]) - 32-bit output
   logic signed [32:0] mult_re;  // Product real
   logic signed [32:0] mult_im;  // Product imag
 
   complex_mult #(
     .InWidth (DataWidth),    // 16-bit input
-    .OutWidth(33)            // 33-bit output
+    .OutWidth(33)            // 32-bit output
   ) u_complex_mult (
     .a_re_i (s_axis_i_sym_i),         // Current real
     .a_im_i (s_axis_q_sym_i),         // Current imag
@@ -73,7 +86,7 @@ module coarse_cfo_core #(
   logic                       acc_done; // Level: window done
 
   accumulator #(
-    .InWidth (33),           // 33-bit input
+    .InWidth (33),           // 32-bit input
     .AccWidth(AccWidth),     // 40-bit accumulator
     .WinLen  (WinLen),       // 32 symbols
     .Lag     (Lag)           // 4 symbols priming
@@ -93,7 +106,7 @@ module coarse_cfo_core #(
   logic acc_done_q;      // Previous value
   logic acc_done_pulse;  // Rising-edge pulse
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin
+  always_ff @(posedge clk_i) begin
     if (!rst_ni) begin
       acc_done_q <= 1'b0;              // Clear
     end else begin
@@ -125,7 +138,7 @@ module coarse_cfo_core #(
   logic signed [23:0] cfo_q;       // Held estimate
   logic               cfo_valid_q; // Held valid
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin
+  always_ff @(posedge clk_i) begin
     if (!rst_ni) begin
       cfo_q       <= '0;              // Clear
       cfo_valid_q <= 1'b0;            // Clear
@@ -142,4 +155,4 @@ module coarse_cfo_core #(
   assign m_axis_cfo_o   = cfo_q;        // Output estimate
   assign m_axis_valid_o = cfo_valid_q;  // One-pulse ready
 
-endmodule
+endmodule 

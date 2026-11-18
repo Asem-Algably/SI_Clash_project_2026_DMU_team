@@ -9,11 +9,11 @@
 
 module accumulator #(
   
-  parameter int unsigned InWidth  = 33,  // Complex sample input width (is the complex multiplier output width)
+  parameter int unsigned InWidth  = 33,  // Complex sample input width ( is the complex multiplier output width)
   
   parameter int unsigned AccWidth = 40,  // Accumulator width
-  // 33 bit width input + 5 bit for 32 (2^5) window length = 38 bits 
-  // if used 6 bit for 64 (2^6) window length + 33 bit width input = 39
+  //33 bit width input + 5 bit for 32 (2^5) window lengh = 38 bits 
+  //if used 6 bit for 64 (2^6) window lengh + 33 bit width input = 39
   // and one or two more bits for fixed point addition overflow = 40 total
   
   parameter int unsigned WinLen   = 32,  // Window length in symbols (number of symbols to sum)
@@ -30,24 +30,18 @@ module accumulator #(
   output logic                       valid_o    // valid output pulse
 );
 
-  // Parameterized counter width to 5 registers
-  // $clog2 calculates the minimum number of bits needed to represent WinLen.
-  // For WinLen = 32, $clog2(32) = 5 bits  (2^5) = 32 and for WinLen = 64 , (2^6) = 64
-  // if changed window length to 64 the counter width will be 6 registers
-  // local parameter because it is a derived parameter depends on a main parameter
-  localparam int unsigned CountWidth = $clog2(WinLen);
+  localparam int unsigned CountWidth = $clog2(WinLen + 1);
 
-  // number of registered flip flops to store the current symbol count and track the accumulation window.
+  // Registered flip-flops to store the current symbol count and track the accumulation window.
   logic [CountWidth-1:0] count_q;       // Symbols accumulated so far
   logic                  active_q;      // Accumulation in progress
   logic                  start_prev_q;  // Previous start_i state for edge detection
 
-  // Asynchronous reset (Async Assert, Sync Deassert) per lowRISC guidelines.
-  always_ff @(posedge clk_i or negedge rst_ni) begin
+  always_ff @(posedge clk_i) begin
     if (!rst_ni) begin
-      out_re_o     <= '0;                   // Reset sum
-      out_im_o     <= '0;                   // Reset sum
-      count_q      <= '0;                   // Reset counter
+      out_re_o     <= '0;
+      out_im_o     <= '0;
+      count_q      <= '0;
       active_q     <= 1'b0;
       start_prev_q <= 1'b0;
     end else begin
@@ -56,28 +50,31 @@ module accumulator #(
       // Start trigger on rising edge of start_i (matching MATLAB step_coarse_cfo.m)
       if (start_i && !start_prev_q) begin
         active_q <= 1'b1;
-        out_re_o <= '0;                     // Clear at burst start
-        out_im_o <= '0;                     // Clear at burst start
+        out_re_o <= '0;
+        out_im_o <= '0;
         if (valid_i) begin
           count_q <= 1'b1;
         end else begin
-          count_q <= '0;                    // Clear counter
+          count_q <= '0;
         end
-      end else if (active_q && valid_i && (count_q < WinLen - 1)) begin
+      end else if (active_q && valid_i && (count_q < WinLen)) begin
         if (count_q >= Lag) begin
-          out_re_o <= out_re_o + in_re_i;   // Accumulate real part once delay line is primed
-          out_im_o <= out_im_o + in_im_i;   // Accumulate imag part once delay line is primed
+          out_re_o <= out_re_o + in_re_i; // Accumulate real part once delay line is primed
+          out_im_o <= out_im_o + in_im_i; // Accumulate imag part once delay line is primed
         end
-        count_q <= count_q + 1'b1;          // Advance counter
+        count_q <= count_q + 1'b1;
+        if (count_q + 1'b1 == WinLen) begin
+          active_q <= 1'b0; // Auto-clear on window completion
+        end
       end
     end
   end
 
-  assign valid_o = (count_q == WinLen - 1);
+  assign valid_o = (count_q == WinLen);
   // Valid is edge-detect for single pulse.
   // Flag to indicate the accumulation window is complete.
   // Hardware counts from 0, so the final (32nd) sample is at index 31 (WinLen - 1).
   // the final sample will be received when the counter reaches its MAXIMUM value: (WinLen - 1).
   // When this condition is true, valid_o asserts high (Level) to indicate the window is full.
 
-endmodule
+endmodule 

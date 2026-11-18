@@ -101,7 +101,7 @@ module cordic_angle #(
     end
 
     // Sequential state, datapath and output registers
-    always_ff @(posedge clk_i or negedge rst_ni) begin
+    always_ff @(posedge clk_i) begin
       if (!rst_ni) begin
         state_q  <= StIdle;   // Start in idle
         valid_q  <= 1'b0;     // No valid yet
