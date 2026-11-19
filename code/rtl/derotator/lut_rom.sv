@@ -32,9 +32,10 @@ module lut_rom #(
     output logic signed [DataWidth-1:0]   cos_o,
     output logic signed [DataWidth-1:0]   sin_o
 );
-    // The table content is generated for 12 index bits and 16-bit entries only
-    if (Phase_Bits != 12 || DataWidth != 16) begin : g_check
-        $error("sine_quarter_lut.svh is generated for Phase_Bits = 12 and DataWidth = 16");
+    initial begin
+        if (Phase_Bits != 12 || DataWidth != 16) begin
+            $error("sine_quarter_lut.svh is generated for Phase_Bits = 12 and DataWidth = 16");
+        end
     end
 
     // Constant table: sine of the in-quadrant angle, midpoint sampled. One case item per entry.

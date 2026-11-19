@@ -77,7 +77,7 @@ set_property DRIVE 8             [get_ports pmod_dp_o]
 set_property SLEW SLOW           [get_ports {pmod_seg_o[*]}]
 set_property SLEW SLOW           [get_ports pmod_dp_o]
 
-# PMOD1 (J87 Header, Level-shifted to 1.8V Bank 66/68) - 4 Digit Anodes
+# PMOD1 (J87 Header, Connected to 1.2V Bank 66) - 4 Digit Anodes
 # Anode 0 (AN0 - Rightmost Digit) -> J87 Pin 1 (PMOD1_0)
 set_property PACKAGE_PIN AN8  [get_ports {pmod_an_o[0]}]
 # Anode 1 (AN1)                   -> J87 Pin 3 (PMOD1_1)
@@ -87,7 +87,7 @@ set_property PACKAGE_PIN AP11 [get_ports {pmod_an_o[2]}]
 # Anode 3 (AN3 - Leftmost Digit)  -> J87 Pin 7 (PMOD1_3)
 set_property PACKAGE_PIN AN11 [get_ports {pmod_an_o[3]}]
 
-set_property IOSTANDARD LVCMOS18 [get_ports {pmod_an_o[*]}]
+set_property IOSTANDARD LVCMOS12 [get_ports {pmod_an_o[*]}]
 set_property DRIVE 8             [get_ports {pmod_an_o[*]}]
 set_property SLEW SLOW           [get_ports {pmod_an_o[*]}]
 
@@ -97,4 +97,3 @@ set_false_path -to [get_ports {pmod_seg_o[*] pmod_dp_o pmod_an_o[*]}]
 # 5. Configuration & Bitstream Generation Directives
 # ------------------------------------------------------------------------------
 set_property BITSTREAM.GENERAL.COMPRESS TRUE [current_design]
-set_property BITSTREAM.CONFIG.CONFIGRATE 33   [current_design]

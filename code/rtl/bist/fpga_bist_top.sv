@@ -17,8 +17,8 @@ module fpga_bist_top #(
   parameter bit          CATHODE_ACTIVE_LOW = 1'b1,
   parameter bit          ANODE_ACTIVE_LOW   = 1'b1,
   parameter int unsigned PRESCALER_LIMIT    = 200_000,       // 200 MHz / 200,000 = 1 kHz refresh
-  parameter              INPUT_ROM_FILE     = "code/rtl/bist/bist_input_vec.mem",
-  parameter              EXP_ROM_FILE       = "code/rtl/bist/bist_exp_vec.mem",
+  parameter              INPUT_ROM_FILE     = "bist_input_vec.mem",
+  parameter              EXP_ROM_FILE       = "bist_exp_vec.mem",
   parameter bit          ENABLE_DEBUG_CORES = 1'b0
 )(
   // Primary differential clock input: 125.00 MHz on PL Bank 28 (Pins H9/G9)

@@ -13,7 +13,7 @@ module bist_expected_rom #(
   parameter int unsigned ADDR_WIDTH = 11,
   parameter int unsigned DATA_WIDTH = 32,
   parameter int unsigned DEPTH      = 1199,
-  parameter              INIT_FILE  = "code/rtl/bist/bist_exp_vec.mem"
+  parameter              INIT_FILE  = "bist_exp_vec.mem"
 )(
   input  logic                            clk,
   input  logic                            en,

@@ -14,7 +14,7 @@ module bist_input_rom #(
   parameter int unsigned ADDR_WIDTH = 13,
   parameter int unsigned DATA_WIDTH = 26,
   parameter int unsigned DEPTH      = 5624,
-  parameter              INIT_FILE  = "code/rtl/bist/bist_input_vec.mem"
+  parameter              INIT_FILE  = "bist_input_vec.mem"
 )(
   input  logic                            clk,
   input  logic                            en,
