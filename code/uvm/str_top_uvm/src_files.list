@@ -1,0 +1,14 @@
+str_top_interface.sv
+sva.sv
+str_top_confg.sv
+str_top_seq_item.sv
+reset_seq.sv
+str_top_sequencer.sv
+str_top_driver.sv
+str_top_monitor.sv
+str_top_agt.sv
+str_top_scoreboard.sv
+str_top_coverage.sv
+str_top_env.sv
+str_top_test.sv
+str_top_top.sv

@@ -1,0 +1,14 @@
+costas_top_interface.sv
+sva.sv
+costas_top_confg.sv
+costas_top_seq_item.sv
+reset_seq.sv
+costas_top_sequencer.sv
+costas_top_driver.sv
+costas_top_monitor.sv
+costas_top_agt.sv
+costas_top_scoreboard.sv
+costas_top_coverage.sv
+costas_top_env.sv
+costas_top_test.sv
+costas_top_top.sv

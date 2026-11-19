@@ -1,0 +1,14 @@
+sync_system_top_interface.sv
+sva.sv
+sync_system_top_confg.sv
+sync_system_top_seq_item.sv
+reset_seq.sv
+sync_system_top_sequencer.sv
+sync_system_top_driver.sv
+sync_system_top_monitor.sv
+sync_system_top_agt.sv
+sync_system_top_scoreboard.sv
+sync_system_top_coverage.sv
+sync_system_top_env.sv
+sync_system_top_test.sv
+sync_system_top_top.sv
