@@ -1,4 +1,5 @@
 `timescale 1ns / 1ps
+import costas_pkg::*;
 
 module tb_costas_top;
 
@@ -30,6 +31,8 @@ module tb_costas_top;
   int err_count = 0;
   int checks_passed = 0;
   int diff;
+
+  costas_transaction tr;
 
   always #4 clk = ~clk;
 
@@ -68,6 +71,8 @@ module tb_costas_top;
   );
 
   initial begin
+    tr = new();
+
     $display("==========================================================");
     $display("  TB: costas_top (Golden Model Bit-Accurate Verification)");
     $display("==========================================================");
@@ -110,8 +115,33 @@ module tb_costas_top;
       exp_phase_valid = v_exp_pval[0];
       exp_lock        = v_exp_lock[0];
 
+      if (mode_i != 2'b11) begin
+        tr.mode         = mode_e'(mode_i);
+        tr.mod_type     = (mod_type_i == 2'b01) ? QAM16 : QPSK;
+        tr.valid        = s_axis_valid_i;
+        tr.i_sym        = s_axis_i_sym_i;
+        tr.q_sym        = s_axis_q_sym_i;
+        tr.preamble_end = preamble_end_i;
+        tr.slicer_qpsk  = (mode_i != 2'b10);
+        tr.sample_in();
+      end
+
       @(posedge clk);
       #1;
+
+      tr.e               = u_costas.e;
+      tr.e_valid         = u_costas.e_valid;
+      tr.freq_adj        = freq_adj_o;
+      tr.freq_adj_valid  = freq_adj_valid_o;
+      tr.int_val         = u_costas.int_o;
+      tr.phase_adj       = phase_adj_o;
+      tr.phase_adj_valid = phase_adj_valid_o;
+      tr.lock            = lock_o;
+      tr.lock_int        = u_costas.lock_int;
+      tr.quad_done       = u_costas.done;
+      tr.quad_unres      = u_costas.quad_unres;
+      tr.kp              = u_costas.kp;
+      tr.sample_out();
 
       // Check frequency adjustment (Strict 100% bit-exact check)
       if (exp_freq_valid && freq_adj_valid_o) begin
@@ -150,6 +180,7 @@ module tb_costas_top;
     end else begin
       $display("  STATUS: >>> FAILED <<<");
     end
+    tr.report();
     $display("==========================================================");
     $stop;
   end
