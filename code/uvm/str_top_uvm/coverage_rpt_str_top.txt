@@ -1,0 +1,3366 @@
+Coverage Report by instance with details
+
+=================================================================================
+=== Instance: /top/str_top_test_vif
+=== Design Unit: work.str_top_inter
+=================================================================================
+Toggle Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Toggles                        292       238        54    81.50%
+
+================================Toggle Details================================
+
+Toggle Coverage for instance /top/str_top_test_vif --
+
+                                              Node      1H->0L      0L->1H  "Coverage"
+                                              ---------------------------------------
+                                               clk           1           1      100.00 
+                                    flush_active_i           1           1      100.00 
+                                      force_w_en_i           0           0        0.00 
+                                   force_w_i[15-0]           0           0        0.00 
+                                            lock_o           0           1       50.00 
+                                  loop_gain_i[7-0]           0           0        0.00 
+                              m_axis_i_sym_o[15-0]           1           1      100.00 
+                              m_axis_q_sym_o[15-0]           1           1      100.00 
+                                    m_axis_valid_o           1           1      100.00 
+                                         mu_o[9-0]           1           1      100.00 
+                                             rst_n           0           1       50.00 
+                           s_axis_i_sample_i[11-0]           1           1      100.00 
+                           s_axis_q_sample_i[11-0]           1           1      100.00 
+                                    s_axis_valid_i           1           1      100.00 
+                                   ted_err_o[31-0]           1           1      100.00 
+                                   ted_err_valid_o           1           1      100.00 
+                                           w_o[15]           0           0        0.00 
+                                         w_o[14-0]           1           1      100.00 
+
+Total Node Count     =        146 
+Toggled Node Count   =        118 
+Untoggled Node Count =         28 
+
+Toggle Coverage      =      81.50% (238 of 292 bins)
+
+=================================================================================
+=== Instance: /top/dut/u_i_interp
+=== Design Unit: work.parabolic_farrow_interpolator
+=================================================================================
+Branch Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Branches                        14        14         0   100.00%
+
+================================Branch Details================================
+
+Branch Coverage for instance /top/dut/u_i_interp
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File parabolic_farrow_interpolator.sv
+------------------------------------IF Branch------------------------------------
+    40                                      5572     Count coming in to IF
+    40              1                          2     
+    48              1                       5567     
+                                               3     All False Count
+Branch totals: 3 hits of 3 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    74                                      5580     Count coming in to IF
+    74              1                          2     
+    79              1                       5575     
+                                               3     All False Count
+Branch totals: 3 hits of 3 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    100                                     5579     Count coming in to IF
+    100             1                          2     
+    104             1                       5574     
+                                               3     All False Count
+Branch totals: 3 hits of 3 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    123                                     5568     Count coming in to IF
+    123             1                          2     
+    125             1                       5563     
+                                               3     All False Count
+Branch totals: 3 hits of 3 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    135                                       31     Count coming in to IF
+    135             1                          2     
+    137             1                         29     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+
+Statement Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Statements                      44        44         0   100.00%
+
+================================Statement Details================================
+
+Statement Coverage for instance /top/dut/u_i_interp --
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File parabolic_farrow_interpolator.sv
+    39              1                       5572     
+    41              1                          2     
+    42              1                          2     
+    43              1                          2     
+    44              1                          2     
+    45              1                          2     
+    46              1                          2     
+    47              1                          2     
+    49              1                       5567     
+    50              1                       5567     
+    51              1                       5567     
+    52              1                       5567     
+    53              1                       5567     
+    54              1                       5567     
+    55              1                       5567     
+    63              1                       5557     
+    64              1                       5557     
+    65              1                       5557     
+    66              1                       5557     
+    73              1                       5580     
+    75              1                          2     
+    76              1                          2     
+    77              1                          2     
+    78              1                          2     
+    81              1                       5575     
+    83              1                       5575     
+    84              1                       5575     
+    85              1                       5575     
+    93              1                       5563     
+    99              1                       5579     
+    101             1                          2     
+    102             1                          2     
+    103             1                          2     
+    106             1                       5574     
+    107             1                       5574     
+    108             1                       5574     
+    116             1                       5569     
+    120             1                      11101     
+    122             1                       5568     
+    124             1                          2     
+    126             1                       5563     
+    134             1                         31     
+    136             1                          2     
+    138             1                         29     
+Toggle Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Toggles                        744       731        13    98.25%
+
+================================Toggle Details================================
+
+Toggle Coverage for instance /top/dut/u_i_interp --
+
+                                              Node      1H->0L      0L->1H  "Coverage"
+                                              ---------------------------------------
+                                         a12[15-1]           1           1      100.00 
+                                            a12[0]           0           0        0.00 
+                                         b12[15-1]           1           1      100.00 
+                                            b12[0]           0           0        0.00 
+                                        b_s1[15-1]           1           1      100.00 
+                                           b_s1[0]           0           0        0.00 
+                                        b_s2[15-1]           1           1      100.00 
+                                           b_s2[0]           0           0        0.00 
+                                         c12[15-1]           1           1      100.00 
+                                            c12[0]           0           0        0.00 
+                                             clk_i           1           1      100.00 
+                                         d12[15-1]           1           1      100.00 
+                                            d12[0]           0           0        0.00 
+                                        h1_q[16-0]           1           1      100.00 
+                                     h1_x_mu[27-0]           1           1      100.00 
+                                         mu_i[0-9]           1           1      100.00 
+                                        mu_s1[9-0]           1           1      100.00 
+                                        mu_s2[9-0]           1           1      100.00 
+                                           rst_n_i           0           1       50.00 
+                                        s1_q[11-0]           1           1      100.00 
+                                        s2_q[11-0]           1           1      100.00 
+                                        s3_q[11-0]           1           1      100.00 
+                                        s4_q[11-0]           1           1      100.00 
+                                        s5_q[11-0]           1           1      100.00 
+                                        s6_q[11-0]           1           1      100.00 
+                                        s7_q[11-0]           1           1      100.00 
+                                        v1_q[15-0]           1           1      100.00 
+                                        v2_q[15-0]           1           1      100.00 
+                                     v2_x_mu[26-0]           1           1      100.00 
+                                     val_pipe[5-0]           1           1      100.00 
+                                    valid_sample_i           1           1      100.00 
+                                    valid_sample_o           1           1      100.00 
+                                         x_i[0-11]           1           1      100.00 
+                                      y_full[19-0]           1           1      100.00 
+                                         y_o[15-0]           1           1      100.00 
+
+Total Node Count     =        372 
+Toggled Node Count   =        365 
+Untoggled Node Count =          7 
+
+Toggle Coverage      =      98.25% (731 of 744 bins)
+
+=================================================================================
+=== Instance: /top/dut/u_q_interp
+=== Design Unit: work.parabolic_farrow_interpolator
+=================================================================================
+Branch Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Branches                        14        14         0   100.00%
+
+================================Branch Details================================
+
+Branch Coverage for instance /top/dut/u_q_interp
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File parabolic_farrow_interpolator.sv
+------------------------------------IF Branch------------------------------------
+    40                                      5572     Count coming in to IF
+    40              1                          2     
+    48              1                       5567     
+                                               3     All False Count
+Branch totals: 3 hits of 3 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    74                                      5580     Count coming in to IF
+    74              1                          2     
+    79              1                       5575     
+                                               3     All False Count
+Branch totals: 3 hits of 3 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    100                                     5579     Count coming in to IF
+    100             1                          2     
+    104             1                       5574     
+                                               3     All False Count
+Branch totals: 3 hits of 3 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    123                                     5568     Count coming in to IF
+    123             1                          2     
+    125             1                       5563     
+                                               3     All False Count
+Branch totals: 3 hits of 3 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    135                                       31     Count coming in to IF
+    135             1                          2     
+    137             1                         29     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+
+Statement Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Statements                      44        44         0   100.00%
+
+================================Statement Details================================
+
+Statement Coverage for instance /top/dut/u_q_interp --
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File parabolic_farrow_interpolator.sv
+    39              1                       5572     
+    41              1                          2     
+    42              1                          2     
+    43              1                          2     
+    44              1                          2     
+    45              1                          2     
+    46              1                          2     
+    47              1                          2     
+    49              1                       5567     
+    50              1                       5567     
+    51              1                       5567     
+    52              1                       5567     
+    53              1                       5567     
+    54              1                       5567     
+    55              1                       5567     
+    63              1                       5552     
+    64              1                       5552     
+    65              1                       5552     
+    66              1                       5552     
+    73              1                       5580     
+    75              1                          2     
+    76              1                          2     
+    77              1                          2     
+    78              1                          2     
+    81              1                       5575     
+    83              1                       5575     
+    84              1                       5575     
+    85              1                       5575     
+    93              1                       5565     
+    99              1                       5579     
+    101             1                          2     
+    102             1                          2     
+    103             1                          2     
+    106             1                       5574     
+    107             1                       5574     
+    108             1                       5574     
+    116             1                       5568     
+    120             1                      11095     
+    122             1                       5568     
+    124             1                          2     
+    126             1                       5563     
+    134             1                         31     
+    136             1                          2     
+    138             1                         29     
+Toggle Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Toggles                        744       731        13    98.25%
+
+================================Toggle Details================================
+
+Toggle Coverage for instance /top/dut/u_q_interp --
+
+                                              Node      1H->0L      0L->1H  "Coverage"
+                                              ---------------------------------------
+                                         a12[15-1]           1           1      100.00 
+                                            a12[0]           0           0        0.00 
+                                         b12[15-1]           1           1      100.00 
+                                            b12[0]           0           0        0.00 
+                                        b_s1[15-1]           1           1      100.00 
+                                           b_s1[0]           0           0        0.00 
+                                        b_s2[15-1]           1           1      100.00 
+                                           b_s2[0]           0           0        0.00 
+                                         c12[15-1]           1           1      100.00 
+                                            c12[0]           0           0        0.00 
+                                             clk_i           1           1      100.00 
+                                         d12[15-1]           1           1      100.00 
+                                            d12[0]           0           0        0.00 
+                                        h1_q[16-0]           1           1      100.00 
+                                     h1_x_mu[27-0]           1           1      100.00 
+                                         mu_i[0-9]           1           1      100.00 
+                                        mu_s1[9-0]           1           1      100.00 
+                                        mu_s2[9-0]           1           1      100.00 
+                                           rst_n_i           0           1       50.00 
+                                        s1_q[11-0]           1           1      100.00 
+                                        s2_q[11-0]           1           1      100.00 
+                                        s3_q[11-0]           1           1      100.00 
+                                        s4_q[11-0]           1           1      100.00 
+                                        s5_q[11-0]           1           1      100.00 
+                                        s6_q[11-0]           1           1      100.00 
+                                        s7_q[11-0]           1           1      100.00 
+                                        v1_q[15-0]           1           1      100.00 
+                                        v2_q[15-0]           1           1      100.00 
+                                     v2_x_mu[26-0]           1           1      100.00 
+                                     val_pipe[5-0]           1           1      100.00 
+                                    valid_sample_i           1           1      100.00 
+                                    valid_sample_o           1           1      100.00 
+                                         x_i[0-11]           1           1      100.00 
+                                      y_full[19-0]           1           1      100.00 
+                                         y_o[15-0]           1           1      100.00 
+
+Total Node Count     =        372 
+Toggled Node Count   =        365 
+Untoggled Node Count =          7 
+
+Toggle Coverage      =      98.25% (731 of 744 bins)
+
+=================================================================================
+=== Instance: /top/dut/u_ted
+=== Design Unit: work.gardner_ted_estimator
+=================================================================================
+Branch Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Branches                        10        10         0   100.00%
+
+================================Branch Details================================
+
+Branch Coverage for instance /top/dut/u_ted
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File gardner_ted_estimator.sv
+------------------------------------IF Branch------------------------------------
+    41                                      5575     Count coming in to IF
+    41              1                          2     
+    45              1                       5569     
+                                               4     All False Count
+Branch totals: 3 hits of 3 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    47                                      5569     Count coming in to IF
+    47              1                       1392     
+                                            4177     All False Count
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    65                                      4182     Count coming in to IF
+    65              1                          2     
+    68              1                       4177     
+                                               3     All False Count
+Branch totals: 3 hits of 3 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    70                                      4177     Count coming in to IF
+    70              1                       1392     
+                                            2785     All False Count
+Branch totals: 2 hits of 2 branches = 100.00%
+
+
+Statement Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Statements                      16        16         0   100.00%
+
+================================Statement Details================================
+
+Statement Coverage for instance /top/dut/u_ted --
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File gardner_ted_estimator.sv
+    34              1                       6954     
+    35              1                       6953     
+    40              1                       5575     
+    42              1                          2     
+    43              1                          2     
+    44              1                          2     
+    46              1                       5569     
+    48              1                       1392     
+    49              1                       1392     
+    60              1                       1393     
+    62              1                       1393     
+    64              1                       4182     
+    66              1                          2     
+    67              1                          2     
+    69              1                       4177     
+    71              1                       1392     
+Toggle Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Toggles                        586       585         1    99.82%
+
+================================Toggle Details================================
+
+Toggle Coverage for instance /top/dut/u_ted --
+
+                                              Node      1H->0L      0L->1H  "Coverage"
+                                              ---------------------------------------
+                                              ce_i           1           1      100.00 
+                                             clk_i           1           1      100.00 
+                                     error_o[31-0]           1           1      100.00 
+                                   error_q21[24-0]           1           1      100.00 
+                                   error_sum[33-0]           1           1      100.00 
+                                     error_valid_o           1           1      100.00 
+                                     i_cur_i[0-15]           1           1      100.00 
+                                      i_diff[16-0]           1           1      100.00 
+                                     i_mid_i[0-15]           1           1      100.00 
+                                    i_prev_i[0-15]           1           1      100.00 
+                                    i_prod_q[32-0]           1           1      100.00 
+                                     q_cur_i[0-15]           1           1      100.00 
+                                      q_diff[16-0]           1           1      100.00 
+                                     q_mid_i[0-15]           1           1      100.00 
+                                    q_prev_i[0-15]           1           1      100.00 
+                                    q_prod_q[32-0]           1           1      100.00 
+                                            rst_ni           0           1       50.00 
+                                          v_stg1_q           1           1      100.00 
+                                           valid_i           1           1      100.00 
+
+Total Node Count     =        293 
+Toggled Node Count   =        292 
+Untoggled Node Count =          1 
+
+Toggle Coverage      =      99.82% (585 of 586 bins)
+
+=================================================================================
+=== Instance: /top/dut/u_pi_loop
+=== Design Unit: work.pI_loop
+=================================================================================
+Branch Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Branches                        16        10         6    62.50%
+
+================================Branch Details================================
+
+Branch Coverage for instance /top/dut/u_pi_loop
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File pI_loop.sv
+------------------------------------IF Branch------------------------------------
+    41                                      4180     Count coming in to IF
+    41              1                          2     
+    46              1                       4178     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    48                                      4178     Count coming in to IF
+    48              1                       1392     
+                                            2786     All False Count
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    71                                      2782     Count coming in to IF
+    71              1                    ***0***     
+    73              1                    ***0***     
+    75              1                       2782     
+Branch totals: 1 hit of 3 branches = 33.33%
+
+------------------------------------IF Branch------------------------------------
+    91                                      4173     Count coming in to IF
+    91              1                    ***0***     
+    93              1                    ***0***     
+    95              1                       4173     
+Branch totals: 1 hit of 3 branches = 33.33%
+
+------------------------------------IF Branch------------------------------------
+    104                                     2787     Count coming in to IF
+    104             1                          2     
+    107             1                       1392     
+                                            1393     All False Count
+Branch totals: 3 hits of 3 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    109                                     1392     Count coming in to IF
+    109             1                    ***0***     
+    111             1                    ***0***     
+    113             1                       1392     
+Branch totals: 1 hit of 3 branches = 33.33%
+
+
+Condition Coverage:
+    Enabled Coverage              Bins   Covered    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Conditions                       6         0         6     0.00%
+
+================================Condition Details================================
+
+Condition Coverage for instance /top/dut/u_pi_loop --
+
+  File pI_loop.sv
+----------------Focused Condition View-------------------
+Line       71 Item    1  (acc_sum > 9395241)
+Condition totals: 0 of 1 input term covered = 0.00%
+
+           Input Term   Covered  Reason for no coverage   Hint
+          -----------  --------  -----------------------  --------------
+  (acc_sum > 9395241)         N  '_1' not hit             Hit '_1'
+
+     Rows:       Hits  FEC Target             Non-masking condition(s)      
+ ---------  ---------  --------------------   -------------------------     
+  Row   1:          1  (acc_sum > 9395241)_0  -                             
+  Row   2:    ***0***  (acc_sum > 9395241)_1  -                             
+
+----------------Focused Condition View-------------------
+Line       73 Item    1  (acc_sum < -9395241)
+Condition totals: 0 of 1 input term covered = 0.00%
+
+            Input Term   Covered  Reason for no coverage   Hint
+           -----------  --------  -----------------------  --------------
+  (acc_sum < -9395241)         N  '_1' not hit             Hit '_1'
+
+     Rows:       Hits  FEC Target              Non-masking condition(s)      
+ ---------  ---------  --------------------    -------------------------     
+  Row   1:          1  (acc_sum < -9395241)_0  -                             
+  Row   2:    ***0***  (acc_sum < -9395241)_1  -                             
+
+----------------Focused Condition View-------------------
+Line       109 Item    1  (sat_hi && (e_stg1_q > 0))
+Condition totals: 0 of 2 input terms covered = 0.00%
+
+      Input Term   Covered  Reason for no coverage   Hint
+     -----------  --------  -----------------------  --------------
+          sat_hi         N  '_1' not hit             Hit '_1'
+  (e_stg1_q > 0)         N  No hits                  Hit '_0' and '_1'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:          1  sat_hi_0              -                             
+  Row   2:    ***0***  sat_hi_1              (e_stg1_q > 0)                
+  Row   3:    ***0***  (e_stg1_q > 0)_0      sat_hi                        
+  Row   4:    ***0***  (e_stg1_q > 0)_1      sat_hi                        
+
+----------------Focused Condition View-------------------
+Line       111 Item    1  (sat_lo && (e_stg1_q < 0))
+Condition totals: 0 of 2 input terms covered = 0.00%
+
+      Input Term   Covered  Reason for no coverage   Hint
+     -----------  --------  -----------------------  --------------
+          sat_lo         N  '_1' not hit             Hit '_1'
+  (e_stg1_q < 0)         N  No hits                  Hit '_0' and '_1'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:          1  sat_lo_0              -                             
+  Row   2:    ***0***  sat_lo_1              (e_stg1_q < 0)                
+  Row   3:    ***0***  (e_stg1_q < 0)_0      sat_lo                        
+  Row   4:    ***0***  (e_stg1_q < 0)_1      sat_lo                        
+
+
+Expression Coverage:
+    Enabled Coverage              Bins   Covered    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Expressions                      2         0         2     0.00%
+
+================================Expression Details================================
+
+Expression Coverage for instance /top/dut/u_pi_loop --
+
+  File pI_loop.sv
+----------------Focused Expression View-----------------
+Line       87 Item    1  (v_raw > 9395241)
+Expression totals: 0 of 1 input term covered = 0.00%
+
+         Input Term   Covered  Reason for no coverage   Hint
+        -----------  --------  -----------------------  --------------
+  (v_raw > 9395241)         N  '_1' not hit             Hit '_1'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:          1  (v_raw > 9395241)_0   -                             
+  Row   2:    ***0***  (v_raw > 9395241)_1   -                             
+
+----------------Focused Expression View-----------------
+Line       88 Item    1  (v_raw < -9395241)
+Expression totals: 0 of 1 input term covered = 0.00%
+
+          Input Term   Covered  Reason for no coverage   Hint
+         -----------  --------  -----------------------  --------------
+  (v_raw < -9395241)         N  '_1' not hit             Hit '_1'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:          1  (v_raw < -9395241)_0  -                             
+  Row   2:    ***0***  (v_raw < -9395241)_1  -                             
+
+
+Statement Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Statements                      32        26         6    81.25%
+
+================================Statement Details================================
+
+Statement Coverage for instance /top/dut/u_pi_loop --
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File pI_loop.sv
+    28              1                       1393     
+    40              1                       4180     
+    42              1                          2     
+    43              1                          2     
+    44              1                          2     
+    45              1                          2     
+    47              1                       4178     
+    49              1                       1392     
+    50              1                       1392     
+    51              1                       1392     
+    60              1                       1393     
+    63              1                       1393     
+    67              1                       2783     
+    70              1                       2782     
+    72              1                    ***0***     
+    74              1                    ***0***     
+    76              1                       2782     
+    82              1                       4174     
+    87              1                       4173     
+    88              1                       4173     
+    90              1                       4173     
+    92              1                    ***0***     
+    94              1                    ***0***     
+    96              1                       4173     
+    103             1                       2787     
+    105             1                          2     
+    106             1                          2     
+    110             1                    ***0***     
+    112             1                    ***0***     
+    114             1                       1392     
+    116             1                       1392     
+    121             1                       1393     
+Toggle Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Toggles                        844       839         5    99.40%
+
+================================Toggle Details================================
+
+Toggle Coverage for instance /top/dut/u_pi_loop --
+
+                                              Node      1H->0L      0L->1H  "Coverage"
+                                              ---------------------------------------
+                                 acc_clamped[25-0]           1           1      100.00 
+                                       acc_q[25-0]           1           1      100.00 
+                                     acc_sum[26-0]           1           1      100.00 
+                                             clk_i           1           1      100.00 
+                                       e_s21[24-0]           1           1      100.00 
+                                    e_stg1_q[24-0]           1           1      100.00 
+                                     error_i[0-31]           1           1      100.00 
+                                      i_term[25-0]           1           1      100.00 
+                                   ki_mult_q[49-0]           1           1      100.00 
+                                   kp_mult_q[49-0]           1           1      100.00 
+                                      p_term[25-0]           1           1      100.00 
+                                        pi_o[23-0]           1           1      100.00 
+                                    pi_reg_q[25-0]           1           1      100.00 
+                                            rst_ni           0           1       50.00 
+                                            sat_hi           0           0        0.00 
+                                            sat_lo           0           0        0.00 
+                                        v_pi[25-0]           1           1      100.00 
+                                       v_raw[26-0]           1           1      100.00 
+                                          v_stg1_q           1           1      100.00 
+                                           valid_i           1           1      100.00 
+
+Total Node Count     =        422 
+Toggled Node Count   =        419 
+Untoggled Node Count =          3 
+
+Toggle Coverage      =      99.40% (839 of 844 bins)
+
+=================================================================================
+=== Instance: /top/dut/u_modulo_ctrl
+=== Design Unit: work.modulo_1_controller
+=================================================================================
+Branch Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Branches                        19        16         3    84.21%
+
+================================Branch Details================================
+
+Branch Coverage for instance /top/dut/u_modulo_ctrl
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File modulo_1_controller.sv
+------------------------------------IF Branch------------------------------------
+    57                                      5580     Count coming in to IF
+    57              1                       1394     
+    60              1                       1395     
+                                            2791     All False Count
+Branch totals: 3 hits of 3 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    62                                      1395     Count coming in to IF
+    62              1                       1395     
+    64              1                    ***0***     
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    88                                      5583     Count coming in to IF
+    88              1                          2     
+    95              1                       5578     
+                                               3     All False Count
+Branch totals: 3 hits of 3 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    114                                     5583     Count coming in to IF
+    114             1                          2     
+    119             1                       5578     
+                                               3     All False Count
+Branch totals: 3 hits of 3 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    140                                     5560     Count coming in to IF
+    140             1                    ***0***     
+    142             1                    ***0***     
+    144             1                       5560     
+Branch totals: 1 hit of 3 branches = 33.33%
+
+------------------------------------IF Branch------------------------------------
+    156                                     5582     Count coming in to IF
+    156             1                          2     
+    160             1                       5577     
+                                               3     All False Count
+Branch totals: 3 hits of 3 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    163                                     5577     Count coming in to IF
+    163             1                       2788     
+                                            2789     All False Count
+Branch totals: 2 hits of 2 branches = 100.00%
+
+
+Condition Coverage:
+    Enabled Coverage              Bins   Covered    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Conditions                       9         6         3    66.66%
+
+================================Condition Details================================
+
+Condition Coverage for instance /top/dut/u_modulo_ctrl --
+
+  File modulo_1_controller.sv
+----------------Focused Condition View-------------------
+Line       57 Item    1  (in_mid_old && ~in_mid_new)
+Condition totals: 2 of 2 input terms covered = 100.00%
+
+  Input Term   Covered  Reason for no coverage   Hint
+ -----------  --------  -----------------------  --------------
+  in_mid_old         Y
+  in_mid_new         Y
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:          1  in_mid_old_0          -                             
+  Row   2:          1  in_mid_old_1          ~in_mid_new                   
+  Row   3:          1  in_mid_new_0          in_mid_old                    
+  Row   4:          1  in_mid_new_1          in_mid_old                    
+
+----------------Focused Condition View-------------------
+Line       60 Item    1  (~in_mid_old && in_mid_new)
+Condition totals: 2 of 2 input terms covered = 100.00%
+
+  Input Term   Covered  Reason for no coverage   Hint
+ -----------  --------  -----------------------  --------------
+  in_mid_old         Y
+  in_mid_new         Y
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:          1  in_mid_old_0          in_mid_new                    
+  Row   2:          1  in_mid_old_1          -                             
+  Row   3:          1  in_mid_new_0          ~in_mid_old                   
+  Row   4:          1  in_mid_new_1          ~in_mid_old                   
+
+----------------Focused Condition View-------------------
+Line       62 Item    1  (m_q >= 12582912)
+Condition totals: 0 of 1 input term covered = 0.00%
+
+         Input Term   Covered  Reason for no coverage   Hint
+        -----------  --------  -----------------------  --------------
+  (m_q >= 12582912)         N  '_0' not hit             Hit '_0'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:    ***0***  (m_q >= 12582912)_0   -                             
+  Row   2:          1  (m_q >= 12582912)_1   -                             
+
+----------------Focused Condition View-------------------
+Line       140 Item    1  (mu_full < 0)
+Condition totals: 0 of 1 input term covered = 0.00%
+
+     Input Term   Covered  Reason for no coverage   Hint
+    -----------  --------  -----------------------  --------------
+  (mu_full < 0)         N  '_1' not hit             Hit '_1'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:          1  (mu_full < 0)_0       -                             
+  Row   2:    ***0***  (mu_full < 0)_1       -                             
+
+----------------Focused Condition View-------------------
+Line       142 Item    1  (mu_full >= 16777216)
+Condition totals: 0 of 1 input term covered = 0.00%
+
+             Input Term   Covered  Reason for no coverage   Hint
+            -----------  --------  -----------------------  --------------
+  (mu_full >= 16777216)         N  '_1' not hit             Hit '_1'
+
+     Rows:       Hits  FEC Target               Non-masking condition(s)      
+ ---------  ---------  --------------------     -------------------------     
+  Row   1:          1  (mu_full >= 16777216)_0  -                             
+  Row   2:    ***0***  (mu_full >= 16777216)_1  -                             
+
+----------------Focused Condition View-------------------
+Line       163 Item    1  (strobe_cur_q2 || strobe_mid_q2)
+Condition totals: 2 of 2 input terms covered = 100.00%
+
+     Input Term   Covered  Reason for no coverage   Hint
+    -----------  --------  -----------------------  --------------
+  strobe_cur_q2         Y
+  strobe_mid_q2         Y
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:          1  strobe_cur_q2_0       ~strobe_mid_q2                
+  Row   2:          1  strobe_cur_q2_1       -                             
+  Row   3:          1  strobe_mid_q2_0       ~strobe_cur_q2                
+  Row   4:          1  strobe_mid_q2_1       ~strobe_cur_q2                
+
+
+Expression Coverage:
+    Enabled Coverage              Bins   Covered    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Expressions                      4         4         0   100.00%
+
+================================Expression Details================================
+
+Expression Coverage for instance /top/dut/u_modulo_ctrl --
+
+  File modulo_1_controller.sv
+----------------Focused Expression View-----------------
+Line       46 Item    1  ((m_q >= 4194304) && (m_q < 12582912))
+Expression totals: 2 of 2 input terms covered = 100.00%
+
+        Input Term   Covered  Reason for no coverage   Hint
+       -----------  --------  -----------------------  --------------
+  (m_q >= 4194304)         Y
+  (m_q < 12582912)         Y
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:          1  (m_q >= 4194304)_0    -                             
+  Row   2:          1  (m_q >= 4194304)_1    (m_q < 12582912)              
+  Row   3:          1  (m_q < 12582912)_0    (m_q >= 4194304)              
+  Row   4:          1  (m_q < 12582912)_1    (m_q >= 4194304)              
+
+----------------Focused Expression View-----------------
+Line       47 Item    1  ((m_next >= 4194304) && (m_next < 12582912))
+Expression totals: 2 of 2 input terms covered = 100.00%
+
+           Input Term   Covered  Reason for no coverage   Hint
+          -----------  --------  -----------------------  --------------
+  (m_next >= 4194304)         Y
+  (m_next < 12582912)         Y
+
+     Rows:       Hits  FEC Target             Non-masking condition(s)      
+ ---------  ---------  --------------------   -------------------------     
+  Row   1:          1  (m_next >= 4194304)_0  -                             
+  Row   2:          1  (m_next >= 4194304)_1  (m_next < 12582912)           
+  Row   3:          1  (m_next < 12582912)_0  (m_next >= 4194304)           
+  Row   4:          1  (m_next < 12582912)_1  (m_next >= 4194304)           
+
+
+Statement Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Statements                      49        46         3    93.87%
+
+================================Statement Details================================
+
+Statement Coverage for instance /top/dut/u_modulo_ctrl --
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File modulo_1_controller.sv
+    35              1                       1393     
+    36              1                       1393     
+    43              1                       6972     
+    46              1                       5580     
+    47              1                       6971     
+    52              1                       5580     
+    53              1                       5580     
+    54              1                       5580     
+    55              1                       5580     
+    58              1                       1394     
+    59              1                       1394     
+    61              1                       1395     
+    63              1                       1395     
+    65              1                    ***0***     
+    87              1                       5583     
+    89              1                          2     
+    90              1                          2     
+    91              1                          2     
+    92              1                          2     
+    93              1                          2     
+    94              1                          2     
+    96              1                       5578     
+    97              1                       5578     
+    98              1                       5578     
+    99              1                       5578     
+    100             1                       5578     
+    101             1                       5578     
+    113             1                       5583     
+    115             1                          2     
+    116             1                          2     
+    117             1                          2     
+    118             1                          2     
+    121             1                       5578     
+    122             1                       5578     
+    123             1                       5578     
+    124             1                       5578     
+    133             1                       5560     
+    136             1                      11119     
+    139             1                       5560     
+    141             1                    ***0***     
+    143             1                    ***0***     
+    146             1                       5560     
+    155             1                       5582     
+    157             1                          2     
+    158             1                          2     
+    159             1                          2     
+    161             1                       5577     
+    162             1                       5577     
+    164             1                       2788     
+Toggle Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Toggles                        744       721        23    96.90%
+
+================================Toggle Details================================
+
+Toggle Coverage for instance /top/dut/u_modulo_ctrl --
+
+                                              Node      1H->0L      0L->1H  "Coverage"
+                                              ---------------------------------------
+                                             clk_i           1           1      100.00 
+                                  current_strobe_o           1           1      100.00 
+                                   eta_4x_q1[23-2]           1           1      100.00 
+                                    eta_4x_q1[1-0]           0           0        0.00 
+                                   eta_4x_q2[23-2]           1           1      100.00 
+                                    eta_4x_q2[1-0]           0           0        0.00 
+                               eta_pi_mult_q[47-0]           1           1      100.00 
+                                    eta_raw[23-22]           0           0        0.00 
+                                     eta_raw[21-0]           1           1      100.00 
+                                  eta_raw_q[23-22]           0           0        0.00 
+                                   eta_raw_q[21-0]           1           1      100.00 
+                                        in_mid_new           1           1      100.00 
+                                        in_mid_old           1           1      100.00 
+                                      m_next[23-0]           1           1      100.00 
+                                         m_q[23-0]           1           1      100.00 
+                                      mid_strobe_o           1           1      100.00 
+                                      mu_calc[9-0]           1           1      100.00 
+                                       mu_full[24]           0           0        0.00 
+                                     mu_full[23-0]           1           1      100.00 
+                                         mu_o[9-0]           1           1      100.00 
+                                       mu_reg[9-0]           1           1      100.00 
+                                           new_cur           1           1      100.00 
+                                           new_mid           1           1      100.00 
+                                        pi_i[0-23]           1           1      100.00 
+                                        pi_q[23-0]           1           1      100.00 
+                                            rst_ni           0           1       50.00 
+                                     strobe_cur_q1           1           1      100.00 
+                                     strobe_cur_q2           1           1      100.00 
+                                     strobe_mid_q1           1           1      100.00 
+                                     strobe_mid_q2           1           1      100.00 
+                                       term2[23-0]           1           1      100.00 
+                                    valid_sample_i           1           1      100.00 
+                                           w_o[15]           0           0        0.00 
+                                         w_o[14-0]           1           1      100.00 
+                                         w_val[23]           0           0        0.00 
+                                       w_val[22-0]           1           1      100.00 
+
+Total Node Count     =        372 
+Toggled Node Count   =        360 
+Untoggled Node Count =         12 
+
+Toggle Coverage      =      96.90% (721 of 744 bins)
+
+=================================================================================
+=== Instance: /top/dut/u_lock_detector
+=== Design Unit: work.lock_detector
+=================================================================================
+Branch Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Branches                        26        25         1    96.15%
+
+================================Branch Details================================
+
+Branch Coverage for instance /top/dut/u_lock_detector
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File lock_detector.sv
+------------------------------------IF Branch------------------------------------
+    48                                      2788     Count coming in to IF
+    48              1                          2     
+    50              1                       1392     
+                                            1394     All False Count
+Branch totals: 3 hits of 3 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    51                                      1392     Count coming in to IF
+    51              1                        672     
+    51              2                        720     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    58                                      2787     Count coming in to IF
+    58              1                          2     
+    61              1                       1392     
+                                            1393     All False Count
+Branch totals: 3 hits of 3 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    67                                         2     Count coming in to IF
+    67              1                          1     
+    67              2                          1     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    71                                        23     Count coming in to IF
+    71              1                         21     
+    73              1                    ***0***     
+    75              1                          2     
+Branch totals: 2 hits of 3 branches = 66.66%
+
+------------------------------------IF Branch------------------------------------
+    72                                        21     Count coming in to IF
+    72              1                          1     
+    72              2                         20     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    81                                      5572     Count coming in to IF
+    81              1                          2     
+    88              1                       5570     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    92                                      5570     Count coming in to IF
+    92              1                       1392     
+                                            4178     All False Count
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    94                                      1392     Count coming in to IF
+    94              1                          1     
+                                            1391     All False Count
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    99                                      5570     Count coming in to IF
+    99              1                       1392     
+                                            4178     All False Count
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    101                                     1392     Count coming in to IF
+    101             1                       1337     
+    103             1                         36     
+                                              19     All False Count
+Branch totals: 3 hits of 3 branches = 100.00%
+
+
+Condition Coverage:
+    Enabled Coverage              Bins   Covered    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Conditions                       9         5         4    55.55%
+
+================================Condition Details================================
+
+Condition Coverage for instance /top/dut/u_lock_detector --
+
+  File lock_detector.sv
+----------------Focused Condition View-------------------
+Line       48 Item    1  (~rst_ni || clr_i)
+Condition totals: 1 of 2 input terms covered = 50.00%
+
+  Input Term   Covered  Reason for no coverage   Hint
+ -----------  --------  -----------------------  --------------
+      rst_ni         Y
+       clr_i         N  '_1' not hit             Hit '_1'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:          1  rst_ni_0              -                             
+  Row   2:          1  rst_ni_1              ~clr_i                        
+  Row   3:          1  clr_i_0               rst_ni                        
+  Row   4:    ***0***  clr_i_1               rst_ni                        
+
+----------------Focused Condition View-------------------
+Line       58 Item    1  (~rst_ni || clr_i)
+Condition totals: 1 of 2 input terms covered = 50.00%
+
+  Input Term   Covered  Reason for no coverage   Hint
+ -----------  --------  -----------------------  --------------
+      rst_ni         Y
+       clr_i         N  '_1' not hit             Hit '_1'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:          1  rst_ni_0              -                             
+  Row   2:          1  rst_ni_1              ~clr_i                        
+  Row   3:          1  clr_i_0               rst_ni                        
+  Row   4:    ***0***  clr_i_1               rst_ni                        
+
+----------------Focused Condition View-------------------
+Line       72 Item    1  (bucket >= 20)
+Condition totals: 1 of 1 input term covered = 100.00%
+
+      Input Term   Covered  Reason for no coverage   Hint
+     -----------  --------  -----------------------  --------------
+  (bucket >= 20)         Y
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:          1  (bucket >= 20)_0      -                             
+  Row   2:          1  (bucket >= 20)_1      -                             
+
+----------------Focused Condition View-------------------
+Line       73 Item    1  (bucket >= 2)
+Condition totals: 0 of 1 input term covered = 0.00%
+
+     Input Term   Covered  Reason for no coverage   Hint
+    -----------  --------  -----------------------  --------------
+  (bucket >= 2)         N  '_1' not hit             Hit '_1'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:          1  (bucket >= 2)_0       -                             
+  Row   2:    ***0***  (bucket >= 2)_1       -                             
+
+----------------Focused Condition View-------------------
+Line       81 Item    1  (~rst_ni || clr_i)
+Condition totals: 1 of 2 input terms covered = 50.00%
+
+  Input Term   Covered  Reason for no coverage   Hint
+ -----------  --------  -----------------------  --------------
+      rst_ni         Y
+       clr_i         N  '_1' not hit             Hit '_1'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:          1  rst_ni_0              -                             
+  Row   2:          1  rst_ni_1              ~clr_i                        
+  Row   3:          1  clr_i_0               rst_ni                        
+  Row   4:    ***0***  clr_i_1               rst_ni                        
+
+----------------Focused Condition View-------------------
+Line       101 Item    1  (bucket_next >= 20)
+Condition totals: 1 of 1 input term covered = 100.00%
+
+           Input Term   Covered  Reason for no coverage   Hint
+          -----------  --------  -----------------------  --------------
+  (bucket_next >= 20)         Y
+
+     Rows:       Hits  FEC Target             Non-masking condition(s)      
+ ---------  ---------  --------------------   -------------------------     
+  Row   1:          1  (bucket_next >= 20)_0  -                             
+  Row   2:          1  (bucket_next >= 20)_1  -                             
+
+
+Expression Coverage:
+    Enabled Coverage              Bins   Covered    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Expressions                      3         1         2    33.33%
+
+================================Expression Details================================
+
+Expression Coverage for instance /top/dut/u_lock_detector --
+
+  File lock_detector.sv
+----------------Focused Expression View-----------------
+Line       63 Item    1  (sym_cnt >= 0)
+Expression totals: 0 of 1 input term covered = 0.00%
+
+      Input Term   Covered  Reason for no coverage   Hint
+     -----------  --------  -----------------------  --------------
+  (sym_cnt >= 0)         N  '_0' not hit             Hit '_0'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:    ***0***  (sym_cnt >= 0)_0      -                             
+  Row   2:          1  (sym_cnt >= 0)_1      -                             
+
+----------------Focused Expression View-----------------
+Line       68 Item    1  ((m_val_r < thr) && idx_ok_r)
+Expression totals: 1 of 2 input terms covered = 50.00%
+
+       Input Term   Covered  Reason for no coverage   Hint
+      -----------  --------  -----------------------  --------------
+  (m_val_r < thr)         Y
+         idx_ok_r         N  '_0' not hit             Hit '_0'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:          1  (m_val_r < thr)_0     -                             
+  Row   2:          1  (m_val_r < thr)_1     idx_ok_r                      
+  Row   3:    ***0***  idx_ok_r_0            (m_val_r < thr)               
+  Row   4:          1  idx_ok_r_1            (m_val_r < thr)               
+
+
+Statement Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Statements                      29        28         1    96.55%
+
+================================Statement Details================================
+
+Statement Coverage for instance /top/dut/u_lock_detector --
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File lock_detector.sv
+    47              1                       2788     
+    49              1                          2     
+    51              1                       1392     
+    55              1                       2785     
+    57              1                       2787     
+    59              1                          2     
+    60              1                          2     
+    62              1                       1392     
+    63              1                       1392     
+    67              1                          4     
+    68              1                       1396     
+    70              1                         23     
+    72              1                         21     
+    74              1                    ***0***     
+    76              1                          2     
+    80              1                       5572     
+    82              1                          2     
+    83              1                          2     
+    84              1                          2     
+    85              1                          2     
+    86              1                          2     
+    87              1                          2     
+    89              1                       5570     
+    90              1                       5570     
+    93              1                       1392     
+    95              1                          1     
+    100             1                       1392     
+    102             1                       1337     
+    104             1                         36     
+Toggle Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Toggles                        428       245       183    57.24%
+
+================================Toggle Details================================
+
+Toggle Coverage for instance /top/dut/u_lock_detector --
+
+                                              Node      1H->0L      0L->1H  "Coverage"
+                                              ---------------------------------------
+                                             clk_i           1           1      100.00 
+                                             clr_i           0           0        0.00 
+                                         e_i[0-22]           1           1      100.00 
+                         gen_pipelined/bucket[0-3]           1           1      100.00 
+                           gen_pipelined/bucket[4]           0           1       50.00 
+                    gen_pipelined/bucket_next[0-3]           1           1      100.00 
+                      gen_pipelined/bucket_next[4]           0           1       50.00 
+                       gen_pipelined/e_abs_r[0-17]           1           1      100.00 
+                      gen_pipelined/e_abs_r[18-22]           0           0        0.00 
+                                gen_pipelined/good           0           1       50.00 
+                            gen_pipelined/idx_ok_r           0           1       50.00 
+                            gen_pipelined/locked_q           0           1       50.00 
+                         gen_pipelined/m_acc[0-20]           1           1      100.00 
+                           gen_pipelined/m_acc[21]           1           0       50.00 
+                        gen_pipelined/m_acc[22-26]           0           0        0.00 
+                        gen_pipelined/m_next[0-21]           1           1      100.00 
+                       gen_pipelined/m_next[22-26]           0           0        0.00 
+                       gen_pipelined/m_val_r[0-16]           1           1      100.00 
+                         gen_pipelined/m_val_r[17]           1           0       50.00 
+                      gen_pipelined/m_val_r[18-22]           0           0        0.00 
+                          gen_pipelined/sym_cnt[0]           0           1       50.00 
+                            gen_pipelined/thr[0-2]           0           0        0.00 
+                              gen_pipelined/thr[3]           1           0       50.00 
+                            gen_pipelined/thr[4-6]           0           0        0.00 
+                              gen_pipelined/thr[7]           1           0       50.00 
+                              gen_pipelined/thr[8]           0           1       50.00 
+                           gen_pipelined/thr[9-10]           1           0       50.00 
+                             gen_pipelined/thr[11]           0           0        0.00 
+                          gen_pipelined/thr[12-13]           0           1       50.00 
+                          gen_pipelined/thr[14-15]           0           0        0.00 
+                             gen_pipelined/thr[16]           0           1       50.00 
+                          gen_pipelined/thr[17-22]           0           0        0.00 
+                                  gen_pipelined/v1           1           1      100.00 
+                                  gen_pipelined/v2           1           1      100.00 
+                                       lock_comb_o           0           1       50.00 
+                                          locked_o           0           1       50.00 
+                                            rst_ni           0           1       50.00 
+                                 thr_enter_i[0-22]           0           0        0.00 
+                                  thr_exit_i[0-22]           0           0        0.00 
+                                           valid_i           1           1      100.00 
+
+Total Node Count     =        214 
+Toggled Node Count   =        113 
+Untoggled Node Count =        101 
+
+Toggle Coverage      =      57.24% (245 of 428 bins)
+
+=================================================================================
+=== Instance: /top/dut
+=== Design Unit: work.str_top
+=================================================================================
+Branch Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Branches                        12        11         1    91.66%
+
+================================Branch Details================================
+
+Branch Coverage for instance /top/dut
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File str_top.sv
+------------------------------------IF Branch------------------------------------
+    100                                     5583     Count coming in to IF
+    100             1                          2     
+    103             1                       5576     
+    106             1                          5     
+Branch totals: 3 hits of 3 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    121                                     5579     Count coming in to IF
+    121             1                          2     
+    125             1                       5572     
+                                               5     All False Count
+Branch totals: 3 hits of 3 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    126                                     5572     Count coming in to IF
+    126             1                       1392     
+                                            4180     All False Count
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    131                                     5572     Count coming in to IF
+    131             1                       1392     
+                                            4180     All False Count
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    176                                     1393     Count coming in to IF
+    176             1                    ***0***     
+    178             1                       1393     
+Branch totals: 1 hit of 2 branches = 50.00%
+
+
+Expression Coverage:
+    Enabled Coverage              Bins   Covered    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Expressions                      6         6         0   100.00%
+
+================================Expression Details================================
+
+Expression Coverage for instance /top/dut --
+
+  File str_top.sv
+----------------Focused Expression View-----------------
+Line       38 Item    1  (s_axis_valid_i | flush_active_i)
+Expression totals: 2 of 2 input terms covered = 100.00%
+
+      Input Term   Covered  Reason for no coverage   Hint
+     -----------  --------  -----------------------  --------------
+  s_axis_valid_i         Y
+  flush_active_i         Y
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:          1  s_axis_valid_i_0      ~flush_active_i               
+  Row   2:          1  s_axis_valid_i_1      ~flush_active_i               
+  Row   3:          1  flush_active_i_0      ~s_axis_valid_i               
+  Row   4:          1  flush_active_i_1      ~s_axis_valid_i               
+
+----------------Focused Expression View-----------------
+Line       158 Item    1  (ted_error_valid && ce_str)
+Expression totals: 2 of 2 input terms covered = 100.00%
+
+       Input Term   Covered  Reason for no coverage   Hint
+      -----------  --------  -----------------------  --------------
+  ted_error_valid         Y
+           ce_str         Y
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:          1  ted_error_valid_0     -                             
+  Row   2:          1  ted_error_valid_1     ce_str                        
+  Row   3:          1  ce_str_0              ted_error_valid               
+  Row   4:          1  ce_str_1              ted_error_valid               
+
+----------------Focused Expression View-----------------
+Line       207 Item    1  (ted_error_valid && ce_str)
+Expression totals: 2 of 2 input terms covered = 100.00%
+
+       Input Term   Covered  Reason for no coverage   Hint
+      -----------  --------  -----------------------  --------------
+  ted_error_valid         Y
+           ce_str         Y
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:          1  ted_error_valid_0     -                             
+  Row   2:          1  ted_error_valid_1     ce_str                        
+  Row   3:          1  ce_str_0              ted_error_valid               
+  Row   4:          1  ce_str_1              ted_error_valid               
+
+
+Statement Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Statements                      25        24         1    96.00%
+
+================================Statement Details================================
+
+Statement Coverage for instance /top/dut --
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File str_top.sv
+    38              1                          6     
+    99              1                       5583     
+    101             1                          2     
+    102             1                          2     
+    104             1                       5576     
+    105             1                       5576     
+    107             1                          5     
+    108             1                          5     
+    120             1                       5579     
+    122             1                          2     
+    122             2                          2     
+    123             1                          2     
+    123             2                          2     
+    124             1                          2     
+    124             2                          2     
+    127             1                       1392     
+    128             1                       1392     
+    132             1                       1392     
+    133             1                       1392     
+    134             1                       1392     
+    135             1                       1392     
+    175             1                       1393     
+    177             1                    ***0***     
+    179             1                       1393     
+    194             1                       1393     
+Toggle Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Toggles                        820       762        58    92.92%
+
+================================Toggle Details================================
+
+Toggle Coverage for instance /top/dut --
+
+                                              Node      1H->0L      0L->1H  "Coverage"
+                                              ---------------------------------------
+                                            ce_str           1           1      100.00 
+                                             clk_i           1           1      100.00 
+                                       curr_strobe           1           1      100.00 
+                                     curr_strobe_d           1           1      100.00 
+                             curr_strobe_pipe[3-0]           1           1      100.00 
+                                    flush_active_i           1           1      100.00 
+                                      force_w_en_i           0           0        0.00 
+                                   force_w_i[0-15]           0           0        0.00 
+                                       i_cur[15-0]           1           1      100.00 
+                                       i_mid[15-0]           1           1      100.00 
+                                      i_prev[15-0]           1           1      100.00 
+                                         i_y[15-0]           1           1      100.00 
+                                            lock_o           0           1       50.00 
+                                  loop_gain_i[0-7]           0           0        0.00 
+                              m_axis_i_sym_o[15-0]           1           1      100.00 
+                              m_axis_q_sym_o[15-0]           1           1      100.00 
+                                    m_axis_valid_o           1           1      100.00 
+                                        mid_strobe           1           1      100.00 
+                                      mid_strobe_d           1           1      100.00 
+                              mid_strobe_pipe[3-0]           1           1      100.00 
+                                           mu[9-0]           1           1      100.00 
+                                         mu_o[9-0]           1           1      100.00 
+                                      pi_val[23-0]           1           1      100.00 
+                                       q_cur[15-0]           1           1      100.00 
+                                       q_mid[15-0]           1           1      100.00 
+                                      q_prev[15-0]           1           1      100.00 
+                                         q_y[15-0]           1           1      100.00 
+                                            rst_ni           0           1       50.00 
+                           s_axis_i_sample_i[0-11]           1           1      100.00 
+                           s_axis_q_sample_i[0-11]           1           1      100.00 
+                                    s_axis_valid_i           1           1      100.00 
+                             ted_err_aligned[22-0]           1           1      100.00 
+                                   ted_err_o[31-0]           1           1      100.00 
+                                   ted_err_valid_o           1           1      100.00 
+                                   ted_error[31-0]           1           1      100.00 
+                                   ted_error_valid           1           1      100.00 
+                                         w_mux[15]           0           0        0.00 
+                                       w_mux[14-0]           1           1      100.00 
+                                           w_o[15]           0           0        0.00 
+                                         w_o[14-0]           1           1      100.00 
+                                         w_val[15]           0           0        0.00 
+                                       w_val[14-0]           1           1      100.00 
+                                           y_valid           1           1      100.00 
+
+Total Node Count     =        410 
+Toggled Node Count   =        380 
+Untoggled Node Count =         30 
+
+Toggle Coverage      =      92.92% (762 of 820 bins)
+
+=================================================================================
+=== Instance: /top
+=== Design Unit: work.top
+=================================================================================
+Statement Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Statements                       6         6         0   100.00%
+
+================================Statement Details================================
+
+Statement Coverage for instance /top --
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File str_top_top.sv
+    12              1                          1     
+    13              1                          1     
+    13              2                      11324     
+    13              3                      11323     
+    41              1                          1     
+    42              1                          1     
+Toggle Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Toggles                          2         2         0   100.00%
+
+================================Toggle Details================================
+
+Toggle Coverage for instance /top --
+
+                                              Node      1H->0L      0L->1H  "Coverage"
+                                              ---------------------------------------
+                                               clk           1           1      100.00 
+
+Total Node Count     =          1 
+Toggled Node Count   =          1 
+Untoggled Node Count =          0 
+
+Toggle Coverage      =     100.00% (2 of 2 bins)
+
+=================================================================================
+=== Instance: /str_top_sequence_item
+=== Design Unit: work.str_top_sequence_item
+=================================================================================
+Branch Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Branches                        10         2         8    20.00%
+
+================================Branch Details================================
+
+Branch Coverage for instance /str_top_sequence_item
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File str_top_seq_item.sv
+------------------------------------IF Branch------------------------------------
+    6                                    ***0***     Count coming in to IF
+    6               1                    ***0***     
+                                         ***0***     All False Count
+Branch totals: 0 hits of 2 branches = 0.00%
+
+------------------------------------IF Branch------------------------------------
+    6                                       5641     Count coming in to IF
+    6               2                    ***0***     
+                                            5641     All False Count
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    6                                    ***0***     Count coming in to IF
+    6               3                    ***0***     
+    6               4                    ***0***     
+Branch totals: 0 hits of 2 branches = 0.00%
+
+------------------------------------IF Branch------------------------------------
+    6                                       5641     Count coming in to IF
+    6               5                    ***0***     
+                                            5641     All False Count
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    6                                    ***0***     Count coming in to IF
+    6               6                    ***0***     
+                                         ***0***     All False Count
+Branch totals: 0 hits of 2 branches = 0.00%
+
+
+Condition Coverage:
+    Enabled Coverage              Bins   Covered    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Conditions                       2         0         2     0.00%
+
+================================Condition Details================================
+
+Condition Coverage for instance /str_top_sequence_item --
+
+  File str_top_seq_item.sv
+----------------Focused Condition View-------------------
+Line       6 Item    1  (name != 0)
+Condition totals: 0 of 1 input term covered = 0.00%
+
+   Input Term   Covered  Reason for no coverage   Hint
+  -----------  --------  -----------------------  --------------
+  (name != 0)         N  No hits                  Hit '_0' and '_1'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:    ***0***  (name != 0)_0         -                             
+  Row   2:    ***0***  (name != 0)_1         -                             
+
+----------------Focused Condition View-------------------
+Line       6 Item    2  (tmp_data__ != null)
+Condition totals: 0 of 1 input term covered = 0.00%
+
+            Input Term   Covered  Reason for no coverage   Hint
+           -----------  --------  -----------------------  --------------
+  (tmp_data__ != null)         N  '_1' not hit             Hit '_1'
+
+     Rows:       Hits  FEC Target              Non-masking condition(s)      
+ ---------  ---------  --------------------    -------------------------     
+  Row   1:          1  (tmp_data__ != null)_0  -                             
+  Row   2:    ***0***  (tmp_data__ != null)_1  -                             
+
+
+Statement Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Statements                      21        12         9    57.14%
+
+================================Statement Details================================
+
+Statement Coverage for instance /str_top_sequence_item --
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File str_top_seq_item.sv
+    6               1                    ***0***     
+    6               2                    ***0***     
+    6               3                    ***0***     
+    6               4                    ***0***     
+    6               5                    ***0***     
+    6               6                       5641     
+    6               7                    ***0***     
+    6               8                    ***0***     
+    6               9                       5641     
+    6              10                    ***0***     
+    9               1                      11302     
+    10              1                      11302     
+    11              1                      11302     
+    12              1                      11302     
+    13              1                      11302     
+    16              1                      11302     
+    17              1                      11302     
+    18              1                      11302     
+    19              1                      11302     
+    32              1                      11302     
+    36              1                    ***0***     
+
+=================================================================================
+=== Instance: /main_sequence
+=== Design Unit: work.main_sequence
+=================================================================================
+Branch Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Branches                        12         0        12     0.00%
+
+================================Branch Details================================
+
+Branch Coverage for instance /main_sequence
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File main_seq.sv
+------------------------------------IF Branch------------------------------------
+    7                                    ***0***     Count coming in to IF
+    7               1                    ***0***     
+                                         ***0***     All False Count
+Branch totals: 0 hits of 2 branches = 0.00%
+
+------------------------------------IF Branch------------------------------------
+    7                                    ***0***     Count coming in to IF
+    7               2                    ***0***     
+                                         ***0***     All False Count
+Branch totals: 0 hits of 2 branches = 0.00%
+
+------------------------------------IF Branch------------------------------------
+    7                                    ***0***     Count coming in to IF
+    7               3                    ***0***     
+    7               4                    ***0***     
+Branch totals: 0 hits of 2 branches = 0.00%
+
+------------------------------------IF Branch------------------------------------
+    7                                    ***0***     Count coming in to IF
+    7               5                    ***0***     
+                                         ***0***     All False Count
+Branch totals: 0 hits of 2 branches = 0.00%
+
+------------------------------------IF Branch------------------------------------
+    7                                    ***0***     Count coming in to IF
+    7               6                    ***0***     
+                                         ***0***     All False Count
+Branch totals: 0 hits of 2 branches = 0.00%
+
+------------------------------------IF Branch------------------------------------
+    36                                   ***0***     Count coming in to IF
+    36              1                    ***0***     
+                                         ***0***     All False Count
+Branch totals: 0 hits of 2 branches = 0.00%
+
+
+Condition Coverage:
+    Enabled Coverage              Bins   Covered    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Conditions                       3         0         3     0.00%
+
+================================Condition Details================================
+
+Condition Coverage for instance /main_sequence --
+
+  File main_seq.sv
+----------------Focused Condition View-------------------
+Line       7 Item    1  (name != 0)
+Condition totals: 0 of 1 input term covered = 0.00%
+
+   Input Term   Covered  Reason for no coverage   Hint
+  -----------  --------  -----------------------  --------------
+  (name != 0)         N  No hits                  Hit '_0' and '_1'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:    ***0***  (name != 0)_0         -                             
+  Row   2:    ***0***  (name != 0)_1         -                             
+
+----------------Focused Condition View-------------------
+Line       7 Item    2  (tmp_data__ != null)
+Condition totals: 0 of 1 input term covered = 0.00%
+
+            Input Term   Covered  Reason for no coverage   Hint
+           -----------  --------  -----------------------  --------------
+  (tmp_data__ != null)         N  No hits                  Hit '_0' and '_1'
+
+     Rows:       Hits  FEC Target              Non-masking condition(s)      
+ ---------  ---------  --------------------    -------------------------     
+  Row   1:    ***0***  (tmp_data__ != null)_0  -                             
+  Row   2:    ***0***  (tmp_data__ != null)_1  -                             
+
+----------------Focused Condition View-------------------
+Line       36 Item    1  ((i % 4) == 3)
+Condition totals: 0 of 1 input term covered = 0.00%
+
+      Input Term   Covered  Reason for no coverage   Hint
+     -----------  --------  -----------------------  --------------
+  ((i % 4) == 3)         N  No hits                  Hit '_0' and '_1'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:    ***0***  ((i % 4) == 3)_0      -                             
+  Row   2:    ***0***  ((i % 4) == 3)_1      -                             
+
+
+Statement Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Statements                      43         0        43     0.00%
+
+================================Statement Details================================
+
+Statement Coverage for instance /main_sequence --
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File main_seq.sv
+    7               1                    ***0***     
+    7               2                    ***0***     
+    7               3                    ***0***     
+    7               4                    ***0***     
+    7               5                    ***0***     
+    7               6                    ***0***     
+    7               7                    ***0***     
+    7               8                    ***0***     
+    7               9                    ***0***     
+    7              10                    ***0***     
+    9               1                    ***0***     
+    10              1                    ***0***     
+    13              1                    ***0***     
+    22              1                    ***0***     
+    22              2                    ***0***     
+    23              1                    ***0***     
+    23              2                    ***0***     
+    24              1                    ***0***     
+    24              2                    ***0***     
+    25              1                    ***0***     
+    25              2                    ***0***     
+    26              1                    ***0***     
+    28              1                    ***0***     
+    28              2                    ***0***     
+    29              1                    ***0***     
+    30              1                    ***0***     
+    31              1                    ***0***     
+    32              1                    ***0***     
+    33              1                    ***0***     
+    34              1                    ***0***     
+    35              1                    ***0***     
+    36              1                    ***0***     
+    37              1                    ***0***     
+    41              1                    ***0***     
+    41              2                    ***0***     
+    42              1                    ***0***     
+    43              1                    ***0***     
+    44              1                    ***0***     
+    45              1                    ***0***     
+    46              1                    ***0***     
+    47              1                    ***0***     
+    48              1                    ***0***     
+    49              1                    ***0***     
+
+=================================================================================
+=== Instance: /golden_sequence
+=== Design Unit: work.golden_sequence
+=================================================================================
+Branch Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Branches                        34        16        18    47.05%
+
+================================Branch Details================================
+
+Branch Coverage for instance /golden_sequence
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File golden_seq.sv
+------------------------------------IF Branch------------------------------------
+    7                                    ***0***     Count coming in to IF
+    7               1                    ***0***     
+                                         ***0***     All False Count
+Branch totals: 0 hits of 2 branches = 0.00%
+
+------------------------------------IF Branch------------------------------------
+    7                                          1     Count coming in to IF
+    7               2                    ***0***     
+                                               1     All False Count
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    7                                    ***0***     Count coming in to IF
+    7               3                    ***0***     
+    7               4                    ***0***     
+Branch totals: 0 hits of 2 branches = 0.00%
+
+------------------------------------IF Branch------------------------------------
+    7                                          1     Count coming in to IF
+    7               5                    ***0***     
+                                               1     All False Count
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    7                                    ***0***     Count coming in to IF
+    7               6                    ***0***     
+                                         ***0***     All False Count
+Branch totals: 0 hits of 2 branches = 0.00%
+
+------------------------------------IF Branch------------------------------------
+    24                                    146224     Count coming in to IF
+    24              1                     101232     
+                                           44992     All False Count
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    37                                         1     Count coming in to IF
+    37              1                    ***0***     
+                                               1     All False Count
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    44                                         2     Count coming in to IF
+    44              1                          1     
+                                               1     All False Count
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    46                                         1     Count coming in to IF
+    46              1                          1     
+                                         ***0***     All False Count
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    49                                         1     Count coming in to IF
+    49              1                    ***0***     
+                                               1     All False Count
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    50                                   ***0***     Count coming in to IF
+    50              1                    ***0***     
+                                         ***0***     All False Count
+Branch totals: 0 hits of 2 branches = 0.00%
+
+------------------------------------IF Branch------------------------------------
+    55                                      5625     Count coming in to IF
+    55              1                          1     
+                                            5624     All False Count
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    57                                      5624     Count coming in to IF
+    57              1                    ***0***     
+                                            5624     All False Count
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    75                                      5624     Count coming in to IF
+    75              1                       1393     
+                                            4231     All False Count
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    79                                         1     Count coming in to IF
+    79              1                          1     
+                                         ***0***     All False Count
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    82                                         1     Count coming in to IF
+    82              1                    ***0***     
+                                               1     All False Count
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    83                                   ***0***     Count coming in to IF
+    83              1                    ***0***     
+                                         ***0***     All False Count
+Branch totals: 0 hits of 2 branches = 0.00%
+
+
+Condition Coverage:
+    Enabled Coverage              Bins   Covered    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Conditions                      14         5         9    35.71%
+
+================================Condition Details================================
+
+Condition Coverage for instance /golden_sequence --
+
+  File golden_seq.sv
+----------------Focused Condition View-------------------
+Line       7 Item    1  (name != 0)
+Condition totals: 0 of 1 input term covered = 0.00%
+
+   Input Term   Covered  Reason for no coverage   Hint
+  -----------  --------  -----------------------  --------------
+  (name != 0)         N  No hits                  Hit '_0' and '_1'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:    ***0***  (name != 0)_0         -                             
+  Row   2:    ***0***  (name != 0)_1         -                             
+
+----------------Focused Condition View-------------------
+Line       7 Item    2  (tmp_data__ != null)
+Condition totals: 0 of 1 input term covered = 0.00%
+
+            Input Term   Covered  Reason for no coverage   Hint
+           -----------  --------  -----------------------  --------------
+  (tmp_data__ != null)         N  '_1' not hit             Hit '_1'
+
+     Rows:       Hits  FEC Target              Non-masking condition(s)      
+ ---------  ---------  --------------------    -------------------------     
+  Row   1:          1  (tmp_data__ != null)_0  -                             
+  Row   2:    ***0***  (tmp_data__ != null)_1  -                             
+
+----------------Focused Condition View-------------------
+Line       24 Item    1  ((((c >= 48) && (c <= 57)) || ((c >= 97) && (c <= 102))) || ((c >= 65) && (c <= 70)))
+Condition totals: 3 of 6 input terms covered = 50.00%
+
+  Input Term   Covered  Reason for no coverage   Hint
+ -----------  --------  -----------------------  --------------
+   (c >= 48)         Y
+   (c <= 57)         Y
+   (c >= 97)         Y
+  (c <= 102)         N  '_0' not hit             Hit '_0'
+   (c >= 65)         N  '_1' not hit             Hit '_1'
+   (c <= 70)         N  '_1' not hit             Hit '_1'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:          1  (c >= 48)_0           (~((c >= 65) && (c <= 70)) && ~((c >= 97) && (c <= 102)))
+  Row   2:          1  (c >= 48)_1           (c <= 57)                     
+  Row   3:          1  (c <= 57)_0           (~((c >= 65) && (c <= 70)) && ~((c >= 97) && (c <= 102)) && (c >= 48))
+  Row   4:          1  (c <= 57)_1           (c >= 48)                     
+  Row   5:          1  (c >= 97)_0           (~((c >= 65) && (c <= 70)) && ~((c >= 48) && (c <= 57)))
+  Row   6:          1  (c >= 97)_1           (~((c >= 48) && (c <= 57)) && (c <= 102))
+  Row   7:    ***0***  (c <= 102)_0          (~((c >= 65) && (c <= 70)) && ~((c >= 48) && (c <= 57)) && (c >= 97))
+  Row   8:          1  (c <= 102)_1          (~((c >= 48) && (c <= 57)) && (c >= 97))
+  Row   9:          1  (c >= 65)_0           ~(((c >= 48) && (c <= 57)) || ((c >= 97) && (c <= 102)))
+ Row   10:    ***0***  (c >= 65)_1           (~(((c >= 48) && (c <= 57)) || ((c >= 97) && (c <= 102))) && (c <= 70))
+ Row   11:          1  (c <= 70)_0           (~(((c >= 48) && (c <= 57)) || ((c >= 97) && (c <= 102))) && (c >= 65))
+ Row   12:    ***0***  (c <= 70)_1           (~(((c >= 48) && (c <= 57)) || ((c >= 97) && (c <= 102))) && (c >= 65))
+
+----------------Focused Condition View-------------------
+Line       44 Item    1  (fd == 0)
+Condition totals: 1 of 1 input term covered = 100.00%
+
+  Input Term   Covered  Reason for no coverage   Hint
+ -----------  --------  -----------------------  --------------
+   (fd == 0)         Y
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:          1  (fd == 0)_0           -                             
+  Row   2:          1  (fd == 0)_1           -                             
+
+----------------Focused Condition View-------------------
+Line       46 Item    1  (fd != 0)
+Condition totals: 0 of 1 input term covered = 0.00%
+
+  Input Term   Covered  Reason for no coverage   Hint
+ -----------  --------  -----------------------  --------------
+   (fd != 0)         N  '_0' not hit             Hit '_0'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:    ***0***  (fd != 0)_0           -                             
+  Row   2:          1  (fd != 0)_1           -                             
+
+----------------Focused Condition View-------------------
+Line       49 Item    1  (fd == 0)
+Condition totals: 0 of 1 input term covered = 0.00%
+
+  Input Term   Covered  Reason for no coverage   Hint
+ -----------  --------  -----------------------  --------------
+   (fd == 0)         N  '_1' not hit             Hit '_1'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:          1  (fd == 0)_0           -                             
+  Row   2:    ***0***  (fd == 0)_1           -                             
+
+----------------Focused Condition View-------------------
+Line       55 Item    1  ($fgets(line,fd) == 0)
+Condition totals: 1 of 1 input term covered = 100.00%
+
+              Input Term   Covered  Reason for no coverage   Hint
+             -----------  --------  -----------------------  --------------
+  ($fgets(line,fd) == 0)         Y
+
+     Rows:       Hits  FEC Target                Non-masking condition(s)      
+ ---------  ---------  --------------------      -------------------------     
+  Row   1:          1  ($fgets(line,fd) == 0)_0  -                             
+  Row   2:          1  ($fgets(line,fd) == 0)_1  -                             
+
+----------------Focused Condition View-------------------
+Line       57 Item    1  (len(hexs) != 18)
+Condition totals: 0 of 1 input term covered = 0.00%
+
+         Input Term   Covered  Reason for no coverage   Hint
+        -----------  --------  -----------------------  --------------
+  (len(hexs) != 18)         N  '_1' not hit             Hit '_1'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:          1  (len(hexs) != 18)_0   -                             
+  Row   2:    ***0***  (len(hexs) != 18)_1   -                             
+
+----------------Focused Condition View-------------------
+Line       82 Item    1  (this.num_vecs == 0)
+Condition totals: 0 of 1 input term covered = 0.00%
+
+            Input Term   Covered  Reason for no coverage   Hint
+           -----------  --------  -----------------------  --------------
+  (this.num_vecs == 0)         N  '_1' not hit             Hit '_1'
+
+     Rows:       Hits  FEC Target              Non-masking condition(s)      
+ ---------  ---------  --------------------    -------------------------     
+  Row   1:          1  (this.num_vecs == 0)_0  -                             
+  Row   2:    ***0***  (this.num_vecs == 0)_1  -                             
+
+
+Statement Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Statements                      59        47        12    79.66%
+
+================================Statement Details================================
+
+Statement Coverage for instance /golden_sequence --
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File golden_seq.sv
+    7               1                    ***0***     
+    7               2                    ***0***     
+    7               3                    ***0***     
+    7               4                    ***0***     
+    7               5                    ***0***     
+    7               6                          1     
+    7               7                    ***0***     
+    7               8                    ***0***     
+    7               9                          1     
+    7              10                    ***0***     
+    9               1                          1     
+    10              1                          1     
+    11              1                          1     
+    14              1                          1     
+    21              1                       5624     
+    22              1                       5624     
+    22              2                     146224     
+    23              1                     146224     
+    25              1                     101232     
+    27              1                       5624     
+    38              1                    ***0***     
+    39              1                          1     
+    40              1                          1     
+    42              1                          1     
+    43              1                          3     
+    45              1                          1     
+    46              1                          1     
+    50              1                    ***0***     
+    53              1                       5625     
+    54              1                       5625     
+    55              1                          1     
+    56              1                       5624     
+    57              1                    ***0***     
+    59              1                       5624     
+    60              1                       5624     
+    62              1                       5624     
+    63              1                       5624     
+    64              1                       5624     
+    65              1                       5624     
+    66              1                       5624     
+    67              1                       5624     
+    68              1                       5624     
+    69              1                       5624     
+    70              1                       5624     
+    72              1                       5624     
+    74              1                       5624     
+    75              1                       1393     
+    77              1                          1     
+    79              1                          1     
+    83              1                    ***0***     
+    86              1                         10     
+    87              1                         10     
+    88              1                         10     
+    89              1                         10     
+    90              1                         10     
+    91              1                         10     
+    92              1                         10     
+    93              1                         10     
+    94              1                         10     
+
+=================================================================================
+=== Instance: /reset_sequence
+=== Design Unit: work.reset_sequence
+=================================================================================
+Branch Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Branches                        10         2         8    20.00%
+
+================================Branch Details================================
+
+Branch Coverage for instance /reset_sequence
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File reset_seq.sv
+------------------------------------IF Branch------------------------------------
+    7                                    ***0***     Count coming in to IF
+    7               1                    ***0***     
+                                         ***0***     All False Count
+Branch totals: 0 hits of 2 branches = 0.00%
+
+------------------------------------IF Branch------------------------------------
+    7                                          1     Count coming in to IF
+    7               2                    ***0***     
+                                               1     All False Count
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    7                                    ***0***     Count coming in to IF
+    7               3                    ***0***     
+    7               4                    ***0***     
+Branch totals: 0 hits of 2 branches = 0.00%
+
+------------------------------------IF Branch------------------------------------
+    7                                          1     Count coming in to IF
+    7               5                    ***0***     
+                                               1     All False Count
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    7                                    ***0***     Count coming in to IF
+    7               6                    ***0***     
+                                         ***0***     All False Count
+Branch totals: 0 hits of 2 branches = 0.00%
+
+
+Condition Coverage:
+    Enabled Coverage              Bins   Covered    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Conditions                       2         0         2     0.00%
+
+================================Condition Details================================
+
+Condition Coverage for instance /reset_sequence --
+
+  File reset_seq.sv
+----------------Focused Condition View-------------------
+Line       7 Item    1  (name != 0)
+Condition totals: 0 of 1 input term covered = 0.00%
+
+   Input Term   Covered  Reason for no coverage   Hint
+  -----------  --------  -----------------------  --------------
+  (name != 0)         N  No hits                  Hit '_0' and '_1'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:    ***0***  (name != 0)_0         -                             
+  Row   2:    ***0***  (name != 0)_1         -                             
+
+----------------Focused Condition View-------------------
+Line       7 Item    2  (tmp_data__ != null)
+Condition totals: 0 of 1 input term covered = 0.00%
+
+            Input Term   Covered  Reason for no coverage   Hint
+           -----------  --------  -----------------------  --------------
+  (tmp_data__ != null)         N  '_1' not hit             Hit '_1'
+
+     Rows:       Hits  FEC Target              Non-masking condition(s)      
+ ---------  ---------  --------------------    -------------------------     
+  Row   1:          1  (tmp_data__ != null)_0  -                             
+  Row   2:    ***0***  (tmp_data__ != null)_1  -                             
+
+
+Statement Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Statements                      31        23         8    74.19%
+
+================================Statement Details================================
+
+Statement Coverage for instance /reset_sequence --
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File reset_seq.sv
+    7               1                    ***0***     
+    7               2                    ***0***     
+    7               3                    ***0***     
+    7               4                    ***0***     
+    7               5                    ***0***     
+    7               6                          1     
+    7               7                    ***0***     
+    7               8                    ***0***     
+    7               9                          1     
+    7              10                    ***0***     
+    9               1                          1     
+    10              1                          1     
+    13              1                          1     
+    19              1                          5     
+    20              1                          5     
+    21              1                          5     
+    22              1                          5     
+    23              1                          5     
+    24              1                          5     
+    25              1                          5     
+    26              1                          5     
+    27              1                          5     
+    30              1                          2     
+    31              1                          2     
+    32              1                          2     
+    33              1                          2     
+    34              1                          2     
+    35              1                          2     
+    36              1                          2     
+    37              1                          2     
+    38              1                          2     
+
+=================================================================================
+=== Instance: /str_top_scoreborad_pck
+=== Design Unit: work.str_top_scoreborad_pck
+=================================================================================
+Branch Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Branches                        57        21        36    36.84%
+
+================================Branch Details================================
+
+Branch Coverage for instance /str_top_scoreborad_pck
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File str_top_scoreboard.sv
+------------------------------------IF Branch------------------------------------
+    50                                      5661     Count coming in to IF
+    50              1                       1393     
+                                            4268     All False Count
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    52                                      1393     Count coming in to IF
+    52              1                         10     
+                                            1383     All False Count
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    53                                        10     Count coming in to IF
+    53              1                         10     
+                                         ***0***     All False Count
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    56                                      1393     Count coming in to IF
+    56              1                       1393     
+                                         ***0***     All False Count
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    57                                      1393     Count coming in to IF
+    57              1                       1393     
+    77              1                    ***0***     
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    58                                      1393     Count coming in to IF
+    58              1                       1393     
+    61              1                    ***0***     
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    65                                   ***0***     Count coming in to IF
+    65              1                    ***0***     
+                                         ***0***     All False Count
+Branch totals: 0 hits of 2 branches = 0.00%
+
+------------------------------------IF Branch------------------------------------
+    66                                   ***0***     Count coming in to IF
+    66              1                    ***0***     
+                                         ***0***     All False Count
+Branch totals: 0 hits of 2 branches = 0.00%
+
+------------------------------------IF Branch------------------------------------
+    71                                      1393     Count coming in to IF
+    71              1                    ***0***     
+                                            1393     All False Count
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    73                                   ***0***     Count coming in to IF
+    73              1                    ***0***     
+                                         ***0***     All False Count
+Branch totals: 0 hits of 2 branches = 0.00%
+
+------------------------------------IF Branch------------------------------------
+    74                                   ***0***     Count coming in to IF
+    74              1                    ***0***     
+                                         ***0***     All False Count
+Branch totals: 0 hits of 2 branches = 0.00%
+
+------------------------------------IF Branch------------------------------------
+    79                                   ***0***     Count coming in to IF
+    79              1                    ***0***     
+                                         ***0***     All False Count
+Branch totals: 0 hits of 2 branches = 0.00%
+
+------------------------------------IF Branch------------------------------------
+    80                                   ***0***     Count coming in to IF
+    80              1                    ***0***     
+                                         ***0***     All False Count
+Branch totals: 0 hits of 2 branches = 0.00%
+
+------------------------------------IF Branch------------------------------------
+    92                                         1     Count coming in to IF
+    92              1                          1     
+                                         ***0***     All False Count
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    93                                         1     Count coming in to IF
+    93              1                          1     
+                                         ***0***     All False Count
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    94                                         1     Count coming in to IF
+    94              1                          1     
+                                         ***0***     All False Count
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    95                                         1     Count coming in to IF
+    95              1                          1     
+                                         ***0***     All False Count
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    96                                         1     Count coming in to IF
+    96              1                          1     
+                                         ***0***     All False Count
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    97                                         1     Count coming in to IF
+    97              1                          1     
+                                         ***0***     All False Count
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    98                                         1     Count coming in to IF
+    98              1                          1     
+                                         ***0***     All False Count
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    99                                         1     Count coming in to IF
+    99              1                          1     
+                                         ***0***     All False Count
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    100                                        1     Count coming in to IF
+    100             1                    ***0***     
+                                               1     All False Count
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    101                                  ***0***     Count coming in to IF
+    101             1                    ***0***     
+                                         ***0***     All False Count
+Branch totals: 0 hits of 2 branches = 0.00%
+
+------------------------------------IF Branch------------------------------------
+    103                                        1     Count coming in to IF
+    103             1                    ***0***     
+    105             1                          1     
+    107             1                    ***0***     
+Branch totals: 1 hit of 3 branches = 33.33%
+
+------------------------------------IF Branch------------------------------------
+    104                                  ***0***     Count coming in to IF
+    104             1                    ***0***     
+                                         ***0***     All False Count
+Branch totals: 0 hits of 2 branches = 0.00%
+
+------------------------------------IF Branch------------------------------------
+    106                                        1     Count coming in to IF
+    106             1                          1     
+                                         ***0***     All False Count
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    108                                  ***0***     Count coming in to IF
+    108             1                    ***0***     
+                                         ***0***     All False Count
+Branch totals: 0 hits of 2 branches = 0.00%
+
+------------------------------------IF Branch------------------------------------
+    110                                        1     Count coming in to IF
+    110             1                          1     
+                                         ***0***     All False Count
+Branch totals: 1 hit of 2 branches = 50.00%
+
+
+Condition Coverage:
+    Enabled Coverage              Bins   Covered    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Conditions                      12         2        10    16.66%
+
+================================Condition Details================================
+
+Condition Coverage for instance /str_top_scoreborad_pck --
+
+  File str_top_scoreboard.sv
+----------------Focused Condition View-------------------
+Line       50 Item    1  (actual.m_axis_valid_o === 1'b1)
+Condition totals: 1 of 1 input term covered = 100.00%
+
+                        Input Term   Covered  Reason for no coverage   Hint
+                       -----------  --------  -----------------------  --------------
+  (actual.m_axis_valid_o === 1'b1)         Y
+
+     Rows:       Hits  FEC Target                          Non-masking condition(s)      
+ ---------  ---------  --------------------                -------------------------     
+  Row   1:          1  (actual.m_axis_valid_o === 1'b1)_0  -                             
+  Row   2:          1  (actual.m_axis_valid_o === 1'b1)_1  -                             
+
+----------------Focused Condition View-------------------
+Line       52 Item    1  (this.strobe_count <= 10)
+Condition totals: 1 of 1 input term covered = 100.00%
+
+                 Input Term   Covered  Reason for no coverage   Hint
+                -----------  --------  -----------------------  --------------
+  (this.strobe_count <= 10)         Y
+
+     Rows:       Hits  FEC Target                   Non-masking condition(s)      
+ ---------  ---------  --------------------         -------------------------     
+  Row   1:          1  (this.strobe_count <= 10)_0  -                             
+  Row   2:          1  (this.strobe_count <= 10)_1  -                             
+
+----------------Focused Condition View-------------------
+Line       58 Item    1  ((actual.m_axis_i_sym_o === expected.exp_i) && (actual.m_axis_q_sym_o === expected.exp_q))
+Condition totals: 0 of 2 input terms covered = 0.00%
+
+                                  Input Term   Covered  Reason for no coverage   Hint
+                                 -----------  --------  -----------------------  --------------
+  (actual.m_axis_i_sym_o === expected.exp_i)         N  '_0' not hit             Hit '_0'
+  (actual.m_axis_q_sym_o === expected.exp_q)         N  '_0' not hit             Hit '_0'
+
+     Rows:       Hits  FEC Target                                    Non-masking condition(s)      
+ ---------  ---------  --------------------                          -------------------------     
+  Row   1:    ***0***  (actual.m_axis_i_sym_o === expected.exp_i)_0  -                             
+  Row   2:          1  (actual.m_axis_i_sym_o === expected.exp_i)_1  (actual.m_axis_q_sym_o === expected.exp_q)
+  Row   3:    ***0***  (actual.m_axis_q_sym_o === expected.exp_q)_0  (actual.m_axis_i_sym_o === expected.exp_i)
+  Row   4:          1  (actual.m_axis_q_sym_o === expected.exp_q)_1  (actual.m_axis_i_sym_o === expected.exp_i)
+
+----------------Focused Condition View-------------------
+Line       65 Item    1  (this.wrong_count <= this.max_err_msgs)
+Condition totals: 0 of 1 input term covered = 0.00%
+
+                               Input Term   Covered  Reason for no coverage   Hint
+                              -----------  --------  -----------------------  --------------
+  (this.wrong_count <= this.max_err_msgs)         N  No hits                  Hit '_0' and '_1'
+
+     Rows:       Hits  FEC Target                                 Non-masking condition(s)      
+ ---------  ---------  --------------------                       -------------------------     
+  Row   1:    ***0***  (this.wrong_count <= this.max_err_msgs)_0  -                             
+  Row   2:    ***0***  (this.wrong_count <= this.max_err_msgs)_1  -                             
+
+----------------Focused Condition View-------------------
+Line       71 Item    1  (actual.lock_o !== expected.exp_lock)
+Condition totals: 0 of 1 input term covered = 0.00%
+
+                             Input Term   Covered  Reason for no coverage   Hint
+                            -----------  --------  -----------------------  --------------
+  (actual.lock_o !== expected.exp_lock)         N  '_1' not hit             Hit '_1'
+
+     Rows:       Hits  FEC Target                               Non-masking condition(s)      
+ ---------  ---------  --------------------                     -------------------------     
+  Row   1:          1  (actual.lock_o !== expected.exp_lock)_0  -                             
+  Row   2:    ***0***  (actual.lock_o !== expected.exp_lock)_1  -                             
+
+----------------Focused Condition View-------------------
+Line       79 Item    1  (this.extra_count <= this.max_err_msgs)
+Condition totals: 0 of 1 input term covered = 0.00%
+
+                               Input Term   Covered  Reason for no coverage   Hint
+                              -----------  --------  -----------------------  --------------
+  (this.extra_count <= this.max_err_msgs)         N  No hits                  Hit '_0' and '_1'
+
+     Rows:       Hits  FEC Target                                 Non-masking condition(s)      
+ ---------  ---------  --------------------                       -------------------------     
+  Row   1:    ***0***  (this.extra_count <= this.max_err_msgs)_0  -                             
+  Row   2:    ***0***  (this.extra_count <= this.max_err_msgs)_1  -                             
+
+----------------Focused Condition View-------------------
+Line       100 Item    1  (this.wrong_count > this.max_err_msgs)
+Condition totals: 0 of 1 input term covered = 0.00%
+
+                              Input Term   Covered  Reason for no coverage   Hint
+                             -----------  --------  -----------------------  --------------
+  (this.wrong_count > this.max_err_msgs)         N  '_1' not hit             Hit '_1'
+
+     Rows:       Hits  FEC Target                                Non-masking condition(s)      
+ ---------  ---------  --------------------                      -------------------------     
+  Row   1:          1  (this.wrong_count > this.max_err_msgs)_0  -                             
+  Row   2:    ***0***  (this.wrong_count > this.max_err_msgs)_1  -                             
+
+----------------Focused Condition View-------------------
+Line       105 Item    1  ((this.wrong_count == 0) && (this.extra_count == 0) && (leftover == 0) && (this.correct_count > 0))
+Condition totals: 0 of 4 input terms covered = 0.00%
+
+                Input Term   Covered  Reason for no coverage   Hint
+               -----------  --------  -----------------------  --------------
+   (this.wrong_count == 0)         N  '_0' not hit             Hit '_0'
+   (this.extra_count == 0)         N  '_0' not hit             Hit '_0'
+           (leftover == 0)         N  '_0' not hit             Hit '_0'
+  (this.correct_count > 0)         N  '_0' not hit             Hit '_0'
+
+     Rows:       Hits  FEC Target                  Non-masking condition(s)      
+ ---------  ---------  --------------------        -------------------------     
+  Row   1:    ***0***  (this.wrong_count == 0)_0   -                             
+  Row   2:          1  (this.wrong_count == 0)_1   ((this.extra_count == 0) && ((leftover == 0) && (this.correct_count > 0)))
+  Row   3:    ***0***  (this.extra_count == 0)_0   (this.wrong_count == 0)       
+  Row   4:          1  (this.extra_count == 0)_1   ((this.wrong_count == 0) && ((leftover == 0) && (this.correct_count > 0)))
+  Row   5:    ***0***  (leftover == 0)_0           ((this.wrong_count == 0) && (this.extra_count == 0))
+  Row   6:          1  (leftover == 0)_1           ((this.wrong_count == 0) && (this.extra_count == 0) && (this.correct_count > 0))
+  Row   7:    ***0***  (this.correct_count > 0)_0  ((this.wrong_count == 0) && (this.extra_count == 0) && (leftover == 0))
+  Row   8:          1  (this.correct_count > 0)_1  ((this.wrong_count == 0) && (this.extra_count == 0) && (leftover == 0))
+
+
+Statement Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Statements                      48        35        13    72.91%
+
+================================Statement Details================================
+
+Statement Coverage for instance /str_top_scoreborad_pck --
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File str_top_scoreboard.sv
+    7               1                    ***0***     
+    7               2                    ***0***     
+    7               3                          2     
+    14              1                          1     
+    15              1                          1     
+    16              1                          1     
+    18              1                          1     
+    19              1                          1     
+    20              1                          1     
+    21              1                          1     
+    22              1                          1     
+    25              1                          1     
+    29              1                          1     
+    30              1                          1     
+    31              1                          1     
+    32              1                          1     
+    33              1                          1     
+    37              1                          1     
+    38              1                          1     
+    39              1                          1     
+    47              1                          1     
+    48              1                       5662     
+    51              1                       1393     
+    53              1                         10     
+    60              1                       1393     
+    62              1                    ***0***     
+    63              1                    ***0***     
+    64              1                    ***0***     
+    66              1                    ***0***     
+    72              1                    ***0***     
+    74              1                    ***0***     
+    78              1                    ***0***     
+    80              1                    ***0***     
+    89              1                          1     
+    90              1                          1     
+    92              1                          1     
+    93              1                          1     
+    94              1                          1     
+    95              1                          1     
+    96              1                          1     
+    97              1                          1     
+    98              1                          1     
+    99              1                          1     
+    101             1                    ***0***     
+    104             1                    ***0***     
+    106             1                          1     
+    108             1                    ***0***     
+    110             1                          1     
+
+=================================================================================
+=== Instance: /str_top_coverage_pkg
+=== Design Unit: work.str_top_coverage_pkg
+=================================================================================
+
+Covergroup Coverage:
+    Covergroups                      1        na        na   100.00%
+        Coverpoints/Crosses          5        na        na        na
+            Covergroup Bins         14        14         0   100.00%
+----------------------------------------------------------------------------------------------------------
+Covergroup                                             Metric       Goal       Bins    Status               
+                                                                                                         
+----------------------------------------------------------------------------------------------------------
+ TYPE /str_top_coverage_pkg/str_top_cover/g1          100.00%        100          -    Covered              
+    covered/total bins:                                    14         14          -                      
+    missing/total bins:                                     0         14          -                      
+    % Hit:                                            100.00%        100          -                      
+    Coverpoint cp_out_valid                           100.00%        100          -    Covered              
+        covered/total bins:                                 2          2          -                      
+        missing/total bins:                                 0          2          -                      
+        % Hit:                                        100.00%        100          -                      
+        bin auto[0]                                      4268          1          -    Covered              
+        bin auto[1]                                      1393          1          -    Covered              
+    Coverpoint cp_lock                                100.00%        100          -    Covered              
+        covered/total bins:                                 2          2          -                      
+        missing/total bins:                                 0          2          -                      
+        % Hit:                                        100.00%        100          -                      
+        bin auto[0]                                       243          1          -    Covered              
+        bin auto[1]                                      5418          1          -    Covered              
+    Coverpoint cp_ted_valid                           100.00%        100          -    Covered              
+        covered/total bins:                                 2          2          -                      
+        missing/total bins:                                 0          2          -                      
+        % Hit:                                        100.00%        100          -                      
+        bin auto[0]                                      4255          1          -    Covered              
+        bin auto[1]                                      1406          1          -    Covered              
+    Coverpoint cp_mu                                  100.00%        100          -    Covered              
+        covered/total bins:                                 4          4          -                      
+        missing/total bins:                                 0          4          -                      
+        % Hit:                                        100.00%        100          -                      
+        bin q0                                             73          1          -    Covered              
+        bin q1                                           5226          1          -    Covered              
+        bin q2                                            345          1          -    Covered              
+        bin q3                                             17          1          -    Covered              
+    Cross cx_valid_lock                               100.00%        100          -    Covered              
+        covered/total bins:                                 4          4          -                      
+        missing/total bins:                                 0          4          -                      
+        % Hit:                                        100.00%        100          -                      
+        Auto, Default and User Defined Bins:
+            bin <auto[1],auto[1]>                        1336          1          -    Covered              
+            bin <auto[0],auto[1]>                        4082          1          -    Covered              
+            bin <auto[1],auto[0]>                          57          1          -    Covered              
+            bin <auto[0],auto[0]>                         186          1          -    Covered              
+ Covergroup instance \/str_top_coverage_pkg::str_top_cover::g1  
+                                                      100.00%        100          -    Covered              
+    covered/total bins:                                    14         14          -                      
+    missing/total bins:                                     0         14          -                      
+    % Hit:                                            100.00%        100          -                      
+    Coverpoint cp_out_valid                           100.00%        100          -    Covered              
+        covered/total bins:                                 2          2          -                      
+        missing/total bins:                                 0          2          -                      
+        % Hit:                                        100.00%        100          -                      
+        bin auto[0]                                      4268          1          -    Covered              
+        bin auto[1]                                      1393          1          -    Covered              
+    Coverpoint cp_lock                                100.00%        100          -    Covered              
+        covered/total bins:                                 2          2          -                      
+        missing/total bins:                                 0          2          -                      
+        % Hit:                                        100.00%        100          -                      
+        bin auto[0]                                       243          1          -    Covered              
+        bin auto[1]                                      5418          1          -    Covered              
+    Coverpoint cp_ted_valid                           100.00%        100          -    Covered              
+        covered/total bins:                                 2          2          -                      
+        missing/total bins:                                 0          2          -                      
+        % Hit:                                        100.00%        100          -                      
+        bin auto[0]                                      4255          1          -    Covered              
+        bin auto[1]                                      1406          1          -    Covered              
+    Coverpoint cp_mu                                  100.00%        100          -    Covered              
+        covered/total bins:                                 4          4          -                      
+        missing/total bins:                                 0          4          -                      
+        % Hit:                                        100.00%        100          -                      
+        bin q0                                             73          1          -    Covered              
+        bin q1                                           5226          1          -    Covered              
+        bin q2                                            345          1          -    Covered              
+        bin q3                                             17          1          -    Covered              
+    Cross cx_valid_lock                               100.00%        100          -    Covered              
+        covered/total bins:                                 4          4          -                      
+        missing/total bins:                                 0          4          -                      
+        % Hit:                                        100.00%        100          -                      
+        Auto, Default and User Defined Bins:
+            bin <auto[1],auto[1]>                        1336          1          -    Covered              
+            bin <auto[0],auto[1]>                        4082          1          -    Covered              
+            bin <auto[1],auto[0]>                          57          1          -    Covered              
+            bin <auto[0],auto[0]>                         186          1          -    Covered              
+Statement Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Statements                      13        11         2    84.61%
+
+================================Statement Details================================
+
+Statement Coverage for instance /str_top_coverage_pkg --
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File str_top_coverage.sv
+    7               1                    ***0***     
+    7               2                    ***0***     
+    7               3                          2     
+    28              1                          1     
+    29              1                          1     
+    33              1                          1     
+    34              1                          1     
+    35              1                          1     
+    39              1                          1     
+    40              1                          1     
+    44              1                          1     
+    45              1                       5662     
+    46              1                       5661     
+
+=================================================================================
+=== Instance: /str_top_configuration
+=== Design Unit: work.str_top_configuration
+=================================================================================
+Branch Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Branches                        10         0        10     0.00%
+
+================================Branch Details================================
+
+Branch Coverage for instance /str_top_configuration
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File str_top_confg.sv
+------------------------------------IF Branch------------------------------------
+    6                                    ***0***     Count coming in to IF
+    6               1                    ***0***     
+                                         ***0***     All False Count
+Branch totals: 0 hits of 2 branches = 0.00%
+
+------------------------------------IF Branch------------------------------------
+    6                                    ***0***     Count coming in to IF
+    6               2                    ***0***     
+                                         ***0***     All False Count
+Branch totals: 0 hits of 2 branches = 0.00%
+
+------------------------------------IF Branch------------------------------------
+    6                                    ***0***     Count coming in to IF
+    6               3                    ***0***     
+    6               4                    ***0***     
+Branch totals: 0 hits of 2 branches = 0.00%
+
+------------------------------------IF Branch------------------------------------
+    6                                    ***0***     Count coming in to IF
+    6               5                    ***0***     
+                                         ***0***     All False Count
+Branch totals: 0 hits of 2 branches = 0.00%
+
+------------------------------------IF Branch------------------------------------
+    6                                    ***0***     Count coming in to IF
+    6               6                    ***0***     
+                                         ***0***     All False Count
+Branch totals: 0 hits of 2 branches = 0.00%
+
+
+Condition Coverage:
+    Enabled Coverage              Bins   Covered    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Conditions                       2         0         2     0.00%
+
+================================Condition Details================================
+
+Condition Coverage for instance /str_top_configuration --
+
+  File str_top_confg.sv
+----------------Focused Condition View-------------------
+Line       6 Item    1  (name != 0)
+Condition totals: 0 of 1 input term covered = 0.00%
+
+   Input Term   Covered  Reason for no coverage   Hint
+  -----------  --------  -----------------------  --------------
+  (name != 0)         N  No hits                  Hit '_0' and '_1'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:    ***0***  (name != 0)_0         -                             
+  Row   2:    ***0***  (name != 0)_1         -                             
+
+----------------Focused Condition View-------------------
+Line       6 Item    2  (tmp_data__ != null)
+Condition totals: 0 of 1 input term covered = 0.00%
+
+            Input Term   Covered  Reason for no coverage   Hint
+           -----------  --------  -----------------------  --------------
+  (tmp_data__ != null)         N  No hits                  Hit '_0' and '_1'
+
+     Rows:       Hits  FEC Target              Non-masking condition(s)      
+ ---------  ---------  --------------------    -------------------------     
+  Row   1:    ***0***  (tmp_data__ != null)_0  -                             
+  Row   2:    ***0***  (tmp_data__ != null)_1  -                             
+
+
+Statement Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Statements                      12         2        10    16.66%
+
+================================Statement Details================================
+
+Statement Coverage for instance /str_top_configuration --
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File str_top_confg.sv
+    6               1                    ***0***     
+    6               2                    ***0***     
+    6               3                    ***0***     
+    6               4                    ***0***     
+    6               5                    ***0***     
+    6               6                    ***0***     
+    6               7                    ***0***     
+    6               8                    ***0***     
+    6               9                    ***0***     
+    6              10                    ***0***     
+    9               1                          1     
+    12              1                          1     
+
+=================================================================================
+=== Instance: /str_top_monitor_pkg
+=== Design Unit: work.str_top_monitor_pkg
+=================================================================================
+Statement Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Statements                      18        16         2    88.88%
+
+================================Statement Details================================
+
+Statement Coverage for instance /str_top_monitor_pkg --
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File str_top_monitor.sv
+    7               1                    ***0***     
+    7               2                    ***0***     
+    7               3                          2     
+    13              1                          1     
+    17              1                          1     
+    18              1                          1     
+    23              1                          1     
+    24              1                       5662     
+    25              1                       5661     
+    27              1                       5661     
+    28              1                       5661     
+    29              1                       5661     
+    30              1                       5661     
+    31              1                       5661     
+    32              1                       5661     
+    33              1                       5661     
+    34              1                       5661     
+    36              1                       5661     
+
+=================================================================================
+=== Instance: /str_top_sequencer
+=== Design Unit: work.str_top_sequencer
+=================================================================================
+Statement Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Statements                       4         2         2    50.00%
+
+================================Statement Details================================
+
+Statement Coverage for instance /str_top_sequencer --
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File str_top_sequencer.sv
+    7               1                    ***0***     
+    7               2                    ***0***     
+    7               3                          2     
+    10              1                          1     
+
+=================================================================================
+=== Instance: /str_top_drive
+=== Design Unit: work.str_top_drive
+=================================================================================
+Branch Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Branches                         2         2         0   100.00%
+
+================================Branch Details================================
+
+Branch Coverage for instance /str_top_drive
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File str_top_driver.sv
+------------------------------------IF Branch------------------------------------
+    51                                      5641     Count coming in to IF
+    51              1                       1393     
+                                            4248     All False Count
+Branch totals: 2 hits of 2 branches = 100.00%
+
+
+Condition Coverage:
+    Enabled Coverage              Bins   Covered    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Conditions                       1         1         0   100.00%
+
+================================Condition Details================================
+
+Condition Coverage for instance /str_top_drive --
+
+  File str_top_driver.sv
+----------------Focused Condition View-------------------
+Line       51 Item    1  (item.exp_valid === 1'b1)
+Condition totals: 1 of 1 input term covered = 100.00%
+
+                 Input Term   Covered  Reason for no coverage   Hint
+                -----------  --------  -----------------------  --------------
+  (item.exp_valid === 1'b1)         Y
+
+     Rows:       Hits  FEC Target                   Non-masking condition(s)      
+ ---------  ---------  --------------------         -------------------------     
+  Row   1:          1  (item.exp_valid === 1'b1)_0  -                             
+  Row   2:          1  (item.exp_valid === 1'b1)_1  -                             
+
+
+Statement Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Statements                      28        26         2    92.85%
+
+================================Statement Details================================
+
+Statement Coverage for instance /str_top_drive --
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File str_top_driver.sv
+    7               1                    ***0***     
+    7               2                    ***0***     
+    7               3                          2     
+    13              1                          1     
+    17              1                          1     
+    18              1                          1     
+    23              1                          1     
+    24              1                          1     
+    25              1                          1     
+    26              1                          1     
+    27              1                          1     
+    28              1                          1     
+    29              1                          1     
+    30              1                          1     
+    36              1                          1     
+    38              1                          1     
+    39              1                       5642     
+    40              1                       5641     
+    42              1                       5641     
+    43              1                       5641     
+    44              1                       5641     
+    45              1                       5641     
+    46              1                       5641     
+    47              1                       5641     
+    48              1                       5641     
+    49              1                       5641     
+    52              1                       1393     
+    54              1                       5641     
+
+=================================================================================
+=== Instance: /str_top_agtt
+=== Design Unit: work.str_top_agtt
+=================================================================================
+Branch Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Branches                         8         3         5    37.50%
+
+================================Branch Details================================
+
+Branch Coverage for instance /str_top_agtt
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File str_top_agt.sv
+------------------------------------IF Branch------------------------------------
+    27                                         1     Count coming in to IF
+    27              1                    ***0***     
+                                               1     All False Count
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    28                                   ***0***     Count coming in to IF
+    28              1                    ***0***     
+                                         ***0***     All False Count
+Branch totals: 0 hits of 2 branches = 0.00%
+
+------------------------------------IF Branch------------------------------------
+    31                                         1     Count coming in to IF
+    31              1                          1     
+                                         ***0***     All False Count
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    43                                         1     Count coming in to IF
+    43              1                          1     
+                                         ***0***     All False Count
+Branch totals: 1 hit of 2 branches = 50.00%
+
+
+Statement Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Statements                      17        14         3    82.35%
+
+================================Statement Details================================
+
+Statement Coverage for instance /str_top_agtt --
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File str_top_agt.sv
+    11              1                    ***0***     
+    11              2                    ***0***     
+    11              3                          2     
+    22              1                          1     
+    26              1                          1     
+    28              1                    ***0***     
+    30              1                          1     
+    32              1                          1     
+    33              1                          1     
+    35              1                          1     
+    36              1                          1     
+    40              1                          1     
+    41              1                          1     
+    42              1                          1     
+    44              1                          1     
+    45              1                          1     
+    46              1                          1     
+
+=================================================================================
+=== Instance: /str_top_env_pac
+=== Design Unit: work.str_top_env_pac
+=================================================================================
+Statement Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Statements                      12        10         2    83.33%
+
+================================Statement Details================================
+
+Statement Coverage for instance /str_top_env_pac --
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File str_top_env.sv
+    9               1                    ***0***     
+    9               2                    ***0***     
+    9               3                          2     
+    16              1                          1     
+    20              1                          1     
+    21              1                          1     
+    22              1                          1     
+    23              1                          1     
+    27              1                          1     
+    28              1                          1     
+    29              1                          1     
+    30              1                          1     
+
+=================================================================================
+=== Instance: /str_top_test_pkg
+=== Design Unit: work.str_top_test_pkg
+=================================================================================
+Branch Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Branches                        10         3         7    30.00%
+
+================================Branch Details================================
+
+Branch Coverage for instance /str_top_test_pkg
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File str_top_test.sv
+------------------------------------IF Branch------------------------------------
+    28                                         1     Count coming in to IF
+    28              1                    ***0***     
+                                               1     All False Count
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    29                                   ***0***     Count coming in to IF
+    29              1                    ***0***     
+                                         ***0***     All False Count
+Branch totals: 0 hits of 2 branches = 0.00%
+
+------------------------------------IF Branch------------------------------------
+    51                                         1     Count coming in to IF
+    51              1                    ***0***     
+    56              1                          1     
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    52                                   ***0***     Count coming in to IF
+    52              1                    ***0***     
+                                         ***0***     All False Count
+Branch totals: 0 hits of 2 branches = 0.00%
+
+------------------------------------IF Branch------------------------------------
+    64                                         1     Count coming in to IF
+    64              1                          1     
+                                         ***0***     All False Count
+Branch totals: 1 hit of 2 branches = 50.00%
+
+
+Statement Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Statements                      27        20         7    74.07%
+
+================================Statement Details================================
+
+Statement Coverage for instance /str_top_test_pkg --
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File str_top_test.sv
+    11              1                    ***0***     
+    11              2                    ***0***     
+    11              3                          4     
+    20              1                          1     
+    24              1                          1     
+    27              1                          1     
+    29              1                    ***0***     
+    30              1                          1     
+    31              1                          1     
+    33              1                          1     
+    40              1                          1     
+    41              1                          1     
+    43              1                          1     
+    46              1                          1     
+    47              1                          1     
+    48              1                          2     
+    48              2                          2     
+    52              1                    ***0***     
+    53              1                    ***0***     
+    54              1                    ***0***     
+    55              1                    ***0***     
+    57              1                          1     
+    58              1                          1     
+    62              1                         20     
+    62              2                         20     
+    64              1                          1     
+    67              1                          1     
+
+COVERGROUP COVERAGE:
+----------------------------------------------------------------------------------------------------------
+Covergroup                                             Metric       Goal       Bins    Status               
+                                                                                                         
+----------------------------------------------------------------------------------------------------------
+ TYPE /str_top_coverage_pkg/str_top_cover/g1          100.00%        100          -    Covered              
+    covered/total bins:                                    14         14          -                      
+    missing/total bins:                                     0         14          -                      
+    % Hit:                                            100.00%        100          -                      
+    Coverpoint cp_out_valid                           100.00%        100          -    Covered              
+        covered/total bins:                                 2          2          -                      
+        missing/total bins:                                 0          2          -                      
+        % Hit:                                        100.00%        100          -                      
+        bin auto[0]                                      4268          1          -    Covered              
+        bin auto[1]                                      1393          1          -    Covered              
+    Coverpoint cp_lock                                100.00%        100          -    Covered              
+        covered/total bins:                                 2          2          -                      
+        missing/total bins:                                 0          2          -                      
+        % Hit:                                        100.00%        100          -                      
+        bin auto[0]                                       243          1          -    Covered              
+        bin auto[1]                                      5418          1          -    Covered              
+    Coverpoint cp_ted_valid                           100.00%        100          -    Covered              
+        covered/total bins:                                 2          2          -                      
+        missing/total bins:                                 0          2          -                      
+        % Hit:                                        100.00%        100          -                      
+        bin auto[0]                                      4255          1          -    Covered              
+        bin auto[1]                                      1406          1          -    Covered              
+    Coverpoint cp_mu                                  100.00%        100          -    Covered              
+        covered/total bins:                                 4          4          -                      
+        missing/total bins:                                 0          4          -                      
+        % Hit:                                        100.00%        100          -                      
+        bin q0                                             73          1          -    Covered              
+        bin q1                                           5226          1          -    Covered              
+        bin q2                                            345          1          -    Covered              
+        bin q3                                             17          1          -    Covered              
+    Cross cx_valid_lock                               100.00%        100          -    Covered              
+        covered/total bins:                                 4          4          -                      
+        missing/total bins:                                 0          4          -                      
+        % Hit:                                        100.00%        100          -                      
+        Auto, Default and User Defined Bins:
+            bin <auto[1],auto[1]>                        1336          1          -    Covered              
+            bin <auto[0],auto[1]>                        4082          1          -    Covered              
+            bin <auto[1],auto[0]>                          57          1          -    Covered              
+            bin <auto[0],auto[0]>                         186          1          -    Covered              
+ Covergroup instance \/str_top_coverage_pkg::str_top_cover::g1  
+                                                      100.00%        100          -    Covered              
+    covered/total bins:                                    14         14          -                      
+    missing/total bins:                                     0         14          -                      
+    % Hit:                                            100.00%        100          -                      
+    Coverpoint cp_out_valid                           100.00%        100          -    Covered              
+        covered/total bins:                                 2          2          -                      
+        missing/total bins:                                 0          2          -                      
+        % Hit:                                        100.00%        100          -                      
+        bin auto[0]                                      4268          1          -    Covered              
+        bin auto[1]                                      1393          1          -    Covered              
+    Coverpoint cp_lock                                100.00%        100          -    Covered              
+        covered/total bins:                                 2          2          -                      
+        missing/total bins:                                 0          2          -                      
+        % Hit:                                        100.00%        100          -                      
+        bin auto[0]                                       243          1          -    Covered              
+        bin auto[1]                                      5418          1          -    Covered              
+    Coverpoint cp_ted_valid                           100.00%        100          -    Covered              
+        covered/total bins:                                 2          2          -                      
+        missing/total bins:                                 0          2          -                      
+        % Hit:                                        100.00%        100          -                      
+        bin auto[0]                                      4255          1          -    Covered              
+        bin auto[1]                                      1406          1          -    Covered              
+    Coverpoint cp_mu                                  100.00%        100          -    Covered              
+        covered/total bins:                                 4          4          -                      
+        missing/total bins:                                 0          4          -                      
+        % Hit:                                        100.00%        100          -                      
+        bin q0                                             73          1          -    Covered              
+        bin q1                                           5226          1          -    Covered              
+        bin q2                                            345          1          -    Covered              
+        bin q3                                             17          1          -    Covered              
+    Cross cx_valid_lock                               100.00%        100          -    Covered              
+        covered/total bins:                                 4          4          -                      
+        missing/total bins:                                 0          4          -                      
+        % Hit:                                        100.00%        100          -                      
+        Auto, Default and User Defined Bins:
+            bin <auto[1],auto[1]>                        1336          1          -    Covered              
+            bin <auto[0],auto[1]>                        4082          1          -    Covered              
+            bin <auto[1],auto[0]>                          57          1          -    Covered              
+            bin <auto[0],auto[0]>                         186          1          -    Covered              
+
+TOTAL COVERGROUP COVERAGE: 100.00%  COVERGROUP TYPES: 1
+
+Total Coverage By Instance (filtered view): 72.15%
+
