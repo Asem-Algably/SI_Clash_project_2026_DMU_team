@@ -25,7 +25,6 @@ with Synopsys Design Compiler and IC Compiler.
 
 ## 1a. Layout
 
-[Layout view from the IC Compiler GUI]
 (<img width="848" height="320" alt="Screenshot 2026-11-21 185336" src="https://github.com/user-attachments/assets/6cf24ffc-770c-428b-befa-32601a5c3743" />
 
 
@@ -147,19 +146,16 @@ SDC, Verilog (`-hierarchy`) and DDC. The design keeps 9 hierarchical cells.
 
 (after routing)*. Area grew about 3% from synthesis to placement.
 
-[Area and design rules]
 (<img width="212" height="329" alt="Screenshot 2026-11-21 144433" src="https://github.com/user-attachments/assets/ed04de1c-6169-469e-b1fb-7914d5833a75" />
 
 
 *QoR report for physical synthesis (after routing): timing, cell count and area.*
 The post-roting column is from the *QoR Report for physical synthesis
 
-[QoR report, after routing]
 (<img width="170" height="201" alt="Screenshot 2026-11-21 144210" src="https://github.com/user-attachments/assets/ccf9ae12-bd49-403c-a8d2-fc9e7a187ce4" /> )
 
 *Area, net length and design rule summary (0 nets with violations, 0 max transition, 0 max capacitance).*
 
-[Cell count and area summary]
 (<img width="311" height="182" alt="Screenshot 2026-11-21 101503" src="https://github.com/user-attachments/assets/bd6fce6a-9371-4d83-8c18-73676988e0f7" />
 
 
@@ -176,7 +172,6 @@ violations, site violations and power-strap violations are all **0**, for both
 fixed and non-fixed cells. The tool warns that the die area is not an integer
 multiple of the minimum site height, which does not affect legality.
 
-[Placement legality check]
 (<img width="229" height="279" alt="Screenshot 2026-11-21 144449" src="https://github.com/user-attachments/assets/9d3d0640-9bc1-4bbf-a6fd-a7a17071639f" />
 
 
@@ -245,13 +240,11 @@ Vias per layer:
 | via5 | 8,041 |
 | **Total** | **309,907** |
  
-[Detail route: 0 open nets, 0 violations, wire length per layer]
-(<img width="1024" height="1024" alt="1 (2)" src="https://github.com/user-attachments/assets/ee75af04-4c1e-4de1-bcc3-c7b730085fd4" />
+(<img width="250" height="250" alt="1 (2)" src="https://github.com/user-attachments/assets/ee75af04-4c1e-4de1-bcc3-c7b730085fd4" />
  
 *Detail route summary: 0 open nets, 0 violations, wire length and contacts per layer.*
  
-[Redundant via conversion report]
-(<img width="1097" height="976" alt="2" src="https://github.com/user-attachments/assets/61d9d587-f30a-4ea0-a956-5cde810ba17c" />
+(<img width="250" height="250" alt="2" src="https://github.com/user-attachments/assets/61d9d587-f30a-4ea0-a956-5cde810ba17c" />
 
  
 *Redundant via report: 0.00% conversion (0 of 309,907 vias), 0 DRCs, antenna checking not active.*
