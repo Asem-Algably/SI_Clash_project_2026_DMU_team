@@ -1,0 +1,32 @@
+// Interfaces & SVA
+coarse_cfo_core_interface.sv
+sva.sv
+
+// UVM Packages
+coarse_cfo_core_confg.sv
+coarse_cfo_core_seq_item.sv
+reset_seq.sv
+main_seq.sv
+golden_seq.sv
+directed_seq.sv      
+
+// UVM Components
+coarse_cfo_core_sequencer.sv
+coarse_cfo_core_driver.sv
+coarse_cfo_core_monitor.sv
+coarse_cfo_core_coverage.sv
+coarse_cfo_core_scoreboard.sv
+coarse_cfo_core_agt.sv
+coarse_cfo_core_env.sv
+
+// UVM Test
+coarse_cfo_core_test.sv
+
+// RTL Design
+complex_mult.sv
+accumulator.sv
+cordic_angle.sv
+coarse_cfo_core.sv    
+
+// Top Module
+coarse_cfo_core_top.sv

@@ -1,0 +1,36 @@
+# Current time Sat Nov 21 03:15:35 2026
+# Program = vish
+# Id = "2021.1"
+# Version = "2021.01"
+# Date = "Jan 19 2021"
+# Platform = win64
+
+Exception c0000005 has occurred at address 59c1ef4a. Traceback:
+# 0    0x59c1ef4a: 'TkSetFocusWin + 0x36a'
+# 1    0x59bbf90c: 'Tk_SetGrid + 0x2a7c'
+# 2    0x59bc44b4: 'Tk_SetGrid + 0x7624'
+# 3    0x59d97103: 'TclNRRunCallbacks + 0x63'
+# 4    0x52860d9a: 'Itcl_EvalMemberCode + 0x3ba'
+# 5    0x52861f5b: 'Itcl_ExecMethod + 0x23b'
+# 6    0x52869a19: 'Itcl_EvalArgs + 0x1c9'
+# 7    0x52864cf1: 'Itcl_HandleInstance + 0x2c1'
+# 8    0x59d97103: 'TclNRRunCallbacks + 0x63'
+# 9    0x52860d9a: 'Itcl_EvalMemberCode + 0x3ba'
+# 10   0x52861f5b: 'Itcl_ExecMethod + 0x23b'
+# 11   0x52869a19: 'Itcl_EvalArgs + 0x1c9'
+# 12   0x52864cf1: 'Itcl_HandleInstance + 0x2c1'
+# 13   0x59d97103: 'TclNRRunCallbacks + 0x63'
+# 14   0x59d97103: 'TclNRRunCallbacks + 0x63'
+# 15   0x59e82b84: 'TclServiceIdle + 0xa74'
+# 16   0x59e8217c: 'TclServiceIdle + 0x6c'
+# 17   0x59e4a9f3: 'Tcl_DoOneEvent + 0x193'
+# 18   0x59c1aee5: 'Tk_MainLoop + 0x25'
+# 19   0x59c5d282: 'Tk_MainEx + 0x932'
+# 20   0x401ab032: 'Mtirpc_Init + 0x23642'
+# 21   0x401adc14: 'Mtirpc_Init + 0x26224'
+# 22   0x40771eb0: 'Tclsqlite3_Init + 0x1c000'
+# 23   0x58f17374: 'BaseThreadInitThunk + 0x14'
+# 24   0x5a9dcc91: 'RtlUserThreadStart + 0x21'
+StackWalk failed 0
+# End of Stack Trace
+

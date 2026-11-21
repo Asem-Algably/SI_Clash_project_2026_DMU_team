@@ -1,0 +1,55 @@
+// ==========================================
+// 1. Interfaces & SVA
+// ==========================================
+costas_top_interface.sv
+sva.sv
+
+// ==========================================
+// 2. Golden Model Package (Must be first)
+// ==========================================
+costas_pkg.sv
+
+// ==========================================
+// 3. UVM Base Config & Items
+// ==========================================
+costas_top_confg.sv
+costas_top_seq_item.sv
+
+// ==========================================
+// 4. UVM Sequences
+// ==========================================
+reset_seq.sv
+golden_seq.sv
+main_seq.sv
+costas_directed_seq.sv
+
+// ==========================================
+// 5. UVM Components
+// ==========================================
+costas_top_sequencer.sv
+costas_top_driver.sv
+costas_top_monitor.sv
+costas_top_scoreboard.sv
+costas_top_coverage.sv
+costas_top_agt.sv
+costas_top_env.sv
+
+// ==========================================
+// 6. UVM Test
+// ==========================================
+costas_top_test.sv
+
+// ==========================================
+// 7. RTL Design Files
+// ==========================================
+slicer.sv
+phase_error.sv
+pi_filter.sv
+lock_detector.sv
+quad_check.sv
+costas_top.sv
+
+// ==========================================
+// 8. Top Module (Must be last)
+// ==========================================
+costas_top_top.sv
