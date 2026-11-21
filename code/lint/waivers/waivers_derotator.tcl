@@ -1,22 +1,23 @@
-# ==========================================================================
-# Status Commands 
-# Version 2021.1 4558100 win64 28-Jan-2021
-# Timestamp     : 2026-11-12 15:52:53
-# Description   : Provides list of commands associated with the status(s) that are exported from GUI.
-# Design        : derotator
-# Database      : D:/qformal/Projects/fine_cfo/derotator/lint.db
-# ==========================================================================
+clear settings -lib
+clear directives
+configure output directory D:/qformal/Projects/Siclash_dmu/derotator
 
+#### Directive Information ####
+lint methodology soc -goal start 
 
-lint report item  -arg parameter=MAXV  -arg count=2  -arg module1=complex_multiplier  -arg module2=quadrant_rotator  -arg file1=D:/qformal/Projects/fine_cfo/derotator/complex_multiplier.sv  -arg file2=D:/qformal/Projects/fine_cfo/derotator/quadrant_rotator.sv  -check {parameter_name_duplicate} -message {Intentional naming consistency across related DSP blocks to reflect matching bit-widths/configurations; verified no parameter override or scoping issues exist.} -owner {haneenshahin} -reviewer {siclash_team} -status {waived}
-lint report item  -arg parameter=DataWidth  -arg count=5  -arg module1=complex_multiplier  -arg module2=derotator  -arg file1=D:/qformal/Projects/fine_cfo/derotator/complex_multiplier.sv  -arg file2=D:/qformal/Projects/fine_cfo/derotator/derotator.sv  -check {parameter_name_duplicate} -message {Intentional naming consistency across related DSP blocks to reflect matching bit-widths/configurations; verified no parameter override or scoping issues exist.} -owner {haneenshahin} -reviewer {siclash_team} -status {waived}
-lint report item  -arg parameter=Coarse_W  -arg count=2  -arg module1=derotator  -arg module2=freq_word  -arg file1=D:/qformal/Projects/fine_cfo/derotator/derotator.sv  -arg file2=D:/qformal/Projects/fine_cfo/derotator/Freq_word.sv  -check {parameter_name_duplicate} -message {Intentional naming consistency across related DSP blocks to reflect matching bit-widths/configurations; verified no parameter override or scoping issues exist.} -owner {haneenshahin} -reviewer {siclash_team} -status {waived}
-lint report item  -arg parameter=Coarse_Shift  -arg count=2  -arg module1=derotator  -arg module2=freq_word  -arg file1=D:/qformal/Projects/fine_cfo/derotator/derotator.sv  -arg file2=D:/qformal/Projects/fine_cfo/derotator/Freq_word.sv  -check {parameter_name_duplicate} -message {Intentional naming consistency across related DSP blocks to reflect matching bit-widths/configurations; verified no parameter override or scoping issues exist.} -owner {haneenshahin} -reviewer {siclash_team} -status {waived}
-lint report item  -arg parameter=Phase_Bits  -arg count=3  -arg module1=NCO_accumulator  -arg module2=derotator  -arg file1=D:/qformal/Projects/fine_cfo/derotator/NCO_accumulator.sv  -arg file2=D:/qformal/Projects/fine_cfo/derotator/derotator.sv  -check {parameter_name_duplicate} -message {Intentional naming consistency across related DSP blocks to reflect matching bit-widths/configurations; verified no parameter override or scoping issues exist.} -owner {haneenshahin} -reviewer {siclash_team} -status {waived}
-lint report item  -arg parameter=Width  -arg count=2  -arg module1=derotator  -arg module2=freq_word  -arg file1=D:/qformal/Projects/fine_cfo/derotator/derotator.sv  -arg file2=D:/qformal/Projects/fine_cfo/derotator/Freq_word.sv  -check {parameter_name_duplicate} -message {Intentional naming consistency across related DSP blocks to reflect matching bit-widths/configurations; verified no parameter override or scoping issues exist.} -owner {haneenshahin} -reviewer {siclash_team} -status {waived}
-lint report item  -arg parameter=Frac  -arg count=2  -arg module1=complex_multiplier  -arg module2=derotator  -arg file1=D:/qformal/Projects/fine_cfo/derotator/complex_multiplier.sv  -arg file2=D:/qformal/Projects/fine_cfo/derotator/derotator.sv  -check {parameter_name_duplicate} -message {Intentional naming consistency across related DSP blocks to reflect matching bit-widths/configurations; verified no parameter override or scoping issues exist.} -owner {haneenshahin} -reviewer {siclash_team} -status {waived}
-lint report item  -arg parameter=MINV  -arg count=2  -arg module1=complex_multiplier  -arg module2=quadrant_rotator  -arg file1=D:/qformal/Projects/fine_cfo/derotator/complex_multiplier.sv  -arg file2=D:/qformal/Projects/fine_cfo/derotator/quadrant_rotator.sv  -check {parameter_name_duplicate} -message {Intentional naming consistency across related DSP blocks to reflect matching bit-widths/configurations; verified no parameter override or scoping issues exist.} -owner {haneenshahin} -reviewer {siclash_team} -status {waived}
+#### vlib Information ####
+vlib work
 
-# Completed writing status commands 
-# ==========================================================================
+#### vmap Information ####
+vmap work work
 
+#### Compile Information ####
+vlog D:/qformal/Projects/Siclash_dmu/derotator/lut_rom.sv -work work
+vlog D:/qformal/Projects/Siclash_dmu/derotator/derotator.sv -work work
+vlog D:/qformal/Projects/Siclash_dmu/derotator/Freq_word.sv -work work
+vlog D:/qformal/Projects/Siclash_dmu/derotator/input_pipeline.sv -work work
+vlog D:/qformal/Projects/Siclash_dmu/derotator/NCO_accumulator.sv -work work
+vlog D:/qformal/Projects/Siclash_dmu/derotator/quadrant_rotator.sv -work work
+
+#### Goal Information ####
+lint run  -d derotator   -L work 
