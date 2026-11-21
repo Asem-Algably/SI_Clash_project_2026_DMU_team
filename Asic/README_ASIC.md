@@ -25,7 +25,8 @@ with Synopsys Design Compiler and IC Compiler.
 
 ## 1a. Layout
 
-![Layout view from the IC Compiler GUI](images/layout.png)
+![Layout view from the IC Compiler GUI](<img width="848" height="320" alt="Screenshot 2026-11-21 185336" src="https://github.com/user-attachments/assets/6cf24ffc-770c-428b-befa-32601a5c3743" />
+)
 
 *Layout view from the IC Compiler GUI.*
 
@@ -67,6 +68,18 @@ set_clock_uncertainty 0.35 [get_clocks]
 set_false_path -hold -from [all_inputs except clk]
 set_false_path -hold -to   [all_outputs]
 ```
+
+What this means for timing budgets:
+ 
+- **Register-to-register paths** have the 5 ns period minus 0.35 ns of clock
+  uncertainty.
+- **Input-to-register and register-to-output paths** additionally lose the
+  1 ns external delay, leaving roughly 3.65 ns.
+- **Hold checks on inputs and outputs are not performed** (the false paths
+  above); hold is checked on internal register-to-register paths.
+- The 5 ns target is deliberately tighter than the 8 ns functional clock, so the
+  implementation has margin at the spec frequency.
+
 ---
 
 ## 5. Flow
@@ -94,6 +107,20 @@ SDC, Verilog (`-hierarchy`) and DDC. The design keeps 9 hierarchical cells.
 9. Output: GDS, `-pg` and no-pg netlists, SPEF.
 
 ---
+### 6 Why each step matters
+ 
+| Step | Purpose |
+|---|---|
+| Floorplan and power mesh | Define the die and deliver VDD/VSS to every cell through rings, straps and tap cells |
+| `place_opt` | Places cells and optimizes timing and area together before the clock tree exists |
+| Clock tree synthesis | Builds a buffered tree so every flop sees the clock at a similar time (skew) |
+| Hold fixing | After CTS, short paths can violate hold; buffers are inserted to fix them (this is why buf/inv cells increase) |
+| Spare cells | Unused gates left in the layout so a late fix (ECO) can be made without redoing the whole design |
+| Redundant vias | Meant to improve yield by doubling vias where space allows; in this run 0 of 309,907 vias were converted (see 7.4) |
+| Filler cells | Fill empty row space so the power rails and wells are continuous |
+| `verify_zrt_route` / `verify_lvs` | Design-rule check and layout-versus-schematic check |
+ 
+---
 
 ## 6. Results
 
@@ -116,18 +143,21 @@ SDC, Verilog (`-hierarchy`) and DDC. The design keeps 9 hierarchical cells.
 | Max transition violations | 0 | 0 |
 | Max capacitance violations | 0 | 0 |
 
-The post-roting column is from the *QoR Report for physical synthesis
+
 (after routing)*. Area grew about 3% from synthesis to placement.
 
-![QoR report, after routing](images/after routing.png)
+![Area and design rules](<img width="212" height="329" alt="Screenshot 2026-11-21 144433" src="https://github.com/user-attachments/assets/ed04de1c-6169-469e-b1fb-7914d5833a75" />
+)
 
 *QoR report for physical synthesis (after routing): timing, cell count and area.*
+The post-roting column is from the *QoR Report for physical synthesis
 
-![Area and design rules](images/area_design_rules.png)
+![QoR report, after routing](<img width="170" height="201" alt="Screenshot 2026-11-21 144210" src="https://github.com/user-attachments/assets/ccf9ae12-bd49-403c-a8d2-fc9e7a187ce4" /> )
 
 *Area, net length and design rule summary (0 nets with violations, 0 max transition, 0 max capacitance).*
 
-![Cell count and area summary](images/cell_count_area.png)
+![Cell count and area summary](<img width="311" height="182" alt="Screenshot 2026-11-21 101503" src="https://github.com/user-attachments/assets/bd6fce6a-9371-4d83-8c18-73676988e0f7" />
+)
 
 *Cell and area summary from `icc_shell`: 5,141 cells, 856 sequential and 4,276 combinational in the top-level design, 50,401 µm² total cell area.*
 
@@ -142,7 +172,8 @@ violations, site violations and power-strap violations are all **0**, for both
 fixed and non-fixed cells. The tool warns that the die area is not an integer
 multiple of the minimum site height, which does not affect legality.
 
-![Placement legality check](images/placement_legality.png)
+![Placement legality check](<img width="229" height="279" alt="Screenshot 2026-11-21 144449" src="https://github.com/user-attachments/assets/9d3d0640-9bc1-4bbf-a6fd-a7a17071639f" />
+)
 
 *`check_legality` report after placement.*
 
@@ -167,13 +198,71 @@ it is synthesized as random logic.
 
 ---
 
-## 7. Notes on file size
+### 7 Routing and DRC results
+ 
+Final detail route and via report, from the routed design:
+ 
+| Item | Value |
+|---|---|
+| Open nets | 0 (0 frozen) |
+| Detail-route violations | 0 |
+| ORC summary, total violations | 0 |
+| Total number of DRCs (after via step) | 0 |
+| Routed nets | 32,646 |
+| Total wire length | 1,060,765 µm |
+| Total contacts (vias) | 309,907 |
+| Total wires (segments) | 452,931 |
+| Detail-route run time | 21 min 29 s real, 21 min 28 s CPU |
+ 
+Wire length per layer:
+ 
+| Layer | Length (µm) | Share |
+|---|---|---|
+| metal1 | 115,900 | 10.9% |
+| metal2 | 329,885 | 31.1% |
+| metal3 | 257,086 | 24.2% |
+| metal4 | 178,983 | 16.9% |
+| metal5 | 105,367 | 9.9% |
+| metal6 | 73,543 | 6.9% |
+| metal7–metal10 | 0 | 0% |
+ 
+Signal routing stops at metal6 as intended; metal7–metal10 are used only for the
+power rings and straps.
+ 
+Vias per layer:
+ 
+| Layer | Vias |
+|---|---|
+| via1 | 138,484 |
+| via2 | 102,250 |
+| via3 | 41,685 |
+| via4 | 19,447 |
+| via5 | 8,041 |
+| **Total** | **309,907** |
+ 
+![Detail route: 0 open nets, 0 violations, wire length per layer](<img width="1024" height="1024" alt="1 (2)" src="https://github.com/user-attachments/assets/ee75af04-4c1e-4de1-bcc3-c7b730085fd4" />
 
-The ~52 MB GDS is consistent with this design. The floorplan runs at 25%
-core utilization, so most of the core is filler cells, and the design has
-~28.6k cells, 32.7k routed nets, redundant vias and a full power mesh.
-The size alone is not an indicator of a problem.
-
+)
+ 
+*Detail route summary: 0 open nets, 0 violations, wire length and contacts per layer.*
+ 
+![Redundant via conversion report](<img width="1097" height="976" alt="2" src="https://github.com/user-attachments/assets/61d9d587-f30a-4ea0-a956-5cde810ba17c" />
+)
+ 
+*Redundant via report: 0.00% conversion (0 of 309,907 vias), 0 DRCs, antenna checking not active.*
+ 
+Notes:
+ 
+- The router reports that it merged away 355,780 aligned or redundant DRC
+  markers during detail routing (message ZRT-305). That is the tool's internal
+  bookkeeping while it iterates; the final count is 0.
+- Redundant-via insertion ran but converted none of the vias (0.00%), so no
+  double vias are present. Wire length is about 36% higher than the
+  pre-route estimate of 778,323 µm, which is typical once real detour routing is
+  done.
+- Antenna checking was **not active** in this run, so antenna rule compliance
+  has not been verified.
+---
 ---
 
 ## 8. Known limitations
