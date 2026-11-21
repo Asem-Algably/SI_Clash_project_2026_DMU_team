@@ -25,7 +25,8 @@ with Synopsys Design Compiler and IC Compiler.
 
 ## 1a. Layout
 
-![Layout view from the IC Compiler GUI](<img width="848" height="320" alt="Screenshot 2026-11-21 185336" src="https://github.com/user-attachments/assets/6cf24ffc-770c-428b-befa-32601a5c3743" />
+![Layout view from the IC Compiler GUI]
+(<img width="848" height="320" alt="Screenshot 2026-11-21 185336" src="https://github.com/user-attachments/assets/6cf24ffc-770c-428b-befa-32601a5c3743" />
 )
 
 *Layout view from the IC Compiler GUI.*
