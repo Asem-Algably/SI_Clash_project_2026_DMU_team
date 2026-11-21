@@ -1,0 +1,376 @@
+C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/sync_system_top_env.sv {1 {vlog -work work -vopt -sv -stats=none C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/sync_system_top_env.sv
+QuestaSim-64 vlog 2021.1 Compiler 2021.01 Jan 19 2021
+-- Compiling package sync_system_top_env_pac
+-- Importing package mtiUvm.uvm_pkg (uvm-1.1d Built-in)
+-- Importing package sync_system_top_agtt
+-- Importing package sync_system_top_drive
+-- Importing package sync_system_top_sequence_item
+-- Importing package sync_system_top_sequencer
+-- Importing package sync_system_top_monitor_pkg
+-- Importing package sync_system_top_configuration
+-- Importing package sync_system_top_coverage_pkg
+-- Importing package sync_system_top_scoreborad_pck
+** Note: (vlog-2286) C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/sync_system_top_env.sv(6): Using implicit +incdir+C:/questasim64_2021.1/uvm-1.1d/../verilog_src/uvm-1.1d/src from import uvm_pkg
+
+Top level modules:
+	--none--
+
+} {} {}} C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/sync_system_top.sv {1 {vlog -work work -vopt -sv -stats=none C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/sync_system_top.sv
+QuestaSim-64 vlog 2021.1 Compiler 2021.01 Jan 19 2021
+-- Compiling module sync_system_top
+
+Top level modules:
+	sync_system_top
+
+} {} {}} C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/str_top.sv {1 {vlog -work work -vopt -sv -stats=none C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/str_top.sv
+QuestaSim-64 vlog 2021.1 Compiler 2021.01 Jan 19 2021
+-- Compiling module str_top
+
+Top level modules:
+	str_top
+
+} {} {}} C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/reset_seq.sv {1 {vlog -work work -vopt -sv -stats=none C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/reset_seq.sv
+QuestaSim-64 vlog 2021.1 Compiler 2021.01 Jan 19 2021
+-- Compiling package reset_sequence
+-- Importing package mtiUvm.uvm_pkg (uvm-1.1d Built-in)
+-- Importing package sync_system_top_sequence_item
+** Note: (vlog-2286) C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/reset_seq.sv(4): Using implicit +incdir+C:/questasim64_2021.1/uvm-1.1d/../verilog_src/uvm-1.1d/src from import uvm_pkg
+
+Top level modules:
+	--none--
+
+} {} {}} C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/coarse_cfo_core.sv {1 {vlog -work work -vopt -sv -stats=none C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/coarse_cfo_core.sv
+QuestaSim-64 vlog 2021.1 Compiler 2021.01 Jan 19 2021
+-- Compiling module coarse_cfo_core
+
+Top level modules:
+	coarse_cfo_core
+
+} {} {}} C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/derotator.sv {1 {vlog -work work -vopt -sv -stats=none C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/derotator.sv
+QuestaSim-64 vlog 2021.1 Compiler 2021.01 Jan 19 2021
+-- Compiling module derotator
+
+Top level modules:
+	derotator
+
+} {} {}} C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/sync_system_top_top.sv {1 {vlog -work work -vopt -sv -stats=none C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/sync_system_top_top.sv
+QuestaSim-64 vlog 2021.1 Compiler 2021.01 Jan 19 2021
+-- Compiling module top
+-- Importing package mtiUvm.uvm_pkg (uvm-1.1d Built-in)
+-- Importing package sync_system_top_test_pkg
+-- Importing package sync_system_top_env_pac
+-- Importing package sync_system_top_agtt
+-- Importing package sync_system_top_drive
+-- Importing package sync_system_top_sequence_item
+-- Importing package sync_system_top_sequencer
+-- Importing package sync_system_top_monitor_pkg
+-- Importing package sync_system_top_configuration
+-- Importing package sync_system_top_coverage_pkg
+-- Importing package sync_system_top_scoreborad_pck
+-- Importing package reset_sequence
+-- Importing package golden_sequence
+-- Importing package main_sequence
+** Note: (vlog-2286) C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/sync_system_top_top.sv(6): Using implicit +incdir+C:/questasim64_2021.1/uvm-1.1d/../verilog_src/uvm-1.1d/src from import uvm_pkg
+
+Top level modules:
+	top
+
+} {} {}} C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/main_seq.sv {1 {vlog -work work -vopt -sv -stats=none C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/main_seq.sv
+QuestaSim-64 vlog 2021.1 Compiler 2021.01 Jan 19 2021
+-- Compiling package main_sequence
+-- Importing package mtiUvm.uvm_pkg (uvm-1.1d Built-in)
+-- Importing package sync_system_top_sequence_item
+** Note: (vlog-2286) C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/main_seq.sv(4): Using implicit +incdir+C:/questasim64_2021.1/uvm-1.1d/../verilog_src/uvm-1.1d/src from import uvm_pkg
+
+Top level modules:
+	--none--
+
+} {} {}} C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/input_pipeline.sv {1 {vlog -work work -vopt -sv -stats=none C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/input_pipeline.sv
+QuestaSim-64 vlog 2021.1 Compiler 2021.01 Jan 19 2021
+-- Compiling module input_pipeline
+
+Top level modules:
+	input_pipeline
+
+} {} {}} C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/sync_system_top_scoreboard.sv {1 {vlog -work work -vopt -sv -stats=none C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/sync_system_top_scoreboard.sv
+QuestaSim-64 vlog 2021.1 Compiler 2021.01 Jan 19 2021
+-- Compiling package sync_system_top_scoreborad_pck
+-- Importing package mtiUvm.uvm_pkg (uvm-1.1d Built-in)
+-- Importing package sync_system_top_sequence_item
+** Note: (vlog-2286) C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/sync_system_top_scoreboard.sv(4): Using implicit +incdir+C:/questasim64_2021.1/uvm-1.1d/../verilog_src/uvm-1.1d/src from import uvm_pkg
+
+Top level modules:
+	--none--
+
+} {} {}} C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/sync_system_top_agt.sv {1 {vlog -work work -vopt -sv -stats=none C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/sync_system_top_agt.sv
+QuestaSim-64 vlog 2021.1 Compiler 2021.01 Jan 19 2021
+-- Compiling package sync_system_top_agtt
+-- Importing package mtiUvm.uvm_pkg (uvm-1.1d Built-in)
+-- Importing package sync_system_top_drive
+-- Importing package sync_system_top_sequence_item
+-- Importing package sync_system_top_sequencer
+-- Importing package sync_system_top_monitor_pkg
+-- Importing package sync_system_top_configuration
+** Note: (vlog-2286) C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/sync_system_top_agt.sv(8): Using implicit +incdir+C:/questasim64_2021.1/uvm-1.1d/../verilog_src/uvm-1.1d/src from import uvm_pkg
+
+Top level modules:
+	--none--
+
+} {} {}} C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/complex_multiplier.sv {1 {vlog -work work -vopt -sv -stats=none C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/complex_multiplier.sv
+QuestaSim-64 vlog 2021.1 Compiler 2021.01 Jan 19 2021
+-- Compiling module complex_multiplier
+
+Top level modules:
+	complex_multiplier
+
+} {} {}} C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/quad_check.sv {1 {vlog -work work -vopt -sv -stats=none C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/quad_check.sv
+QuestaSim-64 vlog 2021.1 Compiler 2021.01 Jan 19 2021
+-- Compiling module quad_check
+
+Top level modules:
+	quad_check
+
+} {} {}} C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/accumulator.sv {1 {vlog -work work -vopt -sv -stats=none C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/accumulator.sv
+QuestaSim-64 vlog 2021.1 Compiler 2021.01 Jan 19 2021
+-- Compiling module accumulator
+
+Top level modules:
+	accumulator
+
+} {} {}} C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/golden_seq.sv {1 {vlog -work work -vopt -sv -stats=none C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/golden_seq.sv
+QuestaSim-64 vlog 2021.1 Compiler 2021.01 Jan 19 2021
+-- Compiling package golden_sequence
+-- Importing package mtiUvm.uvm_pkg (uvm-1.1d Built-in)
+-- Importing package sync_system_top_sequence_item
+** Note: (vlog-2286) C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/golden_seq.sv(4): Using implicit +incdir+C:/questasim64_2021.1/uvm-1.1d/../verilog_src/uvm-1.1d/src from import uvm_pkg
+
+Top level modules:
+	--none--
+
+} {} {}} C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/complex_mult.sv {1 {vlog -work work -vopt -sv -stats=none C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/complex_mult.sv
+QuestaSim-64 vlog 2021.1 Compiler 2021.01 Jan 19 2021
+-- Compiling module complex_mult
+
+Top level modules:
+	complex_mult
+
+} {} {}} C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/sync_system_top_test.sv {1 {vlog -work work -vopt -sv -stats=none C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/sync_system_top_test.sv
+QuestaSim-64 vlog 2021.1 Compiler 2021.01 Jan 19 2021
+-- Compiling package sync_system_top_test_pkg
+-- Importing package mtiUvm.uvm_pkg (uvm-1.1d Built-in)
+-- Importing package sync_system_top_env_pac
+-- Importing package sync_system_top_agtt
+-- Importing package sync_system_top_drive
+-- Importing package sync_system_top_sequence_item
+-- Importing package sync_system_top_sequencer
+-- Importing package sync_system_top_monitor_pkg
+-- Importing package sync_system_top_configuration
+-- Importing package sync_system_top_coverage_pkg
+-- Importing package sync_system_top_scoreborad_pck
+-- Importing package reset_sequence
+-- Importing package golden_sequence
+-- Importing package main_sequence
+** Note: (vlog-2286) C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/sync_system_top_test.sv(8): Using implicit +incdir+C:/questasim64_2021.1/uvm-1.1d/../verilog_src/uvm-1.1d/src from import uvm_pkg
+
+Top level modules:
+	--none--
+
+} {} {}} C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/sva.sv {1 {vlog -work work -vopt -sv -stats=none C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/sva.sv
+QuestaSim-64 vlog 2021.1 Compiler 2021.01 Jan 19 2021
+-- Compiling module sva
+
+Top level modules:
+	sva
+
+} {} {}} C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/slicer.sv {1 {vlog -work work -vopt -sv -stats=none C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/slicer.sv
+QuestaSim-64 vlog 2021.1 Compiler 2021.01 Jan 19 2021
+-- Compiling module slicer
+
+Top level modules:
+	slicer
+
+} {} {}} C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/quadrant_rotator.sv {1 {vlog -work work -vopt -sv -stats=none C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/quadrant_rotator.sv
+QuestaSim-64 vlog 2021.1 Compiler 2021.01 Jan 19 2021
+-- Compiling module quadrant_rotator
+
+Top level modules:
+	quadrant_rotator
+
+} {} {}} C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/lut_rom.sv {1 {vlog -work work -vopt -sv -stats=none C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/lut_rom.sv
+QuestaSim-64 vlog 2021.1 Compiler 2021.01 Jan 19 2021
+-- Compiling module lut_rom
+
+Top level modules:
+	lut_rom
+
+} {} {}} C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/sync_system_top_interface.sv {1 {vlog -work work -vopt -sv -stats=none C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/sync_system_top_interface.sv
+QuestaSim-64 vlog 2021.1 Compiler 2021.01 Jan 19 2021
+-- Compiling interface sync_system_top_inter
+
+Top level modules:
+	--none--
+
+} {} {}} C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/modulo_1_controller.sv {1 {vlog -work work -vopt -sv -stats=none C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/modulo_1_controller.sv
+QuestaSim-64 vlog 2021.1 Compiler 2021.01 Jan 19 2021
+-- Compiling module modulo_1_controller
+
+Top level modules:
+	modulo_1_controller
+
+} {} {}} C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/err_align.sv {1 {vlog -work work -vopt -sv -stats=none C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/err_align.sv
+QuestaSim-64 vlog 2021.1 Compiler 2021.01 Jan 19 2021
+-- Compiling module err_align
+
+Top level modules:
+	err_align
+
+} {} {}} C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/burst_ctrl.sv {1 {vlog -work work -vopt -sv -stats=none C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/burst_ctrl.sv
+QuestaSim-64 vlog 2021.1 Compiler 2021.01 Jan 19 2021
+-- Compiling module burst_ctrl
+
+Top level modules:
+	burst_ctrl
+
+} {} {}} C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/sync_system_top_sequencer.sv {1 {vlog -work work -vopt -sv -stats=none C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/sync_system_top_sequencer.sv
+QuestaSim-64 vlog 2021.1 Compiler 2021.01 Jan 19 2021
+-- Compiling package sync_system_top_sequencer
+-- Importing package mtiUvm.uvm_pkg (uvm-1.1d Built-in)
+** Note: (vlog-2286) C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/sync_system_top_sequencer.sv(3): Using implicit +incdir+C:/questasim64_2021.1/uvm-1.1d/../verilog_src/uvm-1.1d/src from import uvm_pkg
+-- Importing package sync_system_top_sequence_item
+
+Top level modules:
+	--none--
+
+} {} {}} C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/sync_system_top_driver.sv {1 {vlog -work work -vopt -sv -stats=none C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/sync_system_top_driver.sv
+QuestaSim-64 vlog 2021.1 Compiler 2021.01 Jan 19 2021
+-- Compiling package sync_system_top_drive
+-- Importing package mtiUvm.uvm_pkg (uvm-1.1d Built-in)
+-- Importing package sync_system_top_sequence_item
+** Note: (vlog-2286) C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/sync_system_top_driver.sv(4): Using implicit +incdir+C:/questasim64_2021.1/uvm-1.1d/../verilog_src/uvm-1.1d/src from import uvm_pkg
+
+Top level modules:
+	--none--
+
+} {} {}} C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/sync_system_top_coverage.sv {1 {vlog -work work -vopt -sv -stats=none C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/sync_system_top_coverage.sv
+QuestaSim-64 vlog 2021.1 Compiler 2021.01 Jan 19 2021
+-- Compiling package sync_system_top_coverage_pkg
+-- Importing package mtiUvm.uvm_pkg (uvm-1.1d Built-in)
+** Note: (vlog-2286) C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/sync_system_top_coverage.sv(3): Using implicit +incdir+C:/questasim64_2021.1/uvm-1.1d/../verilog_src/uvm-1.1d/src from import uvm_pkg
+-- Importing package sync_system_top_sequence_item
+
+Top level modules:
+	--none--
+
+} {} {}} C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/pi_filter.sv {1 {vlog -work work -vopt -sv -stats=none C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/pi_filter.sv
+QuestaSim-64 vlog 2021.1 Compiler 2021.01 Jan 19 2021
+-- Compiling module pi_filter
+
+Top level modules:
+	pi_filter
+
+} {} {}} C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/gardner_ted_estimator.sv {1 {vlog -work work -vopt -sv -stats=none C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/gardner_ted_estimator.sv
+QuestaSim-64 vlog 2021.1 Compiler 2021.01 Jan 19 2021
+-- Compiling module gardner_ted_estimator
+
+Top level modules:
+	gardner_ted_estimator
+
+} {} {}} C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/sync_system_top_confg.sv {1 {vlog -work work -vopt -sv -stats=none C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/sync_system_top_confg.sv
+QuestaSim-64 vlog 2021.1 Compiler 2021.01 Jan 19 2021
+-- Compiling package sync_system_top_configuration
+-- Importing package mtiUvm.uvm_pkg (uvm-1.1d Built-in)
+** Note: (vlog-2286) C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/sync_system_top_confg.sv(3): Using implicit +incdir+C:/questasim64_2021.1/uvm-1.1d/../verilog_src/uvm-1.1d/src from import uvm_pkg
+
+Top level modules:
+	--none--
+
+} {} {}} C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/parabolic_farrow_interpolator.sv {1 {vlog -work work -vopt -sv -stats=none C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/parabolic_farrow_interpolator.sv
+QuestaSim-64 vlog 2021.1 Compiler 2021.01 Jan 19 2021
+-- Compiling module parabolic_farrow_interpolator
+
+Top level modules:
+	parabolic_farrow_interpolator
+
+} {} {}} C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/NCO_accumulator.sv {1 {vlog -work work -vopt -sv -stats=none C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/NCO_accumulator.sv
+QuestaSim-64 vlog 2021.1 Compiler 2021.01 Jan 19 2021
+-- Compiling module NCO_accumulator
+
+Top level modules:
+	NCO_accumulator
+
+} {} {}} C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/costas_top.sv {1 {vlog -work work -vopt -sv -stats=none C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/costas_top.sv
+QuestaSim-64 vlog 2021.1 Compiler 2021.01 Jan 19 2021
+-- Compiling module costas_top
+
+Top level modules:
+	costas_top
+
+} {} {}} C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/dft_mux.sv {2 {vlog -work work -vopt -sv -stats=none C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/dft_mux.sv
+QuestaSim-64 vlog 2021.1 Compiler 2021.01 Jan 19 2021
+-- Compiling module dft_mux
+** Warning: C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/dft_mux.sv(38): (vlog-13314) Defaulting port 'obs_data_i' kind to 'var' rather than 'wire' due to default compile option setting of -svinputport=relaxed.
+
+Top level modules:
+	dft_mux
+
+} {} {}} C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/sync_system_top_seq_item.sv {1 {vlog -work work -vopt -sv -stats=none C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/sync_system_top_seq_item.sv
+QuestaSim-64 vlog 2021.1 Compiler 2021.01 Jan 19 2021
+-- Compiling package sync_system_top_sequence_item
+-- Importing package mtiUvm.uvm_pkg (uvm-1.1d Built-in)
+** Note: (vlog-2286) C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/sync_system_top_seq_item.sv(3): Using implicit +incdir+C:/questasim64_2021.1/uvm-1.1d/../verilog_src/uvm-1.1d/src from import uvm_pkg
+
+Top level modules:
+	--none--
+
+} {} {}} C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/Freq_word.sv {1 {vlog -work work -vopt -sv -stats=none C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/Freq_word.sv
+QuestaSim-64 vlog 2021.1 Compiler 2021.01 Jan 19 2021
+-- Compiling module freq_word
+
+Top level modules:
+	freq_word
+
+} {} {}} C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/sync_system_top_monitor.sv {1 {vlog -work work -vopt -sv -stats=none C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/sync_system_top_monitor.sv
+QuestaSim-64 vlog 2021.1 Compiler 2021.01 Jan 19 2021
+-- Compiling package sync_system_top_monitor_pkg
+-- Importing package mtiUvm.uvm_pkg (uvm-1.1d Built-in)
+** Note: (vlog-2286) C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/sync_system_top_monitor.sv(3): Using implicit +incdir+C:/questasim64_2021.1/uvm-1.1d/../verilog_src/uvm-1.1d/src from import uvm_pkg
+-- Importing package sync_system_top_sequence_item
+
+Top level modules:
+	--none--
+
+} {} {}} C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/pI_loop.sv {1 {vlog -work work -vopt -sv -stats=none C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/pI_loop.sv
+QuestaSim-64 vlog 2021.1 Compiler 2021.01 Jan 19 2021
+-- Compiling module pI_loop
+
+Top level modules:
+	pI_loop
+
+} {} {}} C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/phase_error.sv {1 {vlog -work work -vopt -sv -stats=none C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/phase_error.sv
+QuestaSim-64 vlog 2021.1 Compiler 2021.01 Jan 19 2021
+-- Compiling module phase_error
+
+Top level modules:
+	phase_error
+
+} {} {}} C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/lock_detector.sv {2 {vlog -work work -vopt -sv -stats=none C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/lock_detector.sv
+QuestaSim-64 vlog 2021.1 Compiler 2021.01 Jan 19 2021
+-- Compiling module lock_detector
+** Warning: C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/lock_detector.sv(72): (vlog-2583) [SVCHK] - Extra checking for conflicts with always_comb and always_latch variables is done at vopt time.
+** Warning: C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/lock_detector.sv(74): (vlog-2583) [SVCHK] - Extra checking for conflicts with always_comb and always_latch variables is done at vopt time.
+** Warning: C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/lock_detector.sv(76): (vlog-2583) [SVCHK] - Extra checking for conflicts with always_comb and always_latch variables is done at vopt time.
+** Warning: C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/lock_detector.sv(137): (vlog-2583) [SVCHK] - Extra checking for conflicts with always_comb and always_latch variables is done at vopt time.
+** Warning: C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/lock_detector.sv(139): (vlog-2583) [SVCHK] - Extra checking for conflicts with always_comb and always_latch variables is done at vopt time.
+** Warning: C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/lock_detector.sv(141): (vlog-2583) [SVCHK] - Extra checking for conflicts with always_comb and always_latch variables is done at vopt time.
+
+Top level modules:
+	lock_detector
+
+} {} {}} C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/cordic_angle.sv {1 {vlog -work work -vopt -sv -stats=none C:/Users/MICROSOFT/Desktop/si_clash/final_design/code/rtl/sync_system_top_uvm/cordic_angle.sv
+QuestaSim-64 vlog 2021.1 Compiler 2021.01 Jan 19 2021
+-- Compiling module cordic_angle
+
+Top level modules:
+	cordic_angle
+
+} {} {}}
