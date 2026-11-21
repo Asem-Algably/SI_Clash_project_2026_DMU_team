@@ -139,7 +139,7 @@ SDC, Verilog (`-hierarchy`) and DDC. The design keeps 9 hierarchical cells.
 | Critical path slack (5 ns clock) | +0.01 ns | +1.00 ns |
 | Total negative slack | 0.00 | 0.00 |
 | Violating setup paths | 0 | 0 |
-| Hold violations |0 | 0 |
+| Hold violations |1,895 (worst −0.29 ns, ideal clock)| 0 |
 | Max transition violations | 0 | 0 |
 | Max capacitance violations | 0 | 0 |
 
