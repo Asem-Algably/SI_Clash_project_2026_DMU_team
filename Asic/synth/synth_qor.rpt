@@ -1,0 +1,68 @@
+ 
+****************************************
+Report : qor
+Design : sync_system_top
+Version: G-2012.06-SP2
+Date   : Wed Nov 20 02:21:37 2019
+****************************************
+
+
+  Timing Path Group 'clk'
+  -----------------------------------
+  Levels of Logic:              70.00
+  Critical Path Length:          3.61
+  Critical Path Slack:           0.01
+  Critical Path Clk Period:      5.00
+  Total Negative Slack:          0.00
+  No. of Violating Paths:        0.00
+  Worst Hold Violation:         -0.29
+  Total Hold Violation:       -426.56
+  No. of Hold Violations:     1895.00
+  -----------------------------------
+
+
+  Cell Count
+  -----------------------------------
+  Hierarchical Cell Count:          9
+  Hierarchical Port Count:        820
+  Leaf Cell Count:              28177
+  Buf/Inv Cell Count:            3286
+  CT Buf/Inv Cell Count:            0
+  Combinational Cell Count:     26166
+  Sequential Cell Count:         2011
+  Macro Count:                      0
+  -----------------------------------
+
+
+  Area
+  -----------------------------------
+  Combinational Area:    38579.044429
+  Noncombinational Area: 10380.916185
+  Buf/Inv Area:           1850.562012
+  Net Area:                  0.000000
+  -----------------------------------
+  Cell Area:             48959.960614
+  Design Area:           48959.960614
+
+
+  Design Rules
+  -----------------------------------
+  Total Number of Nets:         32175
+  Nets With Violations:             0
+  Max Trans Violations:             0
+  Max Cap Violations:               0
+  -----------------------------------
+
+
+  Hostname: 192.168.23.128
+
+  Compile CPU Statistics
+  -----------------------------------------
+  Resource Sharing:                   24.56
+  Logic Optimization:                 61.60
+  Mapping Optimization:              123.64
+  -----------------------------------------
+  Overall Compile Time:              285.79
+  Overall Compile Wall Clock Time:   304.27
+
+1

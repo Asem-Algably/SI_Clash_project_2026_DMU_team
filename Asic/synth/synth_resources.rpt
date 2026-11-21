@@ -1,0 +1,346 @@
+ 
+****************************************
+Report : resources
+Design : sync_system_top
+Version: G-2012.06-SP2
+Date   : Wed Nov 20 02:21:37 2019
+****************************************
+
+
+Resource Report for this hierarchy in file ../rtl/sync_system_top.sv
+=============================================================================
+| Cell           | Module         | Parameters | Contained Operations       |
+=============================================================================
+| add_x_1        | DW01_add       | width=32   | add_353                    |
+| sub_x_3        | DW01_sub       | width=32   | u_str/sub_178              |
+| gt_x_5         | DW_cmp         | width=32   | u_str/gt_194               |
+| gt_x_6         | DW_cmp         | width=32   | u_str/gt_207               |
+| gt_x_7         | DW_cmp         | width=16   | u_str/gt_208               |
+| sub_x_12       | DW01_sub       | width=16   | u_coarse_cfo/sub_65        |
+| gte_x_20       | DW_cmp         | width=32   | u_burst_ctrl/gte_90        |
+| gte_x_21       | DW_cmp         | width=32   | u_burst_ctrl/gte_104       |
+| gte_x_22       | DW_cmp         | width=32   | u_burst_ctrl/gte_129       |
+| add_x_33       | DW01_add       | width=48   | u_str/u_pi_loop/add_56     |
+| gt_x_34        | DW_cmp         | width=48   | u_str/u_pi_loop/gt_59      |
+| lt_x_35        | DW_cmp         | width=48   | u_str/u_pi_loop/lt_60      |
+| gt_x_36        | DW_cmp         | width=32   | u_str/u_pi_loop/gt_75      |
+| add_x_38       | DW01_add       | width=48   | u_str/u_pi_loop/add_76     |
+| add_x_41       | DW01_add       | width=16   | u_str/u_modulo_ctrl/add_59 |
+| gte_x_42       | DW_cmp         | width=17   | u_str/u_modulo_ctrl/gte_78 |
+| lt_x_43        | DW_cmp         | width=17   | u_str/u_modulo_ctrl/lt_78  |
+| mult_x_45      | DW_mult_tc     | a_width=17 | u_str/u_modulo_ctrl/mult_143 |
+               |                | b_width=16 |                            |
+| lt_x_47        | DW_cmp         | width=5    | u_coarse_cfo/u_accumulator/lt_51 |
+| add_x_48       | DW01_add       | width=40   | u_coarse_cfo/u_accumulator/add_52 |
+| add_x_49       | DW01_add       | width=40   | u_coarse_cfo/u_accumulator/add_53 |
+| add_x_50       | DW01_inc       | width=5    | u_coarse_cfo/u_accumulator/add_54 |
+| add_x_54       | DW01_add       | width=32   | u_derotator/freq_word_inst/add_74 |
+| gte_x_68       | DW_cmp         | width=16   | u_costas/u_slicer/gte_34   |
+| lt_x_69        | DW_cmp         | width=16   | u_costas/u_slicer/lt_38    |
+| gte_x_70       | DW_cmp         | width=16   | u_costas/u_slicer/gte_35   |
+| gte_x_71       | DW_cmp         | width=16   | u_costas/u_slicer/gte_47   |
+| lt_x_72        | DW_cmp         | width=16   | u_costas/u_slicer/lt_51    |
+| gte_x_73       | DW_cmp         | width=16   | u_costas/u_slicer/gte_48   |
+| add_x_80       | DW01_inc       | width=16   | u_costas/u_lock_int/add_35 |
+| gte_x_82       | DW_cmp         | width=3    | u_costas/u_lock_int/gte_55 |
+| lt_x_83        | DW_cmp         | width=16   | u_costas/u_lock_int/lt_66  |
+| add_x_84       | DW01_inc       | width=4    | u_costas/u_lock_int/add_69 |
+| sub_x_85       | DW01_sub       | width=4    | u_costas/u_lock_int/sub_72 |
+| add_x_89       | DW01_inc       | width=3    | u_costas/u_lock_int/add_104 |
+| add_x_102      | DW01_add       | width=5    | u_costas/u_quad/add_45_aco |
+| sub_x_103      | DW01_dec       | width=5    | u_costas/u_quad/sub_49     |
+| add_x_104      | DW01_add       | width=5    | u_costas/u_quad/add_55_aco |
+| sub_x_105      | DW01_dec       | width=5    | u_costas/u_quad/sub_59     |
+| add_x_126      | DW01_inc       | width=16   | u_costas/u_lock_pub/add_35 |
+| gte_x_128      | DW_cmp         | width=4    | u_costas/u_lock_pub/gte_55 |
+| lt_x_129       | DW_cmp         | width=16   | u_costas/u_lock_pub/lt_66  |
+| gte_x_130      | DW_cmp         | width=4    | u_costas/u_lock_pub/gte_69 |
+| add_x_131      | DW01_inc       | width=4    | u_costas/u_lock_pub/add_69 |
+| sub_x_132      | DW01_sub       | width=4    | u_costas/u_lock_pub/sub_72 |
+| add_x_136      | DW01_inc       | width=4    | u_costas/u_lock_pub/add_104 |
+| gte_x_137      | DW_cmp         | width=4    | u_costas/u_lock_pub/gte_110 |
+| add_x_19       | DW01_inc       | width=32   | u_burst_ctrl/add_102       |
+|                |                |            | u_burst_ctrl/add_115       |
+|                |                |            | u_burst_ctrl/add_124       |
+|                |                |            | u_burst_ctrl/add_88        |
+| sub_x_60       | DW01_sub       | width=16   | u_derotator/quadrant_rotator_inst/sub_35_C42 |
+                |            | u_derotator/quadrant_rotator_inst/sub_35_C43 |
+| sub_x_61       | DW01_sub       | width=16   | u_derotator/quadrant_rotator_inst/sub_35_C43_01 |
+             |            | u_derotator/quadrant_rotator_inst/sub_35_C44 |
+| DP_OP_264J2_124_6347            |            |                            |
+|                | DP_OP_264J2_124_6347 |      |                            |
+| DP_OP_265J2_125_2477            |            |                            |
+|                | DP_OP_265J2_125_2477 |      |                            |
+| DP_OP_266J2_126_1029            |            |                            |
+|                | DP_OP_266J2_126_1029 |      |                            |
+| DP_OP_267J2_127_1029            |            |                            |
+|                | DP_OP_267J2_127_1029 |      |                            |
+| DP_OP_259J2_140_4466            |            |                            |
+|                | DP_OP_259J2_140_4466 |      |                            |
+| DP_OP_260J2_141_4466            |            |                            |
+|                | DP_OP_260J2_141_4466 |      |                            |
+| DP_OP_263J2_137_3086            |            |                            |
+|                | DP_OP_263J2_137_3086 |      |                            |
+| DP_OP_23J2_134_7969             |            |                            |
+|                | DP_OP_23J2_134_7969 |       |                            |
+| DP_OP_194J2_128_5427            |            |                            |
+|                | DP_OP_194J2_128_5427 |      |                            |
+| DP_OP_195J2_129_1992            |            |                            |
+|                | DP_OP_195J2_129_1992 |      |                            |
+=============================================================================
+
+Datapath Report for DP_OP_264J2_124_6347
+==============================================================================
+| Cell                 | Contained Operations                                |
+==============================================================================
+| DP_OP_264J2_124_6347 | u_str/u_modulo_ctrl/sub_144                         |
+|                      | u_str/u_modulo_ctrl/lt_148                          |
+|                      | u_str/u_modulo_ctrl/gte_150                         |
+==============================================================================
+
+==============================================================================
+|       |      | Data     |       |                                          |
+| Var   | Type | Class    | Width | Expression                               |
+==============================================================================
+| I1    | PI   | Signed   | 19    |                                          |
+| I2    | PI   | Signed   | 21    |                                          |
+| O1    | PO   | Signed   | 22    | I1 - I2                                  |
+| O2    | PO   | Signed   | 1     | O1 < $signed(1'b0)                       |
+| O3    | PO   | Signed   | 1     | O1 >= $signed(17'b01000000000000000)     |
+==============================================================================
+
+Datapath Report for DP_OP_265J2_125_2477
+==============================================================================
+| Cell                 | Contained Operations                                |
+==============================================================================
+| DP_OP_265J2_125_2477 | u_derotator/nco_inst/add_59                         |
+|                      | u_derotator/nco_inst/add_68                         |
+==============================================================================
+
+==============================================================================
+|       |      | Data     |       |                                          |
+| Var   | Type | Class    | Width | Expression                               |
+==============================================================================
+| I1    | PI   | Unsigned | 32    |                                          |
+| I2    | PI   | Unsigned | 32    |                                          |
+| I3    | PI   | Unsigned | 32    |                                          |
+| O1    | PO   | Unsigned | 32    | I1 + I2 + I3                             |
+==============================================================================
+
+Datapath Report for DP_OP_266J2_126_1029
+==============================================================================
+| Cell                 | Contained Operations                                |
+==============================================================================
+| DP_OP_266J2_126_1029 | u_costas/u_lock_int/add_49                          |
+|                      | u_costas/u_lock_int/sub_49                          |
+==============================================================================
+
+==============================================================================
+|       |      | Data     |       |                                          |
+| Var   | Type | Class    | Width | Expression                               |
+==============================================================================
+| I1    | PI   | Signed   | 20    |                                          |
+| I2    | PI   | Unsigned | 16    |                                          |
+| I3    | PI   | Unsigned | 16    |                                          |
+| O1    | PO   | Signed   | 20    | I1 + I2 - I3                             |
+==============================================================================
+
+Datapath Report for DP_OP_267J2_127_1029
+==============================================================================
+| Cell                 | Contained Operations                                |
+==============================================================================
+| DP_OP_267J2_127_1029 | u_costas/u_lock_pub/add_49                          |
+|                      | u_costas/u_lock_pub/sub_49                          |
+==============================================================================
+
+==============================================================================
+|       |      | Data     |       |                                          |
+| Var   | Type | Class    | Width | Expression                               |
+==============================================================================
+| I1    | PI   | Signed   | 20    |                                          |
+| I2    | PI   | Unsigned | 16    |                                          |
+| I3    | PI   | Unsigned | 16    |                                          |
+| O1    | PO   | Signed   | 20    | I1 + I2 - I3                             |
+==============================================================================
+
+Datapath Report for DP_OP_259J2_140_4466
+==============================================================================
+| Cell                 | Contained Operations                                |
+==============================================================================
+| DP_OP_259J2_140_4466 | u_str/u_modulo_ctrl/sub_123                         |
+==============================================================================
+
+==============================================================================
+|       |      | Data     |       |                                          |
+| Var   | Type | Class    | Width | Expression                               |
+==============================================================================
+| I1    | PI   | Signed   | 17    |                                          |
+| O1    | PO   | Signed   | 17    | I1 - $unsigned(15'b100000000000000)      |
+==============================================================================
+
+Datapath Report for DP_OP_260J2_141_4466
+==============================================================================
+| Cell                 | Contained Operations                                |
+==============================================================================
+| DP_OP_260J2_141_4466 | u_str/u_modulo_ctrl/sub_125                         |
+==============================================================================
+
+==============================================================================
+|       |      | Data     |       |                                          |
+| Var   | Type | Class    | Width | Expression                               |
+==============================================================================
+| I1    | PI   | Signed   | 17    |                                          |
+| O1    | PO   | Signed   | 17    | I1 - $unsigned(16'b1100000000000000)     |
+==============================================================================
+
+Datapath Report for DP_OP_263J2_137_3086
+==============================================================================
+| Cell                 | Contained Operations                                |
+==============================================================================
+| DP_OP_263J2_137_3086 | u_str/u_modulo_ctrl/sub_89                          |
+|                      | u_str/u_modulo_ctrl/add_94                          |
+|                      | u_str/u_modulo_ctrl/sub_97                          |
+==============================================================================
+
+==============================================================================
+|       |      | Data     |       |                                          |
+| Var   | Type | Class    | Width | Expression                               |
+==============================================================================
+| I1    | PI   | Signed   | 17    |                                          |
+| I2    | PI   | Signed   | 16    |                                          |
+| I3    | PI   | Unsigned | 1     |                                          |
+| O1    | PO   | Signed   | 17    | I1 - I2                                  |
+| O2    | PO   | Signed   | 17    | addsub(O1,$unsigned(17'b10000000000000000),I3) |
+==============================================================================
+
+Datapath Report for DP_OP_23J2_134_7969
+==============================================================================
+| Cell                 | Contained Operations                                |
+==============================================================================
+| DP_OP_23J2_134_7969  | u_str/add_206_S2 u_str/sub_208_S2                   |
+==============================================================================
+
+==============================================================================
+|       |      | Data     |       |                                          |
+| Var   | Type | Class    | Width | Expression                               |
+==============================================================================
+| I1    | PI   | Signed   | 16    |                                          |
+| I2    | PI   | Unsigned | 2     |                                          |
+| I3    | PI   | Unsigned | 1     |                                          |
+| O1    | PO   | Signed   | 16    | addsub(I1,I2,I3)                         |
+==============================================================================
+
+Datapath Report for DP_OP_194J2_128_5427
+==============================================================================
+| Cell                 | Contained Operations                                |
+==============================================================================
+| DP_OP_194J2_128_5427 | u_str/sub_195 u_str/sub_197                         |
+==============================================================================
+
+==============================================================================
+|       |      | Data     |       |                                          |
+| Var   | Type | Class    | Width | Expression                               |
+==============================================================================
+| I1    | PI   | Signed   | 32    |                                          |
+| I2    | PI   | Signed   | 32    |                                          |
+| O1    | PO   | Signed   | 32    | I1 - I2                                  |
+==============================================================================
+
+Datapath Report for DP_OP_195J2_129_1992
+==============================================================================
+| Cell                 | Contained Operations                                |
+==============================================================================
+| DP_OP_195J2_129_1992 | u_str/add_195 u_str/sub_197_2                       |
+==============================================================================
+
+==============================================================================
+|       |      | Data     |       |                                          |
+| Var   | Type | Class    | Width | Expression                               |
+==============================================================================
+| I1    | PI   | Signed   | 32    |                                          |
+| I2    | PI   | Unsigned | 28    |                                          |
+| I3    | PI   | Unsigned | 1     |                                          |
+| O1    | PO   | Signed   | 32    | addsub(I1,I2,I3)                         |
+==============================================================================
+
+
+Implementation Report
+===============================================================================
+|                    |                  | Current            | Set            |
+| Cell               | Module           | Implementation     | Implementation |
+===============================================================================
+| add_x_1            | DW01_add         | apparch (area)     |                |
+| sub_x_3            | DW01_sub         | apparch (area)     |                |
+| gt_x_5             | DW_cmp           | apparch (area)     |                |
+| gt_x_6             | DW_cmp           | apparch (area)     |                |
+| gt_x_7             | DW_cmp           | apparch (area)     |                |
+| sub_x_12           | DW01_sub         | apparch (area)     |                |
+| gte_x_20           | DW_cmp           | apparch (area)     |                |
+| gte_x_21           | DW_cmp           | apparch (area)     |                |
+| gte_x_22           | DW_cmp           | apparch (area)     |                |
+| add_x_33           | DW01_add         | apparch (area)     |                |
+| gt_x_34            | DW_cmp           | apparch (area)     |                |
+| lt_x_35            | DW_cmp           | apparch (area)     |                |
+| gt_x_36            | DW_cmp           | apparch (area)     |                |
+| add_x_38           | DW01_add         | apparch (area)     |                |
+| add_x_41           | DW01_add         | apparch (area)     |                |
+| gte_x_42           | DW_cmp           | apparch (area)     |                |
+| lt_x_43            | DW_cmp           | apparch (area)     |                |
+| mult_x_45          | DW_mult_tc       | apparch (area)     |                |
+| lt_x_47            | DW_cmp           | apparch (area)     |                |
+| add_x_48           | DW01_add         | apparch (area)     |                |
+| add_x_49           | DW01_add         | apparch (area)     |                |
+| add_x_50           | DW01_inc         | apparch (area)     |                |
+| add_x_54           | DW01_add         | apparch (area)     |                |
+| gte_x_68           | DW_cmp           | apparch (area)     |                |
+| lt_x_69            | DW_cmp           | apparch (area)     |                |
+| gte_x_70           | DW_cmp           | apparch (area)     |                |
+| gte_x_71           | DW_cmp           | apparch (area)     |                |
+| lt_x_72            | DW_cmp           | apparch (area)     |                |
+| gte_x_73           | DW_cmp           | apparch (area)     |                |
+| add_x_80           | DW01_inc         | apparch (area)     |                |
+| gte_x_82           | DW_cmp           | apparch (area)     |                |
+| lt_x_83            | DW_cmp           | apparch (area)     |                |
+| add_x_84           | DW01_inc         | apparch (area)     |                |
+| sub_x_85           | DW01_sub         | apparch (area)     |                |
+| add_x_89           | DW01_inc         | apparch (area)     |                |
+| add_x_102          | DW01_add         | apparch (area)     |                |
+| sub_x_103          | DW01_dec         | apparch (area)     |                |
+| add_x_104          | DW01_add         | apparch (area)     |                |
+| sub_x_105          | DW01_dec         | apparch (area)     |                |
+| add_x_126          | DW01_inc         | apparch (area)     |                |
+| gte_x_128          | DW_cmp           | apparch (area)     |                |
+| lt_x_129           | DW_cmp           | apparch (area)     |                |
+| gte_x_130          | DW_cmp           | apparch (area)     |                |
+| add_x_131          | DW01_inc         | apparch (area)     |                |
+| sub_x_132          | DW01_sub         | apparch (area)     |                |
+| add_x_136          | DW01_inc         | apparch (area)     |                |
+| gte_x_137          | DW_cmp           | apparch (area)     |                |
+| add_x_19           | DW01_inc         | apparch (area)     |                |
+| sub_x_60           | DW01_sub         | apparch (area)     |                |
+| sub_x_61           | DW01_sub         | apparch (area)     |                |
+| DP_OP_264J2_124_6347                  |                    |                |
+|                    | DP_OP_264J2_124_6347 | str (area)     |                |
+| DP_OP_265J2_125_2477                  |                    |                |
+|                    | DP_OP_265J2_125_2477 | str (area)     |                |
+| DP_OP_266J2_126_1029                  |                    |                |
+|                    | DP_OP_266J2_126_1029 | str (area)     |                |
+| DP_OP_267J2_127_1029                  |                    |                |
+|                    | DP_OP_267J2_127_1029 | str (area)     |                |
+| DP_OP_259J2_140_4466                  |                    |                |
+|                    | DP_OP_259J2_140_4466 | str (area)     |                |
+| DP_OP_260J2_141_4466                  |                    |                |
+|                    | DP_OP_260J2_141_4466 | str (area)     |                |
+| DP_OP_263J2_137_3086                  |                    |                |
+|                    | DP_OP_263J2_137_3086 | str (area,speed)                |
+| DP_OP_23J2_134_7969                   |                    |                |
+|                    | DP_OP_23J2_134_7969 | str (area)      |                |
+| DP_OP_194J2_128_5427                  |                    |                |
+|                    | DP_OP_194J2_128_5427 | str (area)     |                |
+| DP_OP_195J2_129_1992                  |                    |                |
+|                    | DP_OP_195J2_129_1992 | str (area)     |                |
+===============================================================================
+
+
+No multiplexors to report
+1
