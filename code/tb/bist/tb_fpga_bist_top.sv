@@ -39,8 +39,8 @@ module tb_fpga_bist_top;
     .CATHODE_ACTIVE_LOW(1'b1),
     .ANODE_ACTIVE_LOW  (1'b1),
     .PRESCALER_LIMIT   (FAST_PRESCALER),
-    .INPUT_ROM_FILE    ("code/rtl/bist/bist_input_vec.mem"),
-    .EXP_ROM_FILE      ("code/rtl/bist/bist_exp_vec.mem"),
+    .INPUT_ROM_FILE    ("bist_input_vec.mem"),
+    .EXP_ROM_FILE      ("bist_exp_vec.mem"),
     .ENABLE_DEBUG_CORES(1'b0)
   ) dut_top (
     .clk_125_p  (clk_125_p),
@@ -51,6 +51,73 @@ module tb_fpga_bist_top;
     .pmod_dp_o  (pmod_dp_o),
     .pmod_an_o  (pmod_an_o)
   );
+
+  // ==========================================================================
+  // Probed DUT Internal Signals for Easy Waveform Inspection (Hierarchical Dot Operator)
+  // ==========================================================================
+  // 1. 7-Segment Pre-Decoded Display Word & Status Codes
+  logic [15:0] display_word;       // Raw 16-bit word driving 7-seg display (Hex: 0xAAAF)
+  logic [7:0]  status_code;        // Upper byte: 0x00=RST, 0x01=STR, 0x02=Costas, 0x05=Track, 0xAA=PASS, 0xEE=ERR
+  logic [7:0]  display_lower_byte; // Lower byte: Pass count LSB or failing address on error
+  logic [3:0]  bist_fsm_state;     // Current BIST state (0=RESET, 1=FEED, 2=DRAIN, 10=DONE)
+  logic [15:0] pass_count;         // Total symbols verified bit-accurately (counts to 1199)
+  logic [15:0] error_count;        // Mismatch error count (remains 0 on pass)
+  logic        all_passed;         // Overall PASS register (1 = passed)
+  logic        error_latch;        // Mismatch sticky error latch (0 = no error)
+
+  assign display_word       = dut_top.display_word;
+  assign status_code        = dut_top.status_code;
+  assign display_lower_byte = dut_top.display_lower_byte;
+  assign bist_fsm_state     = dut_top.bist_state_q;
+  assign pass_count         = dut_top.pass_count_q;
+  assign error_count        = dut_top.err_count_q;
+  assign all_passed         = dut_top.all_passed_q;
+  assign error_latch        = dut_top.error_latch_q;
+
+  // 2. ASCII representation of the 4 Display Digits for direct reading in Waveform
+  function automatic [7:0] hex_to_ascii(input [3:0] nibble);
+    return (nibble < 4'hA) ? (8'h30 + {4'h0, nibble}) : (8'h41 + {4'h0, nibble - 4'hA});
+  endfunction
+
+  logic [31:0] display_ascii; // [31:24]=Digit 3, [23:16]=Digit 2, [15:8]=Digit 1, [7:0]=Digit 0
+  assign display_ascii = {
+    hex_to_ascii(dut_top.display_word[15:12]),
+    hex_to_ascii(dut_top.display_word[11:8]),
+    hex_to_ascii(dut_top.display_word[7:4]),
+    hex_to_ascii(dut_top.display_word[3:0])
+  };
+
+  // 3. Receiver Input IQ & Synchronization Milestones
+  logic               dut_in_valid;
+  logic signed [11:0] dut_in_i;
+  logic signed [11:0] dut_in_q;
+  logic               str_locked;
+  logic               costas_locked;
+  logic [2:0]         receiver_fsm_state;
+
+  assign dut_in_valid       = dut_top.dut_in_valid;
+  assign dut_in_i           = dut_top.dut_in_i;
+  assign dut_in_q           = dut_top.dut_in_q;
+  assign str_locked         = dut_top.str_locked_raw;
+  assign costas_locked      = dut_top.costas_locked_raw;
+  assign receiver_fsm_state = dut_top.dut_fsm_state_reg;
+
+  // 4. Demodulated Symbol vs Golden Reference & Bit-Exact Comparator
+  logic               sym_valid;
+  logic signed [15:0] sym_out_i;
+  logic signed [15:0] sym_out_q;
+  logic signed [15:0] sym_exp_i;
+  logic signed [15:0] sym_exp_q;
+  logic               sym_match;
+  logic               sym_mismatch;
+
+  assign sym_valid          = dut_top.dut_out_sym_valid;
+  assign sym_out_i          = dut_top.dut_out_sym_i;
+  assign sym_out_q          = dut_top.dut_out_sym_q;
+  assign sym_exp_i          = dut_top.exp_sym_i;
+  assign sym_exp_q          = dut_top.exp_sym_q;
+  assign sym_match          = dut_top.sym_match;
+  assign sym_mismatch       = dut_top.sym_mismatch;
 
   int sim_cycles = 0;
   bit str_locked_seen    = 1'b0;
@@ -275,8 +342,8 @@ module tb_fpga_bist_top;
 
     $display("[CYCLE %0d] Injecting artificial payload mismatch at expected addr = %0d (0x%02X)...",
              sim_cycles, dut_top.exp_addr_q, dut_top.exp_addr_q[7:0]);
-    // Inject corruption on expected symbol data
-    force dut_top.exp_rom_dout[15:0] = 16'hDEAD;
+    // Inject corruption on expected symbol data (force whole 32-bit register for xsim compliance)
+    force dut_top.exp_rom_dout = {dut_top.exp_rom_dout[31:16], 16'hDEAD};
     @(posedge clk_125_p);
     sim_cycles++;
     // Wait until dut_out_sym_valid triggers comparator with corrupted data
@@ -286,7 +353,7 @@ module tb_fpga_bist_top;
     end
     @(posedge clk_125_p); // Latch comparator output
     sim_cycles++;
-    release dut_top.exp_rom_dout[15:0];
+    release dut_top.exp_rom_dout;
 
     $display("[CYCLE %0d] Error Injected. Checking error latch and display freezing...", sim_cycles);
     $display("  - error_latch_q       : %0b (Expected: 1)", dut_top.error_latch_q);

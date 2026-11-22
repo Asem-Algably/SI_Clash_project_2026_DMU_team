@@ -179,7 +179,7 @@ module fpga_bist_top #(
   localparam logic [3:0] ST_RESET = 4'b0000;
   localparam logic [3:0] ST_FEED  = 4'b0001;
   localparam logic [3:0] ST_DRAIN = 4'b0010;
-  localparam logic [3:0] ST_DONE  = 4'b1010;
+  localparam logic [3:0] ST_DONE  =  4'b1010;
 
   logic [3:0]  bist_state_q, bist_state_d;
   logic [12:0] sample_addr_q, sample_addr_d;

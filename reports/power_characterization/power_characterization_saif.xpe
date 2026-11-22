@@ -1,0 +1,212 @@
+<?xml version="1.0"?>
+<POWERDATA author="Vivado Power Analysis" dataVersion="2018.2" design="fpga_bist_top" designState="synthesized" date="Sun Nov 22 23:20:59 2026" pwrOpt="None" activityLevel="simulation">
+	<ENVIRONMENT>
+		<DEVICE part="xczu7ev" grade="extended" package="ffvc1156" speed="-2" process="typical" vid="No">
+		</DEVICE>
+		<VOLTAGESOURCES>
+			<SOURCE name="Vcco18" voltage="1.800000" icc="0.000346" iccq="0.000015" power="0.000651">
+			</SOURCE>
+			<SOURCE name="Vcco12" voltage="1.200000" icc="0.000058" iccq="0.000000" power="0.000069">
+			</SOURCE>
+			<SOURCE name="Vccbram" voltage="0.850000" icc="0.000993" iccq="0.001774" power="0.002353">
+			</SOURCE>
+			<SOURCE name="Vccint" voltage="0.850000" icc="0.111144" iccq="0.136406" power="0.210417">
+			</SOURCE>
+			<SOURCE name="Vccaux" voltage="1.800000" icc="0.044640" iccq="0.148413" power="0.347496">
+			</SOURCE>
+			<SOURCE name="Vccint_io" voltage="0.850000" icc="0.000469" iccq="0.069950" power="0.059856">
+			</SOURCE>
+			<SOURCE name="Vccaux_io" voltage="1.800000" icc="0.004334" iccq="0.055016" power="0.106830">
+			</SOURCE>
+			<SOURCE name="Vccadc" voltage="1.800000" icc="0.000000" iccq="0.008000" power="0.014400">
+			</SOURCE>
+			<SOURCE name="VCC_PSINTLP" voltage="0.850000" icc="0.000000" iccq="0.004919" power="0.004181">
+			</SOURCE>
+			<SOURCE name="VCC_PSPLL" voltage="1.200000" icc="0.000000" iccq="0.001500" power="0.001800">
+			</SOURCE>
+			<SOURCE name="VCC_PSAUX" voltage="1.800000" icc="0.000000" iccq="0.002200" power="0.003960">
+			</SOURCE>
+			<SOURCE name="VCC_PSADC" voltage="1.800000" icc="0.000000" iccq="0.001500" power="0.002700">
+			</SOURCE>
+			<SOURCE name="VCC_PSBATT" voltage="1.200000" icc="0.000000" iccq="0.000000" power="0.000000">
+			</SOURCE>
+			<SOURCE name="VCCINT_VCU" voltage="0.900000" icc="0.000000" iccq="0.025116" power="0.022605">
+			</SOURCE>
+		</VOLTAGESOURCES>
+		<THERMAL>
+			<AMBIENT value="25.000000">
+			</AMBIENT>
+			<AIRFLOW value="250.000000">
+			</AIRFLOW>
+			<HEATSINK value="medium (Medium Profile)">
+			</HEATSINK>
+			<BOARDSELECTION value="medium (10&quot;x10&quot;)">
+			</BOARDSELECTION>
+			<BOARDLAYERS value="12to15 (12 to 15 Layers)">
+			</BOARDLAYERS>
+			<TSA value="1.500000">
+			</TSA>
+			<TJB value="1.952839">
+			</TJB>
+			<BOARDTEMP value="25.0 (C)">
+			</BOARDTEMP>
+			<JUNCTION value="25.8 (C)">
+			</JUNCTION>
+		</THERMAL>
+	</ENVIRONMENT>
+	<BLOCKDETAILS>
+		<BYTYPE>
+			<BLOCKTYPE name="Clocks">
+				<CLOCK name="clk_125_p" freq="125.000004" belFanout="1" sliceFanout="1" FoPerSite="1.000000" sliceEnableRate="0.000000" leafs="0.000000" hrows="0.000000" power="0.000004">
+				</CLOCK>
+				<CLOCK name="gen_usplus_mmcm.u_ibufds/O" freq="125.000004" belFanout="1" sliceFanout="1" FoPerSite="1.000000" sliceEnableRate="0.000000" leafs="0.000000" hrows="0.000000" power="0.000000" enableRate="1" bufType="I/O">
+				</CLOCK>
+				<CLOCK name="gen_usplus_mmcm.u_ibufds/OUT" freq="125.000004" belFanout="1" sliceFanout="1" FoPerSite="1.000000" sliceEnableRate="0.000000" leafs="0.000000" hrows="0.000000" power="0.000004" enableRate="1" bufType="I/O">
+				</CLOCK>
+				<CLOCK name="clk_200" freq="200.000001" belFanout="1445" sliceFanout="802" FoPerSite="1.801746" sliceEnableRate="0.343931" leafs="0.000000" hrows="0.000000" power="0.010537" enableRate="1" bufType="BUFG">
+				</CLOCK>
+				<CLOCK name="gen_usplus_mmcm.clk_200_unbuf" freq="200.000001" belFanout="1" sliceFanout="1" FoPerSite="1.000000" sliceEnableRate="0.000000" leafs="0.000000" hrows="0.000000" power="0.000007" enableRate="1" bufType="MMCM">
+				</CLOCK>
+				<CLOCK name="gen_usplus_mmcm.clk_fb_buf" freq="125.000004" belFanout="1" sliceFanout="1" FoPerSite="1.000000" sliceEnableRate="0.000000" leafs="0.000000" hrows="0.000000" power="0.000004" enableRate="1" bufType="BUFG">
+				</CLOCK>
+				<CLOCK name="gen_usplus_mmcm.clk_fb_unbuf" freq="125.000004" belFanout="1" sliceFanout="1" FoPerSite="1.000000" sliceEnableRate="0.000000" leafs="0.000000" hrows="0.000000" power="0.000004" enableRate="1" bufType="MMCM">
+				</CLOCK>
+			</BLOCKTYPE>
+			<BLOCKTYPE name="LOGIC">
+				<LOGIC clock="Unclocked_or_HFN_instance" clockFreq="200.000001" clockFreq2="200.000001" toggleRate="31.829121" toggleRate2="27.343321" totalRate="117063.485042" name="gen_usplus_mmcm.clk_200_unbuf" hierName="fpga_bist_top/u_dut" writeRate="0.000000" enableRate="0.000000" fanout="2.721281" ru="0.000000" fanout2="2.645777" totalFanout="4335.000000" fanoutRate="93889.170991" numNets="4228" extNets="1593" carry8s="167" luts="1938" logicCap="1220097797" signalCap="475637.121811" power="0.022760" sp="0.007851">
+				</LOGIC>
+				<LOGIC clock="clk_200" clockFreq="200.000001" clockFreq2="200.000001" toggleRate="13.735115" toggleRate2="3.822028" totalRate="103.194767" name="gen_usplus_mmcm.clk_200_unbuf" hierName="fpga_bist_top/u_dut" writeRate="0.000000" enableRate="0.153077" fanout="0.000000" ru="0.000000" fanout2="0.000000" totalFanout="0.000000" fanoutRate="0.000000" numNets="28" extNets="0" SRL="28" logicCap="23857789" signalCap="0.000000" power="0.000237" sp="0.000000">
+				</LOGIC>
+				<LOGIC clock="clk_200" clockFreq="200.000001" clockFreq2="200.000001" toggleRate="14.410704" toggleRate2="16.463981" totalRate="17177.558754" name="gen_usplus_mmcm.clk_200_unbuf" hierName="fpga_bist_top/u_dut" writeRate="0.000000" enableRate="0.369164" fanout="5.106771" ru="0.000000" fanout2="5.271186" totalFanout="5883.000000" fanoutRate="92906.838234" numNets="1192" extNets="1152" ffs="1192" logicCap="78898562" signalCap="709374.273712" power="0.000866" sp="0.007806">
+				</LOGIC>
+				<LOGIC clock="Unclocked_or_HFN_instance" clockFreq="200.000001" clockFreq2="200.000001" toggleRate="12.136138" toggleRate2="12.216483" totalRate="171.793062" name="gen_usplus_mmcm.clk_200_unbuf" hierName="fpga_bist_top/u_expected_rom" writeRate="0.000000" enableRate="0.000000" fanout="1.466667" ru="0.000000" fanout2="1.000000" totalFanout="22.000000" fanoutRate="172.071864" numNets="15" extNets="15" luts="15" logicCap="8317349" signalCap="2683.110901" power="0.000075" sp="0.000017">
+				</LOGIC>
+				<LOGIC clock="Unclocked_or_HFN_instance" clockFreq="200.000001" clockFreq2="200.000001" toggleRate="58.704011" toggleRate2="39.531567" totalRate="1027.953574" name="gen_usplus_mmcm.clk_200_unbuf" hierName="fpga_bist_top/u_input_rom" writeRate="0.000000" enableRate="0.000000" fanout="5.000000" ru="0.000000" fanout2="1.000000" totalFanout="10.000000" fanoutRate="1.378297" numNets="28" extNets="2" luts="15" logicCap="14159024" signalCap="1035.582764" power="0.000326" sp="0.000000">
+				</LOGIC>
+				<LOGIC clock="Unclocked_or_HFN_instance" clockFreq="200.000001" clockFreq2="200.000001" toggleRate="12.297554" toggleRate2="11.557466" totalRate="740.918940" name="gen_usplus_mmcm.clk_200_unbuf" hierName="fpga_bist_top/u_seven_seg" writeRate="0.000000" enableRate="0.000000" fanout="1.575758" ru="0.000000" fanout2="1.368421" totalFanout="104.000000" fanoutRate="692.179549" numNets="79" extNets="66" carry8s="3" luts="32" logicCap="22631575" signalCap="12688.060684" power="0.000130" sp="0.000067">
+				</LOGIC>
+				<LOGIC clock="clk_200" clockFreq="200.000001" clockFreq2="200.000001" toggleRate="11.765553" toggleRate2="11.765553" totalRate="364.732138" name="gen_usplus_mmcm.clk_200_unbuf" hierName="fpga_bist_top/u_seven_seg" writeRate="0.000000" enableRate="0.936754" fanout="2.451613" ru="0.000000" fanout2="2.451613" totalFanout="76.000000" fanoutRate="839.789667" numNets="31" extNets="31" ffs="31" logicCap="2162560" signalCap="21844.688141" power="0.000018" sp="0.000116">
+				</LOGIC>
+				<LOGIC clock="Unclocked_or_HFN_instance" clockFreq="200.000001" clockFreq2="200.000001" toggleRate="5.296103" toggleRate2="9.654101" totalRate="512.026940" name="gen_usplus_mmcm.clk_200_unbuf" hierName="fpga_bist_top" writeRate="0.000000" enableRate="0.000000" fanout="2.000000" ru="0.000000" fanout2="1.207547" totalFanout="192.000000" fanoutRate="549.208390" numNets="96" extNets="96" luts="92" logicCap="34461272" signalCap="22091.858307" power="0.000153" sp="0.000052">
+				</LOGIC>
+				<LOGIC clock="clk_200" clockFreq="200.000001" clockFreq2="200.000001" toggleRate="4.753758" toggleRate2="7.214769" totalRate="765.355118" name="gen_usplus_mmcm.clk_200_unbuf" hierName="fpga_bist_top" writeRate="0.000000" enableRate="0.173276" fanout="4.993789" ru="0.000000" fanout2="2.764151" totalFanout="804.000000" fanoutRate="3323.192242" numNets="161" extNets="161" ffs="161" logicCap="8371200" signalCap="103313.378479" power="0.000039" sp="0.000322">
+				</LOGIC>
+			</BLOCKTYPE>
+			<BLOCKTYPE name="BRAM">
+				<MODULE name="fpga_bist_top/u_dut|clk_200" count="2">
+					<GROUPSUMMARY>
+						<BRAM name="fpga_bist_top/u_dut|clk_200" mode="RAMB36" cascade="1" toggleRate="1.882053" power="0.002513" sp="0.000125" vccbram="0.000073" vccint="0.002440">
+							<RAMPORT name="A" clock="clk_200" clockFreq="200.000001" readWidth="9" writeWidth="9" enableRate="0.208500" writeMode="WRITE_FIRST" writeRate="0.000000">
+							</RAMPORT>
+							<RAMPORT name="B" clock="clk_200" clockFreq="200.000001" readWidth="9" writeWidth="0" enableRate="0.208500" writeMode="WRITE_FIRST" writeRate="0.000000">
+							</RAMPORT>
+						</BRAM>
+					</GROUPSUMMARY>
+				</MODULE>
+				<MODULE name="fpga_bist_top/u_expected_rom|clk_200" count="2">
+					<GROUPSUMMARY>
+						<BRAM name="fpga_bist_top/u_expected_rom|clk_200" mode="RAMB36" cascade="1" toggleRate="2.764017" power="0.003768" sp="0.000094" vccbram="0.000175" vccint="0.003593">
+							<RAMPORT name="A" clock="clk_200" clockFreq="200.000001" readWidth="18" writeWidth="18" enableRate="1.000000" writeMode="WRITE_FIRST" writeRate="0.000000">
+							</RAMPORT>
+							<RAMPORT name="B" clock="u_expected_rom/&lt;const0&gt;" clockFreq="0.000000" readWidth="0" writeWidth="0" enableRate="0.000000" writeMode="WRITE_FIRST" writeRate="1.000000">
+							</RAMPORT>
+						</BRAM>
+					</GROUPSUMMARY>
+				</MODULE>
+				<MODULE name="fpga_bist_top/u_input_rom|clk_200" count="1">
+					<GROUPSUMMARY>
+						<BRAM name="fpga_bist_top/u_input_rom|clk_200" mode="RAMB18" cascade="1" toggleRate="0.003431" power="0.001012" sp="0.000000" vccbram="0.000072" vccint="0.000940">
+							<RAMPORT name="A" clock="clk_200" clockFreq="200.000001" readWidth="2" writeWidth="2" enableRate="1.000000" writeMode="WRITE_FIRST" writeRate="0.000000">
+							</RAMPORT>
+							<RAMPORT name="B" clock="u_input_rom/&lt;const0&gt;" clockFreq="0.000000" readWidth="0" writeWidth="0" enableRate="0.000000" writeMode="WRITE_FIRST" writeRate="1.000000">
+							</RAMPORT>
+						</BRAM>
+					</GROUPSUMMARY>
+				</MODULE>
+				<MODULE name="fpga_bist_top/u_input_rom|clk_200" count="6">
+					<GROUPSUMMARY>
+						<BRAM name="fpga_bist_top/u_input_rom|clk_200" mode="RAMB36" cascade="1" toggleRate="2.514270" power="0.011274" sp="0.000402" vccbram="0.000524" vccint="0.010750">
+							<RAMPORT name="A" clock="clk_200" clockFreq="200.000001" readWidth="4" writeWidth="4" enableRate="1.000000" writeMode="WRITE_FIRST" writeRate="0.000000">
+							</RAMPORT>
+							<RAMPORT name="B" clock="u_input_rom/&lt;const0&gt;" clockFreq="0.000000" readWidth="0" writeWidth="0" enableRate="0.000000" writeMode="WRITE_FIRST" writeRate="1.000000">
+							</RAMPORT>
+						</BRAM>
+					</GROUPSUMMARY>
+				</MODULE>
+			</BLOCKTYPE>
+			<BLOCKTYPE name="MMCM">
+				<MMCM name="gen_usplus_mmcm.u_mmcm4" clock="gen_usplus_mmcm.u_ibufds/O" clockFreq="125.000004" phaseShift="None" interpolators="1" divCounter="1" multCounter="8.000000" clock0Div="5" clock1Div="0" clock2Div="0" clock3Div="0" clock4Div="0" clock5Div="0" clock6Div="0" powerDownRate="0.000000" Vccint="0.000273" Vccaux="0.080353">
+				</MMCM>
+			</BLOCKTYPE>
+			<BLOCKTYPE name="DSP">
+				<MODULE name="fpga_bist_top/u_dut|clk_200" count="16">
+					<GROUPSUMMARY>
+						<DSP48E2 name="fpga_bist_top/u_dut|clk_200" clock="clk_200" toggleRate="19.672458" clockFreq="200.000001" multUsed="Yes" mregUsed="No" preAdderUsed="No" power="0.018693">
+						</DSP48E2>
+					</GROUPSUMMARY>
+				</MODULE>
+				<MODULE name="fpga_bist_top/u_dut|clk_200" count="1">
+					<GROUPSUMMARY>
+						<DSP48E2 name="fpga_bist_top/u_dut|clk_200" clock="clk_200" toggleRate="15.813865" clockFreq="200.000001" multUsed="Yes" mregUsed="No" preAdderUsed="Yes" power="0.001142">
+						</DSP48E2>
+					</GROUPSUMMARY>
+				</MODULE>
+				<MODULE name="fpga_bist_top/u_dut|clk_200" count="4">
+					<GROUPSUMMARY>
+						<DSP48E2 name="fpga_bist_top/u_dut|clk_200" clock="clk_200" toggleRate="15.375112" clockFreq="200.000001" multUsed="Yes" mregUsed="Yes" preAdderUsed="No" power="0.003449">
+						</DSP48E2>
+					</GROUPSUMMARY>
+				</MODULE>
+				<MODULE name="fpga_bist_top/u_dut|clk_200" count="1">
+					<GROUPSUMMARY>
+						<DSP48E2 name="fpga_bist_top/u_dut|clk_200" clock="clk_200" toggleRate="15.805365" clockFreq="200.000001" multUsed="Yes" mregUsed="Yes" preAdderUsed="Yes" power="0.001142">
+						</DSP48E2>
+					</GROUPSUMMARY>
+				</MODULE>
+			</BLOCKTYPE>
+			<BLOCKTYPE name="IO">
+				<MODULE name="btn_sw14" count="1">
+					<GROUPSUMMARY>
+						<IO name="btn_sw14" clock="gen_usplus_mmcm.clk_200_unbuf" clockFreq="200.000001" ioStandard="LVCMOS12" bidis="0" inputs="1" outputs="0" signalRate="0.116644" toggleRate="0.058322" dataRate="SDR" serdes="No" preEmphasis="No" ioDelay="No" ibufLowPower="No" inTerm="RTT_NONE" outTerm="NONE" numHP="1" ibufDisable="0.000000" dcitermDisable="0.000000" vccInt="0.000000" vccAux="0.000000" vcco="0.000000" vccoCurrent="0.000000" extTerm="NONE">
+						</IO>
+					</GROUPSUMMARY>
+				</MODULE>
+				<MODULE name="clk_125_p" count="1">
+					<GROUPSUMMARY>
+						<IO name="clk_125_p" clock="clk_125_p" clockFreq="125.000004" ioStandard="LVDS" bidis="0" inputs="1" outputs="0" signalRate="250.000000" toggleRate="200.000000" dataRate="Clock" serdes="No" preEmphasis="No" ioDelay="No" ibufLowPower="Yes" inTerm="RTT_NONE" outTerm="NONE" numHP="1" ibufDisable="0.000000" dcitermDisable="0.000000" vccInt="0.000000" vccAux="0.000000" vcco="0.000000" vccoCurrent="0.000000" extTerm="NONE">
+						</IO>
+					</GROUPSUMMARY>
+				</MODULE>
+				<MODULE name="gpio_led&lt;0:7&gt;" count="8">
+					<GROUPSUMMARY>
+						<IO name="gpio_led&lt;0:7&gt;" clock="gen_usplus_mmcm.clk_200_unbuf" clockFreq="200.000001" ioStandard="LVCMOS12_8" bidis="0" inputs="0" outputs="8" signalRate="0.072902" toggleRate="0.036451" outputEnableRate="1.000000" outputLoad="0.000000" dataRate="SDR" serdes="No" preEmphasis="No" ioDelay="No" ibufLowPower="No" inTerm="NONE" outTerm="RDRV_NONE_NONE" numHP="8" ibufDisable="0.000000" dcitermDisable="0.000000" vccInt="0.000000" vccAux="0.000000" vcco="0.000005" vccoCurrent="0.000004" extTerm="NONE">
+						</IO>
+					</GROUPSUMMARY>
+				</MODULE>
+				<MODULE name="pmod_an_o&lt;0:3&gt;" count="4">
+					<GROUPSUMMARY>
+						<IO name="pmod_an_o&lt;0:3&gt;" clock="gen_usplus_mmcm.clk_200_unbuf" clockFreq="200.000001" ioStandard="LVCMOS12_8" bidis="0" inputs="0" outputs="4" signalRate="1.997521" toggleRate="0.998761" outputEnableRate="1.000000" outputLoad="0.000000" dataRate="SDR" serdes="No" preEmphasis="No" ioDelay="No" ibufLowPower="No" inTerm="NONE" outTerm="RDRV_NONE_NONE" numHP="4" ibufDisable="0.000000" dcitermDisable="0.000000" vccInt="0.000000" vccAux="0.000000" vcco="0.000065" vccoCurrent="0.000054" extTerm="NONE">
+						</IO>
+					</GROUPSUMMARY>
+				</MODULE>
+				<MODULE name="pmod_dp_o" count="1">
+					<GROUPSUMMARY>
+						<IO name="pmod_dp_o" clock="" clockFreq="0.000000" ioStandard="LVCMOS18_8" bidis="0" inputs="0" outputs="1" signalRate="0.000000" toggleRate="0.000000" outputEnableRate="1.000000" outputLoad="0.000000" dataRate="Async" serdes="No" preEmphasis="No" ioDelay="No" ibufLowPower="No" inTerm="NONE" outTerm="RDRV_NONE_NONE" numHP="1" ibufDisable="0.000000" dcitermDisable="0.000000" vccInt="0.000000" vccAux="0.000000" vcco="0.000000" vccoCurrent="0.000000" extTerm="NONE">
+						</IO>
+					</GROUPSUMMARY>
+				</MODULE>
+				<MODULE name="pmod_seg_o&lt;0:6&gt;" count="7">
+					<GROUPSUMMARY>
+						<IO name="pmod_seg_o&lt;0:6&gt;" clock="gen_usplus_mmcm.clk_200_unbuf" clockFreq="200.000001" ioStandard="LVCMOS18_8" bidis="0" inputs="0" outputs="7" signalRate="5.498912" toggleRate="2.749456" outputEnableRate="1.000000" outputLoad="0.000000" dataRate="SDR" serdes="No" preEmphasis="No" ioDelay="No" ibufLowPower="No" inTerm="NONE" outTerm="RDRV_NONE_NONE" numHP="7" ibufDisable="0.000000" dcitermDisable="0.000000" vccInt="0.000000" vccAux="0.000000" vcco="0.000624" vccoCurrent="0.000346" extTerm="NONE">
+						</IO>
+					</GROUPSUMMARY>
+				</MODULE>
+			</BLOCKTYPE>
+			<BLOCKTYPE name="IOBANK">
+				<IOBANK numInternalVref="0" numDelayControl="0" numLVDSBanks="1">
+				</IOBANK>
+			</BLOCKTYPE>
+		</BYTYPE>
+	</BLOCKDETAILS>
+</POWERDATA>
+
