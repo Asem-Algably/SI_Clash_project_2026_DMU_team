@@ -80,7 +80,10 @@ module sync_system_top #(
   output logic                            lock_detect,
   output logic                            flush_active,
   output logic [7:0]                      valid_during_flush,
-  output logic [31:0]                     dft_obs_data
+  output logic [31:0]                     dft_obs_data,
+  output logic                            str_lock_o,
+  output logic                            costas_lock_o,
+  output logic [2:0]                      fsm_state_o
 );
 
   // -------------------------------------------------------------------------
@@ -384,5 +387,9 @@ module sync_system_top #(
 
   // lock_detect = STR lock AND public Costas lock (wrapper.md Section 3)
   assign lock_detect = str_lock & costas_lock;
+
+  assign str_lock_o    = str_lock;
+  assign costas_lock_o = costas_lock;
+  assign fsm_state_o   = fsm_state;
 
 endmodule
