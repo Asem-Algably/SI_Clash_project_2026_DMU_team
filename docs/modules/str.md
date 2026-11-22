@@ -4,10 +4,10 @@ Source of truth for every value: the golden model (`model/`, files under `rx_blo
 
 ## 1. Overview
 
-The STR takes the I/Q samples (4 per symbol) and outputs one interpolated symbol per symbol period. It uses an STR-only clock-enable scheme:
+The STR takes the I/Q samples (4 per symbol) and outputs one interpolated symbol per symbol period. the entire module proceeds only when receiving a valid input that is treated as it's clock enable, a problem that would arise from that is that at the end of the burst there might be a symbol or two stuck inside of the STR, so a flush signal could drive the clock enable:
 `ce_str = s_axis_valid_i | flush_active`.
 When `ce_str = 0` (idle clock / gap), the entire STR datapath and all internal state registers freeze (delay line, modulo-1 counter, Farrow interpolator, $\mu$ pipeline, strobe sampler, Gardner TED, loop filter integrator, and lock detector).
-Its pipelines shift strictly on `ce_str`, guaranteeing that STR loop delay is constant in samples and its output symbol sequence is bit-identical for any input valid pattern.
+Its pipelines shift strictly on `ce_str`, guaranteeing that STR loop is constant in samples calculations.
 The output strobe `m_axis_valid_o` is a registered single-clock pulse per symbol that is actively cleared to `0` on any clock where `ce_str = 0` (the only register exempt from freezing). Output data registers hold their value.
 
 ```mermaid
@@ -30,32 +30,33 @@ flowchart LR
   LD --> LOCK["lock_o"]
 ```
 
-Blocks: delay line, Farrow interpolator, strobe sampler (small control FSM), Gardner TED (R.108), PI loop filter,
-modulo-1 controller, lock detector. The coarse CFO estimator and the derotator read the STR output.
+Blocks: delay line, Farrow interpolator, strobe sampler (small control FSM), Gardner TED, PI loop filter, modulo-1 controller, lock detector.
 
-Spec limits: jitter at most 0.02 Ts RMS at SNR 15 dB (R.111), lock within 150 symbols (R.112), mu precision 8, 10 or 12 bit (R.110).
-Chosen: parabolic Farrow (from the architecture figure) and 10-bit mu.
+The coarse CFO estimator and the derotator read the STR output.
+
+**Spec limits**: jitter at most 0.02 Ts RMS at SNR 15 dB (R.111), lock within 150 symbols (R.112), mu precision 8, 10 or 12 bit (R.110).
+**Chosen**: parabolic Farrow and 10-bit mu.
 
 ## 2. Interface
 
 Ports are plain valid streams with separate I and Q ports. There is no `ready` (`CODING_STANDARDS.md`, section 3).
 
-| Port                           | Dir | Width / format              | Description                                                        |
-| ------------------------------ | --- | --------------------------- | ------------------------------------------------------------------ |
-| `clk_i`                        | in  | 1                           | Clock                                                              |
-| `rst_ni`                       | in  | 1                           | Active-low reset                                                   |
-| `s_axis_valid_i`               | in  | 1                           | One high pulse per input sample                                    |
+| Port                           | Dir | Width / format              | Description                                                                 |
+| ------------------------------ | --- | --------------------------- | --------------------------------------------------------------------------- |
+| `clk_i`                        | in  | 1                           | Clock                                                                       |
+| `rst_ni`                       | in  | 1                           | Active-low reset                                                            |
+| `s_axis_valid_i`               | in  | 1                           | One high pulse per input sample                                             |
 | `flush_active_i`               | in  | 1                           | Flush enable from wrapper FSM (`ce_str = s_axis_valid_i \| flush_active_i`) |
-| `s_axis_i_sample_i`            | in  | 12, signed Q1.11            | Input sample, I                                                    |
-| `s_axis_q_sample_i`            | in  | 12, signed Q1.11            | Input sample, Q                                                    |
-| `loop_gain_i`                  | in  | 8                           | Gain select from the top-level port (encoding TBD)                 |
-| `m_axis_valid_o`               | out | 1                           | Symbol strobe: output valid for one cycle                          |
-| `m_axis_i_sym_o`               | out | format TBD                  | Interpolated symbol, I                                             |
-| `m_axis_q_sym_o`               | out | format TBD                  | Interpolated symbol, Q                                             |
-| `lock_o`                       | out | 1                           | STR lock flag                                                      |
-| `ted_err_valid_o`, `ted_err_o` | out | 1, TBD                      | TED error with its valid, for the wrapper to align with the symbol |
-| `mu_o`, `w_o`                  | out | mu: 10 bit unsigned; w: TBD | Observation (DFT mux)                                              |
-| `force_w_en_i`, `force_w_i`    | in  | 1, TBD                      | Override W (DFT force register)                                    |
+| `s_axis_i_sample_i`            | in  | 12, signed Q1.11            | Input sample, I                                                             |
+| `s_axis_q_sample_i`            | in  | 12, signed Q1.11            | Input sample, Q                                                             |
+| `loop_gain_i`                  | in  | 8                           | Gain select from the top-level port (encoding TBD)                          |
+| `m_axis_valid_o`               | out | 1                           | Symbol strobe: output valid for one cycle                                   |
+| `m_axis_i_sym_o`               | out | Q1.15                       | Interpolated symbol, I                                                      |
+| `m_axis_q_sym_o`               | out | Q1.15                       | Interpolated symbol, Q                                                      |
+| `lock_o`                       | out | 1                           | STR lock flag                                                               |
+| `ted_err_valid_o`, `ted_err_o` | out | 1, TBD                      | TED error with its valid, for the wrapper to align with the symbol          |
+| `mu_o`, `w_o`                  | out | mu: 10 bit unsigned; w: TBD | Observation (DFT mux)                                                       |
+| `force_w_en_i`, `force_w_i`    | in  | 1, TBD                      | Override W (DFT force register)                                             |
 
 Parameters: `MuBits` = 10. Interpolator type `parabolic` . Reset values:
 `M` = 0.75, `W` = 0.25, integrator 0, current, previous and mid registers 0.
@@ -88,18 +89,18 @@ Both `acc` and `pi` saturate at `+-max_v_pi` with anti-windup (the integrator do
 **5. Modulo-1 controller.** On every valid input sample: `M <- (M - (0.25 + pi)) mod 1`, with `W = 0.25 + pi`.
 The counter range is split into two regions:
 
-| Region  | Range of `M`            | Strobe                                                           |
-| ------- | ----------------------- | ---------------------------------------------------------------- |
+| Region  | Range of `M`                                | Strobe                                                           |
+| ------- | ------------------------------------------- | ---------------------------------------------------------------- |
 | Current | from [0.25, 0.5) to [0.75, 1) and [0, 0.25) | Current strobe when `M` enters this region (from the mid region) |
-| Mid     | from [0.75, 1) to [0.25, 0.75)            | Mid strobe when `M` enters this region (from the current region) |
+| Mid     | from [0.75, 1) to [0.25, 0.75)              | Mid strobe when `M` enters this region (from the current region) |
 
 Two consecutive samples in the same region give no strobe. With `W` near 0.25 this gives one mid strobe and one current strobe per symbol.
 **Interpolation interval `mu`.** `mu` is calculated **once per strobe**, with one equation for each strobe type. Let `M_old` be the counter value before this sample's decrement, and `pi` the PI filter output (`W = 0.25 + pi`).
 
-| Strobe  | Boundary crossed (counter decreasing) | Distance above the boundary | Exact              | Linear approximation (used in RTL) |
-| ------- | ------------------------------------- | --------------------------- | ------------------ | ---------------------------------- |
-| Current | `M` falls through 0.25 (mid region to current region) | `eta_cur = M_old - 0.25` | `mu_cur = eta_cur / W` | `mu_cur = 4*eta_cur - 16*eta_cur*pi` |
-| Mid     | `M` falls through 0.75 (current region to mid region) | `eta_mid = M_old - 0.75` | `mu_mid = eta_mid / W` | `mu_mid = 4*eta_mid - 16*eta_mid*pi` |
+| Strobe  | Boundary crossed (counter decreasing)                 | Distance above the boundary | Exact                  | Linear approximation (used in RTL)   |
+| ------- | ----------------------------------------------------- | --------------------------- | ---------------------- | ------------------------------------ |
+| Current | `M` falls through 0.25 (mid region to current region) | `eta_cur = M_old - 0.25`    | `mu_cur = eta_cur / W` | `mu_cur = 4*eta_cur - 16*eta_cur*pi` |
+| Mid     | `M` falls through 0.75 (current region to mid region) | `eta_mid = M_old - 0.75`    | `mu_mid = eta_mid / W` | `mu_mid = 4*eta_mid - 16*eta_mid*pi` |
 
 At a strobe `0 <= eta < W`, so `mu` is in [0, 1). The linear form is the first-order expansion in `pi`: `1/W = 4/(1 + 4*pi)`, so `mu ~= 4*eta*(1 - 4*pi)`.
 
@@ -117,11 +118,11 @@ For the STR `K_nco` = 4, `Bn_Ts` = 0.015, `zeta` = 0.707.
 `K_nco` is the controller gain: how far the strobe timing moves, as a fraction of a symbol per symbol, for one unit of `pi`. `W` changes by `pi` on each of the 4 samples of a symbol, so `K_nco` = 4 (it would be 1 in the distance form).
 `K_ted` is the Gardner detector gain: the slope of its average output against the timing error (in symbols) at the lock point. It depends on the data, so a gain schedule selects it:
 
-| Phase | `K_ted` (peak norm, config) | `K_ted` (peak norm, measured) | `K_ted` (rms norm) |
-| --- | --- | --- | --- |
-| Preamble | 12.9543 | 12.9543 | 6.4772 |
-| QPSK payload | 2.1541 | 2.1918 | 1.0771 |
-| 16-QAM payload | 1.2326 | 1.1978 | 1.1093 |
+| Phase          | `K_ted` (peak norm, config) | `K_ted` (peak norm, measured) | `K_ted` (rms norm) |
+| -------------- | --------------------------- | ----------------------------- | ------------------ |
+| Preamble       | 12.9543                     | 12.9543                       | 6.4772             |
+| QPSK payload   | 2.1541                      | 2.1918                        | 1.0771             |
+| 16-QAM payload | 1.2326                      | 1.1978                        | 1.1093             |
 
 note that the gains are paramatrized and their Ideal value would be taken from the golden model
 
