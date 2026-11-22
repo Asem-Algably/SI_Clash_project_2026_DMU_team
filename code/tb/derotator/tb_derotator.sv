@@ -2,6 +2,8 @@
 
 module tb_derotator;
 
+  import derotator_pkg::*;
+
   localparam int MAX_VECS = 20000;
   logic [171:0] vec_mem [0:MAX_VECS-1];
   logic [3:0]   v_val, v_cval, v_fval, v_pval, v_exp_val;
@@ -14,6 +16,8 @@ module tb_derotator;
   logic signed [23:0]  coarse_word_i;
   logic                freq_adj_valid_i;
   logic signed [31:0]  freq_adj_i;
+  logic                force_freq_en_i;
+  logic        [31:0]  force_freq_i;
   logic                phase_adj_valid_i;
   logic        [31:0]  phase_adj_i;
 
@@ -31,6 +35,8 @@ module tb_derotator;
   logic signed [15:0] exp_q_q [$];
   logic signed [15:0] cur_ei, cur_eq;
   int diff_i, diff_q;
+
+  derotator_transaction cov;
 
   always #4 clk = ~clk;
 
@@ -51,8 +57,8 @@ module tb_derotator;
     .coarse_word_i    (coarse_word_i),
     .freq_adj_valid_i (freq_adj_valid_i),
     .freq_adj_i       (freq_adj_i),
-    .force_freq_en_i  (1'b0),
-    .force_freq_i     (32'd0),
+    .force_freq_en_i  (force_freq_en_i),
+    .force_freq_i     (force_freq_i),
     .phase_adj_valid_i(phase_adj_valid_i),
     .phase_adj_i      (phase_adj_i),
     .m_axis_valid_o   (m_axis_valid_o),
@@ -63,13 +69,16 @@ module tb_derotator;
   );
 
   initial begin
+    cov = new();
+
     $display("==========================================================");
     $display("  TB: derotator (Golden Model Bit-Accurate Verification)");
     $display("==========================================================");
 
     $readmemh("code/tb/vectors/tb_derot_vec.hex", vec_mem);
 
-    while (vec_mem[num_vecs] !== 172'hx && num_vecs < MAX_VECS) begin
+    // Check array bounds before indexing vec_mem
+    while (num_vecs < MAX_VECS && vec_mem[num_vecs] !== 172'hx) begin
       {v_val, s_axis_i_sym_i, s_axis_q_sym_i,
        v_cval, coarse_word_i,
        v_fval, freq_adj_i,
@@ -97,6 +106,8 @@ module tb_derotator;
     coarse_word_i     = '0;
     freq_adj_valid_i  = 1'b0;
     freq_adj_i        = '0;
+    force_freq_en_i   = 1'b0;
+    force_freq_i      = 32'd0;
     phase_adj_valid_i = 1'b0;
     phase_adj_i       = '0;
     repeat (5) @(posedge clk);
@@ -115,8 +126,29 @@ module tb_derotator;
       phase_adj_valid_i = v_pval[0];
       exp_valid         = v_exp_val[0];
 
+      // Sample inputs & current state before active clock edge
+      cov.s_valid         = s_axis_valid_i;
+      cov.i_sym           = s_axis_i_sym_i;
+      cov.q_sym           = s_axis_q_sym_i;
+      cov.coarse_valid    = coarse_valid_i;
+      cov.coarse_word     = coarse_word_i;
+      cov.freq_adj_valid  = freq_adj_valid_i;
+      cov.freq_adj        = freq_adj_i;
+      cov.phase_adj_valid = phase_adj_valid_i;
+      cov.phase_adj       = phase_adj_i;
+      cov.force_en        = force_freq_en_i;
+      cov.set_phase(phase_o);
+      cov.freq_word       = freq_word_o;
+      cov.sample_in();
+
       @(posedge clk);
       #1;
+
+      // Sample outputs after clock edge
+      cov.m_valid = m_axis_valid_o;
+      cov.m_i     = m_axis_i_sym_o;
+      cov.m_q     = m_axis_q_sym_o;
+      cov.sample_out();
 
       if (exp_valid && num_matched < 5) begin
         $display("[DEROT_EXP] exp_valid at cycle %0d", k);
@@ -147,6 +179,14 @@ module tb_derotator;
 
     repeat (10) @(posedge clk);
 
+    // Ensure all expected symbols were produced by the DUT
+    if (exp_q_i.size() != 0) begin
+      $display("[FAIL] %0d expected symbols never produced", exp_q_i.size());
+      err_count++;
+    end
+
+    cov.report();
+
     $display("----------------------------------------------------------");
     $display("  DEROTATOR VERIFICATION SUMMARY");
     $display("----------------------------------------------------------");
@@ -161,33 +201,5 @@ module tb_derotator;
     $display("==========================================================");
     $stop;
   end
-
-  function automatic bit out_sym_check(
-    input bit exp_val, input bit rtl_val,
-    input signed [15:0] ei, input signed [15:0] eq,
-    input signed [15:0] ri, input signed [15:0] rq,
-    input int cycle
-  );
-    if (exp_val !== rtl_val) begin
-      if (cycle >= 1270) begin
-        // Trailing pipeline flush clock edge variation
-        return 1'b1;
-      end
-      $display("[FAIL][Cycle %0d] Valid mismatch: RTL=%b, Exp=%b", cycle, rtl_val, exp_val);
-      return 1'b0;
-    end
-    if (exp_val && rtl_val) begin
-      int diff_i = (ri > ei) ? (ri - ei) : (ei - ri);
-      int diff_q = (rq > eq) ? (rq - eq) : (eq - rq);
-      if (diff_i <= 32 && diff_q <= 32) begin
-        return 1'b1;
-      end else begin
-        $display("[FAIL][Cycle %0d] Symbol mismatch: RTL=(%0d, %0d), Exp=(%0d, %0d), diff=(%0d, %0d)",
-                 cycle, ri, rq, ei, eq, diff_i, diff_q);
-        return 1'b0;
-      end
-    end
-    return 1'b1;
-  endfunction
 
 endmodule
