@@ -79,10 +79,19 @@ add_files -fileset constrs_1 [list \
     "$PROJ_ROOT/code/constraints/zcu106_bist.xdc" \
 ]
 
-# 7. Configure include directories and top module
+# 7. Add Simulation Testbench Files (.sv)
+add_files -fileset sim_1 [list \
+    "$PROJ_ROOT/code/tb/bist/tb_fpga_bist_top.sv" \
+]
+
+# 8. Configure include directories, synthesis top, and simulation top
 set_property include_dirs [list "$PROJ_ROOT/code/rtl/derotator"] [current_fileset]
 set_property top fpga_bist_top [current_fileset]
 update_compile_order -fileset sources_1
+
+set_property top tb_fpga_bist_top [get_filesets sim_1]
+set_property top_lib xil_defaultlib [get_filesets sim_1]
+update_compile_order -fileset sim_1
 
 puts "======================================================================"
 puts "SUCCESS: Project created at $PROJ_DIR/$PROJ_NAME.xpr"
