@@ -39,8 +39,8 @@ module helper (input logic clk_i);
 endmodule
 ```
 
-**Design files go in `code/rtl/<module>/`, testbench files in `code/tb/<module>/`.** [Project]
-Shared types, widths and constants live in `code/rtl/pkg/` and are compiled first.
+**Design files go in `rtl/<module>/`, testbench files in `tb/<module>/`.** [Project]
+Shared types, widths and constants live in `rtl/pkg/` and are compiled first.
 
 ## 2. Naming
 

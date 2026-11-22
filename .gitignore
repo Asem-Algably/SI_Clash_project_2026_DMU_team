@@ -13,6 +13,7 @@ Thumbs.db
 # Simulation and EDA artifacts
 # ---------------------------------------------------------------------------
 work/
+code/work/
 transcript
 modelsim.ini
 *.wlf
