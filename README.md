@@ -288,16 +288,6 @@ The verification suite was implemented in **UVM 1.2** with SystemVerilog Asserti
 - **`cp_mod_type`:** 100% covered for both QPSK (`2'b00`) and 16-QAM (`2'b01`).
 - **`cp_lock`:** 100% covered for timing lock, carrier phase lock, and joint dual-lock assertion.
 
-<div align="center">
-  <img src="docs/figures/coverage_dashboard_summary.png" alt="QuestaSim Coverage Dashboard Summary" width="850" />
-  <p><i>Figure 3: QuestaSim Unified Coverage Dashboard (100% Statement and Branch Coverage Sign-Off)</i></p>
-</div>
-
-<div align="center">
-  <img src="docs/figures/coverage_functional_covergroups.png" alt="UVM Functional Covergroups and Bins" width="850" />
-  <p><i>Figure 4: UVM Functional Covergroups and Cross Bins Breakdown</i></p>
-</div>
-
 > [!TIP]
 > **View Interactive Coverage GUI in QuestaSim:**
 > ```bash
