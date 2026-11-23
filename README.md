@@ -204,6 +204,9 @@ The synchronizer is packaged into an autonomous hardware verification top ([`rtl
   <br/>
   <p><b>📺 Click above or visit: <a href="https://drive.google.com/file/d/1-VSb3okrkvrnm6JxDLrNsg9hf773Kjs-/view?usp=sharing">Live Hardware Video Demonstration (Google Drive)</a></b></p>
   <p><i>Autonomous Hardware BIST running live on AMD Zynq UltraScale+ ZCU106 silicon at 200.00 MHz</i></p>
+  <br/>
+  <img src="docs/figures/fpga_gpio_leds_0xAD.jpg" alt="AMD ZCU106 Live PL GPIO LEDs (0xAD)" width="520" />
+  <p><i>Figure 2: Live On-Board PL GPIO LEDs on AMD ZCU106 Evaluation Kit Settling at <code>0xAD</code> (<code>8'b1010_1101</code>: ALL_PASSED=1, STR_LOCKED=1, COSTAS_LOCKED=1, FSM_STATE=DONE)</i></p>
 </div>
 
 > [!IMPORTANT]
@@ -323,12 +326,12 @@ The verification suite was implemented in **UVM 1.2** with SystemVerilog Asserti
 
 This project was engineered for the **SI Clash Digital Design Hackathon**, organized by the **IEEE Solid-State Circuits Society (SSCS) Al-Azhar University Student Chapter (AUSC)**:
 
-- [@Asem-Algably](https://github.com/Asem-Algably)
-- [@hadeer-ghoneim](https://github.com/hadeer-ghoneim)
-- [@Haneen-Shahin](https://github.com/Haneen-Shahin)
-- [@ArwaKantoush](https://github.com/ArwaKantoush)
-- [@mo1234-bit](https://github.com/mo1234-bit)
-- [@AbdEl-RhmanKhalifa](https://github.com/AbdEl-RhmanKhalifa)
+- [Asem Algably](https://github.com/Asem-Algably)
+- [Hadeer Ghoneim](https://github.com/hadeer-ghoneim)
+- [Haneen Shahin](https://github.com/Haneen-Shahin)
+- [Arwa Qantoush](https://github.com/ArwaKantoush)
+- [Mohamed Gamal Diab](https://github.com/mo1234-bit)
+- [Abd El-Rhman Khalifa](https://github.com/AbdEl-RhmanKhalifa)
 
 ---
 <div align="center">
