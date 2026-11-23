@@ -323,14 +323,12 @@ The verification suite was implemented in **UVM 1.2** with SystemVerilog Asserti
 
 This project was engineered for the **SI Clash Digital Design Hackathon**, organized by the **IEEE Solid-State Circuits Society (SSCS) Al-Azhar University Student Chapter (AUSC)**:
 
-| Team Member | GitHub Profile | Engineering Responsibilities & Contributions |
-| :--- | :--- | :--- |
-| **Asem Algably** | [@Asem-Algably](https://github.com/Asem-Algably) | **Team Lead** • Top System Integration (`sync_system_top`) • FPGA Prototyping & Autonomous BIST (200 MHz on AMD ZCU106) • Fixed-Point Golden Reference Model • SAIF Vector-Driven Power Flow |
-| **Hadeer Ghoneim** | [@hadeer-ghoneim](https://github.com/hadeer-ghoneim) | **Verification Lead** • Complete UVM 1.2 Regressions (Top & Subsystems) • SystemVerilog Assertions (SVA) • Coarse CFO Core RTL & Verification |
-| **Mohamed Gamal Diab** | [@mo1234-bit](https://github.com/mo1234-bit) | **ASIC Lead** • Synopsys ASIC Physical Design Flow (DC Synthesis & ICC P&R) • Nangate 45nm Timing Closure (200 MHz) • SPEF Extraction & GDSII Tapeout |
-| **Abd El-Rhman Khalifa** | [@AbdEl-RhmanKhalifa](https://github.com/AbdEl-RhmanKhalifa) | **RTL Engineer** • Symbol Timing Recovery (STR) RTL • 2-Stage Parabolic Farrow Interpolator • Pipelined Modulo-1 Controller • Top Linting Compliance |
-| **Haneen Shahin** | [@Haneen-Shahin](https://github.com/Haneen-Shahin) | **RTL Engineer** • Phase Derotator RTL • NCO Phase Accumulator & Quarter-Wave Sine/Cosine LUT • Formal Linting Sign-Off & Waivers |
-| **Arwa Qantoush** | [@ArwaKantoush](https://github.com/ArwaKantoush) | **RTL & Verification** • Costas Loop Carrier Recovery RTL • Decision-Directed Slicer & Phase Error Detector • Costas & Derotator Functional Coverage |
+- [@Asem-Algably](https://github.com/Asem-Algably)
+- [@hadeer-ghoneim](https://github.com/hadeer-ghoneim)
+- [@Haneen-Shahin](https://github.com/Haneen-Shahin)
+- [@ArwaKantoush](https://github.com/ArwaKantoush)
+- [@mo1234-bit](https://github.com/mo1234-bit)
+- [@AbdEl-RhmanKhalifa](https://github.com/AbdEl-RhmanKhalifa)
 
 ---
 <div align="center">
