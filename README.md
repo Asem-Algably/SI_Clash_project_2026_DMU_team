@@ -332,9 +332,3 @@ This project was engineered for the **SI Clash Digital Design Hackathon**, organ
 - [Arwa Qantoush](https://github.com/ArwaKantoush)
 - [Mohamed Gamal Diab](https://github.com/mo1234-bit)
 - [Abd El-Rhman Khalifa](https://github.com/AbdEl-RhmanKhalifa)
-
----
-<div align="center">
-  <b>Real-Time All-Digital Carrier and Timing Synchronization Unit</b><br/>
-  <i>Engineered for Silicon. Verified to the LSB. Built to Win.</i>
-</div>
