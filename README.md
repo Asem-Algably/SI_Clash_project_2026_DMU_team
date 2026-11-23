@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="Logo/SI_Clash_logo.jpeg" alt="SI Clash Logo" width="90" />
+<img src="assets/SI_Clash_logo.jpeg" alt="SI Clash Logo" width="90" />
 
 # Real-Time All-Digital Carrier and Timing Synchronization Unit
 ### Advanced Multi-Standard (QPSK & 16-QAM) Burst-Mode Receiver IP Core
