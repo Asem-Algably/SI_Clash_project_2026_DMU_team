@@ -200,7 +200,6 @@ The synchronizer is packaged into an autonomous hardware verification top ([`rtl
     <img src="https://img.shields.io/badge/▶_WATCH_LIVE_FPGA_DEMONSTRATION-Google_Drive-red?style=for-the-badge&logo=google-drive&logoColor=white" height="42" alt="Watch Live FPGA Demo" />
   </a>
   <br/>
-  <p><b>📺 Click above or visit: <a href="https://drive.google.com/file/d/1-VSb3okrkvrnm6JxDLrNsg9hf773Kjs-/view?usp=sharing">Live Hardware Video Demonstration (Google Drive)</a></b></p>
   <p><i>Autonomous Hardware BIST running live on AMD Zynq UltraScale+ ZCU106 silicon at 200.00 MHz</i></p>
   <br/>
   <img src="docs/figures/fpga_gpio_leds_0xAD.jpg" alt="AMD ZCU106 Live PL GPIO LEDs (0xAD)" width="520" />
