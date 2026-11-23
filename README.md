@@ -11,7 +11,7 @@
 [![Target-FPGA](https://img.shields.io/badge/FPGA-AMD_ZCU106_UltraScale%2B-orange.svg)](#-fpga-implementation--live-silicon-demonstration)
 [![ASIC-Flow](https://img.shields.io/badge/ASIC-Nangate_45nm_Tapeout_Ready-purple.svg)](#-asic-physical-implementation-nangate-45-nm)
 [![Clock-Frequency](https://img.shields.io/badge/Clock-200.00_MHz_Closed_Timing-success.svg)](#-performance-scorecard)
-[![Accuracy](https://img.shields.io/badge/Demodulation-100%25_Bit--Exact_1199%2F1199_Symbols-brightgreen.svg)](#-performance-scorecard)
+[![Accuracy](https://img.shields.io/badge/Demodulation-100%25_Bit--Exact_1200%2F1200_Symbols-brightgreen.svg)](#-performance-scorecard)
 [![Verification](https://img.shields.io/badge/Verification-UVM_1.2_%26_SVA-blue.svg)](#-industrial-uvm-verification--coverage-sign-off)
 [![Power-Methodology](https://img.shields.io/badge/Power-IEEE_1801_SAIF_High_Confidence-yellowgreen.svg)](#-vector-driven-power-characterization-ieee-1801-saif)
 
