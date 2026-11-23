@@ -297,11 +297,11 @@ The verification suite was implemented in **UVM 1.2** with SystemVerilog Asserti
 
 ## 👥 Project Team
 
-This project was engineered for the **SI Clash Digital Design Hackathon**, organized by the **IEEE Solid-State Circuits Society (SSCS) Al-Azhar University Student Chapter (AUSC)**:
+This project was engineered for the **SI Clash Digital Design Hackathon**, organized by the **IEEE Solid-State Circuits Society (SSCS) Alexandria University Student Chapter (AUSC)**:
 
 - Asem Algably ([@Asem-Algably](https://github.com/Asem-Algably))
 - Hadeer Ghoneim ([@hadeer-ghoneim](https://github.com/hadeer-ghoneim))
 - Haneen Shahin ([@Haneen-Shahin](https://github.com/Haneen-Shahin))
-- Arwa Qantoush ([@ArwaKantoush](https://github.com/ArwaKantoush))
+- Arwa Kantoush ([@ArwaKantoush](https://github.com/ArwaKantoush))
 - Mohamed Gamal Diab ([@mo1234-bit](https://github.com/mo1234-bit))
 - Abd El-Rhman Khalifa ([@AbdEl-RhmanKhalifa](https://github.com/AbdEl-RhmanKhalifa))
