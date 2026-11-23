@@ -33,7 +33,6 @@
 - [Vector-Driven Power Characterization (IEEE 1801 SAIF)](#-vector-driven-power-characterization-ieee-1801-saif)
 - [ASIC Physical Implementation (Nangate 45 nm)](#-asic-physical-implementation-nangate-45-nm)
 - [Industrial UVM Verification & Coverage Sign-Off](#-industrial-uvm-verification--coverage-sign-off)
-- [Fixed-Point Arithmetic Format](#-fixed-point-arithmetic-format)
 - [Project Team](#-project-team)
 
 ---
@@ -293,21 +292,6 @@ The verification suite was implemented in **UVM 1.2** with SystemVerilog Asserti
 > ```bash
 > vsim -viewcov uvm/sync_system_top_uvm/sync_system_top_tb.ucdb
 > ```
-
----
-
-## 🔢 Fixed-Point Arithmetic Format
-
-| Datapath Stage | Signal Identifier | Format | Bit Width | Range | Quantization Policy |
-| :--- | :--- | :---: | :---: | :---: | :--- |
-| **Baseband Input** | `in_sample_i`, `in_sample_q` | `s12.11` | 12 | $[-1.0, +0.9995]$ | Truncation from ADC |
-| **Coarse Frequency Word** | `coarse_cfo_est` | `s24.23` | 24 | $[-\pi, +\pi]$ | CORDIC convergence ($16\ \text{stages}$) |
-| **Derotator Sine/Cosine** | `sin_val`, `cos_val` | `s16.15` | 16 | $[-1.0, +1.0]$ | Symmetric quarter-wave LUT |
-| **Fractional Delay** | `mu` | `u10.10` | 10 | $[0.0, 1.0)$ | Modulo-1 counter fraction |
-| **STR Output** | `str_out_i`, `str_out_q` | `s16.15` | 16 | $[-2.0, +1.9999]$ | Fractional parabolic interpolation |
-| **Costas Phase Error** | `phase_error` | `s16.15` | 16 | $[-\pi, +\pi]$ | Cross-product decision-directed |
-| **NCO Phase Accumulator**| `nco_phase` | `s32.31` | 32 | $[-\pi, +\pi]$ | Modulo-$2\pi$ wrap |
-| **Demodulated Output** | `out_sym_i`, `out_sym_q` | `s16.15` | 16 | $[-1.5, +1.5]$ | Hard sliced & calibrated |
 
 ---
 
