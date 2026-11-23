@@ -7,6 +7,26 @@ from docx.enum.table import WD_TABLE_ALIGNMENT
 from docx.oxml import parse_xml
 from docx.oxml.ns import nsdecls
 
+def clean_latex(text):
+    if not text:
+        return text
+    t = text
+    # LaTeX commands & environments
+    t = re.sub(r'\\text\{([^}]+)\}', r'\1', t)
+    t = re.sub(r'\\mathbf\{([^}]+)\}', r'\1', t)
+    t = re.sub(r'\\mathit\{([^}]+)\}', r'\1', t)
+    t = re.sub(r'\\sqrt\{?(\d+)\}?', r'√\1', t)
+    t = t.replace(r'\pm', '±').replace(r'\le', '≤').replace(r'\ge', '≥')
+    t = t.replace(r'\times', '×').replace(r'\rightarrow', '→').replace(r'\leftarrow', '←')
+    t = t.replace(r'\approx', '≈').replace(r'\mu', 'µ').replace(r'\tau', 'τ')
+    t = t.replace(r'\omega_n', 'ωₙ').replace(r'\omega', 'ω').replace(r'\zeta', 'ζ')
+    t = t.replace(r'\pi', 'π').replace(r'\theta', 'θ').replace(r'\circ', '°')
+    t = t.replace(r'\%', '%').replace(r'\_', '_').replace(r'\ ', ' ')
+    t = t.replace('^°C', '°C').replace('^2', '²').replace('µm^2', 'µm²').replace('mm^2', 'mm²').replace('um2', 'µm²')
+    t = re.sub(r'\$([^$]+)\$', r'\1', t)
+    t = re.sub(r'\\(?=\s|\d|[a-zA-Z])', '', t)
+    return t
+
 def set_cell_background(cell, fill_hex):
     tcPr = cell._tc.get_or_add_tcPr()
     shd = parse_xml(f'<w:shd {nsdecls("w")} w:fill="{fill_hex}"/>')
@@ -18,19 +38,20 @@ def set_cell_margins(cell, top=100, bottom=100, left=150, right=150):
     tcPr.append(tcMar)
 
 def add_formatted_text(paragraph, text):
-    """Parses markdown inline tokens: **bold**, *italic*, `code`, [text](url), $\\LaTeX$"""
+    """Parses markdown inline tokens: **bold**, *italic*, `code`, [text](url) with clean typography"""
+    text = clean_latex(text)
     pattern = re.compile(r'(\*\*.*?\*\*|\*.*?\*|`.*?`|\[.*?\]\(.*?\)|\$.*?\$|[^`\*\[\$]+)')
     tokens = pattern.findall(text)
     
     for token in tokens:
         if token.startswith('**') and token.endswith('**') and len(token) >= 4:
-            run = paragraph.add_run(token[2:-2])
+            run = paragraph.add_run(clean_latex(token[2:-2]))
             run.bold = True
         elif token.startswith('*') and token.endswith('*') and len(token) >= 2 and not token.startswith('**'):
-            run = paragraph.add_run(token[1:-1])
+            run = paragraph.add_run(clean_latex(token[1:-1]))
             run.italic = True
         elif token.startswith('`') and token.endswith('`') and len(token) >= 2:
-            run = paragraph.add_run(token[1:-1])
+            run = paragraph.add_run(clean_latex(token[1:-1]))
             run.font.name = 'Consolas'
             run.font.size = Pt(9.5)
             run.font.color.rgb = RGBColor(30, 41, 59)
@@ -38,23 +59,16 @@ def add_formatted_text(paragraph, text):
             m = re.match(r'\[(.*?)\]\((.*?)\)', token)
             if m:
                 label, url = m.groups()
-                run = paragraph.add_run(label)
-                run.font.color.rgb = RGBColor(0, 133, 117) # Teal accent from template
+                run = paragraph.add_run(clean_latex(label))
+                run.font.color.rgb = RGBColor(0, 133, 117)
                 run.underline = True
             else:
-                paragraph.add_run(token)
+                paragraph.add_run(clean_latex(token))
         elif token.startswith('$') and token.endswith('$') and len(token) >= 2:
-            math_text = token[1:-1]
-            math_text = math_text.replace(r'\pm', '±').replace(r'\le', '≤').replace(r'\ge', '≥')
-            math_text = math_text.replace(r'\times', '×').replace(r'\mu', 'µ').replace(r'\tau', 'τ')
-            math_text = math_text.replace(r'\omega', 'ω').replace(r'\zeta', 'ζ').replace(r'\pi', 'π')
-            math_text = math_text.replace(r'\theta', 'θ').replace(r'\approx', '≈').replace(r'\circ', '°')
-            math_text = math_text.replace(r'\rightarrow', '→').replace(r'\text', '').replace(r'\mathbf', '')
-            math_text = re.sub(r'[{}]', '', math_text)
-            run = paragraph.add_run(math_text)
+            run = paragraph.add_run(clean_latex(token[1:-1]))
             run.italic = True
         else:
-            paragraph.add_run(token)
+            paragraph.add_run(clean_latex(token))
 
 def build_word_document():
     template_path = r'C:\Users\Asem\Desktop\progress_report_final.docx'
@@ -75,7 +89,6 @@ def build_word_document():
     for t in list(doc.tables):
         t._element.getparent().remove(t._element)
 
-    # Add a page break after the cover page
     doc.add_page_break()
 
     # 3. Read and parse markdown file
@@ -95,9 +108,9 @@ def build_word_document():
     while i < len(lines):
         line = lines[i]
 
-        # Skip top badges and top title
+        # Skip top badges and top title, start right at Section 1 (Repo & Structure)
         if skip_header:
-            if line.startswith('## 1. Executive Summary'):
+            if line.startswith('## 1. Official GitHub Repository'):
                 skip_header = False
             else:
                 i += 1
@@ -114,7 +127,7 @@ def build_word_document():
                 img_p.paragraph_format.space_before = Pt(8)
                 img_p.paragraph_format.space_after = Pt(2)
                 r_img = img_p.add_run()
-                # Choose width based on image
+                
                 width = Inches(5.6)
                 if 'burst_fsm' in img_rel_path:
                     width = Inches(5.6)
@@ -124,18 +137,15 @@ def build_word_document():
                     width = Inches(4.2)
                 r_img.add_picture(img_full_path, width=width)
                 
-                # Caption
                 if alt_text.strip():
                     cap_p = doc.add_paragraph()
                     cap_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
                     cap_p.paragraph_format.space_before = Pt(0)
                     cap_p.paragraph_format.space_after = Pt(8)
-                    cap_run = cap_p.add_run(alt_text.strip())
+                    cap_run = cap_p.add_run(clean_latex(alt_text.strip()))
                     cap_run.italic = True
                     cap_run.font.size = Pt(9.0)
                     cap_run.font.color.rgb = RGBColor(100, 116, 139)
-            else:
-                print(f"Warning: Image not found at {img_full_path}")
             i += 1
             continue
 
@@ -207,7 +217,7 @@ def build_word_document():
                 for tline in table_lines:
                     if re.match(r'^\s*\|(\s*:?-+:?\s*\|)+\s*$', tline):
                         continue
-                    cells = [c.strip() for c in tline.strip().strip('|').split('|')]
+                    cells = [clean_latex(c.strip()) for c in tline.strip().strip('|').split('|')]
                     parsed_rows.append(cells)
                 
                 if parsed_rows:
@@ -243,7 +253,7 @@ def build_word_document():
 
         # Headings
         if line.startswith('## '):
-            h_text = line[3:].strip()
+            h_text = clean_latex(line[3:].strip())
             p = doc.add_heading(h_text, level=1)
             p.paragraph_format.space_before = Pt(14)
             p.paragraph_format.space_after = Pt(6)
@@ -251,7 +261,7 @@ def build_word_document():
             i += 1
             continue
         elif line.startswith('### '):
-            h_text = line[4:].strip()
+            h_text = clean_latex(line[4:].strip())
             p = doc.add_heading(h_text, level=2)
             p.paragraph_format.space_before = Pt(10)
             p.paragraph_format.space_after = Pt(4)
@@ -259,7 +269,7 @@ def build_word_document():
             i += 1
             continue
         elif line.startswith('#### '):
-            h_text = line[5:].strip()
+            h_text = clean_latex(line[5:].strip())
             p = doc.add_heading(h_text, level=3)
             p.paragraph_format.space_before = Pt(8)
             p.paragraph_format.space_after = Pt(3)
@@ -295,7 +305,7 @@ def build_word_document():
             i += 1
             continue
 
-        # Normal text paragraph (skip div align or bare html tags)
+        # Normal text paragraph
         if line.strip() and not line.strip().startswith('<') and not line.strip().endswith('>'):
             p = doc.add_paragraph()
             p.paragraph_format.space_before = Pt(2)
@@ -308,7 +318,7 @@ def build_word_document():
     doc.save(output_desktop_path)
     print(f'Saving to: {output_repo_path}')
     doc.save(output_repo_path)
-    print('SUCCESS! Word document updated with all SVG/PNG diagrams, WaveDrom waveforms, and hardware photos.')
+    print('SUCCESS! Word document updated with repo at the top, clean typography, and zero LaTeX corruption.')
 
 if __name__ == '__main__':
     build_word_document()
