@@ -3,9 +3,9 @@ import re
 import docx
 from docx.shared import Inches, Pt, RGBColor
 from docx.enum.text import WD_ALIGN_PARAGRAPH
-from docx.enum.table import WD_TABLE_ALIGNMENT, WD_ALIGN_VERTICAL
-from docx.oxml import OxmlElement, parse_xml
-from docx.oxml.ns import nsdecls, qn
+from docx.enum.table import WD_TABLE_ALIGNMENT
+from docx.oxml import parse_xml
+from docx.oxml.ns import nsdecls
 
 def set_cell_background(cell, fill_hex):
     tcPr = cell._tc.get_or_add_tcPr()
@@ -19,7 +19,6 @@ def set_cell_margins(cell, top=100, bottom=100, left=150, right=150):
 
 def add_formatted_text(paragraph, text):
     """Parses markdown inline tokens: **bold**, *italic*, `code`, [text](url), $\\LaTeX$"""
-    # Regex to tokenize markdown inline syntax
     pattern = re.compile(r'(\*\*.*?\*\*|\*.*?\*|`.*?`|\[.*?\]\(.*?\)|\$.*?\$|[^`\*\[\$]+)')
     tokens = pattern.findall(text)
     
@@ -45,13 +44,12 @@ def add_formatted_text(paragraph, text):
             else:
                 paragraph.add_run(token)
         elif token.startswith('$') and token.endswith('$') and len(token) >= 2:
-            # Inline math: simplify LaTeX syntax for plain text in Word
             math_text = token[1:-1]
             math_text = math_text.replace(r'\pm', '±').replace(r'\le', '≤').replace(r'\ge', '≥')
             math_text = math_text.replace(r'\times', '×').replace(r'\mu', 'µ').replace(r'\tau', 'τ')
             math_text = math_text.replace(r'\omega', 'ω').replace(r'\zeta', 'ζ').replace(r'\pi', 'π')
             math_text = math_text.replace(r'\theta', 'θ').replace(r'\approx', '≈').replace(r'\circ', '°')
-            math_text = math_text.replace(r'\text', '').replace(r'\mathbf', '')
+            math_text = math_text.replace(r'\rightarrow', '→').replace(r'\text', '').replace(r'\mathbf', '')
             math_text = re.sub(r'[{}]', '', math_text)
             run = paragraph.add_run(math_text)
             run.italic = True
@@ -63,6 +61,7 @@ def build_word_document():
     output_desktop_path = r'C:\Users\Asem\Desktop\FINAL_PROJECT_REPORT.docx'
     output_repo_path = r'c:\Users\Asem\Desktop\si clash\rx_sync_project\FINAL_PROJECT_REPORT.docx'
     md_path = r'c:\Users\Asem\Desktop\si clash\rx_sync_project\FINAL_PROJECT_REPORT.md'
+    repo_root = r'c:\Users\Asem\Desktop\si clash\rx_sync_project'
 
     print(f'Loading template: {template_path}')
     doc = docx.Document(template_path)
@@ -90,7 +89,7 @@ def build_word_document():
     table_lines = []
     in_quote = False
     quote_lines = []
-    skip_header = True # skip the top markdown title and badges since cover page has them
+    skip_header = True
 
     i = 0
     while i < len(lines):
@@ -104,11 +103,46 @@ def build_word_document():
                 i += 1
                 continue
 
+        # Check for markdown image: ![Caption](path)
+        img_match = re.match(r'^\s*!\[(.*?)\]\((.*?)\)\s*$', line)
+        if img_match and not in_code_block:
+            alt_text, img_rel_path = img_match.groups()
+            img_full_path = os.path.normpath(os.path.join(repo_root, img_rel_path))
+            if os.path.exists(img_full_path):
+                img_p = doc.add_paragraph()
+                img_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                img_p.paragraph_format.space_before = Pt(8)
+                img_p.paragraph_format.space_after = Pt(2)
+                r_img = img_p.add_run()
+                # Choose width based on image
+                width = Inches(5.6)
+                if 'burst_fsm' in img_rel_path:
+                    width = Inches(5.6)
+                elif 'leds' in img_rel_path:
+                    width = Inches(4.5)
+                elif 'Asic' in img_rel_path:
+                    width = Inches(4.2)
+                r_img.add_picture(img_full_path, width=width)
+                
+                # Caption
+                if alt_text.strip():
+                    cap_p = doc.add_paragraph()
+                    cap_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                    cap_p.paragraph_format.space_before = Pt(0)
+                    cap_p.paragraph_format.space_after = Pt(8)
+                    cap_run = cap_p.add_run(alt_text.strip())
+                    cap_run.italic = True
+                    cap_run.font.size = Pt(9.0)
+                    cap_run.font.color.rgb = RGBColor(100, 116, 139)
+            else:
+                print(f"Warning: Image not found at {img_full_path}")
+            i += 1
+            continue
+
         # Code block handling
         if line.startswith('```'):
             if in_code_block:
                 in_code_block = False
-                # Emit code table
                 code_text = '\n'.join(code_lines)
                 table = doc.add_table(rows=1, cols=1)
                 table.alignment = WD_TABLE_ALIGNMENT.CENTER
@@ -122,7 +156,7 @@ def build_word_document():
                 c_run.font.name = 'Consolas'
                 c_run.font.size = Pt(8.5)
                 c_run.font.color.rgb = RGBColor(15, 23, 42)
-                doc.add_paragraph() # Spacing
+                doc.add_paragraph()
                 code_lines = []
             else:
                 in_code_block = True
@@ -139,19 +173,16 @@ def build_word_document():
         if line.startswith('>'):
             quote_text = line.lstrip('> ').strip()
             quote_lines.append(quote_text)
-            # Check if next line is also a quote
             if i + 1 < len(lines) and lines[i+1].startswith('>'):
                 i += 1
                 continue
             else:
-                # Emit callout block
                 full_quote = '\n'.join(quote_lines)
                 table = doc.add_table(rows=1, cols=1)
                 table.alignment = WD_TABLE_ALIGNMENT.CENTER
                 cell = table.cell(0, 0)
-                set_cell_background(cell, 'F0FDFA') # Light teal
+                set_cell_background(cell, 'F0FDFA')
                 set_cell_margins(cell, top=140, bottom=140, left=200, right=200)
-                # Left border teal in XML
                 tcPr = cell._tc.get_or_add_tcPr()
                 tcBorders = parse_xml(f'<w:tcBorders {nsdecls("w")}><w:left w:val="single" w:sz="36" w:space="0" w:color="008575"/><w:top w:val="none"/><w:right w:val="none"/><w:bottom w:val="none"/></w:tcBorders>')
                 tcPr.append(tcBorders)
@@ -172,10 +203,8 @@ def build_word_document():
                 i += 1
                 continue
             else:
-                # Emit table
                 parsed_rows = []
                 for tline in table_lines:
-                    # check if separator row like |:---|:---:|
                     if re.match(r'^\s*\|(\s*:?-+:?\s*\|)+\s*$', tline):
                         continue
                     cells = [c.strip() for c in tline.strip().strip('|').split('|')]
@@ -202,7 +231,7 @@ def build_word_document():
                                 add_formatted_text(p, f"**{cell_text}**")
                             else:
                                 add_formatted_text(p, cell_text)
-                    doc.add_paragraph() # Spacing after table
+                    doc.add_paragraph()
                 table_lines = []
                 i += 1
                 continue
@@ -247,7 +276,7 @@ def build_word_document():
             p.paragraph_format.left_indent = Inches(0.25)
             r_bullet = p.add_run("•  ")
             r_bullet.bold = True
-            r_bullet.font.color.rgb = RGBColor(0, 133, 117) # Teal bullet
+            r_bullet.font.color.rgb = RGBColor(0, 133, 117)
             add_formatted_text(p, item_text)
             i += 1
             continue
@@ -266,8 +295,8 @@ def build_word_document():
             i += 1
             continue
 
-        # Normal text paragraph
-        if line.strip():
+        # Normal text paragraph (skip div align or bare html tags)
+        if line.strip() and not line.strip().startswith('<') and not line.strip().endswith('>'):
             p = doc.add_paragraph()
             p.paragraph_format.space_before = Pt(2)
             p.paragraph_format.space_after = Pt(4)
@@ -275,12 +304,11 @@ def build_word_document():
 
         i += 1
 
-    # Save to Desktop and repo
     print(f'Saving to: {output_desktop_path}')
     doc.save(output_desktop_path)
     print(f'Saving to: {output_repo_path}')
     doc.save(output_repo_path)
-    print('SUCCESS! Word document generated.')
+    print('SUCCESS! Word document updated with all SVG/PNG diagrams, WaveDrom waveforms, and hardware photos.')
 
 if __name__ == '__main__':
     build_word_document()

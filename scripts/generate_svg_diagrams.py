@@ -1,0 +1,203 @@
+import os
+
+def create_signal_chain_svg(path):
+    svg = '''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 420" width="100%" height="100%" style="background:#0f172a; font-family:'Segoe UI', Helvetica, Arial, sans-serif;">
+  <defs>
+    <linearGradient id="gradBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e3a8a"/>
+      <stop offset="100%" stop-color="#0284c7"/>
+    </linearGradient>
+    <linearGradient id="gradTeal" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#064e3b"/>
+      <stop offset="100%" stop-color="#059669"/>
+    </linearGradient>
+    <linearGradient id="gradAmber" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#78350f"/>
+      <stop offset="100%" stop-color="#d97706"/>
+    </linearGradient>
+    <linearGradient id="gradPurple" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4c1d95"/>
+      <stop offset="100%" stop-color="#7c3aed"/>
+    </linearGradient>
+    <linearGradient id="gradSlate" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#334155"/>
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000" flood-opacity="0.5"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8"/>
+    </marker>
+    <marker id="arrowAmber" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#fbbf24"/>
+    </marker>
+    <marker id="arrowTeal" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399"/>
+    </marker>
+  </defs>
+
+  <!-- Title -->
+  <text x="500" y="32" text-anchor="middle" fill="#f8fafc" font-size="18" font-weight="bold" letter-spacing="1">REAL-TIME BASEBAND RECEIVER SYNCHRONIZATION SIGNAL CHAIN</text>
+  <text x="500" y="52" text-anchor="middle" fill="#94a3b8" font-size="12">Fully Synthesizable 200 MHz SystemVerilog Core • QPSK &amp; 16-QAM Demodulation</text>
+
+  <!-- Input Port -->
+  <g transform="translate(30, 110)" filter="url(#shadow)">
+    <rect width="140" height="90" rx="10" fill="url(#gradSlate)" stroke="#38bdf8" stroke-width="2"/>
+    <text x="70" y="30" text-anchor="middle" fill="#38bdf8" font-size="13" font-weight="bold">RAW BASEBAND</text>
+    <text x="70" y="50" text-anchor="middle" fill="#f8fafc" font-size="11">4 sps I/Q Input</text>
+    <text x="70" y="68" text-anchor="middle" fill="#94a3b8" font-size="10">12-bit signed (s12.11)</text>
+  </g>
+
+  <!-- STR Subsystem -->
+  <g transform="translate(210, 85)" filter="url(#shadow)">
+    <rect width="170" height="140" rx="10" fill="url(#gradTeal)" stroke="#34d399" stroke-width="2"/>
+    <text x="85" y="26" text-anchor="middle" fill="#a7f3d0" font-size="13" font-weight="bold">CHECKPOINT 2: STR</text>
+    <text x="85" y="48" text-anchor="middle" fill="#fff" font-size="11">Parabolic Farrow</text>
+    <text x="85" y="68" text-anchor="middle" fill="#fff" font-size="11">Gardner TED Error</text>
+    <text x="85" y="88" text-anchor="middle" fill="#fff" font-size="11">Retimed Modulo-1</text>
+    <text x="85" y="112" text-anchor="middle" fill="#6ee7b7" font-size="10" font-weight="bold">200 MHz Closed Loop</text>
+  </g>
+
+  <!-- Coarse CFO -->
+  <g transform="translate(420, 85)" filter="url(#shadow)">
+    <rect width="160" height="140" rx="10" fill="url(#gradAmber)" stroke="#fbbf24" stroke-width="2"/>
+    <text x="80" y="26" text-anchor="middle" fill="#fef3c7" font-size="13" font-weight="bold">CHECKPOINT 3: CFO</text>
+    <text x="80" y="48" text-anchor="middle" fill="#fff" font-size="11">Delay Autocorrelation</text>
+    <text x="80" y="68" text-anchor="middle" fill="#fff" font-size="11">32-Symbol Window</text>
+    <text x="80" y="88" text-anchor="middle" fill="#fff" font-size="11">16-Stage CORDIC</text>
+    <text x="80" y="112" text-anchor="middle" fill="#fde68a" font-size="10" font-weight="bold">±0.10 Rsym Capture</text>
+  </g>
+
+  <!-- Derotator -->
+  <g transform="translate(620, 85)" filter="url(#shadow)">
+    <rect width="150" height="140" rx="10" fill="url(#gradBlue)" stroke="#60a5fa" stroke-width="2"/>
+    <text x="75" y="26" text-anchor="middle" fill="#bfdbfe" font-size="13" font-weight="bold">CHECKPOINT 4A: DEROT</text>
+    <text x="75" y="48" text-anchor="middle" fill="#fff" font-size="11">32-bit Phase NCO</text>
+    <text x="75" y="68" text-anchor="middle" fill="#fff" font-size="11">Quarter-Wave LUT</text>
+    <text x="75" y="88" text-anchor="middle" fill="#fff" font-size="11">Pipelined Complex Mult</text>
+    <text x="75" y="112" text-anchor="middle" fill="#93c5fd" font-size="10" font-weight="bold">&gt; 85 dBc SFDR</text>
+  </g>
+
+  <!-- Costas Loop -->
+  <g transform="translate(810, 85)" filter="url(#shadow)">
+    <rect width="160" height="140" rx="10" fill="url(#gradPurple)" stroke="#c084fc" stroke-width="2"/>
+    <text x="80" y="26" text-anchor="middle" fill="#f3e8ff" font-size="13" font-weight="bold">CHECKPOINT 4B: COSTAS</text>
+    <text x="80" y="48" text-anchor="middle" fill="#fff" font-size="11">Decision-Directed Slicer</text>
+    <text x="80" y="68" text-anchor="middle" fill="#fff" font-size="11">2nd-Order Active PI</text>
+    <text x="80" y="88" text-anchor="middle" fill="#fff" font-size="11">QPSK &amp; 16-QAM</text>
+    <text x="80" y="112" text-anchor="middle" fill="#d8b4fe" font-size="10" font-weight="bold">16-bit Bit-Exact Out</text>
+  </g>
+
+  <!-- Inter-block Arrows -->
+  <line x1="170" y1="155" x2="204" y2="155" stroke="#38bdf8" stroke-width="3" marker-end="url(#arrow)"/>
+  <line x1="380" y1="155" x2="414" y2="155" stroke="#34d399" stroke-width="3" marker-end="url(#arrowTeal)"/>
+  <line x1="580" y1="155" x2="614" y2="155" stroke="#fbbf24" stroke-width="3" marker-end="url(#arrowAmber)"/>
+  <line x1="770" y1="155" x2="804" y2="155" stroke="#60a5fa" stroke-width="3" marker-end="url(#arrow)"/>
+
+  <!-- Feedback loop from Costas to Derotator -->
+  <path d="M 890 225 L 890 260 L 695 260 L 695 231" fill="none" stroke="#c084fc" stroke-width="2.5" stroke-dasharray="5,4" marker-end="url(#arrow)"/>
+  <text x="792" y="278" text-anchor="middle" fill="#c084fc" font-size="11" font-weight="bold">Fine Phase / Freq Correction</text>
+
+  <!-- Burst Controller Block -->
+  <g transform="translate(100, 310)" filter="url(#shadow)">
+    <rect width="380" height="80" rx="8" fill="#1e293b" stroke="#f59e0b" stroke-width="2"/>
+    <text x="190" y="25" text-anchor="middle" fill="#f59e0b" font-size="12" font-weight="bold">AUTONOMOUS 7-STATE BURST CONTROLLER</text>
+    <text x="190" y="45" text-anchor="middle" fill="#cbd5e1" font-size="10">WaitBurst → Acquire → CoarseEst → Load → CostasAcq → Track → Flush</text>
+    <text x="190" y="65" text-anchor="middle" fill="#94a3b8" font-size="10">Watchdog Timeout (14 invalid cycles) • Automatic Pipeline Flush</text>
+  </g>
+
+  <!-- DFT Multiplexer Block -->
+  <g transform="translate(520, 310)" filter="url(#shadow)">
+    <rect width="380" height="80" rx="8" fill="#1e293b" stroke="#008575" stroke-width="2"/>
+    <text x="190" y="25" text-anchor="middle" fill="#2dd4bf" font-size="12" font-weight="bold">CHECKPOINT 5: DESIGN FOR TESTABILITY (DFT)</text>
+    <text x="190" y="45" text-anchor="middle" fill="#cbd5e1" font-size="10">16-Channel 32-bit Observation Multiplexer (`dft_obs_data`)</text>
+    <text x="190" y="65" text-anchor="middle" fill="#94a3b8" font-size="10">Manual Force Override Registers for Block-Level Isolation</text>
+  </g>
+</svg>'''
+    with open(path, 'w', encoding='utf-8') as f:
+        f.write(svg)
+    print(f'Created {path}')
+
+def create_fsm_svg(path):
+    svg = '''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 240" width="100%" height="100%" style="background:#0f172a; font-family:'Segoe UI', Helvetica, Arial, sans-serif;">
+  <defs>
+    <marker id="fsmArrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8"/>
+    </marker>
+    <marker id="flushArrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#ef4444"/>
+    </marker>
+  </defs>
+
+  <text x="450" y="28" text-anchor="middle" fill="#f8fafc" font-size="16" font-weight="bold">AUTONOMOUS BURST CONTROLLER FSM SEQUENCING</text>
+
+  <!-- States -->
+  <!-- 0: WaitBurst -->
+  <g transform="translate(30, 70)">
+    <circle cx="50" cy="50" r="42" fill="#1e293b" stroke="#38bdf8" stroke-width="2.5"/>
+    <text x="50" y="46" text-anchor="middle" fill="#fff" font-size="11" font-weight="bold">WaitBurst</text>
+    <text x="50" y="62" text-anchor="middle" fill="#94a3b8" font-size="10">State 0</text>
+  </g>
+
+  <!-- 1: Acquire -->
+  <g transform="translate(150, 70)">
+    <circle cx="50" cy="50" r="42" fill="#064e3b" stroke="#34d399" stroke-width="2.5"/>
+    <text x="50" y="46" text-anchor="middle" fill="#fff" font-size="11" font-weight="bold">Acquire</text>
+    <text x="50" y="62" text-anchor="middle" fill="#6ee7b7" font-size="10">STR Lock (1)</text>
+  </g>
+
+  <!-- 2: CoarseEst -->
+  <g transform="translate(270, 70)">
+    <circle cx="50" cy="50" r="42" fill="#78350f" stroke="#fbbf24" stroke-width="2.5"/>
+    <text x="50" y="46" text-anchor="middle" fill="#fff" font-size="11" font-weight="bold">CoarseEst</text>
+    <text x="50" y="62" text-anchor="middle" fill="#fde68a" font-size="10">CORDIC (2)</text>
+  </g>
+
+  <!-- 3: Load -->
+  <g transform="translate(390, 70)">
+    <circle cx="50" cy="50" r="42" fill="#1e3a8a" stroke="#60a5fa" stroke-width="2.5"/>
+    <text x="50" y="46" text-anchor="middle" fill="#fff" font-size="11" font-weight="bold">Load</text>
+    <text x="50" y="62" text-anchor="middle" fill="#93c5fd" font-size="10">NCO Init (3)</text>
+  </g>
+
+  <!-- 4: CostasAcq -->
+  <g transform="translate(510, 70)">
+    <circle cx="50" cy="50" r="42" fill="#4c1d95" stroke="#c084fc" stroke-width="2.5"/>
+    <text x="50" y="46" text-anchor="middle" fill="#fff" font-size="11" font-weight="bold">CostasAcq</text>
+    <text x="50" y="62" text-anchor="middle" fill="#d8b4fe" font-size="10">Wide BW (4)</text>
+  </g>
+
+  <!-- 5: Track -->
+  <g transform="translate(630, 70)">
+    <circle cx="50" cy="50" r="42" fill="#065f46" stroke="#10b981" stroke-width="2.5"/>
+    <text x="50" y="46" text-anchor="middle" fill="#fff" font-size="11" font-weight="bold">Track</text>
+    <text x="50" y="62" text-anchor="middle" fill="#34d399" font-size="10">Payload (5)</text>
+  </g>
+
+  <!-- 6: Flush -->
+  <g transform="translate(750, 70)">
+    <circle cx="50" cy="50" r="42" fill="#881337" stroke="#f43f5e" stroke-width="2.5"/>
+    <text x="50" y="46" text-anchor="middle" fill="#fff" font-size="11" font-weight="bold">Flush</text>
+    <text x="50" y="62" text-anchor="middle" fill="#fda4af" font-size="10">16 Clks (6)</text>
+  </g>
+
+  <!-- Forward Transitions -->
+  <line x1="122" y1="120" x2="144" y2="120" stroke="#38bdf8" stroke-width="2.5" marker-end="url(#fsmArrow)"/>
+  <line x1="242" y1="120" x2="264" y2="120" stroke="#38bdf8" stroke-width="2.5" marker-end="url(#fsmArrow)"/>
+  <line x1="362" y1="120" x2="384" y2="120" stroke="#38bdf8" stroke-width="2.5" marker-end="url(#fsmArrow)"/>
+  <line x1="482" y1="120" x2="504" y2="120" stroke="#38bdf8" stroke-width="2.5" marker-end="url(#fsmArrow)"/>
+  <line x1="602" y1="120" x2="624" y2="120" stroke="#38bdf8" stroke-width="2.5" marker-end="url(#fsmArrow)"/>
+  <line x1="722" y1="120" x2="744" y2="120" stroke="#38bdf8" stroke-width="2.5" marker-end="url(#fsmArrow)"/>
+
+  <!-- Return Path from Flush to WaitBurst -->
+  <path d="M 792 165 C 792 215, 80 215, 80 168" fill="none" stroke="#f43f5e" stroke-width="2" stroke-dasharray="6,4" marker-end="url(#flushArrow)"/>
+  <text x="440" y="222" text-anchor="middle" fill="#fda4af" font-size="11">Watchdog Flush &amp; Soft Reset (16 Cycles) → Return to WaitBurst</text>
+</svg>'''
+    with open(path, 'w', encoding='utf-8') as f:
+        f.write(svg)
+    print(f'Created {path}')
+
+if __name__ == '__main__':
+    create_signal_chain_svg('docs/figures/system_signal_chain.svg')
+    create_fsm_svg('docs/figures/burst_fsm_states.svg')

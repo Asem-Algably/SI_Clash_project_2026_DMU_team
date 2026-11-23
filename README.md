@@ -110,7 +110,7 @@ rx_sync_project/
 ## 🔄 System Architecture & Signal Chain
 
 <div align="center">
-  <img src="docs/figures/architecture.png" alt="Receiver Signal Chain Architecture" width="100%" />
+  <img src="docs/figures/system_signal_chain_architecture.png" alt="Receiver Signal Chain Architecture" width="100%" />
   <p><i>Figure 1: Full-System Signal Chain Micro-Architecture (Gardner TED STR &rarr; Coarse CFO Estimator &rarr; Costas Loop & Derotator)</i></p>
 </div>
 
@@ -299,9 +299,9 @@ The verification suite was implemented in **UVM 1.2** with SystemVerilog Asserti
 
 This project was engineered for the **SI Clash Digital Design Hackathon**, organized by the **IEEE Solid-State Circuits Society (SSCS) Al-Azhar University Student Chapter (AUSC)**:
 
-- [Asem Algably](https://github.com/Asem-Algably)
-- [Hadeer Ghoneim](https://github.com/hadeer-ghoneim)
-- [Haneen Shahin](https://github.com/Haneen-Shahin)
-- [Arwa Qantoush](https://github.com/ArwaKantoush)
-- [Mohamed Gamal Diab](https://github.com/mo1234-bit)
-- [Abd El-Rhman Khalifa](https://github.com/AbdEl-RhmanKhalifa)
+- [Asem Algably](https://github.com/Asem-Algably) ([@Asem-Algably](https://github.com/Asem-Algably)): Team Lead • Top System Integration (`sync_system_top`) • FPGA Prototyping & BIST • Golden Model • SAIF Power Flow
+- [Hadeer Ghoneim](https://github.com/hadeer-ghoneim) ([@hadeer-ghoneim](https://github.com/hadeer-ghoneim)): Verification Lead • Complete UVM 1.2 Regressions • SVA Assertions • Coarse CFO Core
+- [Haneen Shahin](https://github.com/Haneen-Shahin) ([@Haneen-Shahin](https://github.com/Haneen-Shahin)): Phase Derotator RTL • NCO Phase Accumulator & Quarter-Wave Sine/Cosine LUT • Formal Linting Sign-Off & Waivers
+- [Arwa Qantoush](https://github.com/ArwaKantoush) ([@ArwaKantoush](https://github.com/ArwaKantoush)): Costas Loop Carrier Recovery RTL • Decision-Directed Slicer & Phase Error Detector • Functional Coverage
+- [Mohamed Gamal Diab](https://github.com/mo1234-bit) ([@mo1234-bit](https://github.com/mo1234-bit)): ASIC Physical Implementation (Synopsys DC & ICC Flow) • Nangate 45nm Timing Closure • Tapeout Netlists
+- [Abd El-Rhman Khalifa](https://github.com/AbdEl-RhmanKhalifa) ([@AbdEl-RhmanKhalifa](https://github.com/AbdEl-RhmanKhalifa)): Symbol Timing Recovery (STR) RTL • 2-Stage Parabolic Farrow Interpolator • Modulo-1 Controller • Top Linting Audit

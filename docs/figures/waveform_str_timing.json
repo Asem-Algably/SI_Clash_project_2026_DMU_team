@@ -1,0 +1,15 @@
+{
+  "signal": [
+    { "name": "clk", "wave": "p.............." },
+    { "name": "in_sample_valid", "wave": "1.............." },
+    { "name": "in_sample_i[11:0]", "wave": "3.3.3.3.3.3.3.3", "data": ["s0", "s1", "s2", "s3", "s4", "s5", "s6", "s7"] },
+    {},
+    { "name": "ted_error[15:0]", "wave": "x.4...4...4...4", "data": ["+0.42", "+0.18", "+0.04", "0.00"] },
+    { "name": "pi_out[15:0]", "wave": "x.5...5...5...5", "data": ["ΔW0", "ΔW1", "ΔW2", "ΔW_lock"] },
+    { "name": "mu[9:0] (Fraction)", "wave": "x.6...6...6...6", "data": ["0.81", "0.52", "0.26", "0.25"] },
+    { "name": "strobe_out (1 sps)", "wave": "0...1.......1.." },
+    { "name": "str_sym_i[15:0]", "wave": "x...7.......7..", "data": ["Sym_k", "Sym_k+1"] },
+    { "name": "str_lock", "wave": "0.....1........" }
+  ],
+  "config": { "hscale": 1.5 }
+}

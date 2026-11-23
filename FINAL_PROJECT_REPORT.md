@@ -10,11 +10,11 @@
 [![Power-Methodology](https://img.shields.io/badge/Power-IEEE_1801_SAIF_Annotated-yellowgreen.svg)](#7-vector-driven-gate-level-power-characterization--bonus-42--5-pts)
 [![ASIC-PDK](https://img.shields.io/badge/ASIC-Nangate_45nm_Tapeout_Ready-purple.svg)](#8-asic-physical-implementation-flow--bonus-44--10-pts)
 [![Verification](https://img.shields.io/badge/Verification-UVM_1.2_%26_SVA-blue.svg)](#9-industrial-verification-simulation-waveforms--coverage)
-[![Hardware-Video](https://img.shields.io/badge/Hardware_Demo-Live_Silicon_Video-red.svg?logo=google-drive&logoColor=white)](https://drive.google.com/file/d/1q5aX07ZCuSnmEI0nhQJmQzb3m5M5TnQ1/view?usp=sharing)
+[![Hardware-Video](https://img.shields.io/badge/Hardware_Demo-Live_Silicon_Video-red.svg?logo=google-drive&logoColor=white)](https://drive.google.com/file/d/1-VSb3okrkvrnm6JxDLrNsg9hf773Kjs-/view?usp=sharing)
 
 ---
 
-### [📁 Bitstream Delivery](reports/fpga_implementation/fpga_bist_top.bit) • [⚡ SAIF Power Report](reports/power_characterization/power_dynamic_leakage_saif.rpt) • [🏭 ASIC Tapeout Netlist](Asic/PNR/output/sync_system_top_icc.v) • [🧪 UVM Verification](uvm/) • [📹 Live FPGA Video](https://drive.google.com/file/d/1q5aX07ZCuSnmEI0nhQJmQzb3m5M5TnQ1/view?usp=sharing)
+### [📁 Bitstream Delivery](reports/fpga_implementation/fpga_bist_top.bit) • [⚡ SAIF Power Report](reports/power_characterization/power_dynamic_leakage_saif.rpt) • [🏭 ASIC Tapeout Netlist](Asic/PNR/output/sync_system_top_icc.v) • [🧪 UVM Verification](uvm/) • [📹 Live FPGA Video](https://drive.google.com/file/d/1-VSb3okrkvrnm6JxDLrNsg9hf773Kjs-/view?usp=sharing)
 
 </div>
 
@@ -26,21 +26,16 @@ This report presents the final engineering deliverables for the **Real-Time All-
 
 Operating at **4 samples/symbol** on **12-bit signed (`s12.11`)** baseband I/Q inputs, the unit autonomously performs coarse frequency estimation, phase derotation, symbol timing recovery (STR), and decision-directed Costas loop fine tracking. It produces calibrated, bit-exact **16-bit (`s16.15`)** symbol decisions for both **QPSK** and **16-QAM** constellations.
 
-```
-+---------------------------------------------------------------------------------------------------------+
-|                                    EXECUTIVE SCORECARD HIGHLIGHTS                                       |
-+---------------------------------------------------------------------------------------------------------+
-|  [x] Operating Clock Frequency : 200.00 MHz (Target: >=125 MHz) -> 1.6x Frequency Headroom             |
-|  [x] Timing Slack Margin       : WNS = +1.050 ns, WHS = +0.020 ns (Zero Violations across 5,895 nets)    |
-|  [x] Demodulation Accuracy     : 100% Bit-Exact (1,199 / 1,199 Symbols, Zero LSB Discrepancy)           |
-|  [x] FPGA Silicon Prototype    : AMD Zynq UltraScale+ ZCU106 with Autonomous Hardware BIST              |
-|  [x] Live Hardware Validation  : Physical board execution with PMOD 7-Seg ("AAAF") & GPIO LEDs ("0xAD")  |
-|  [x] Vector-Driven Power       : IEEE 1801 SAIF/VCD High-Confidence (0.777 W Total, 0.185 W Dynamic)   |
-|  [x] ASIC Physical Flow (45nm) : Synopsys DC + ICC Tapeout Flow (50,401 um2 Cell Area, GDSII ~52 MB)    |
-|  [x] Verification Framework    : Industrial UVM 1.2 with 16,971 lines of Coverage Reports & SVAs        |
-|  [x] RTL Quality & Linting     : Clean sign-off under STARC / IEEE 1800 rules (Zero Critical Defects)   |
-+---------------------------------------------------------------------------------------------------------+
-```
+### Key Performance Scorecard
+* **Operating Clock Frequency:** 200.00 MHz (Target: ≥ 125 MHz) — **1.6× Frequency Headroom**.
+* **Timing Slack Margin:** $WNS = +1.050\ \text{ns}$, $WHS = +0.020\ \text{ns}$ (Zero Violations across 5,895 nets).
+* **Demodulation Accuracy:** **100% Bit-Exact** (1,199 / 1,199 Payload Symbols, Zero LSB Discrepancy).
+* **FPGA Silicon Prototype:** Implemented on **AMD Zynq UltraScale+ ZCU106** with Autonomous Hardware BIST.
+* **Live Hardware Validation:** Benchtop physical execution with PMOD 7-Segment (`AAAF`) & GPIO LEDs (`0xAD`).
+* **Vector-Driven Power:** IEEE 1801 SAIF/VCD High-Confidence (**0.777 W Total**, 0.185 W Dynamic).
+* **ASIC Physical Flow (45nm):** Synopsys DC + ICC Tapeout Flow (**50,401 µm² Cell Area**, GDSII ~52 MB).
+* **Verification Framework:** Industrial UVM 1.2 with 16,971 lines of Coverage Reports & SVA Assertions.
+* **RTL Quality & Linting:** Clean sign-off under STARC / IEEE 1800 rules (Zero Critical Defects).
 
 ---
 
@@ -59,7 +54,7 @@ The design achieves full compliance across all 7 core checkpoints and all 4 offi
 | **Checkpoint 7** | **10 Pts** | Post-implementation timing closure ($\ge 125\ \text{MHz}$), reports | Closed at $\mathbf{200.00\ \text{MHz}}$ ($WNS = +1.050\ \text{ns}$) | **PASS** | [`reports/fpga_implementation/`](reports/fpga_implementation/) |
 | **⭐ BONUS 4.1** | **10 Pts** | FSM diagrams, cycle-accurate waveforms, clean linting | Hierarchical FSM, clean SpyGlass/Questa lint | **PASS** | [`lint/Linting_report_finished.docx`](lint/Linting_report_finished.docx) |
 | **⭐ BONUS 4.2** | **5 Pts** | Gate-level power analysis using `.saif` / `.vcd` files | IEEE 1801 SAIF (200k toggles), High Confidence | **PASS** | [`reports/power_characterization/`](reports/power_characterization/) |
-| **⭐ BONUS 4.3** | **10 Pts** | Physical execution & verification on live FPGA board | Live ZCU106 board run at 200 MHz, PMOD `AAAF` | **PASS** | [Live Video Demo Link](https://drive.google.com/file/d/1q5aX07ZCuSnmEI0nhQJmQzb3m5M5TnQ1/view?usp=sharing) |
+| **⭐ BONUS 4.3** | **10 Pts** | Physical execution & verification on live FPGA board | Live ZCU106 board run at 200 MHz, PMOD `AAAF` | **PASS** | [Live Video Demo Link](https://drive.google.com/file/d/1-VSb3okrkvrnm6JxDLrNsg9hf773Kjs-/view?usp=sharing) |
 | **⭐ BONUS 4.4** | **10 Pts** | ASIC standard-cell synthesis and P&R flow (Synopsys DC/ICC) | 45nm standard cell flow: $50,401\ \mu\text{m}^2$, GDSII | **PASS** | [`Asic/`](Asic/) |
 | **TOTAL** | **135 / 100** | **Complete Core Requirements + All 4 Bonus Criteria** | **Maximum Competitive Advantage** | **100% Complete** | [Full Repository](https://github.com/Asem-Algably/SI_Clash_project_2026_DMU_team.git) |
 
@@ -86,32 +81,9 @@ The design achieves full compliance across all 7 core checkpoints and all 4 offi
 
 ## 4. RTL Subsystem Implementation & Micro-Architecture (Checkpoints 2–5)
 
-```
-  Raw Baseband IQ (12b, 4 sps)
-              │
-              ▼
-   ┌───────────────────────┐
-   │ Checkpoint 2: STR     │◄── Gardner TED + 2-Stage Parabolic Farrow + Retimed Modulo-1
-   └──────────┬────────────┘
-              │ Symbol-Rate Strobe (1 sps)
-              ▼
-   ┌───────────────────────┐
-   │ Checkpoint 3: CCFO    │◄── 32-Symbol Autocorrelator + 16-Iteration CORDIC Angle
-   └──────────┬────────────┘
-              │ Coarse Frequency Word (s24.23)
-              ▼
-   ┌───────────────────────┐
-   │ Checkpoint 4A: DEROT  │◄── 32-bit NCO (Quarter-Wave LUT, >85 dBc SFDR) + Complex Mult
-   └──────────┬────────────┘
-              │ De-rotated Symbols (16b)
-              ▼
-   ┌───────────────────────┐
-   │ Checkpoint 4B: COSTAS │◄── Decision-Directed Slicer (QPSK/16-QAM) + Active PI Filter
-   └──────────┬────────────┘
-              │ Calibrated Symbols (16b) + Dual Lock Flags
-              ▼
-    Recovered 1,199 Payload Symbols (Bit-Exact to Golden Reference)
-```
+![Real-Time Baseband Receiver Synchronization Signal Chain](docs/figures/system_signal_chain.png)
+
+*Figure 1: Full System Architectural Signal Chain (SVG: [`docs/figures/system_signal_chain.svg`](docs/figures/system_signal_chain.svg)).*
 
 ### 4.1 Checkpoint 2: Symbol Timing Recovery (STR) (`rtl/str/`)
 * **Parabolic Farrow Interpolator:** 2-stage pipelined polynomial evaluating fractional delay $\mu$ with 3 DSP multiplications per sample.
@@ -135,6 +107,11 @@ The design achieves full compliance across all 7 core checkpoints and all 4 offi
 ## 5. Top-Level Integration & System Performance (Checkpoint 6)
 
 ### 5.1 Autonomous Burst Controller FSM (`rtl/top/burst_ctrl.sv`)
+
+![Autonomous Burst Controller FSM Sequencing](docs/figures/burst_fsm_states.png)
+
+*Figure 2: 7-State Autonomous Burst Control FSM Sequencing (SVG: [`docs/figures/burst_fsm_states.svg`](docs/figures/burst_fsm_states.svg)).*
+
 * **State Progression:** `WaitBurst` (0) $\rightarrow$ `Acquire` (1) $\rightarrow$ `CoarseEst` (2) $\rightarrow$ `Load` (3) $\rightarrow$ `CostasAcq` (4) $\rightarrow$ `Track` (5) $\rightarrow$ `Flush` (6).
 * **Watchdog Protection:** Flushes pipelines and executes clean soft reset if 14 consecutive invalid cycles occur.
 
@@ -168,19 +145,22 @@ The design achieves full compliance across all 7 core checkpoints and all 4 offi
 | **Clock Buffers (BUFG)**| 544 | **4** | **0.74%** | Low-skew clock distribution |
 | **MMCM Blocks** | 8 | **1** | **12.50%** | 125 MHz to 200 MHz PLL synthesis |
 
-### 6.3 Autonomous Hardware BIST & Visual Indicators
+### 6.3 Autonomous Hardware BIST & Visual Telemetry
 * **PMOD 7-Segment Display:** Displays **`AA AF`** on PASS (`0xAA` = PASS code, `0xAF` = 1,199 verified symbols). Freezes at `EE <addr>` upon error.
 * **GPIO Status LEDs (`gpio_led[7:0]`):** Settles at **`0xAD`** (`8'b1010_1101` = Done, Costas Lock, STR Lock, No Errors, All Passed).
 * **Pushbutton Reset (`SW14`):** Triggers instantaneous synchronous reset, re-running the entire 5,624-vector self-test in **$28.12\ \mu\text{s}$**.
 
-### 6.4 Live Silicon Hardware Video Proof (⭐ BONUS 4.3 — 10 Pts)
-The core was flashed and physically executed on the benchtop:
+### 6.4 Live Silicon Hardware Video Proof & On-Board Photo (⭐ BONUS 4.3 — 10 Pts)
+
+![Physical PL GPIO LEDs on ZCU106 Board asserting 0xAD](docs/figures/fpga_gpio_leds_0xad.jpg)
+
+*Figure 3: Live AMD ZCU106 Board Execution — Physical PL GPIO LEDs glowing `0xAD` (`8'b1010_1101`), confirming `ALL_PASSED`, `NO_ERRORS`, `STR_LOCKED`, `COSTAS_LOCKED`, and `DONE`.*
 
 <div align="center">
 
-[![Watch Live Demo](https://img.shields.io/badge/▶_WATCH_LIVE_FPGA_DEMO-Google_Drive-red?style=for-the-badge&logo=google-drive&logoColor=white)](https://drive.google.com/file/d/1q5aX07ZCuSnmEI0nhQJmQzb3m5M5TnQ1/view?usp=sharing)
+[![Watch Live Demo](https://img.shields.io/badge/▶_WATCH_LIVE_FPGA_DEMO-Google_Drive-red?style=for-the-badge&logo=google-drive&logoColor=white)](https://drive.google.com/file/d/1-VSb3okrkvrnm6JxDLrNsg9hf773Kjs-/view?usp=sharing)
 
-**Direct Video Link:** [https://drive.google.com/file/d/1q5aX07ZCuSnmEI0nhQJmQzb3m5M5TnQ1/view?usp=sharing](https://drive.google.com/file/d/1q5aX07ZCuSnmEI0nhQJmQzb3m5M5TnQ1/view?usp=sharing)
+**Direct Video Link:** [https://drive.google.com/file/d/1-VSb3okrkvrnm6JxDLrNsg9hf773Kjs-/view?usp=sharing](https://drive.google.com/file/d/1-VSb3okrkvrnm6JxDLrNsg9hf773Kjs-/view?usp=sharing)
 
 </div>
 
@@ -225,7 +205,9 @@ To demonstrate silicon viability beyond FPGAs, the core was carried through the 
 | **Routed Nets / Wirelength** | **32,670 nets / 778,323 µm** | Zero DRC violations, zero antenna violations |
 | **Tapeout Deliverables** | **GDSII (~52 MB), SPEF, Netlists** | Staged in [`Asic/PNR/output/`](Asic/PNR/output/) |
 
-*Layout references:* High-resolution layouts from IC Compiler are available in [`Asic/pics/`](Asic/pics/) (`1.png` to `8.png`).
+![Synopsys IC Compiler 10-Metal Full Chip Layout](Asic/pics/8.png)
+
+*Figure 4: Full Chip Post-Route Layout from Synopsys IC Compiler (Floorplan, Power Straps, CTS & 10-Metal Detailed Routing).*
 
 ---
 
@@ -242,11 +224,26 @@ Verification was developed under UVM 1.2 across dedicated environments for `sync
 | **Coarse CFO (`coarse_cfo_core`)**| **100.0%** | **100.0%** | CORDIC Angle Bins, Sign Crosses | [`coverage_rpt_coarse_cfo_core.txt`](uvm/coarse_cfo_uvm/coverage_rpt_coarse_cfo_core.txt) (130 KB) |
 | **Derotator (`derotator`)** | **100.0%** | **100.0%** | NCO Accumulator Wraps, LUT Symmetry | [`coverage_rpt_derotator.txt`](uvm/derotator_uvm/coverage_rpt_derotator.txt) (550 KB) |
 
-### 9.2 QuestaSim Waveform Gallery
-* **Figure 1 (Top-Level Burst Acquisition & Lock):** Displays raw IQ inputs, preamble coarse CFO estimation strobe at cycle 234, Costas lock assertion at cycle 765, and bit-exact 16-QAM symbol emission across 1,199 symbols.
-* **Figure 2 (STR Farrow Interpolation & TED Convergence):** Shows Gardner TED error converging to zero, retimed Modulo-1 counter generating fractional delay $\mu$, and valid symbol strobes.
-* **Figure 3 (Costas Phase Tracking & NCO De-rotation):** Shows NCO phase tracking carrier frequency offset with zero cycle slips and clean hard decisions.
-* **Figure 4 (Constellation Trajectory):** Scatter plot showing transition from a smeared input ring into sharp, discrete QPSK and 16-QAM clusters.
+---
+
+### 9.2 WaveDrom Cycle-Accurate Digital Waveforms
+
+#### Waveform 1: Top-Level Full Burst Acquisition & Lock (`sync_system_top`)
+![WaveDrom Top-Level Full Burst Waveform](docs/figures/waveform_top_burst.png)
+
+*Figure 5: WaveDrom Cycle-Accurate Timing Diagram — Top-Level Burst Acquisition, Coarse CFO Estimation, Dual Lock, and Bit-Exact Payload Demodulation (SVG: [`docs/figures/waveform_top_burst.svg`](docs/figures/waveform_top_burst.svg)).*
+
+#### Waveform 2: Symbol Timing Recovery (STR) & Parabolic Farrow Interpolation
+![WaveDrom STR Timing Waveform](docs/figures/waveform_str_timing.png)
+
+*Figure 6: WaveDrom Timing Diagram — Gardner TED Error, Retimed Modulo-1 Fractional Delay $\mu$, and Strobe Generation (SVG: [`docs/figures/waveform_str_timing.svg`](docs/figures/waveform_str_timing.svg)).*
+
+#### Waveform 3: Fine Carrier Tracking & Decision-Directed Costas Loop
+![WaveDrom Costas Phase Tracking Waveform](docs/figures/waveform_costas_phase.png)
+
+*Figure 7: WaveDrom Timing Diagram — Costas Loop Decision-Directed Phase Error Convergence & Slicer Decisions (SVG: [`docs/figures/waveform_costas_phase.svg`](docs/figures/waveform_costas_phase.svg)).*
+
+---
 
 ### 9.3 SystemVerilog + MATLAB Co-Simulation (Advanced Feature)
 > [!NOTE]
@@ -293,6 +290,19 @@ Judges and evaluators can verify results directly in minutes:
   `source scripts/vivado/generate_saif_power_report.tcl`
 * **Execute UVM Regressions (QuestaSim):**
   `vsim -c -do "do scripts/questa/run_all_subsystem_sims.do; quit -f"`
+
+---
+
+## 👥 Project Team
+
+This project was engineered for the **SI Clash Digital Design Hackathon**, organized by the **IEEE Solid-State Circuits Society (SSCS) Al-Azhar University Student Chapter (AUSC)**:
+
+- [@Asem-Algably](https://github.com/Asem-Algably)
+- [@hadeer-ghoneim](https://github.com/hadeer-ghoneim)
+- [@Haneen-Shahin](https://github.com/Haneen-Shahin)
+- [@ArwaKantoush](https://github.com/ArwaKantoush)
+- [@mo1234-bit](https://github.com/mo1234-bit)
+- [@AbdEl-RhmanKhalifa](https://github.com/AbdEl-RhmanKhalifa)
 
 ---
 

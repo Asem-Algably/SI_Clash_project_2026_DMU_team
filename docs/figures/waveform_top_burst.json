@@ -1,0 +1,25 @@
+{
+  "signal": [
+    { "name": "clk", "wave": "p.............." },
+    { "name": "rst_n", "wave": "01............." },
+    { "name": "in_sample_valid", "wave": "01............." },
+    { "name": "in_sample_i[11:0]", "wave": "x.3.3.3.3.3.3.3", "data": ["S_0", "S_1", "S_2", "S_3", "S_4", "S_5", "S_6"] },
+    { "node": "..a...b...c...." },
+    {},
+    { "name": "fsm_state[2:0]", "wave": "2.3...4.5...6..", "data": ["Acquire (1)", "CoarseEst (2)", "Load (3)", "CostasAcq (4)", "Track (5)"] },
+    { "name": "str_lock", "wave": "0...1.........." },
+    { "name": "coarse_valid", "wave": "0.....10......." },
+    { "name": "coarse_cfo_est[23:0]", "wave": "x.....3........", "data": ["0x10A038 (+CFO)"] },
+    { "name": "costas_lock", "wave": "0.........1...." },
+    { "name": "lock_detect", "wave": "0.........1...." },
+    {},
+    { "name": "out_sym_valid", "wave": "0.........1.1.1" },
+    { "name": "dut_out_sym_i[15:0]", "wave": "x.........4.4.4", "data": ["+1.0", "-1.0", "+3.0"] },
+    { "name": "dut_out_sym_q[15:0]", "wave": "x.........5.5.5", "data": ["+1.0", "+3.0", "-1.0"] }
+  ],
+  "edge": [
+    "a~>b STR Locked",
+    "b~>c Dual Locked"
+  ],
+  "config": { "hscale": 1.5 }
+}
