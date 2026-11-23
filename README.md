@@ -52,14 +52,13 @@ This repository delivers a production-ready, silicon-proven **Real-Time All-Digi
 | Metric / Parameter | Competition Target | Achieved (This Implementation) | Sign-Off Deliverable |
 | :--- | :---: | :---: | :--- |
 | **Clock Frequency** | $125.00\ \text{MHz}$ | $\mathbf{200.00\ \text{MHz}}$ | Post-route timing closure ($WNS = +0.12\ \text{ns}$, 0 violations) |
-| **Clock Period** | $8.00\ \text{ns}$ | $\mathbf{5.00\ \text{ns}}$ | Validated across FPGA & ASIC worst-case corner (`ss0p95vn40c`) |
-| **Demodulation Accuracy** | Bit-Exact | $\mathbf{100\%\ (1,199 / 1,199\ \text{Symbols})}$ | **Zero LSB Error** vs. MATLAB golden model |
-| **Power Characterization** | Vector-Driven | $\mathbf{0.777\ \text{W}\ (0.185\ \text{W}\ \text{Dynamic})}$ | **IEEE 1801 SAIF / VCD Annotated (Confidence: HIGH)** |
+| **Clock Period** | $8.00\ \text{ns}$ | $\mathbf{5.00\ \text{ns}}$ | Validated across FPGA & ASIC |
+| **Demodulation Accuracy** | Bit-Exact | 100% | **Zero LSB Error** vs. MATLAB golden model |
+| **Power Characterization** | Vector-Driven | $\mathbf{0.777\ \text{W}\ (0.185\ \text{W}\ \text{Dynamic})}$ | **IEEE 1801 SAIF / VCD Annotated** |
 | **FPGA Target** | Evaluation Board | **AMD Zynq UltraScale+ ZCU106** | Hardware bitstream verified ([`fpga_bist_top.bit`](reports/fpga_implementation/fpga_bist_top.bit)) |
 | **ASIC Target** | Standard Cells | **Nangate 45 nm FreePDK45** | Tapeout GDSII, SPEF, post-route netlist ([`Asic/`](Asic/)) |
 | **ASIC Cell Area** | Minimal Footprint | $\mathbf{50,401\ \mu\text{m}^2}\ (\approx 0.05\ \text{mm}^2)$ | Synopsys ICC post-route summary (28,617 cells) |
 | **Verification** | Comprehensive | **Industrial UVM 1.2 + SVA** | 100% statement & branch coverage ([`uvm/`](uvm/)) |
-| **Hardware BIST** | Autonomous | **PMOD (`AAAF`) & LEDs (`0xAD`)** | Standalone on-board execution with instant $SW14$ restart |
 
 ---
 
