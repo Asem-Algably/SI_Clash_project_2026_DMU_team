@@ -303,4 +303,4 @@ This project was engineered for the **SI Clash Digital Design Hackathon**, organ
 - Haneen Shahin ([@Haneen-Shahin](https://github.com/Haneen-Shahin))
 - Arwa Kantoush ([@ArwaKantoush](https://github.com/ArwaKantoush))
 - Mohamed Gamal Diab ([@mo1234-bit](https://github.com/mo1234-bit))
-- Abd El-Rhman Khalifa ([@AbdEl-RhmanKhalifa](https://github.com/AbdEl-RhmanKhalifa))
+- Abd El-Rhman Khalifa ([@Abd-El-Rhman-Khalifa](https://github.com/Abd-El-Rhman-Khalifa))
