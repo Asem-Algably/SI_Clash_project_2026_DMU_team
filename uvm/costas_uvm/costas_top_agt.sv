@@ -13,6 +13,7 @@ package costas_top_agtt;
         costas_top_monitor monitor;
         costas_top_confg cfg;
         uvm_analysis_port #(costas_top_seq_item) agt_ap;
+        uvm_analysis_port #(costas_top_seq_item) exp_ap;
         function new(string name="costas_top_agt", uvm_component parent = null);
             super.new(name,parent);
         endfunction //new()
@@ -28,6 +29,7 @@ package costas_top_agtt;
             sqr = costas_top_sqr_class::type_id::create("sqr",this);
         end
         agt_ap = new("agt_ap",this);
+        exp_ap = new("exp_ap",this);
         endfunction
         function void connect_phase (uvm_phase phase);
         super.connect_phase(phase);
@@ -37,6 +39,7 @@ package costas_top_agtt;
         begin
             driver.costas_top_test_vif=cfg.costas_top_test_vif;
             driver.seq_item_port.connect(sqr.seq_item_export);
+            driver.drv_ap.connect(exp_ap);
         end
         monitor.mon_ap.connect(agt_ap);
     endfunction

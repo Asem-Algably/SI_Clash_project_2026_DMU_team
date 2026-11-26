@@ -22,11 +22,11 @@ coarse_cfo_core_env.sv
 // UVM Test
 coarse_cfo_core_test.sv
 
-// RTL Design
-complex_mult.sv
-accumulator.sv
-cordic_angle.sv
-coarse_cfo_core.sv    
+// RTL Design (authoritative rtl/)
+../../rtl/coarse_cfo/complex_mult.sv
+../../rtl/coarse_cfo/accumulator.sv
+../../rtl/coarse_cfo/cordic_angle.sv
+../../rtl/coarse_cfo/coarse_cfo_core.sv
 
 // Top Module
 coarse_cfo_core_top.sv

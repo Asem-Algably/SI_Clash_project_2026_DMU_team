@@ -22,13 +22,15 @@ package sync_system_top_sequence_item;
         logic                    force_freq_en  = 1'b0;
         logic [31:0]             force_freq     = '0;
 
-        // ------------- Expected values (from tb_top_vec.hex) -------------
+        // ------------- Expected values (from tb_top_tc_XX.hex / tb_top_vec.hex) -------------
         bit                      golden         = 1'b0;      // item comes from the golden file
         logic                    exp_valid      = 1'b0;
         logic signed [15:0]      exp_i          = '0;
         logic signed [15:0]      exp_q          = '0;
         logic [2:0]              exp_state      = '0;
         logic                    exp_lock       = 1'b0;
+        bit                      has_exp_cfo    = 1'b0;
+        logic signed [23:0]      exp_cfo        = '0;
 
         // ------------- Actual outputs (filled in by the monitor) -------------
         logic                    out_sym_valid;

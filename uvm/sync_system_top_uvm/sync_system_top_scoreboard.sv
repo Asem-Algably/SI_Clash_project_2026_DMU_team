@@ -30,9 +30,10 @@ package sync_system_top_scoreborad_pck;
         int state_err_count     = 0;
         int cfo_err_count       = 0;
 
-        logic [2:0] prev_state  = 3'd0;
-        bit         cfo_checked = 1'b0;
-        bit         last_lock   = 1'b0;
+        logic [2:0]          prev_state  = 3'd0;
+        bit                  cfo_checked = 1'b0;
+        bit                  last_lock   = 1'b0;
+        logic signed [23:0]  cfo_golden;
 
         function new(string name = "sync_system_top_scoreborad", uvm_component parent = null);
             super.new(name, parent);
@@ -84,6 +85,9 @@ package sync_system_top_scoreborad_pck;
                 // ------------------------------------------------------------
                 if (!$isunknown(actual.fsm_state) && (actual.fsm_state !== prev_state)) begin
                     state_change_count++;
+                    if (actual.fsm_state == 3'd0) begin
+                        cfo_checked = 1'b0;
+                    end
                     if (enable_check) begin
                         if (st_fifo.try_get(exp_st)) begin
                             if (exp_st.exp_state !== actual.fsm_state) begin
@@ -94,6 +98,7 @@ package sync_system_top_scoreborad_pck;
                                                st_name(exp_st.exp_state), exp_st.exp_state))
                             end
                         end else begin
+                            exp_st = null;
                             state_err_count++;
                             if (state_err_count <= max_err_msgs)
                                 `uvm_error("SB_STATE", $sformatf("Unexpected FSM transition to %s (golden has no more changes)",
@@ -101,16 +106,17 @@ package sync_system_top_scoreborad_pck;
                         end
 
                         // ----------------------------------------------------
-                        // 2) Coarse CFO estimate, checked once when the burst
-                        //    enters CostasAcq (estimate is held in the core)
+                        // 2) Coarse CFO estimate, checked once per burst when
+                        //    entering CostasAcq (compare per-case or fallback)
                         // ----------------------------------------------------
                         if (check_cfo && (actual.fsm_state == 3'd4) && !cfo_checked) begin
                             cfo_checked = 1'b1;
                             cfo_ext     = actual.coarse_cfo_est;
-                            if (cfo_ext !== exp_coarse_cfo) begin
+                            cfo_golden  = (exp_st != null && exp_st.has_exp_cfo) ? exp_st.exp_cfo : exp_coarse_cfo[23:0];
+                            if (actual.coarse_cfo_est !== cfo_golden) begin
                                 cfo_err_count++;
-                                `uvm_error("SB_CFO", $sformatf("coarse_cfo_est=%0d expected=%0d (expected_metrics.txt)",
-                                           cfo_ext, exp_coarse_cfo))
+                                `uvm_error("SB_CFO", $sformatf("coarse_cfo_est=%0d expected=%0d",
+                                           cfo_ext, $signed(cfo_golden)))
                             end else
                                 `uvm_info("SB_CFO", $sformatf("coarse_cfo_est=%0d matches golden", cfo_ext), UVM_LOW)
                         end

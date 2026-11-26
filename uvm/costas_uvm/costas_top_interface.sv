@@ -21,4 +21,5 @@ interface costas_top_inter (input bit clk);
     logic                dbg_e_valid_o;
     logic                dbg_lock_int_o;
     logic                dbg_quad_done_o;
+    logic [23:0]         kp_obs;
 endinterface

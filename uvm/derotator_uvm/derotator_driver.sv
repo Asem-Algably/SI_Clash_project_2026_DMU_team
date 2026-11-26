@@ -22,17 +22,26 @@ package derotator_drive;
         
         task run_phase (uvm_phase phase);
             super.run_phase(phase);
-            
-            derotator_test_vif.rst_ni <= 0;
-            derotator_test_vif.s_axis_valid_i <= 0;
-            @(negedge derotator_test_vif.clk);
-            derotator_test_vif.rst_ni <= 1;
-            
+
+            derotator_test_vif.rst_ni            <= 1'b0;
+            derotator_test_vif.s_axis_valid_i    <= 1'b0;
+            derotator_test_vif.s_axis_i_sym_i    <= 16'sd0;
+            derotator_test_vif.s_axis_q_sym_i    <= 16'sd0;
+            derotator_test_vif.coarse_valid_i    <= 1'b0;
+            derotator_test_vif.coarse_word_i     <= 24'sd0;
+            derotator_test_vif.freq_adj_valid_i  <= 1'b0;
+            derotator_test_vif.freq_adj_i        <= 32'sd0;
+            derotator_test_vif.force_freq_en_i   <= 1'b0;
+            derotator_test_vif.force_freq_i      <= 32'd0;
+            derotator_test_vif.phase_adj_valid_i <= 1'b0;
+            derotator_test_vif.phase_adj_i       <= 32'd0;
+
             forever begin
                 seq_item_port.get_next_item(req);
-                
-                // Drive inputs
+
+                // Drive inputs before posedge
                 @(negedge derotator_test_vif.clk);
+                derotator_test_vif.rst_ni           <= req.rst_ni;
                 derotator_test_vif.s_axis_valid_i   <= req.s_axis_valid_i;
                 derotator_test_vif.s_axis_i_sym_i   <= req.s_axis_i_sym_i;
                 derotator_test_vif.s_axis_q_sym_i   <= req.s_axis_q_sym_i;
@@ -44,10 +53,11 @@ package derotator_drive;
                 derotator_test_vif.force_freq_i     <= req.force_freq_i;
                 derotator_test_vif.phase_adj_valid_i<= req.phase_adj_valid_i;
                 derotator_test_vif.phase_adj_i      <= req.phase_adj_i;
-                
-                // Send to scoreboard so it knows what to expect
-                drv_ap.write(req);
-                
+
+                if (req.exp_valid === 1'b1) begin
+                    drv_ap.write(req);
+                end
+
                 seq_item_port.item_done();
             end
         endtask

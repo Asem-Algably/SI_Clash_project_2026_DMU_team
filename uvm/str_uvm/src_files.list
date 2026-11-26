@@ -12,11 +12,11 @@ str_top_scoreboard.sv
 str_top_agt.sv
 str_top_env.sv
 str_top_test.sv
-gardner_ted_estimator.sv
-lock_detector.sv
-modulo_1_controller.sv
-parabolic_farrow_interpolator.sv
-pI_loop.sv
-str_top.sv
+../../rtl/str/gardner_ted_estimator.sv
+../../rtl/str/lock_detector.sv
+../../rtl/str/modulo_1_controller.sv
+../../rtl/str/parabolic_farrow_interpolator.sv
+../../rtl/str/pI_loop.sv
+../../rtl/str/str_top.sv
 sva.sv
 str_top_top.sv

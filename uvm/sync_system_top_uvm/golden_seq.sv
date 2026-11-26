@@ -31,78 +31,149 @@ package golden_sequence;
             return r;
         endfunction
 
+        function bit is_comment_or_blank(string s);
+            for (int k = 0; k < s.len(); k++) begin
+                byte c = s.getc(k);
+                if (c == " " || c == "\t" || c == 8'h0d || c == "\n") continue;
+                return (c == "#" || c == "/");
+            end
+            return 1'b1;
+        endfunction
+
+        task load_case_list(output string files[$]);
+            int fd;
+            string line, cleaned, arg;
+            files.delete();
+            if ($value$plusargs("VEC_FILE=%s", arg)) begin
+                files.push_back(arg);
+                return;
+            end
+            fd = $fopen("cases/cases_list.txt", "r");
+            if (fd != 0) begin
+                while (!$feof(fd)) begin
+                    line = "";
+                    if ($fgets(line, fd) == 0) break;
+                    if (is_comment_or_blank(line)) continue;
+                    cleaned = "";
+                    for (int k = 0; k < line.len(); k++) begin
+                        byte c = line.getc(k);
+                        if (c != " " && c != "\t" && c != 8'h0d && c != "\n")
+                            cleaned = {cleaned, line.substr(k, k)};
+                    end
+                    if (cleaned.len() > 0) files.push_back(cleaned);
+                end
+                $fclose(fd);
+            end
+        endtask
+
         task body();
             int                      fd;
             string                   line, hexs, fname;
+            string                   case_files[$];
             string                   candidates[$];
-            int                      mt;
+            int                      mt, cidx;
             sync_system_top_seq_item item;
 
             if ($value$plusargs("MOD_TYPE=%d", mt)) mod_type = mt[1:0];
 
-            // -------- locate and open the vector file --------
-            if ($value$plusargs("VEC_FILE=%s", fname))
-                candidates.push_back(fname);
-            candidates.push_back("tb_top_vec.hex");
-            candidates.push_back("../vectors/tb_top_vec.hex");
-            candidates.push_back("tb/vectors/tb_top_vec.hex");
-            candidates.push_back("uvm/vectors/tb_top_vec.hex");
-
-            fd = 0;
-            foreach (candidates[k]) begin
-                if (fd == 0) begin
+            load_case_list(case_files);
+            if (case_files.size() == 0) begin
+                candidates.push_back("tb_top_vec.hex");
+                candidates.push_back("../vectors/tb_top_vec.hex");
+                candidates.push_back("tb/vectors/tb_top_vec.hex");
+                candidates.push_back("uvm/vectors/tb_top_vec.hex");
+                foreach (candidates[k]) begin
                     fd = $fopen(candidates[k], "r");
-                    if (fd != 0) fname = candidates[k];
+                    if (fd != 0) begin
+                        $fclose(fd);
+                        case_files.push_back(candidates[k]);
+                        break;
+                    end
                 end
             end
-            if (fd == 0)
-                `uvm_fatal("GOLDEN_SEQ", "Could not open tb_top_vec.hex - put it in the simulation directory or pass +VEC_FILE=<path>")
+            if (case_files.size() == 0)
+                `uvm_fatal("GOLDEN_SEQ", "No vector files found (neither cases/cases_list.txt nor tb_top_vec.hex)")
 
-            // -------- one item per vector line --------
-            while (!$feof(fd)) begin
-                line = "";
-                if ($fgets(line, fd) == 0) break;
-                hexs = hex_only(line);
-                if (hexs.len() != 19) continue;          // blank / malformed line
+            foreach (case_files[cidx]) begin
+                int case_vecs = 0;
+                fname = case_files[cidx];
+                fd = $fopen(fname, "r");
+                if (fd == 0)
+                    `uvm_fatal("GOLDEN_SEQ", $sformatf("Could not open case vector file: %s", fname))
 
-                item = sync_system_top_seq_item::type_id::create("item");
-                start_item(item);
+                while (!$feof(fd)) begin
+                    line = "";
+                    if ($fgets(line, fd) == 0) break;
+                    if (is_comment_or_blank(line)) continue;
+                    hexs = hex_only(line);
+                    if (hexs.len() != 19 && hexs.len() != 49) continue;
 
-                item.rst_n     = 1'b1;
-                item.golden    = 1'b1;
-                item.mod_type  = mod_type;
-                item.valid     = hexs.substr(0, 0).atohex();
-                item.i_in      = hexs.substr(1, 3).atohex();
-                item.q_in      = hexs.substr(4, 6).atohex();
-                item.start     = hexs.substr(7, 7).atohex();
-                item.exp_valid = hexs.substr(8, 8).atohex();
-                item.exp_i     = hexs.substr(9, 12).atohex();
-                item.exp_q     = hexs.substr(13, 16).atohex();
-                item.exp_state = hexs.substr(17, 17).atohex();
-                item.exp_lock  = hexs.substr(18, 18).atohex();
+                    item = sync_system_top_seq_item::type_id::create("item");
+                    start_item(item);
 
-                finish_item(item);
+                    item.golden = 1'b1;
+                    if (hexs.len() == 49) begin
+                        item.rst_n         = hexs.substr(0, 0).atohex();
+                        item.valid         = hexs.substr(1, 1).atohex();
+                        item.i_in          = hexs.substr(2, 4).atohex();
+                        item.q_in          = hexs.substr(5, 7).atohex();
+                        item.start         = hexs.substr(8, 8).atohex();
+                        item.mod_type      = hexs.substr(9, 9).atohex();
+                        item.dft_sel       = hexs.substr(10, 10).atohex();
+                        item.force_w_en    = hexs.substr(11, 11).atohex();
+                        item.force_w       = hexs.substr(12, 15).atohex();
+                        item.force_cfo_en  = hexs.substr(16, 16).atohex();
+                        item.force_cfo     = hexs.substr(17, 22).atohex();
+                        item.force_freq_en = hexs.substr(23, 23).atohex();
+                        item.force_freq    = hexs.substr(24, 31).atohex();
+                        item.exp_valid     = hexs.substr(32, 32).atohex();
+                        item.exp_i         = hexs.substr(33, 36).atohex();
+                        item.exp_q         = hexs.substr(37, 40).atohex();
+                        item.exp_state     = hexs.substr(41, 41).atohex();
+                        item.exp_lock      = hexs.substr(42, 42).atohex();
+                        item.has_exp_cfo   = 1'b1;
+                        item.exp_cfo       = hexs.substr(43, 48).atohex();
+                    end else begin
+                        item.rst_n         = 1'b1;
+                        item.mod_type      = mod_type;
+                        item.valid         = hexs.substr(0, 0).atohex();
+                        item.i_in          = hexs.substr(1, 3).atohex();
+                        item.q_in          = hexs.substr(4, 6).atohex();
+                        item.start         = hexs.substr(7, 7).atohex();
+                        item.exp_valid     = hexs.substr(8, 8).atohex();
+                        item.exp_i         = hexs.substr(9, 12).atohex();
+                        item.exp_q         = hexs.substr(13, 16).atohex();
+                        item.exp_state     = hexs.substr(17, 17).atohex();
+                        item.exp_lock      = hexs.substr(18, 18).atohex();
+                        item.has_exp_cfo   = 1'b0;
+                    end
 
-                num_vecs++;
-                if (item.exp_valid) num_exp_syms++;
+                    finish_item(item);
+                    case_vecs++;
+                    num_vecs++;
+                    if (item.exp_valid) num_exp_syms++;
+                end
+                $fclose(fd);
+                `uvm_info("GOLDEN_SEQ", $sformatf("Loaded %0d vectors from %s (total=%0d, exp_syms=%0d)",
+                          case_vecs, fname, num_vecs, num_exp_syms), UVM_LOW)
             end
-            $fclose(fd);
-
-            `uvm_info("GOLDEN_SEQ", $sformatf("Loaded %0d vectors (%0d expected output symbols) from %s",
-                      num_vecs, num_exp_syms, fname), UVM_LOW)
 
             if (num_vecs == 0)
-                `uvm_fatal("GOLDEN_SEQ", "Vector file was opened but no valid lines were parsed")
+                `uvm_fatal("GOLDEN_SEQ", "Vector file(s) opened but no valid lines were parsed")
 
             // Idle at the end so the inputs do not keep the last vector
             repeat (num_tail_idle) begin
                 item = sync_system_top_seq_item::type_id::create("item");
                 start_item(item);
-                item.rst_n = 1'b1;
-                item.valid = 1'b0;
-                item.start = 1'b0;
-                item.i_in  = 12'sd0;
-                item.q_in  = 12'sd0;
+                item.rst_n         = 1'b1;
+                item.valid         = 1'b0;
+                item.start         = 1'b0;
+                item.i_in          = 12'sd0;
+                item.q_in          = 12'sd0;
+                item.dft_sel       = 4'd0;
+                item.force_w_en    = 1'b0;
+                item.force_cfo_en  = 1'b0;
+                item.force_freq_en = 1'b0;
                 finish_item(item);
             end
         endtask
