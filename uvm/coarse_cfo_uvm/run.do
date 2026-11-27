@@ -17,7 +17,9 @@ if {[llength [find instances /top/dut]] > 0} {
     add wave -position insertpoint sim:/top/dut/*
 }
 
+onfinish stop
 run -all
 
-coverage save coarse_cfo_core_tb.ucdb -onexit
+coverage save coarse_cfo_core_tb.ucdb
 vcover report coarse_cfo_core_tb.ucdb -details -all -output coverage_rpt_coarse_cfo_core.txt
+quit -f

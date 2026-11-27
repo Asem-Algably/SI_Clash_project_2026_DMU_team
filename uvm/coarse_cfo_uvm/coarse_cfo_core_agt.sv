@@ -13,6 +13,7 @@ package coarse_cfo_core_agtt;
         coarse_cfo_core_monitor monitor;
         coarse_cfo_core_confg cfg;
         uvm_analysis_port #(coarse_cfo_core_seq_item) agt_ap;
+        uvm_analysis_port #(coarse_cfo_core_seq_item) exp_ap;
         function new(string name="coarse_cfo_core_agt", uvm_component parent = null);
             super.new(name,parent);
         endfunction //new()
@@ -28,6 +29,7 @@ package coarse_cfo_core_agtt;
             sqr = coarse_cfo_core_sqr_class::type_id::create("sqr",this);
         end
         agt_ap = new("agt_ap",this);
+        exp_ap = new("exp_ap",this);
         endfunction
         function void connect_phase (uvm_phase phase);
         super.connect_phase(phase);
@@ -37,6 +39,7 @@ package coarse_cfo_core_agtt;
         begin
             driver.coarse_cfo_core_test_vif=cfg.coarse_cfo_core_test_vif;
             driver.seq_item_port.connect(sqr.seq_item_export);
+            driver.drv_ap.connect(exp_ap);
         end
         monitor.mon_ap.connect(agt_ap);
     endfunction

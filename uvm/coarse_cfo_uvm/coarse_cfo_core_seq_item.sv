@@ -6,12 +6,17 @@ package coarse_cfo_core_sequence_item;
     `uvm_object_utils(coarse_cfo_core_seq_item)
 
     // Stimulus fields (driven by driver)
-    rand logic               start;
-    rand logic               s_valid;
-    rand logic signed [15:0] i_sym;
-    rand logic signed [15:0] q_sym;
-    rand logic               force_en;
-    rand logic [23:0]        force_val;
+    logic                    rst_ni    = 1'b1;
+    rand logic               start     = 1'b0;
+    rand logic               s_valid   = 1'b0;
+    rand logic signed [15:0] i_sym     = '0;
+    rand logic signed [15:0] q_sym     = '0;
+    rand logic               force_en  = 1'b0;
+    rand logic [23:0]        force_val = '0;
+
+    // Expected fields (from golden file)
+    logic                    exp_valid = 1'b0;
+    logic signed [23:0]      exp_cfo   = '0;
 
     // Observation fields (sampled by monitor)
     logic               o_valid;

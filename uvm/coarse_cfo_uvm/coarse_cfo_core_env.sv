@@ -23,6 +23,7 @@ class coarse_cfo_core_env extends uvm_env;
     function void connect_phase (uvm_phase phase);
         super.connect_phase(phase);
         agt.agt_ap.connect(sb.sb_export);
+        agt.exp_ap.connect(sb.exp_export);
         agt.agt_ap.connect(cov.cov_export);
     endfunction
 endclass

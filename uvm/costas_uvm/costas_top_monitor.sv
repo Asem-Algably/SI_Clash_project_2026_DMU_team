@@ -23,6 +23,17 @@ package costas_top_monitor;
                 @(posedge costas_top_test_vif.clk);
                 #1;
                 item = costas_top_seq_item::type_id::create("item");
+                // Inputs (needed by coverage)
+                item.rst_n           = costas_top_test_vif.rst_n;
+                item.valid           = costas_top_test_vif.s_axis_valid_i;
+                item.i_sym           = costas_top_test_vif.s_axis_i_sym_i;
+                item.q_sym           = costas_top_test_vif.s_axis_q_sym_i;
+                item.mode            = costas_top_test_vif.mode_i;
+                item.mod_type        = costas_top_test_vif.mod_type_i;
+                item.slicer_qpsk     = costas_top_test_vif.slicer_qpsk_i;
+                item.preamble_end    = costas_top_test_vif.preamble_end_i;
+                // Observed internal/outputs
+                item.kp              = costas_top_test_vif.kp_obs;
                 item.e               = costas_top_test_vif.dbg_e_o;
                 item.e_valid         = costas_top_test_vif.dbg_e_valid_o;
                 item.freq_adj        = costas_top_test_vif.freq_adj_o;

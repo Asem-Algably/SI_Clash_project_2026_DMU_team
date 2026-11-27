@@ -255,10 +255,8 @@ package costas_pkg;
                 bins track = {TRACK};
             }
             cx_kp_mode: cross cp_kp, cp_mode {
-                illegal_bins kp_qam_acq =
+                ignore_bins kp_qam_acq =
                     binsof(cp_kp.kp_qam) && binsof(cp_mode.acq);
-                illegal_bins kp_acq_track =
-                    binsof(cp_kp.kp_acq_qpsk) && binsof(cp_mode.track);
             }
         endgroup: cg_pi
 

@@ -1,0 +1,8 @@
+cases/tb_derot_tc_01.hex
+cases/tb_derot_tc_02.hex
+cases/tb_derot_tc_03.hex
+cases/tb_derot_tc_04.hex
+cases/tb_derot_tc_05.hex
+cases/tb_derot_tc_06.hex
+cases/tb_derot_tc_07.hex
+cases/tb_derot_tc_08.hex

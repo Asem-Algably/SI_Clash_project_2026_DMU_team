@@ -45,7 +45,7 @@ module str_top (
     localparam int LOCK_CONFIRM_CNT = 20;
 
     // Signals
-    logic [MU_WIDTH-1:0]  mu;
+    logic [MU_WIDTH-1:0]  mu, mu_d;
     logic                 mid_strobe, curr_strobe;
     logic                 mid_strobe_d, curr_strobe_d;
 
@@ -71,7 +71,7 @@ module str_top (
         .MU_WIDTH(MU_WIDTH)
     ) u_i_interp (
         .clk_i(clk_i), .rst_n_i(rst_ni), .valid_sample_i(ce_str),
-        .x_i(s_axis_i_sample_i), .mu_i(mu), .y_o(i_y), .valid_sample_o()
+        .x_i(s_axis_i_sample_i), .mu_i(mu_d), .y_o(i_y), .valid_sample_o()
     );
 
     parabolic_farrow_interpolator #(
@@ -80,7 +80,7 @@ module str_top (
         .MU_WIDTH(MU_WIDTH)
     ) u_q_interp (
         .clk_i(clk_i), .rst_n_i(rst_ni), .valid_sample_i(ce_str),
-        .x_i(s_axis_q_sample_i), .mu_i(mu), .y_o(q_y), .valid_sample_o(y_valid)
+        .x_i(s_axis_q_sample_i), .mu_i(mu_d), .y_o(q_y), .valid_sample_o(y_valid)
     );
 
     // -------------------------------------------------------------------------
@@ -90,7 +90,7 @@ module str_top (
     //    Cycle 2: modulo_1_controller Cut 2 registers (DSP output: eta_pi_mult_q)
     //    Cycle 3: modulo_1_controller Stage 3 outputs registered current_strobe / mu_reg;
     //             interpolator captures [s4, s5, s6, s7] = [t-2, t-3, t-4, t-5]
-    //    Cycle 4: pipe[0] asserts; interpolator registers Stage 1 (v1, v2)
+    //    Cycle 4: pipe[0] & mu_d assert (aligned with [s4..s7]); interpolator registers Stage 1 (v1, v2)
     //    Cycle 5: pipe[1] asserts; interpolator registers Stage 2 (h1)
     //    Cycle 6: pipe[2] asserts = curr_strobe_d; interpolator registers Stage 3 (y_o)
     //             m_axis_valid_o and m_axis_*_sym_o are valid at Cycle 6 (matching Golden Model)
@@ -100,9 +100,12 @@ module str_top (
         if (!rst_ni) begin
             mid_strobe_pipe  <= '0;
             curr_strobe_pipe <= '0;
+            mu_d             <= '0;
         end else if (ce_str) begin
             mid_strobe_pipe  <= {mid_strobe_pipe[2:0], mid_strobe};
             curr_strobe_pipe <= {curr_strobe_pipe[2:0], curr_strobe};
+            // Delay mu by 1 ce_str cycle to stay aligned with Farrow's 7-tap window [s7..s4] on adjacent strobes
+            mu_d             <= mu;
         end else begin
             mid_strobe_pipe[3]  <= 1'b0;
             curr_strobe_pipe[3] <= 1'b0;

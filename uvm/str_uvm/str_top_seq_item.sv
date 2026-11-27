@@ -6,11 +6,13 @@ package str_top_sequence_item;
         `uvm_object_utils(str_top_seq_item)
 
         // Inputs driven to the DUT
-        logic                    rst_n = 1'b1;
-        rand logic               valid = 1'b0;
-        rand logic signed [11:0] i_in  = '0;
-        rand logic signed [11:0] q_in  = '0;
-        rand logic               flush = 1'b0;
+        logic                    rst_n      = 1'b1;
+        rand logic               valid      = 1'b0;
+        rand logic signed [11:0] i_in       = '0;
+        rand logic signed [11:0] q_in       = '0;
+        rand logic               flush      = 1'b0;
+        logic                    force_w_en = 1'b0;
+        logic [15:0]             force_w    = 16'd0;
 
         // Expected outputs (from the golden vector file)
         logic                    exp_valid = 1'b0;
