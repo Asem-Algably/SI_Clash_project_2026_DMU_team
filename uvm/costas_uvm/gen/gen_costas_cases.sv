@@ -42,7 +42,7 @@ module gen_costas_cases;
         int        total_cycles;
         string     fname;
 
-        num_cases = 10;
+        num_cases = 11;
         void'($system("if not exist cases mkdir cases"));
         cfg = new();
         cyc = new();
@@ -63,8 +63,10 @@ module gen_costas_cases;
                     cfg.corner_tag  = 5; // PI pos_high & neg_high saturation + large errors
                 end else if (c == 9) begin
                     cfg.corner_tag  = 6; // Lock loss <fall, done, ok> + 16-QAM constellation
-                end else begin
+                end else if (c == 10) begin
                     cfg.corner_tag  = 7; // Randomized 16-QAM/QPSK + long gaps + mid-burst resets
+                end else begin
+                    cfg.corner_tag  = 8; // u_lock_int bucket >= 2 unlock decrement before done
                 end
             end
 
@@ -157,7 +159,7 @@ module gen_costas_cases;
                     else if (t < 60)  begin mode_i = 2'b01; s_val = 1'b1; pe = (t == 45); end
                     else if (t < 330) begin mode_i = 2'b10; s_val = 1'b1; end
                     else              begin mode_i = 2'b00; s_val = 1'b0; end
-                end else begin
+                end else if (cfg.corner_tag == 7) begin
                     // corner_tag == 7: Randomized 16-QAM constellation + zero error + long gaps + 2 active resets!
                     mod_i = 2'b01;
                     if (t < 4)        begin mode_i = 2'b00; s_val = 1'b0; end
@@ -166,6 +168,13 @@ module gen_costas_cases;
                     else if (t < 185) begin rst_n  = 1'b0;  mode_i = 2'b00; s_val = 1'b0; end // reset #1
                     else if (t < 235) begin mode_i = 2'b01; s_val = 1'b1; pe = (t == 220); end
                     else if (t < 240) begin rst_n  = 1'b0;  mode_i = 2'b00; s_val = 1'b0; end // reset #2 in ACQ->TRACK transition
+                    else if (t < 330) begin mode_i = 2'b10; s_val = 1'b1; end
+                    else              begin mode_i = 2'b00; s_val = 1'b0; end
+                end else begin
+                    // corner_tag == 8: Charge u_lock_int bucket >= 2 during ACQ while !done, then inject high phase error
+                    mod_i = 2'b00;
+                    if (t < 4)        begin mode_i = 2'b00; s_val = 1'b0; end
+                    else if (t < 140) begin mode_i = 2'b01; s_val = 1'b1; pe = (t == 135); end
                     else if (t < 330) begin mode_i = 2'b10; s_val = 1'b1; end
                     else              begin mode_i = 2'b00; s_val = 1'b0; end
                 end

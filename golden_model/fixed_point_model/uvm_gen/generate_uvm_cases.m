@@ -371,12 +371,26 @@ function build_derot_cases(cases_dir, T, case_ids)
             p_cnt     = 0;
 
             out_mat = zeros(15, N, 'uint32');
+            corner_cnt = 0;
+            clip_max   = 1.0 - 2^-15;
+            c4_pts     = [ -1.0,     clip_max; ...
+                            clip_max, -1.0; ...
+                           -1.0,     -1.0; ...
+                            clip_max, clip_max; ...
+                           -1.0,      0.5 ];
             for t = 1:N
                 if sval_vec(t) && rst_n_vec(t)
-                    ang   = 2 * pi * rand();
-                    mag   = 0.3 + 0.4 * rand();
-                    i_d   = mag * cos(ang);
-                    q_d   = mag * sin(ang);
+                    if c.corner_tag == 4
+                        corner_cnt = corner_cnt + 1;
+                        idx_c = mod(corner_cnt - 1, size(c4_pts, 1)) + 1;
+                        i_d   = c4_pts(idx_c, 1);
+                        q_d   = c4_pts(idx_c, 2);
+                    else
+                        ang   = 2 * pi * rand();
+                        mag   = 0.3 + 0.4 * rand();
+                        i_d   = mag * cos(ang);
+                        q_d   = mag * sin(ang);
+                    end
                 else
                     i_d = 0.0; q_d = 0.0;
                 end
@@ -928,7 +942,7 @@ function [re_d, im_d, burstB_val_cnt] = gen_costas_unit_symbol(...
             cplx = 0.96 + 0.36j;
         end
 
-    else
+    elseif corner_tag == 7
         if t0 < 55 || (t0 >= 185 && t0 < 235)
             cplx = (0.5 + 0.5j) + 0.3 * noise_std * (randn() + 1j * randn());
         elseif mod(t0, 4) == 0
@@ -937,6 +951,23 @@ function [re_d, im_d, burstB_val_cnt] = gen_costas_unit_symbol(...
         else
             cplx = qam16_pts(randi(4)) + 1j * qam16_pts(randi(4));
             cplx = cplx + 0.04 * ((2 * rand() - 1) + 1j * (2 * rand() - 1));
+        end
+    else
+        % corner_tag == 8: clean aligned symbols while keeping quad counters inside (-15..+14) until bucket >= 2, then big phase error
+        if mode_i == T.enc.mode.ACQ
+            if t0 < 28
+                if mod(floor((t0 - 4) / 10), 2) == 0
+                    cplx = 0.5 + 0.5j;
+                else
+                    cplx = -0.5 - 0.5j;
+                end
+            elseif t0 < 50
+                cplx = 0.96 + 0.02j;
+            else
+                cplx = 0.5 + 0.5j;
+            end
+        else
+            cplx = qpsk_pts(randi(2)) + 1j * qpsk_pts(randi(2));
         end
     end
 

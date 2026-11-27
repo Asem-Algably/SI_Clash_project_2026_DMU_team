@@ -12,30 +12,45 @@
 // Resets are purely synchronous (active-low rst_ni).
 
 module pI_loop #(
-    parameter logic [23:0]        KP        = 24'h0A_EDD7,
-    parameter logic [23:0]        KI        = 24'h09_53F9,
-    parameter logic signed [25:0] MAX_V_PI  = 26'sh08F_5C29 // +-0.0350 in sQ-3.28 (int 9395241)
+    parameter int                           ErrInWidth     = 32,
+    parameter int                           ErrActiveWidth = 25,
+    parameter int                           ErrFracBits    = 21,
+    parameter int                           GainWidth      = 24,
+    parameter int                           KpFracBits     = 25,
+    parameter int                           KiFracBits     = 31,
+    parameter int                           PiIntWidth     = 26,
+    parameter int                           PiIntFracBits  = 28,
+    parameter int                           PiOutWidth     = 24,
+    parameter int                           PiOutFracBits  = 24,
+    parameter logic [GainWidth-1:0]         KP             = 24'h0A_EDD7,
+    parameter logic [GainWidth-1:0]         KI             = 24'h09_53F9,
+    parameter logic signed [PiIntWidth-1:0] MAX_V_PI       = 26'sh08F_5C29 // +-0.0350 in sQ-3.28 (int 9395241)
 )(
-    input  logic               clk_i,
-    input  logic               rst_ni,     // Synchronous active-low reset
-    input  logic               valid_i,    // TED error valid strobe & ce_str
-    input  logic signed [31:0] error_i,    // sQ3.21 from Gardner TED
-    output logic signed [23:0] pi_o        // sQ-1.24 to Modulo-1 NCO (latency = 2)
+    input  logic                        clk_i,
+    input  logic                        rst_ni,     // Synchronous active-low reset
+    input  logic                        valid_i,    // TED error valid strobe & ce_str
+    input  logic signed [ErrInWidth-1:0] error_i,    // Signed error from Gardner TED
+    output logic signed [PiOutWidth-1:0] pi_o        // Filtered loop correction to Modulo-1 NCO (latency = 2)
 );
 
-    // Extract 25-bit sQ3.21 error
-    logic signed [24:0] e_s21;
-    assign e_s21 = error_i[24:0];
+    localparam int MultWidth = GainWidth + 1 + ErrActiveWidth;
+    localparam int SumWidth  = PiIntWidth + 1;
+    localparam int PShift    = (KpFracBits + ErrFracBits) - PiIntFracBits;
+    localparam int IShift    = (KiFracBits + ErrFracBits) - PiIntFracBits;
+    localparam int OutShift  = PiIntFracBits - PiOutFracBits;
+    localparam logic signed [SumWidth-1:0] MaxVPiExt = SumWidth'(MAX_V_PI);
+
+    // Extract active signed error bits
+    logic signed [ErrActiveWidth-1:0] e_s21;
+    assign e_s21 = error_i[ErrActiveWidth-1:0];
 
     // -------------------------------------------------------------------------
     // Stage 1: Registered Multipliers Kp * e and Ki * e (1 clock cycle)
     // -------------------------------------------------------------------------
-    // Kp (25 frac) * e (21 frac) = 46 frac bits
-    // Ki (31 frac) * e (21 frac) = 52 frac bits
-    logic signed [49:0] kp_mult_q;
-    logic signed [49:0] ki_mult_q;
-    logic signed [24:0] e_stg1_q;
-    logic               v_stg1_q;
+    logic signed [MultWidth-1:0]      kp_mult_q;
+    logic signed [MultWidth-1:0]      ki_mult_q;
+    logic signed [ErrActiveWidth-1:0] e_stg1_q;
+    logic                             v_stg1_q;
 
     always_ff @(posedge clk_i) begin
         if (!rst_ni) begin
@@ -56,36 +71,36 @@ module pI_loop #(
     // -------------------------------------------------------------------------
     // Stage 2: Combinational Scaling, Clamping, and State Registers (2 clocks)
     // -------------------------------------------------------------------------
-    logic signed [25:0] p_term;
-    assign p_term = 26'(kp_mult_q >>> 18); // sQ-3.28 with proper arithmetic shift
+    logic signed [PiIntWidth-1:0] p_term;
+    assign p_term = PiIntWidth'(kp_mult_q >>> PShift); // proper arithmetic shift
 
-    logic signed [25:0] i_term;
-    assign i_term = 26'(ki_mult_q >>> 24); // sQ-3.28 with proper arithmetic shift
+    logic signed [PiIntWidth-1:0] i_term;
+    assign i_term = PiIntWidth'(ki_mult_q >>> IShift); // proper arithmetic shift
 
-    logic signed [25:0] acc_q;
-    logic signed [26:0] acc_sum;
+    logic signed [PiIntWidth-1:0] acc_q;
+    logic signed [SumWidth-1:0]   acc_sum;
     assign acc_sum = acc_q + i_term;
 
-    logic signed [25:0] acc_clamped;
+    logic signed [PiIntWidth-1:0] acc_clamped;
     always_comb begin
-        if (acc_sum > $signed({1'b0, MAX_V_PI})) begin
+        if (acc_sum > MaxVPiExt) begin
             acc_clamped = MAX_V_PI;
-        end else if (acc_sum < -MAX_V_PI) begin
+        end else if (acc_sum < -MaxVPiExt) begin
             acc_clamped = -MAX_V_PI;
         end else begin
-            acc_clamped = acc_sum[25:0];
+            acc_clamped = acc_sum[PiIntWidth-1:0];
         end
     end
 
     // Proportional + Clamped Integral
-    logic signed [26:0] v_raw;
+    logic signed [SumWidth-1:0] v_raw;
     assign v_raw = p_term + acc_clamped;
 
     // Output Saturation
-    logic signed [25:0] v_pi;
-    logic               sat_hi, sat_lo;
-    assign sat_hi = (v_raw > $signed({1'b0, MAX_V_PI}));
-    assign sat_lo = (v_raw < -MAX_V_PI);
+    logic signed [PiIntWidth-1:0] v_pi;
+    logic                         sat_hi, sat_lo;
+    assign sat_hi = (v_raw > MaxVPiExt);
+    assign sat_lo = (v_raw < -MaxVPiExt);
 
     always_comb begin
         if (sat_hi) begin
@@ -93,12 +108,12 @@ module pI_loop #(
         end else if (sat_lo) begin
             v_pi = -MAX_V_PI;
         end else begin
-            v_pi = v_raw[25:0];
+            v_pi = v_raw[PiIntWidth-1:0];
         end
     end
 
     // Sequential State Registers (Synchronous Reset)
-    logic signed [25:0] pi_reg_q;
+    logic signed [PiIntWidth-1:0] pi_reg_q;
 
     always_ff @(posedge clk_i) begin
         if (!rst_ni) begin
@@ -117,7 +132,7 @@ module pI_loop #(
         end
     end
 
-    // pi_o is sQ-1.24 (shift signed sQ-3.28 right by 4 bits with proper sign extension)
-    assign pi_o = 24'($signed(pi_reg_q) >>> 4);
+    // Scale internal PI word to PiOutWidth
+    assign pi_o = PiOutWidth'($signed(pi_reg_q) >>> OutShift);
 
 endmodule

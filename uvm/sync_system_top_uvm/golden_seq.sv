@@ -117,7 +117,7 @@ package golden_sequence;
                         item.valid         = hexs.substr(1, 1).atohex();
                         item.i_in          = hexs.substr(2, 4).atohex();
                         item.q_in          = hexs.substr(5, 7).atohex();
-                        item.start         = hexs.substr(8, 8).atohex();
+                        // hexs[8] legacy sob nibble ignored (DUT starts directly on in_sample_valid)
                         item.mod_type      = hexs.substr(9, 9).atohex();
                         item.dft_sel       = hexs.substr(10, 10).atohex();
                         item.force_w_en    = hexs.substr(11, 11).atohex();
@@ -139,7 +139,7 @@ package golden_sequence;
                         item.valid         = hexs.substr(0, 0).atohex();
                         item.i_in          = hexs.substr(1, 3).atohex();
                         item.q_in          = hexs.substr(4, 6).atohex();
-                        item.start         = hexs.substr(7, 7).atohex();
+                        // hexs[7] legacy sob nibble ignored
                         item.exp_valid     = hexs.substr(8, 8).atohex();
                         item.exp_i         = hexs.substr(9, 12).atohex();
                         item.exp_q         = hexs.substr(13, 16).atohex();
@@ -167,7 +167,6 @@ package golden_sequence;
                 start_item(item);
                 item.rst_n         = 1'b1;
                 item.valid         = 1'b0;
-                item.start         = 1'b0;
                 item.i_in          = 12'sd0;
                 item.q_in          = 12'sd0;
                 item.dft_sel       = 4'd0;

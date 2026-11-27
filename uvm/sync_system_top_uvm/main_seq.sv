@@ -16,7 +16,7 @@ package main_sequence;
             super.new(name);
         endfunction
 
-        task send(bit v, int i, int q, bit sob, bit [3:0] dsel,
+        task send(bit v, int i, int q, bit [3:0] dsel,
                   bit fw = 0, bit fc = 0, bit ff = 0);
             sync_system_top_seq_item item;
             item = sync_system_top_seq_item::type_id::create("item");
@@ -25,7 +25,6 @@ package main_sequence;
             item.valid         = v;
             item.i_in          = i;
             item.q_in          = q;
-            item.start         = sob;
             item.mod_type      = mod_type;
             item.dft_sel       = dsel;
             item.force_w_en    = fw;
@@ -49,13 +48,13 @@ package main_sequence;
             qpsk_i[3] =  12'sd1000;  qpsk_q[3] = -12'sd1000;
 
             for (int n = 0; n < num_samples; n++) begin
-                send(1'b1, qpsk_i[sym_idx], qpsk_q[sym_idx], (n == 0), (n / 8) % 16,
+                send(1'b1, qpsk_i[sym_idx], qpsk_q[sym_idx], (n / 8) % 16,
                      use_force && (n > 100 && n < 200),
                      use_force && (n > 300 && n < 400),
                      use_force && (n > 500 && n < 600));
                 if (n % 4 == 3) sym_idx = (sym_idx + 1) % 4;
             end
-            repeat (num_idle) send(1'b0, 0, 0, 1'b0, 4'd0);
+            repeat (num_idle) send(1'b0, 0, 0, 4'd0);
         endtask
 
         task body();

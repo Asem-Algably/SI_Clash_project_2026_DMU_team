@@ -44,7 +44,6 @@ add_files -fileset sources_1 [list \
     "$PROJ_ROOT/rtl/coarse_cfo/accumulator.sv" \
     "$PROJ_ROOT/rtl/coarse_cfo/cordic_angle.sv" \
     "$PROJ_ROOT/rtl/coarse_cfo/coarse_cfo_core.sv" \
-    "$PROJ_ROOT/rtl/coarse_cfo/coarse_cfo_axi_wrapper.sv" \
     "$PROJ_ROOT/rtl/derotator/lut_rom.sv" \
     "$PROJ_ROOT/rtl/derotator/quadrant_rotator.sv" \
     "$PROJ_ROOT/rtl/derotator/input_pipeline.sv" \

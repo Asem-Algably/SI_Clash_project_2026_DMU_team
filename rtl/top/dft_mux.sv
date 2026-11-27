@@ -39,28 +39,15 @@ module dft_mux #(
   output logic [DataWidth-1:0]                 dft_obs_data_o
 );
 
-  // The 4-bit selector indexes exactly 16 entries, so a direct index is
-  // safe. Kept as a unique case for readability and to guard against an
-  // accidental width change in NumChannels.
-  always_comb begin
-    unique case (dft_sel_i)
-      4'd0:    dft_obs_data_o = obs_data_i[0];
-      4'd1:    dft_obs_data_o = obs_data_i[1];
-      4'd2:    dft_obs_data_o = obs_data_i[2];
-      4'd3:    dft_obs_data_o = obs_data_i[3];
-      4'd4:    dft_obs_data_o = obs_data_i[4];
-      4'd5:    dft_obs_data_o = obs_data_i[5];
-      4'd6:    dft_obs_data_o = obs_data_i[6];
-      4'd7:    dft_obs_data_o = obs_data_i[7];
-      4'd8:    dft_obs_data_o = obs_data_i[8];
-      4'd9:    dft_obs_data_o = obs_data_i[9];
-      4'd10:   dft_obs_data_o = obs_data_i[10];
-      4'd11:   dft_obs_data_o = obs_data_i[11];
-      4'd12:   dft_obs_data_o = obs_data_i[12];
-      4'd13:   dft_obs_data_o = obs_data_i[13];
-      4'd14:   dft_obs_data_o = obs_data_i[14];
-      default: dft_obs_data_o = obs_data_i[15];
-    endcase
-  end
+  // Index safely across parameterized NumChannels and DftSelWidth without dead branches
+  generate
+    if (NumChannels >= (1 << DftSelWidth)) begin : gen_full_mux
+      assign dft_obs_data_o = obs_data_i[dft_sel_i];
+    end else begin : gen_bounded_mux
+      assign dft_obs_data_o = (dft_sel_i < DftSelWidth'(NumChannels))
+                            ? obs_data_i[dft_sel_i]
+                            : {DataWidth{1'b0}};
+    end
+  endgenerate
 
 endmodule

@@ -6,3 +6,5 @@ cases/tb_coarse_tc_05.hex
 cases/tb_coarse_tc_06.hex
 cases/tb_coarse_tc_07.hex
 cases/tb_coarse_tc_08.hex
+cases/tb_coarse_tc_09.hex
+cases/tb_coarse_tc_10.hex

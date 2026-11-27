@@ -43,16 +43,27 @@ module costas_top #(
     parameter logic [Error_Width-1:0]  Lock_Int_Enter_Thresh  = 16'd3277,
     parameter logic [Error_Width-1:0]  Lock_Int_Exit_Thresh   = 16'd4915,
     parameter int                      Lock_Int_Min_Symbols   = 0,
-    parameter logic [Error_Width-1:0]  Lock_Int_Init_Error    = 16'd5734
+    parameter logic [Error_Width-1:0]  Lock_Int_Init_Error    = 16'd5734,
+
+    // Modulation, mode, gain-port, and quad check parameters
+    parameter int                      ModWidth               = 2,
+    parameter logic [ModWidth-1:0]     ModQpsk                = 2'b00,
+    parameter logic [ModWidth-1:0]     ModQam16               = 2'b01,
+    parameter int                      ModeWidth              = 2,
+    parameter logic [ModeWidth-1:0]    ModeHold               = 2'b00,
+    parameter logic [ModeWidth-1:0]    ModeAcq                = 2'b01,
+    parameter int                      GainPortWidth          = 8,
+    parameter int                      QuadCntMax             = 15,
+    parameter bit                      LockPipelined          = 1'b0
 )(
     input  logic                          clk_i,
     input  logic                          rst_ni,
     input  logic                          s_axis_valid_i,
     input  logic signed [Data_Width-1:0]  s_axis_i_sym_i,
     input  logic signed [Data_Width-1:0]  s_axis_q_sym_i,
-    input  logic        [1:0]             mod_type_i,
-    input  logic        [7:0]             costas_gain_i,
-    input  logic        [1:0]             mode_i,                      // 00 HOLD, 01 ACQ, 10 TRACK
+    input  logic        [ModWidth-1:0]    mod_type_i,
+    input  logic        [GainPortWidth-1:0] costas_gain_i,
+    input  logic        [ModeWidth-1:0]   mode_i,                      // HOLD, ACQ, TRACK
     input  logic                          slicer_qpsk_i,
     input  logic                          preamble_end_i,
 
@@ -68,10 +79,6 @@ module costas_top #(
     output logic                          dbg_lock_int_o,                // internal lock detector
     output logic                          dbg_quad_done_o                // quadrant decision made
 );
-    localparam logic [1:0] MODE_HOLD = 2'b00;
-    localparam logic [1:0] MODE_ACQ  = 2'b01;
-    localparam logic [1:0] MOD_QAM16 = 2'b01;
-
     // -------------------------------------- Synchronous Reset
     logic rst_sync_n;
     assign rst_sync_n = rst_ni;
@@ -84,7 +91,10 @@ module costas_top #(
     slicer #(
         .Data_Width   (Data_Width),
         .Qpsk_Level   (Qpsk_Level),
-        .Qam_Level    (Qam_Level)
+        .Qam_Level    (Qam_Level),
+        .ModWidth     (ModWidth),
+        .ModQpsk      (ModQpsk),
+        .ModQam16     (ModQam16)
     ) u_slicer (
         .yi_i         (s_axis_i_sym_i),
         .yq_i         (s_axis_q_sym_i),
@@ -114,9 +124,9 @@ module costas_top #(
     logic [Error_Width-1:0] thr_enter, thr_exit;
 
     always_comb begin
-        use_qam = !slicer_qpsk_i && (mod_type_i == MOD_QAM16);
+        use_qam = !slicer_qpsk_i && (mod_type_i == ModQam16) && (ModQpsk != ModQam16);
 
-        if (mode_i == MODE_ACQ) begin
+        if (mode_i == ModeAcq) begin
             kp = Kp_Acq;
             ki = Ki_Acq;
         end
@@ -156,9 +166,11 @@ module costas_top #(
     logic e_valid;
 
     phase_error #(
-        .Data_Width(Data_Width),
-        .Error_Width(Error_Width),
-        .Data_Frac_Bits(Data_Frac_Bits)
+        .Data_Width    (Data_Width),
+        .Error_Width   (Error_Width),
+        .Data_Frac_Bits(Data_Frac_Bits),
+        .ModeWidth     (ModeWidth),
+        .ModeHold      (ModeHold)
     ) u_pe (
         .clk_i  (clk_i),
         .rst_ni (rst_sync_n),
@@ -181,7 +193,9 @@ module costas_top #(
         .Phase_Width    (Phase_Width),
         .Error_Frac_Bits(Data_Frac_Bits),
         .Gain_Frac_Bits (Gain_Frac_Bits),
-        .Max_Pi_Output  (Max_Pi_Output)
+        .Max_Pi_Output  (Max_Pi_Output),
+        .ModeWidth      (ModeWidth),
+        .ModeHold       (ModeHold)
     ) u_pi (
         .clk_i     (clk_i),
         .rst_ni    (rst_sync_n),
@@ -205,11 +219,12 @@ module costas_top #(
         .Alpha_Shift       (Lock_Alpha_Shift),
         .Confirm_Count     (Lock_Int_Confirm_Count),
         .Min_Symbols       (Lock_Int_Min_Symbols),
-        .Init_Error        (Lock_Int_Init_Error)
+        .Init_Error        (Lock_Int_Init_Error),
+        .Pipelined         (LockPipelined)
     ) u_lock_int (
         .clk_i      (clk_i),
         .rst_ni     (rst_sync_n),
-        .clr_i      (mode_i == MODE_HOLD),
+        .clr_i      (mode_i == ModeHold),
         .valid_i    (e_valid && !done),
         .e_i        (e),
         .thr_enter_i(Lock_Int_Enter_Thresh),
@@ -219,7 +234,10 @@ module costas_top #(
     );
 
     quad_check #(
-        .Phase_Width      (Phase_Width)
+        .Phase_Width      (Phase_Width),
+        .ModeWidth        (ModeWidth),
+        .ModeHold         (ModeHold),
+        .CntMax           (QuadCntMax)
     ) u_quad (
         .clk_i            (clk_i),
         .rst_ni           (rst_sync_n),
@@ -240,11 +258,12 @@ module costas_top #(
         .Alpha_Shift       (Lock_Alpha_Shift),
         .Confirm_Count     (Lock_Confirm_Count),
         .Min_Symbols       (Lock_Min_Symbols),
-        .Init_Error        (Lock_Init_Error)
+        .Init_Error        (Lock_Init_Error),
+        .Pipelined         (LockPipelined)
     ) u_lock_pub (
         .clk_i      (clk_i),
         .rst_ni     (rst_sync_n),
-        .clr_i      ((mode_i == MODE_HOLD) || !done || quad_unres),
+        .clr_i      ((mode_i == ModeHold) || !done || quad_unres),
         .valid_i    (e_valid),
         .e_i        (e),
         .thr_enter_i(thr_enter),

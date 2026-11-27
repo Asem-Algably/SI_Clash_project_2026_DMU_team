@@ -10,7 +10,6 @@ package sync_system_top_sequence_item;
         rand logic               valid          = 1'b0;
         rand logic signed [11:0] i_in           = '0;
         rand logic signed [11:0] q_in           = '0;
-        logic                    start          = 1'b0;      // start_of_burst
         logic [1:0]              mod_type       = 2'b01;     // 00 = QPSK, 01 = 16-QAM
         logic [7:0]              loop_gain      = 8'd0;
         logic [7:0]              costas_gain    = 8'd0;
@@ -53,8 +52,8 @@ package sync_system_top_sequence_item;
         endfunction
 
         virtual function string convert2string();
-            return $sformatf("rst_n=%0b valid=%0b sob=%0b in=(%0d,%0d) | exp_valid=%0b exp=(%0d,%0d) exp_state=%0d exp_lock=%0b | out_valid=%0b out=(%0d,%0d) state=%0d lock=%0b",
-                             rst_n, valid, start, i_in, q_in,
+            return $sformatf("rst_n=%0b valid=%0b in=(%0d,%0d) | exp_valid=%0b exp=(%0d,%0d) exp_state=%0d exp_lock=%0b | out_valid=%0b out=(%0d,%0d) state=%0d lock=%0b",
+                             rst_n, valid, i_in, q_in,
                              exp_valid, exp_i, exp_q, exp_state, exp_lock,
                              out_sym_valid, out_sym_i, out_sym_q, fsm_state, lock_detect);
         endfunction

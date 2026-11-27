@@ -21,7 +21,6 @@ package reset_sequence;
                 start_item(item);
                 item.rst_n  = 1'b0;      // apply reset
                 item.valid  = 1'b0;
-                item.start  = 1'b0;
                 item.i_in   = 12'sd0;
                 item.q_in   = 12'sd0;
                 finish_item(item);
@@ -32,7 +31,6 @@ package reset_sequence;
                 start_item(item);
                 item.rst_n  = 1'b1;      // reset released, bus idle
                 item.valid  = 1'b0;
-                item.start  = 1'b0;
                 item.i_in   = 12'sd0;
                 item.q_in   = 12'sd0;
                 finish_item(item);

@@ -8,3 +8,4 @@ cases/tb_costas_tc_07.hex
 cases/tb_costas_tc_08.hex
 cases/tb_costas_tc_09.hex
 cases/tb_costas_tc_10.hex
+cases/tb_costas_tc_11.hex

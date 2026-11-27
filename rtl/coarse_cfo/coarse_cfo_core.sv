@@ -9,25 +9,29 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 module coarse_cfo_core #(
-  parameter int unsigned DataWidth = 16,  // Input sample width
-  parameter int unsigned Lag       = 4,   // Delay in symbols
-  parameter int unsigned WinLen    = 32,  // Symbols per window
-  parameter int unsigned AccWidth  = 40   // Accumulator width
+  parameter int unsigned DataWidth  = 16,               // Input sample width
+  parameter int unsigned Lag        = 4,                // Delay in symbols (power of 2, >= 2)
+  parameter int unsigned WinLen     = 32,               // Symbols per window
+  parameter int unsigned AccWidth   = 40,               // Accumulator width
+  parameter int unsigned OutWidth   = 24,               // CFO estimate output width
+  parameter int unsigned MultWidth  = 2*DataWidth + 1,  // Complex multiplier output width
+  parameter int unsigned CordicIter = 16                // CORDIC iterations (<= 16)
 ) (
-  input  logic                       clk_i,           // Clock
-  input  logic                       rst_ni,          // Async reset, active low
-  input  logic                       start_i,         // Start a new window
-  input  logic                       s_axis_valid_i,  // Symbol strobe
-  input  logic signed [DataWidth-1:0] s_axis_i_sym_i, // I symbol in
-  input  logic signed [DataWidth-1:0] s_axis_q_sym_i, // Q symbol in
-  output logic                       m_axis_valid_o,  // One-pulse estimate ready
-  output logic signed [23:0]         m_axis_cfo_o,    // Estimate out
-  input  logic                       force_cfo_en_i,  // Force override enable
-  input  logic [23:0]                force_cfo_i      // Forced value (DFT)
+  input  logic                        clk_i,           // Clock
+  input  logic                        rst_ni,          // Sync reset, active low
+  input  logic                        start_i,         // Start a new window
+  input  logic                        s_axis_valid_i,  // Symbol strobe
+  input  logic signed [DataWidth-1:0] s_axis_i_sym_i,  // I symbol in
+  input  logic signed [DataWidth-1:0] s_axis_q_sym_i,  // Q symbol in
+  output logic                        m_axis_valid_o,  // One-pulse estimate ready
+  output logic signed [OutWidth-1:0]  m_axis_cfo_o,    // Estimate out
+  input  logic                        force_cfo_en_i,  // Force override enable
+  input  logic [OutWidth-1:0]         force_cfo_i      // Forced value (DFT)
 );
 
-  // Parameterized counter width to 5 registers
+  // Parameterized counter width & lag divider shift
   localparam int unsigned SymCountWidth = $clog2(WinLen + 1);
+  localparam int unsigned LagShift      = $clog2(Lag);
 
   // Symbol counter for the window
   logic [SymCountWidth-1:0] sym_count_q;
@@ -64,13 +68,13 @@ module coarse_cfo_core #(
     end
   end
 
-  // Complex multiply r[n] * conj(r[n-Lag]) - 32-bit output
-  logic signed [32:0] mult_re;  // Product real
-  logic signed [32:0] mult_im;  // Product imag
+  // Complex multiply r[n] * conj(r[n-Lag])
+  logic signed [MultWidth-1:0] mult_re;  // Product real
+  logic signed [MultWidth-1:0] mult_im;  // Product imag
 
   complex_mult #(
-    .InWidth (DataWidth),    // 16-bit input
-    .OutWidth(33)            // 32-bit output
+    .InWidth (DataWidth),    // Input width
+    .OutWidth(MultWidth)     // Complex product width
   ) u_complex_mult (
     .a_re_i (s_axis_i_sym_i),         // Current real
     .a_im_i (s_axis_q_sym_i),         // Current imag
@@ -86,10 +90,10 @@ module coarse_cfo_core #(
   logic                       acc_done; // Level: window done
 
   accumulator #(
-    .InWidth (33),           // 32-bit input
-    .AccWidth(AccWidth),     // 40-bit accumulator
-    .WinLen  (WinLen),       // 32 symbols
-    .Lag     (Lag)           // 4 symbols priming
+    .InWidth (MultWidth),    // Complex mult output width
+    .AccWidth(AccWidth),     // Accumulator width
+    .WinLen  (WinLen),       // Symbols per window
+    .Lag     (Lag)           // Delay line priming lag
   ) u_accumulator (
     .clk_i   (clk_i),                  // Clock
     .rst_ni  (rst_ni),                 // Reset
@@ -117,13 +121,13 @@ module coarse_cfo_core #(
   assign acc_done_pulse = acc_done & ~acc_done_q;  // Rising edge only
 
   // CORDIC angle of the accumulated R
-  logic signed [23:0] angle_out;   // Angle in fraction-of-turn
-  logic               angle_valid; // One-pulse valid
+  logic signed [OutWidth-1:0] angle_out;   // Angle in fraction-of-turn
+  logic                       angle_valid; // One-pulse valid
 
   cordic_angle #(
-    .InWidth   (AccWidth),   // 40-bit vector
-    .OutWidth  (24),         // 24-bit angle
-    .Iterations(16)          // 16 iterations
+    .InWidth   (AccWidth),   // Accumulator vector width
+    .OutWidth  (OutWidth),   // Angle output width
+    .Iterations(CordicIter)  // CORDIC iterations
   ) u_cordic_angle (
     .clk_i  (clk_i),                  // Clock
     .rst_ni (rst_ni),                 // Reset
@@ -134,9 +138,9 @@ module coarse_cfo_core #(
     .valid_o(angle_valid)             // Valid out
   );
 
-  // Divide by lag D=4 => turns per symbol; then register output
-  logic signed [23:0] cfo_q;       // Held estimate
-  logic               cfo_valid_q; // Held valid
+  // Divide by lag D => turns per symbol; then register output
+  logic signed [OutWidth-1:0] cfo_q;       // Held estimate
+  logic                       cfo_valid_q; // Held valid
 
   always_ff @(posedge clk_i) begin
     if (!rst_ni) begin
@@ -147,7 +151,7 @@ module coarse_cfo_core #(
       if (force_cfo_en_i) begin
         cfo_q <= force_cfo_i;         // DFT force override
       end else if (angle_valid) begin
-        cfo_q <= angle_out >>> 2;     // Divide by 4
+        cfo_q <= angle_out >>> LagShift; // Divide by Lag
       end
     end
   end

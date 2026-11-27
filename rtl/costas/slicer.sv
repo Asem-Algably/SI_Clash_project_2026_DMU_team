@@ -8,11 +8,14 @@
 module slicer #(
     parameter int                           Data_Width = 16,
     parameter logic signed [Data_Width-1:0] Qpsk_Level = 16'sd16384, // QPSK (+-0.5 in Q1.15)
-    parameter logic signed [Data_Width-1:0] Qam_Level  = 16'sd5461   // 16-QAM (+-0.5/3 in Q1.15)
+    parameter logic signed [Data_Width-1:0] Qam_Level  = 16'sd5461,  // 16-QAM (+-0.5/3 in Q1.15)
+    parameter int                           ModWidth   = 2,
+    parameter logic [ModWidth-1:0]          ModQpsk    = 2'b00,
+    parameter logic [ModWidth-1:0]          ModQam16   = 2'b01
 )(
     input  logic signed [Data_Width-1:0] yi_i,
     input  logic signed [Data_Width-1:0] yq_i,
-    input  logic        [1:0]            mod_type_i,              // 2'b00=QPSK, 2'b01=16-QAM
+    input  logic        [ModWidth-1:0]   mod_type_i,              // ModQpsk / ModQam16
     input  logic                         slicer_qpsk_i,           // Force QPSK (Preamble)
 
     output logic signed [Data_Width-1:0] ai_o,
@@ -20,14 +23,13 @@ module slicer #(
     output logic                         sgn_i_pos_o,           // Sign I (1=pos)
     output logic                         sgn_q_pos_o            // Sign Q (1=pos)
 );
-    localparam logic [1:0] MOD_QAM16 = 2'b01;
     localparam logic signed [Data_Width-1:0] D3 = Qpsk_Level;        // 3d (outer level = +-0.5 in Q1.15 = 16384)
     localparam logic signed [Data_Width-1:0] T2 = 2 * Qam_Level;     // 2d boundary
 
     logic use_qam;
 
     always_comb begin
-        use_qam = (mod_type_i == MOD_QAM16) && !slicer_qpsk_i;
+        use_qam = !slicer_qpsk_i && (mod_type_i == ModQam16) && (ModQpsk != ModQam16);
 
         // I axis. Same tie rule as qam_slicer.m: +T2 -> outer, -T2 -> inner, 0 -> +d
         if (use_qam) begin

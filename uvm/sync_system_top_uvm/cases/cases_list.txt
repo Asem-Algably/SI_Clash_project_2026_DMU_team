@@ -26,3 +26,5 @@ cases/tb_top_tc_25.hex
 cases/tb_top_tc_26.hex
 cases/tb_top_tc_27.hex
 cases/tb_top_tc_28.hex
+cases/tb_top_tc_29.hex
+cases/tb_top_tc_30.hex

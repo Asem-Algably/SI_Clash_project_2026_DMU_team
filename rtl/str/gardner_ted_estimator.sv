@@ -10,32 +10,43 @@
 //   Stage 2: Register product sum, round to sQ3.21, and sign-extend to 32 bits
 // Resets are purely synchronous (active-low rst_ni).
 
-module gardner_ted_estimator (
-  input  logic               clk_i,
-  input  logic               rst_ni,        // Synchronous active-low reset
-  input  logic               ce_i,          // Clock enable (ce_str)
-  input  logic               valid_i,       // Current strobe strobe_d
+module gardner_ted_estimator #(
+  parameter int DataWidth      = 16,
+  parameter int DataFracBits   = DataWidth - 1,
+  parameter int ErrActiveWidth = 25,
+  parameter int ErrFracBits    = 21,
+  parameter int ErrOutWidth    = 32
+)(
+  input  logic                        clk_i,
+  input  logic                        rst_ni,        // Synchronous active-low reset
+  input  logic                        ce_i,          // Clock enable (ce_str)
+  input  logic                        valid_i,       // Current strobe strobe_d
 
-  input  logic signed [15:0] i_mid_i,       // sQ1.15 mid-symbol sample
-  input  logic signed [15:0] q_mid_i,       // sQ1.15 mid-symbol sample
-  input  logic signed [15:0] i_cur_i,       // sQ1.15 current symbol sample (i_y)
-  input  logic signed [15:0] q_cur_i,       // sQ1.15 current symbol sample (q_y)
-  input  logic signed [15:0] i_prev_i,      // sQ1.15 previous symbol sample (i_cur register)
-  input  logic signed [15:0] q_prev_i,      // sQ1.15 previous symbol sample (q_cur register)
+  input  logic signed [DataWidth-1:0] i_mid_i,       // sQ1.(DataFracBits) mid-symbol sample
+  input  logic signed [DataWidth-1:0] q_mid_i,       // sQ1.(DataFracBits) mid-symbol sample
+  input  logic signed [DataWidth-1:0] i_cur_i,       // sQ1.(DataFracBits) current symbol sample (i_y)
+  input  logic signed [DataWidth-1:0] q_cur_i,       // sQ1.(DataFracBits) current symbol sample (q_y)
+  input  logic signed [DataWidth-1:0] i_prev_i,      // sQ1.(DataFracBits) previous symbol sample (i_cur register)
+  input  logic signed [DataWidth-1:0] q_prev_i,      // sQ1.(DataFracBits) previous symbol sample (q_cur register)
 
-  output logic signed [31:0] error_o,       // 32-bit signed error (sQ3.21 format)
-  output logic               error_valid_o  // 1-cycle strobe when error_o updates (latency = 2)
+  output logic signed [ErrOutWidth-1:0] error_o,     // Signed error output
+  output logic                          error_valid_o // 1-cycle strobe when error_o updates (latency = 2)
 );
+
+  localparam int DiffWidth = DataWidth + 1;
+  localparam int ProdWidth = DataWidth + DiffWidth;
+  localparam int SumWidth  = ProdWidth + 1;
+  localparam int ErrShift  = (2 * DataFracBits) - ErrFracBits;
 
   // -------------------------------------------------------------------------
   // Stage 1: Differences and Registered Multiplier Products (1 clock cycle)
   // -------------------------------------------------------------------------
-  logic signed [16:0] i_diff, q_diff;
+  logic signed [DiffWidth-1:0] i_diff, q_diff;
   assign i_diff = i_cur_i - i_prev_i;
   assign q_diff = q_cur_i - q_prev_i;
 
-  logic signed [32:0] i_prod_q, q_prod_q; // 33-bit sQ3.30 products
-  logic               v_stg1_q;
+  logic signed [ProdWidth-1:0] i_prod_q, q_prod_q;
+  logic                        v_stg1_q;
 
   always_ff @(posedge clk_i) begin
     if (!rst_ni) begin
@@ -52,14 +63,14 @@ module gardner_ted_estimator (
   end
 
   // -------------------------------------------------------------------------
-  // Stage 2: Summation, Quantization to sQ3.21, and Output Register (2 clocks)
+  // Stage 2: Summation, Quantization, and Output Register (2 clocks)
   // -------------------------------------------------------------------------
-  logic signed [33:0] error_sum;      // 34-bit sQ4.30
-  logic signed [24:0] error_q21;      // 25-bit sQ3.21
+  logic signed [SumWidth-1:0]       error_sum;
+  logic signed [ErrActiveWidth-1:0] error_q21;
 
   assign error_sum = i_prod_q + q_prod_q;
   // Pure wire truncation matching MATLAB step_str.m
-  assign error_q21 = error_sum >>> 9;
+  assign error_q21 = ErrActiveWidth'(error_sum >>> ErrShift);
 
   always_ff @(posedge clk_i) begin
     if (!rst_ni) begin
@@ -68,7 +79,7 @@ module gardner_ted_estimator (
     end else if (ce_i) begin
       error_valid_o <= v_stg1_q;
       if (v_stg1_q) begin
-        error_o <= {{7{error_q21[24]}}, error_q21};
+        error_o <= ErrOutWidth'(error_q21);
       end
     end
   end

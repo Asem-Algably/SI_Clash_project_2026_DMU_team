@@ -224,42 +224,59 @@ module fpga_bist_top #(
   // --------------------------------------------------------------------------
   logic signed [11:0] dut_in_i, dut_in_q;
   logic               dut_in_valid;
-  logic               dut_sob;
 
   // Registered stimulus driving DUT
   always_comb begin
     if (bist_state_q == ST_FEED || bist_state_q == ST_DRAIN) begin
       dut_in_valid = in_rom_dout[25];
-      dut_sob      = in_rom_dout[24];
       dut_in_i     = in_rom_dout[23:12];
       dut_in_q     = in_rom_dout[11:0];
     end else begin
       dut_in_valid = 1'b0;
-      dut_sob      = 1'b0;
       dut_in_i     = '0;
       dut_in_q     = '0;
     end
   end
 
+  logic [3:0]         dut_dft_sel;
   logic signed [15:0] dut_out_sym_i, dut_out_sym_q;
   logic               dut_out_sym_valid;
   logic signed [23:0] dut_coarse_cfo_est;
   logic signed [31:0] dut_fine_cfo_est;
   logic               dut_lock_detect;
-  logic               dut_flush_active;
-  logic [7:0]         dut_valid_during_flush;
   logic [31:0]        dut_dft_obs_data;
+  logic [1:0]         dft_poll_q;
   logic               str_locked_raw;
   logic               costas_locked_raw;
   logic               str_locked_sticky;
   logic               costas_locked_sticky;
+  logic [2:0]         fsm_state_q;
   logic [2:0]         dut_fsm_state_reg;
+
+  // Poll DFT observation bus for fsm_state (ch14), str_lock (ch12), costas_lock (ch13);
+  // keep ch14 active whenever an output symbol is valid so payload checks see live TRACK state.
+  assign dut_dft_sel = dut_out_sym_valid ? 4'd14 :
+                       (dft_poll_q == 2'd0) ? 4'd14 :
+                       (dft_poll_q == 2'd1) ? 4'd12 : 4'd13;
+
+  assign dut_fsm_state_reg = (dut_dft_sel == 4'd14) ? dut_dft_obs_data[2:0] : fsm_state_q;
 
   always_ff @(posedge clk_200) begin
     if (!rst_n_sync) begin
+      dft_poll_q           <= 2'd0;
+      str_locked_raw       <= 1'b0;
+      costas_locked_raw    <= 1'b0;
+      fsm_state_q          <= 3'd0;
       str_locked_sticky    <= 1'b0;
       costas_locked_sticky <= 1'b0;
     end else begin
+      if (!dut_out_sym_valid) begin
+        dft_poll_q <= (dft_poll_q == 2'd2) ? 2'd0 : (dft_poll_q + 2'd1);
+      end
+      if (dut_dft_sel == 4'd14)      fsm_state_q       <= dut_dft_obs_data[2:0];
+      else if (dut_dft_sel == 4'd12) str_locked_raw    <= dut_dft_obs_data[0];
+      else if (dut_dft_sel == 4'd13) costas_locked_raw <= dut_dft_obs_data[0];
+
       if (str_locked_raw)    str_locked_sticky    <= 1'b1;
       if (costas_locked_raw) costas_locked_sticky <= 1'b1;
     end
@@ -286,8 +303,7 @@ module fpga_bist_top #(
     .mod_type          (2'd1),      // 16-QAM
     .loop_gain         (8'd0),
     .costas_loop_gain  (8'd0),
-    .dft_sel           (4'd0),
-    .start_of_burst    (dut_sob),
+    .dft_sel           (dut_dft_sel),
     .force_w_en        (1'b0),
     .force_w           (16'd0),
     .force_cfo_en      (1'b0),
@@ -300,12 +316,7 @@ module fpga_bist_top #(
     .coarse_cfo_est    (dut_coarse_cfo_est),
     .fine_cfo_est      (dut_fine_cfo_est),
     .lock_detect       (dut_lock_detect),
-    .flush_active      (dut_flush_active),
-    .valid_during_flush(dut_valid_during_flush),
-    .dft_obs_data      (dut_dft_obs_data),
-    .str_lock_o        (str_locked_raw),
-    .costas_lock_o     (costas_locked_raw),
-    .fsm_state_o       (dut_fsm_state_reg)
+    .dft_obs_data      (dut_dft_obs_data)
   );
 
   // --------------------------------------------------------------------------
