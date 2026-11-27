@@ -24,8 +24,7 @@ coverage exclude -du work.sync_system_top_test_pkg -code bcefst -comment {Testbe
 # Defensive STR PI saturation clamps & anti-windup (closed-loop error stays below +-MAX_V_PI = +-9395241)
 coverage exclude -scope /top/dut/u_str/u_pi_loop -linerange 86-89 102 103 106-109 124-127 -code bces -comment {Closed-loop STR never winds PI loop to +-MAX_V_PI clamp}
 
-# Modulo-1 controller upper clamp (mu_full >= 1.0 cannot be reached with closed-loop positive step W ~ 0.25)
-coverage exclude -scope /top/dut/u_str/u_modulo_ctrl -linerange 147-148 -code bcs -comment {Modulo-1 residual mu_full remains below 1.0 threshold}
+# Modulo-1 controller upper clamp (mu_full >= 1.0) is now exercised by tc_30; no waiver needed.
 
 # STR lock_detector structural invariants (clr_i=0 tie-off, unsigned sym_cnt>=0, Min_Symbols=1 idx_ok_r==0 with Init_Error>thr)
 coverage exclude -scope /top/dut/u_str/u_lock_detector -feccondrow 48 4 -comment {clr_i tied to 1'b0 in str_top}
@@ -72,7 +71,7 @@ coverage exclude -scope /top/dut/u_costas/u_lock_pub -fecexprrow 133 3 -comment 
 coverage exclude -scope /top/dut/u_burst_ctrl -linerange 127-128 -code bcs -comment {Deadlock failsafe timeout never reached with functioning coarse_cfo}
 
 # sync_system_top lock_detect expression invariant: Costas cannot lock while STR is unlocked
-coverage exclude -scope /top/dut -fecexprrow 441 1 -comment {Costas requires STR symbol strobes (en_costas) to converge}
+coverage exclude -scope /top/dut -fecexprrow 449 1 -comment {Costas requires STR symbol strobes (en_costas) to converge}
 
 # 3. Structural Zero-Toggle / Constant Tie-Off / Zero-Padding Bit Waivers
 coverage exclude -scope /top/dut/u_str/u_i_interp -togglenode a12[0] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
@@ -98,6 +97,16 @@ coverage exclude -scope /top/dut/u_str/u_q_interp -togglenode d12[0] -comment {S
 coverage exclude -scope /top/dut/u_str/u_pi_loop -togglenode sat_hi -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
 coverage exclude -scope /top/dut/u_str/u_pi_loop -togglenode sat_lo -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
 coverage exclude -scope /top/dut/u_str/u_modulo_ctrl -togglenode eta_4x_q1[0] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut/u_str/u_modulo_ctrl -togglenode force_w_full[0] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut/u_str/u_modulo_ctrl -togglenode force_w_full[1] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut/u_str/u_modulo_ctrl -togglenode force_w_full[2] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut/u_str/u_modulo_ctrl -togglenode force_w_full[3] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut/u_str/u_modulo_ctrl -togglenode force_w_full[4] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut/u_str/u_modulo_ctrl -togglenode force_w_full[5] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut/u_str/u_modulo_ctrl -togglenode force_w_full[6] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut/u_str/u_modulo_ctrl -togglenode force_w_full[7] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut/u_str/u_modulo_ctrl -togglenode force_w_full[23] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut/u_str/u_modulo_ctrl -togglenode w_eff[23] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
 coverage exclude -scope /top/dut/u_str/u_modulo_ctrl -togglenode eta_4x_q1[1] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
 coverage exclude -scope /top/dut/u_str/u_modulo_ctrl -togglenode eta_4x_q2[0] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
 coverage exclude -scope /top/dut/u_str/u_modulo_ctrl -togglenode eta_4x_q2[1] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}

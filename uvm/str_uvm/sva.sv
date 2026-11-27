@@ -29,7 +29,8 @@ module sva (
     input logic signed [15:0]  i_cur, q_cur,
     input logic signed [15:0]  i_prev, q_prev,
     input logic signed [23:0]  pi_val,            // PI filter output (sQ-1.24)
-    input logic signed [15:0]  w_val              // NCO step, uQ0.24 [23:8]
+    input logic signed [15:0]  w_val,             // NCO step, uQ0.24 [23:8]
+    input logic [23:0]         nco_m_q            // modulo_1_controller phase accumulator
 );
 
     default clocking cb @(posedge clk_i); endclocking
@@ -42,37 +43,47 @@ module sva (
     logic [7:0] cur_gap, mid_gap, evt_gap;   // ce-cycles since the previous strobe
     logic       seen_cur, seen_mid, seen_evt;
     logic       last_was_mid;                // 0 after reset: first strobe must be "mid"
+    logic       force_cur_gap, force_mid_gap, force_evt_gap;
 
     always_ff @(posedge clk_i) begin
         if (!rst_ni) begin
-            cur_gap      <= '0;
-            mid_gap      <= '0;
-            evt_gap      <= '0;
-            seen_cur     <= 1'b0;
-            seen_mid     <= 1'b0;
-            seen_evt     <= 1'b0;
-            last_was_mid <= 1'b0;
+            cur_gap       <= '0;
+            mid_gap       <= '0;
+            evt_gap       <= '0;
+            seen_cur      <= 1'b0;
+            seen_mid      <= 1'b0;
+            seen_evt      <= 1'b0;
+            last_was_mid  <= 1'b0;
+            force_cur_gap <= 1'b0;
+            force_mid_gap <= 1'b0;
+            force_evt_gap <= 1'b0;
         end else if (ce_str) begin
             if (curr_strobe) begin
-                cur_gap  <= 8'd1;
-                seen_cur <= 1'b1;
-            end else if (cur_gap != 8'hFF) begin
-                cur_gap  <= cur_gap + 8'd1;
+                cur_gap       <= 8'd1;
+                seen_cur      <= 1'b1;
+                force_cur_gap <= force_w_en_i;
+            end else begin
+                if (cur_gap != 8'hFF) cur_gap <= cur_gap + 8'd1;
+                if (force_w_en_i)     force_cur_gap <= 1'b1;
             end
 
             if (mid_strobe) begin
-                mid_gap  <= 8'd1;
-                seen_mid <= 1'b1;
-            end else if (mid_gap != 8'hFF) begin
-                mid_gap  <= mid_gap + 8'd1;
+                mid_gap       <= 8'd1;
+                seen_mid      <= 1'b1;
+                force_mid_gap <= force_w_en_i;
+            end else begin
+                if (mid_gap != 8'hFF) mid_gap <= mid_gap + 8'd1;
+                if (force_w_en_i)     force_mid_gap <= 1'b1;
             end
 
             if (curr_strobe || mid_strobe) begin
-                evt_gap      <= 8'd1;
-                seen_evt     <= 1'b1;
-                last_was_mid <= mid_strobe;
-            end else if (evt_gap != 8'hFF) begin
-                evt_gap      <= evt_gap + 8'd1;
+                evt_gap       <= 8'd1;
+                seen_evt      <= 1'b1;
+                last_was_mid  <= mid_strobe;
+                force_evt_gap <= force_w_en_i;
+            end else begin
+                if (evt_gap != 8'hFF) evt_gap <= evt_gap + 8'd1;
+                if (force_w_en_i)     force_evt_gap <= 1'b1;
             end
         end
     end
@@ -180,19 +191,18 @@ module sva (
         (ce_str && mid_strobe) |-> !last_was_mid
     ) else $error("SVA: mid strobe not preceded by a current strobe");
 
-    // Spacing in ce-cycles. The NCO step W = 0.25 + pi with |pi| <= 0.035, so
-    // W is in [0.215, 0.285]:  symbol period between 3 and 5 samples,
-    // half-symbol (mid<->current) spacing at most 3 samples.
+    // Spacing in ce-cycles during unforced closed-loop operation:
+    // W = 0.25 + pi with |pi| <= 0.035 -> symbol period in [3, 5] samples.
     a_cur_spacing: assert property (
-        (ce_str && curr_strobe && seen_cur) |-> (cur_gap >= 8'd3 && cur_gap <= 8'd5)
+        (ce_str && curr_strobe && seen_cur && !force_cur_gap && !force_w_en_i) |-> (cur_gap >= 8'd3 && cur_gap <= 8'd5)
     ) else $error("SVA: current strobe spacing outside 3..5 samples");
 
     a_mid_spacing: assert property (
-        (ce_str && mid_strobe && seen_mid) |-> (mid_gap >= 8'd3 && mid_gap <= 8'd5)
+        (ce_str && mid_strobe && seen_mid && !force_mid_gap && !force_w_en_i) |-> (mid_gap >= 8'd3 && mid_gap <= 8'd5)
     ) else $error("SVA: mid strobe spacing outside 3..5 samples");
 
     a_event_spacing: assert property (
-        (ce_str && (curr_strobe || mid_strobe) && seen_evt) |-> (evt_gap <= 8'd3)
+        (ce_str && (curr_strobe || mid_strobe) && seen_evt && !force_evt_gap && !force_w_en_i) |-> (evt_gap <= 8'd3)
     ) else $error("SVA: more than 3 samples between consecutive strobes");
 
     // mu is only reloaded together with a strobe
@@ -213,10 +223,14 @@ module sva (
         (w_val >= 14090) && (w_val <= 18677)
     ) else $error("SVA: NCO step W outside [0.215, 0.285]");
 
-    // DFT force mux on w_o
+    // DFT force mux on w_o & genuine NCO decrement override
     a_w_force_mux: assert property (
         w_o === (force_w_en_i ? force_w_i : w_val[15:0])
     ) else $error("SVA: w_o does not follow the force_w mux");
+
+    a_force_w_nco_step: assert property (
+        (ce_str && force_w_en_i) |=> (nco_m_q === ($past(nco_m_q) - {$past(force_w_i), 8'd0}))
+    ) else $error("SVA: modulo_1_controller.m_q did not step by force_w_i");
 
     // =========================================================================
     // 6. Gardner TED data path
@@ -318,5 +332,6 @@ bind str_top sva u_sva (
     .i_prev            (i_prev),
     .q_prev            (q_prev),
     .pi_val            (pi_val),
-    .w_val             (w_val)
+    .w_val             (w_val),
+    .nco_m_q           (u_modulo_ctrl.m_q)
 );

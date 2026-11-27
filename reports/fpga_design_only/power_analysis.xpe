@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
-<POWERDATA author="Vivado Power Analysis" dataVersion="2018.2" design="sync_system_top" designState="routed" date="Fri Nov 27 16:19:25 2026" pwrOpt="BRAMPwropt" activityLevel="vectorless">
+<POWERDATA author="Vivado Power Analysis" dataVersion="2018.2" design="sync_system_top" designState="routed" date="Fri Nov 27 19:44:40 2026" pwrOpt="BRAMPwropt" activityLevel="vectorless">
 	<ENVIRONMENT>
 		<DEVICE part="xczu7ev" grade="extended" package="ffvc1156" speed="-2" process="typical" vid="No">
 		</DEVICE>
 		<VOLTAGESOURCES>
 			<SOURCE name="Vccbram" voltage="0.850000" icc="0.000037" iccq="0.001763" power="0.001530">
 			</SOURCE>
-			<SOURCE name="Vccint" voltage="0.850000" icc="0.129045" iccq="0.135919" power="0.225220">
+			<SOURCE name="Vccint" voltage="0.850000" icc="0.128844" iccq="0.135918" power="0.225048">
 			</SOURCE>
 			<SOURCE name="Vccaux" voltage="1.800000" icc="0.000000" iccq="0.148446" power="0.267203">
 			</SOURCE>
@@ -26,7 +26,7 @@
 			</SOURCE>
 			<SOURCE name="VCC_PSBATT" voltage="1.200000" icc="0.000000" iccq="0.000000" power="0.000000">
 			</SOURCE>
-			<SOURCE name="VCCINT_VCU" voltage="0.900000" icc="0.000000" iccq="0.025062" power="0.022555">
+			<SOURCE name="VCCINT_VCU" voltage="0.900000" icc="0.000000" iccq="0.025061" power="0.022555">
 			</SOURCE>
 		</VOLTAGESOURCES>
 		<THERMAL>
@@ -53,62 +53,62 @@
 	<BLOCKDETAILS>
 		<BYTYPE>
 			<BLOCKTYPE name="Clocks">
-				<CLOCK name="clk" freq="200.000001" belFanout="1409" sliceFanout="784" FoPerSite="1.797194" sliceEnableRate="0.631651" leafs="0.000000" hrows="0.000000" power="0.012836">
+				<CLOCK name="clk" freq="200.000001" belFanout="1346" sliceFanout="748" FoPerSite="1.799465" sliceEnableRate="0.614959" leafs="0.000000" hrows="0.000000" power="0.012115">
 				</CLOCK>
 			</BLOCKTYPE>
 			<BLOCKTYPE name="LOGIC">
-				<LOGIC clock="Unclocked_or_HFN_instance" clockFreq="200.000001" clockFreq2="200.000001" toggleRate="26.653104" toggleRate2="16.812268" totalRate="2672.919278" name="clk" hierName="sync_system_top/u_burst_ctrl" writeRate="0.000000" enableRate="0.000000" fanout="4.696429" ru="10.553298" fanout2="4.640777" totalFanout="526.000000" fanoutRate="9764.512642" numNets="151" extNets="112" carry8s="3" luts="94" logicCap="59490946" signalCap="40785.091560" power="0.000880" sp="0.000570">
+				<LOGIC clock="Unclocked_or_HFN_instance" clockFreq="200.000001" clockFreq2="200.000001" toggleRate="28.502895" toggleRate2="16.774125" totalRate="2675.505792" name="clk" hierName="sync_system_top/u_burst_ctrl" writeRate="0.000000" enableRate="0.000000" fanout="5.052632" ru="10.184079" fanout2="4.605769" totalFanout="576.000000" fanoutRate="9790.850595" numNets="153" extNets="114" carry8s="3" luts="95" logicCap="61018815" signalCap="42064.812927" power="0.000969" sp="0.000534">
 				</LOGIC>
-				<LOGIC clock="clk" clockFreq="200.000001" clockFreq2="200.000001" toggleRate="32.122120" toggleRate2="6.289373" totalRate="6.289373" name="clk" hierName="sync_system_top/u_burst_ctrl" writeRate="0.000000" enableRate="1.000000" fanout="0.000000" ru="0.000000" fanout2="0.000000" totalFanout="0.000000" fanoutRate="0.000000" numNets="1" extNets="0" SRL="1" logicCap="905583" signalCap="0.000000" power="0.000021" sp="0.000000">
+				<LOGIC clock="clk" clockFreq="200.000001" clockFreq2="200.000001" toggleRate="32.119694" toggleRate2="6.287577" totalRate="6.287577" name="clk" hierName="sync_system_top/u_burst_ctrl" writeRate="0.000000" enableRate="1.000000" fanout="0.000000" ru="0.000000" fanout2="0.000000" totalFanout="0.000000" fanoutRate="0.000000" numNets="1" extNets="0" SRL="1" logicCap="905583" signalCap="0.000000" power="0.000021" sp="0.000000">
 				</LOGIC>
-				<LOGIC clock="clk" clockFreq="200.000001" clockFreq2="200.000001" toggleRate="9.082485" toggleRate2="9.304009" totalRate="381.464352" name="clk" hierName="sync_system_top/u_burst_ctrl" writeRate="0.000000" enableRate="0.522616" fanout="1.809524" ru="8.764378" fanout2="1.756098" totalFanout="76.000000" fanoutRate="722.684161" numNets="42" extNets="42" ffs="42" logicCap="2860160" signalCap="7536.511337" power="0.000019" sp="0.000052">
+				<LOGIC clock="clk" clockFreq="200.000001" clockFreq2="200.000001" toggleRate="9.080348" toggleRate2="9.301820" totalRate="381.374614" name="clk" hierName="sync_system_top/u_burst_ctrl" writeRate="0.000000" enableRate="0.522839" fanout="1.809524" ru="8.778100" fanout2="1.756098" totalFanout="76.000000" fanoutRate="722.629202" numNets="42" extNets="42" ffs="42" logicCap="2860160" signalCap="8439.060501" power="0.000019" sp="0.000053">
 				</LOGIC>
-				<LOGIC clock="Unclocked_or_HFN_instance" clockFreq="200.000001" clockFreq2="40.878724" toggleRate="14.307555" toggleRate2="22.519650" totalRate="315.512496" name="High_Fanout_Nets" hierName="sync_system_top/u_burst_ctrl" writeRate="0.000000" enableRate="0.691119" fanout="113.333333" ru="25.591639" fanout2="73.571429" totalFanout="2040.000000" fanoutRate="13479.380206" numNets="18" extNets="18" carry8s="1" ffs="5" luts="4" logicCap="1689422" signalCap="99504.968842" power="0.000024" sp="0.000640">
+				<LOGIC clock="Unclocked_or_HFN_instance" clockFreq="200.000001" clockFreq2="41.013921" toggleRate="15.949860" toggleRate2="22.507936" totalRate="315.344046" name="High_Fanout_Nets" hierName="sync_system_top/u_burst_ctrl" writeRate="0.000000" enableRate="0.691186" fanout="109.529412" ru="25.879371" fanout2="68.857143" totalFanout="1862.000000" fanoutRate="13404.682320" numNets="17" extNets="17" carry8s="1" ffs="5" luts="3" logicCap="1543423" signalCap="102470.928772" power="0.000021" sp="0.000696">
 				</LOGIC>
-				<LOGIC clock="Unclocked_or_HFN_instance" clockFreq="200.000001" clockFreq2="200.000001" toggleRate="47.954065" toggleRate2="38.722784" totalRate="51218.400717" name="clk" hierName="sync_system_top/u_coarse_cfo" writeRate="0.000000" enableRate="0.000000" fanout="1.611529" ru="7.144169" fanout2="1.620865" totalFanout="643.000000" fanoutRate="25353.180092" numNets="975" extNets="399" carry8s="38" luts="577" logicCap="308615616" signalCap="81151.071659" power="0.009451" sp="0.002469">
+				<LOGIC clock="Unclocked_or_HFN_instance" clockFreq="200.000001" clockFreq2="200.000001" toggleRate="47.699027" toggleRate2="38.682425" totalRate="50269.180674" name="clk" hierName="sync_system_top/u_coarse_cfo" writeRate="0.000000" enableRate="0.000000" fanout="1.725000" ru="6.981657" fanout2="1.736041" totalFanout="690.000000" fanoutRate="25166.419446" numNets="976" extNets="400" carry8s="38" luts="577" logicCap="311157281" signalCap="76055.117142" power="0.009422" sp="0.002134">
 				</LOGIC>
-				<LOGIC clock="clk" clockFreq="200.000001" clockFreq2="200.000001" toggleRate="27.180031" toggleRate2="27.180032" totalRate="7664.768910" name="clk" hierName="sync_system_top/u_coarse_cfo" writeRate="0.000000" enableRate="0.635551" fanout="4.294326" ru="12.671717" fanout2="4.294326" totalFanout="1211.000000" fanoutRate="34446.215005" numNets="282" extNets="282" ffs="282" logicCap="19672320" signalCap="149886.611416" power="0.000386" sp="0.003223">
+				<LOGIC clock="clk" clockFreq="200.000001" clockFreq2="200.000001" toggleRate="27.087258" toggleRate2="27.087258" totalRate="7665.694105" name="clk" hierName="sync_system_top/u_coarse_cfo" writeRate="0.000000" enableRate="0.636838" fanout="4.303887" ru="12.461400" fanout2="4.303887" totalFanout="1218.000000" fanoutRate="34452.954691" numNets="283" extNets="283" ffs="283" logicCap="19742080" signalCap="148997.629982" power="0.000386" sp="0.003117">
 				</LOGIC>
-				<LOGIC clock="Unclocked_or_HFN_instance" clockFreq="200.000001" clockFreq2="32.589291" toggleRate="16.294646" toggleRate2="19.426872" totalRate="194.280918" name="High_Fanout_Nets" hierName="sync_system_top/u_coarse_cfo" writeRate="0.000000" enableRate="0.851854" fanout="92.900000" ru="24.748169" fanout2="92.900000" totalFanout="929.000000" fanoutRate="19668.697333" numNets="10" extNets="10" carry8s="1" ffs="8" luts="1" logicCap="1360751" signalCap="65816.782715" power="0.000012" sp="0.000941">
+				<LOGIC clock="Unclocked_or_HFN_instance" clockFreq="200.000001" clockFreq2="36.081914" toggleRate="18.040957" toggleRate2="21.474962" totalRate="193.286859" name="High_Fanout_Nets" hierName="sync_system_top/u_coarse_cfo" writeRate="0.000000" enableRate="0.830690" fanout="97.333333" ru="24.851516" fanout2="97.333333" totalFanout="876.000000" fanoutRate="19616.029274" numNets="9" extNets="9" carry8s="1" ffs="7" luts="1" logicCap="1240650" signalCap="58338.753174" power="0.000012" sp="0.000853">
 				</LOGIC>
-				<LOGIC clock="Unclocked_or_HFN_instance" clockFreq="200.000001" clockFreq2="200.000001" toggleRate="30.418443" toggleRate2="26.252348" totalRate="18774.281916" name="clk" hierName="sync_system_top/u_costas" writeRate="0.000000" enableRate="0.000000" fanout="2.914692" ru="4.803516" fanout2="2.898936" totalFanout="615.000000" fanoutRate="12660.454972" numNets="691" extNets="211" carry8s="35" luts="464" logicCap="246251225" signalCap="48930.937683" power="0.004286" sp="0.000741">
+				<LOGIC clock="Unclocked_or_HFN_instance" clockFreq="200.000001" clockFreq2="200.000001" toggleRate="30.307182" toggleRate2="26.232103" totalRate="18867.166683" name="clk" hierName="sync_system_top/u_costas" writeRate="0.000000" enableRate="0.000000" fanout="3.071090" ru="4.972130" fanout2="3.074468" totalFanout="648.000000" fanoutRate="13287.367850" numNets="692" extNets="211" carry8s="36" luts="465" logicCap="244250718" signalCap="52718.321476" power="0.004308" sp="0.000807">
 				</LOGIC>
-				<LOGIC clock="clk" clockFreq="200.000001" clockFreq2="200.000001" toggleRate="7.077459" toggleRate2="8.064867" totalRate="1387.182025" name="clk" hierName="sync_system_top/u_costas" writeRate="0.000000" enableRate="0.401481" fanout="4.341837" ru="12.646492" fanout2="3.936047" totalFanout="851.000000" fanoutRate="6115.563598" numNets="196" extNets="196" ffs="196" logicCap="12068480" signalCap="89481.858818" power="0.000070" sp="0.000614">
+				<LOGIC clock="clk" clockFreq="200.000001" clockFreq2="200.000001" toggleRate="7.066407" toggleRate2="8.052273" totalRate="1385.015826" name="clk" hierName="sync_system_top/u_costas" writeRate="0.000000" enableRate="0.401500" fanout="4.341837" ru="12.488237" fanout2="3.936047" totalFanout="851.000000" fanoutRate="6105.950214" numNets="196" extNets="196" ffs="196" logicCap="12068480" signalCap="90528.630539" power="0.000070" sp="0.000631">
 				</LOGIC>
-				<LOGIC clock="Unclocked_or_HFN_instance" clockFreq="200.000001" clockFreq2="48.742717" toggleRate="24.371358" toggleRate2="36.455391" totalRate="3098.708993" name="High_Fanout_Nets" hierName="sync_system_top/u_costas" writeRate="0.000000" enableRate="0.912654" fanout="6.348837" ru="28.383199" fanout2="6.411765" totalFanout="546.000000" fanoutRate="14336.511849" numNets="86" extNets="86" carry8s="11" ffs="3" logicCap="6764496" signalCap="53214.784668" power="0.000142" sp="0.001155">
+				<LOGIC clock="Unclocked_or_HFN_instance" clockFreq="200.000001" clockFreq2="48.113321" toggleRate="24.056660" toggleRate2="36.643537" totalRate="3078.057870" name="High_Fanout_Nets" hierName="sync_system_top/u_costas" writeRate="0.000000" enableRate="0.912667" fanout="6.023529" ru="28.359690" fanout2="6.083333" totalFanout="512.000000" fanoutRate="13689.806726" numNets="85" extNets="85" carry8s="10" ffs="3" logicCap="6328943" signalCap="50966.631180" power="0.000133" sp="0.001135">
 				</LOGIC>
-				<LOGIC clock="Unclocked_or_HFN_instance" clockFreq="200.000001" clockFreq2="200.000001" toggleRate="34.548808" toggleRate2="24.780702" totalRate="8240.895969" name="clk" hierName="sync_system_top/u_derotator" writeRate="0.000000" enableRate="0.000000" fanout="2.106061" ru="4.410193" fanout2="2.106061" totalFanout="139.000000" fanoutRate="2827.574671" numNets="304" extNets="66" carry8s="12" luts="194" logicCap="108267190" signalCap="17297.347298" power="0.001964" sp="0.000208">
+				<LOGIC clock="Unclocked_or_HFN_instance" clockFreq="200.000001" clockFreq2="200.000001" toggleRate="33.292949" toggleRate2="24.778953" totalRate="8263.889363" name="clk" hierName="sync_system_top/u_derotator" writeRate="0.000000" enableRate="0.000000" fanout="2.089552" ru="4.474088" fanout2="2.089552" totalFanout="140.000000" fanoutRate="2836.809997" numNets="304" extNets="67" carry8s="12" luts="200" logicCap="105655584" signalCap="16964.416672" power="0.001914" sp="0.000215">
 				</LOGIC>
-				<LOGIC clock="clk" clockFreq="200.000001" clockFreq2="200.000001" toggleRate="18.968895" toggleRate2="19.093690" totalRate="2902.240876" name="clk" hierName="sync_system_top/u_derotator" writeRate="0.000000" enableRate="0.609698" fanout="4.065359" ru="12.316162" fanout2="4.072368" totalFanout="622.000000" fanoutRate="11452.775574" numNets="153" extNets="153" ffs="153" logicCap="10603520" signalCap="69907.747864" power="0.000146" sp="0.001018">
+				<LOGIC clock="clk" clockFreq="200.000001" clockFreq2="200.000001" toggleRate="19.142755" toggleRate2="19.267872" totalRate="2947.984360" name="clk" hierName="sync_system_top/u_derotator" writeRate="0.000000" enableRate="0.612991" fanout="4.259740" ru="12.464090" fanout2="4.267974" totalFanout="656.000000" fanoutRate="12900.211304" numNets="154" extNets="154" ffs="154" logicCap="10673280" signalCap="73400.946388" power="0.000149" sp="0.001154">
 				</LOGIC>
-				<LOGIC clock="Unclocked_or_HFN_instance" clockFreq="200.000001" clockFreq2="57.526295" toggleRate="28.763147" toggleRate2="28.763147" totalRate="86.289442" name="High_Fanout_Nets" hierName="sync_system_top/u_derotator" writeRate="0.000000" enableRate="0.696325" fanout="31.666667" ru="20.899051" fanout2="31.666667" totalFanout="95.000000" fanoutRate="2917.866608" numNets="3" extNets="3" ffs="3" logicCap="209280" signalCap="9919.134766" power="0.000004" sp="0.000199">
+				<LOGIC clock="Unclocked_or_HFN_instance" clockFreq="200.000001" clockFreq2="43.726392" toggleRate="21.863196" toggleRate2="21.863197" totalRate="43.726394" name="High_Fanout_Nets" hierName="sync_system_top/u_derotator" writeRate="0.000000" enableRate="0.544457" fanout="30.500000" ru="20.969100" fanout2="30.500000" totalFanout="61.000000" fanoutRate="1470.762792" numNets="2" extNets="2" ffs="2" logicCap="139520" signalCap="6718.386963" power="0.000002" sp="0.000092">
 				</LOGIC>
-				<LOGIC clock="Unclocked_or_HFN_instance" clockFreq="200.000001" clockFreq2="200.000001" toggleRate="24.253466" toggleRate2="28.355258" totalRate="4162.987051" name="clk" hierName="sync_system_top/u_dft_mux" writeRate="0.000000" enableRate="0.000000" fanout="1.015385" ru="7.702228" fanout2="1.015385" totalFanout="66.000000" fanoutRate="2390.318790" numNets="120" extNets="65" SMUX="21" luts="99" logicCap="52561896" signalCap="11190.505138" power="0.001125" sp="0.000297">
+				<LOGIC clock="Unclocked_or_HFN_instance" clockFreq="200.000001" clockFreq2="200.000001" toggleRate="25.048452" toggleRate2="27.797425" totalRate="3815.671136" name="clk" hierName="sync_system_top/u_dft_mux" writeRate="0.000000" enableRate="0.000000" fanout="1.018182" ru="8.086174" fanout2="1.018182" totalFanout="56.000000" fanoutRate="1998.763601" numNets="111" extNets="55" SMUX="22" luts="89" logicCap="48839350" signalCap="12389.469189" power="0.001116" sp="0.000333">
 				</LOGIC>
-				<LOGIC clock="clk" clockFreq="200.000001" clockFreq2="200.000001" toggleRate="12.381085" toggleRate2="12.381085" totalRate="619.054250" name="clk" hierName="sync_system_top/u_err_align" writeRate="0.000000" enableRate="1.000000" fanout="1.120000" ru="9.116902" fanout2="1.120000" totalFanout="56.000000" fanoutRate="693.340756" numNets="50" extNets="50" ffs="50" logicCap="3488000" signalCap="12575.232300" power="0.000031" sp="0.000112">
+				<LOGIC clock="clk" clockFreq="200.000001" clockFreq2="200.000001" toggleRate="12.381073" toggleRate2="12.381073" totalRate="619.053671" name="clk" hierName="sync_system_top/u_err_align" writeRate="0.000000" enableRate="1.000000" fanout="1.120000" ru="9.334873" fanout2="1.120000" totalFanout="56.000000" fanoutRate="693.340109" numNets="50" extNets="50" ffs="50" logicCap="3488000" signalCap="14422.923584" power="0.000031" sp="0.000129">
 				</LOGIC>
-				<LOGIC clock="Unclocked_or_HFN_instance" clockFreq="200.000001" clockFreq2="200.000001" toggleRate="46.067214" toggleRate2="37.468542" totalRate="54615.061583" name="clk" hierName="sync_system_top/u_str" writeRate="0.000000" enableRate="0.000000" fanout="2.113695" ru="7.940719" fanout2="2.068602" totalFanout="818.000000" fanoutRate="34487.554176" numNets="1127" extNets="387" carry8s="52" luts="679" logicCap="373530891" signalCap="106399.461075" power="0.009902" sp="0.003695">
+				<LOGIC clock="Unclocked_or_HFN_instance" clockFreq="200.000001" clockFreq2="200.000001" toggleRate="46.973181" toggleRate2="37.660527" totalRate="58383.450549" name="clk" hierName="sync_system_top/u_str" writeRate="0.000000" enableRate="0.000000" fanout="2.073991" ru="8.106810" fanout2="2.034247" totalFanout="925.000000" fanoutRate="39235.096135" numNets="1213" extNets="446" carry8s="57" luts="704" logicCap="399752602" signalCap="118043.539707" power="0.010662" sp="0.004007">
 				</LOGIC>
-				<LOGIC clock="clk" clockFreq="200.000001" clockFreq2="200.000001" toggleRate="37.206253" toggleRate2="15.260424" totalRate="396.771035" name="clk" hierName="sync_system_top/u_str" writeRate="0.000000" enableRate="0.990487" fanout="0.000000" ru="0.000000" fanout2="0.000000" totalFanout="0.000000" fanoutRate="0.000000" numNets="26" extNets="0" SRL="18" logicCap="21083283" signalCap="0.000000" power="0.000394" sp="0.000000">
+				<LOGIC clock="clk" clockFreq="200.000001" clockFreq2="200.000001" toggleRate="37.197851" toggleRate2="15.256559" totalRate="396.670526" name="clk" hierName="sync_system_top/u_str" writeRate="0.000000" enableRate="0.990486" fanout="0.000000" ru="0.000000" fanout2="0.000000" totalFanout="0.000000" fanoutRate="0.000000" numNets="26" extNets="0" SRL="18" logicCap="21083283" signalCap="0.000000" power="0.000393" sp="0.000000">
 				</LOGIC>
-				<LOGIC clock="clk" clockFreq="200.000001" clockFreq2="200.000001" toggleRate="22.631388" toggleRate2="23.036139" totalRate="11587.271018" name="clk" hierName="sync_system_top/u_str" writeRate="0.000000" enableRate="0.684762" fanout="4.082031" ru="12.576692" fanout2="4.000000" totalFanout="2090.000000" fanoutRate="47059.517162" numNets="512" extNets="512" ffs="512" logicCap="35228802" signalCap="278868.982620" power="0.000584" sp="0.004692">
+				<LOGIC clock="clk" clockFreq="200.000001" clockFreq2="200.000001" toggleRate="22.546871" toggleRate2="22.950913" totalRate="11521.451038" name="clk" hierName="sync_system_top/u_str" writeRate="0.000000" enableRate="0.684164" fanout="4.142857" ru="12.879594" fanout2="4.061753" totalFanout="2117.000000" fanoutRate="48250.887194" numNets="511" extNets="511" ffs="511" logicCap="35159041" signalCap="301530.064007" power="0.000581" sp="0.005466">
 				</LOGIC>
-				<LOGIC clock="Unclocked_or_HFN_instance" clockFreq="200.000001" clockFreq2="90.064512" toggleRate="45.032256" toggleRate2="48.702555" totalRate="7222.549203" name="High_Fanout_Nets" hierName="sync_system_top/u_str" writeRate="0.000000" enableRate="1.000000" fanout="5.858156" ru="31.388137" fanout2="5.858156" totalFanout="826.000000" fanoutRate="38134.247341" numNets="147" extNets="141" carry8s="19" ffs="1" luts="2" logicCap="12104173" signalCap="107144.866753" power="0.000403" sp="0.003782">
+				<LOGIC clock="Unclocked_or_HFN_instance" clockFreq="200.000001" clockFreq2="88.588118" toggleRate="44.294059" toggleRate2="48.518653" totalRate="6293.170056" name="High_Fanout_Nets" hierName="sync_system_top/u_str" writeRate="0.000000" enableRate="0.995243" fanout="6.065041" ru="30.548210" fanout2="6.065041" totalFanout="746.000000" fanoutRate="34065.018777" numNets="129" extNets="123" carry8s="17" ffs="2" luts="1" logicCap="10305441" signalCap="93485.543793" power="0.000336" sp="0.003219">
 				</LOGIC>
 				<LOGIC clock="Unclocked_or_HFN_instance" clockFreq="200.000001" clockFreq2="200.000001" toggleRate="19.935875" toggleRate2="12.500000" totalRate="25.000000" name="clk" hierName="sync_system_top" writeRate="0.000000" enableRate="0.000000" fanout="0.000000" ru="0.000000" fanout2="0.000000" totalFanout="0.000000" fanoutRate="0.000000" numNets="2" extNets="0" luts="1" logicCap="496921" signalCap="0.000000" power="0.000004" sp="0.000000">
 				</LOGIC>
 				<LOGIC clock="clk" clockFreq="200.000001" clockFreq2="200.000001" toggleRate="30.479994" toggleRate2="12.500000" totalRate="25.000000" name="clk" hierName="sync_system_top" writeRate="0.000000" enableRate="1.000000" fanout="0.000000" ru="0.000000" fanout2="0.000000" totalFanout="0.000000" fanoutRate="0.000000" numNets="2" extNets="0" SRL="2" logicCap="1704128" signalCap="0.000000" power="0.000038" sp="0.000000">
 				</LOGIC>
-				<LOGIC clock="clk" clockFreq="200.000001" clockFreq2="200.000001" toggleRate="31.876808" toggleRate2="38.223454" totalRate="3516.557741" name="clk" hierName="sync_system_top" writeRate="0.000000" enableRate="0.991596" fanout="1.039604" ru="9.757450" fanout2="1.021739" totalFanout="105.000000" fanoutRate="3541.557763" numNets="101" extNets="101" ffs="101" logicCap="4743680" signalCap="21624.646133" power="0.000162" sp="0.000672">
+				<LOGIC clock="clk" clockFreq="200.000001" clockFreq2="200.000001" toggleRate="1.644737" toggleRate2="12.396552" totalRate="359.500006" name="clk" hierName="sync_system_top" writeRate="0.000000" enableRate="0.993684" fanout="1.131579" ru="14.367684" fanout2="1.103448" totalFanout="43.000000" fanoutRate="397.000011" numNets="38" extNets="38" ffs="38" logicCap="348800" signalCap="4007.750420" power="0.000003" sp="0.000036">
 				</LOGIC>
 			</BLOCKTYPE>
 			<BLOCKTYPE name="BRAM">
 				<MODULE name="sync_system_top/u_derotator|clk" count="2">
 					<GROUPSUMMARY>
-						<BRAM name="sync_system_top/u_derotator|clk" mode="RAMB36" cascade="1" toggleRate="0.839605" power="0.001757" sp="0.000055" vccbram="0.000031" vccint="0.001726">
-							<RAMPORT name="A" clock="clk" clockFreq="200.000001" readWidth="9" writeWidth="9" enableRate="0.088976" writeMode="WRITE_FIRST" writeRate="0.000000">
+						<BRAM name="sync_system_top/u_derotator|clk" mode="RAMB36" cascade="1" toggleRate="0.839034" power="0.001757" sp="0.000056" vccbram="0.000031" vccint="0.001726">
+							<RAMPORT name="A" clock="clk" clockFreq="200.000001" readWidth="9" writeWidth="9" enableRate="0.088915" writeMode="WRITE_FIRST" writeRate="0.000000">
 							</RAMPORT>
-							<RAMPORT name="B" clock="clk" clockFreq="200.000001" readWidth="9" writeWidth="0" enableRate="0.088976" writeMode="WRITE_FIRST" writeRate="0.000000">
+							<RAMPORT name="B" clock="clk" clockFreq="200.000001" readWidth="9" writeWidth="0" enableRate="0.088915" writeMode="WRITE_FIRST" writeRate="0.000000">
 							</RAMPORT>
 						</BRAM>
 					</GROUPSUMMARY>
@@ -117,49 +117,49 @@
 			<BLOCKTYPE name="DSP">
 				<MODULE name="sync_system_top/u_coarse_cfo|clk" count="4">
 					<GROUPSUMMARY>
-						<DSP48E2 name="sync_system_top/u_coarse_cfo|clk" clock="clk" toggleRate="28.717984" clockFreq="200.000001" multUsed="Yes" mregUsed="No" preAdderUsed="No" power="0.006452">
+						<DSP48E2 name="sync_system_top/u_coarse_cfo|clk" clock="clk" toggleRate="28.794348" clockFreq="200.000001" multUsed="Yes" mregUsed="No" preAdderUsed="No" power="0.006467">
 						</DSP48E2>
 					</GROUPSUMMARY>
 				</MODULE>
 				<MODULE name="sync_system_top/u_costas|clk" count="2">
 					<GROUPSUMMARY>
-						<DSP48E2 name="sync_system_top/u_costas|clk" clock="clk" toggleRate="5.844621" clockFreq="200.000001" multUsed="Yes" mregUsed="No" preAdderUsed="No" power="0.000977">
+						<DSP48E2 name="sync_system_top/u_costas|clk" clock="clk" toggleRate="5.796807" clockFreq="200.000001" multUsed="Yes" mregUsed="No" preAdderUsed="No" power="0.000972">
 						</DSP48E2>
 					</GROUPSUMMARY>
 				</MODULE>
 				<MODULE name="sync_system_top/u_costas|clk" count="2">
 					<GROUPSUMMARY>
-						<DSP48E2 name="sync_system_top/u_costas|clk" clock="clk" toggleRate="5.871876" clockFreq="200.000001" multUsed="Yes" mregUsed="Yes" preAdderUsed="No" power="0.000907">
+						<DSP48E2 name="sync_system_top/u_costas|clk" clock="clk" toggleRate="5.841424" clockFreq="200.000001" multUsed="Yes" mregUsed="Yes" preAdderUsed="No" power="0.000905">
 						</DSP48E2>
 					</GROUPSUMMARY>
 				</MODULE>
 				<MODULE name="sync_system_top/u_derotator|clk" count="2">
 					<GROUPSUMMARY>
-						<DSP48E2 name="sync_system_top/u_derotator|clk" clock="clk" toggleRate="35.961761" clockFreq="200.000001" multUsed="Yes" mregUsed="No" preAdderUsed="No" power="0.003938">
+						<DSP48E2 name="sync_system_top/u_derotator|clk" clock="clk" toggleRate="36.172664" clockFreq="200.000001" multUsed="Yes" mregUsed="No" preAdderUsed="No" power="0.003959">
 						</DSP48E2>
 					</GROUPSUMMARY>
 				</MODULE>
 				<MODULE name="sync_system_top/u_derotator|clk" count="2">
 					<GROUPSUMMARY>
-						<DSP48E2 name="sync_system_top/u_derotator|clk" clock="clk" toggleRate="36.326040" clockFreq="200.000001" multUsed="Yes" mregUsed="Yes" preAdderUsed="No" power="0.003527">
+						<DSP48E2 name="sync_system_top/u_derotator|clk" clock="clk" toggleRate="36.539081" clockFreq="200.000001" multUsed="Yes" mregUsed="Yes" preAdderUsed="No" power="0.003545">
 						</DSP48E2>
 					</GROUPSUMMARY>
 				</MODULE>
 				<MODULE name="sync_system_top/u_str|clk" count="8">
 					<GROUPSUMMARY>
-						<DSP48E2 name="sync_system_top/u_str|clk" clock="clk" toggleRate="30.343449" clockFreq="200.000001" multUsed="Yes" mregUsed="No" preAdderUsed="No" power="0.013544">
+						<DSP48E2 name="sync_system_top/u_str|clk" clock="clk" toggleRate="32.102426" clockFreq="200.000001" multUsed="Yes" mregUsed="No" preAdderUsed="No" power="0.014235">
 						</DSP48E2>
 					</GROUPSUMMARY>
 				</MODULE>
 				<MODULE name="sync_system_top/u_str|clk" count="1">
 					<GROUPSUMMARY>
-						<DSP48E2 name="sync_system_top/u_str|clk" clock="clk" toggleRate="39.566281" clockFreq="200.000001" multUsed="Yes" mregUsed="No" preAdderUsed="Yes" power="0.002556">
+						<DSP48E2 name="sync_system_top/u_str|clk" clock="clk" toggleRate="39.437935" clockFreq="200.000001" multUsed="Yes" mregUsed="No" preAdderUsed="Yes" power="0.002548">
 						</DSP48E2>
 					</GROUPSUMMARY>
 				</MODULE>
 				<MODULE name="sync_system_top/u_str|clk" count="1">
 					<GROUPSUMMARY>
-						<DSP48E2 name="sync_system_top/u_str|clk" clock="clk" toggleRate="39.566869" clockFreq="200.000001" multUsed="Yes" mregUsed="Yes" preAdderUsed="Yes" power="0.002556">
+						<DSP48E2 name="sync_system_top/u_str|clk" clock="clk" toggleRate="39.438522" clockFreq="200.000001" multUsed="Yes" mregUsed="Yes" preAdderUsed="Yes" power="0.002548">
 						</DSP48E2>
 					</GROUPSUMMARY>
 				</MODULE>

@@ -23,31 +23,44 @@ module modulo_1_controller #(
     input  logic                        valid_sample_i,  // ce_str clock enable
 
     input  logic signed [PI_WIDTH-1:0]  pi_i,            // Signed PI correction
+    input  logic                        force_w_en_i = 1'b0, // DFT: override NCO step W
+    input  logic [W_OUT_WIDTH-1:0]      force_w_i    = '0,   // Forced step size (uQ0.(W_OUT_WIDTH))
 
     output logic [MU_WIDTH-1:0]         mu_o,            // uQ0.(MU_WIDTH) fractional delay in [0, 1)
     output logic                        mid_strobe_o,    // Mid-symbol strobe
     output logic                        current_strobe_o,// Symbol strobe
-    output logic signed [W_OUT_WIDTH-1:0] w_o            // Step size for DFT observation
+    output logic signed [W_OUT_WIDTH-1:0] w_o            // Unforced step size for DFT observation
 );
 
     localparam integer MULT_WIDTH  = NCO_WIDTH + PI_WIDTH;
     localparam integer TERM2_SHIFT = NCO_WIDTH - 4;
-    localparam integer MU_FULL_W   = NCO_WIDTH + 1;
+    localparam integer MU_FULL_W   = NCO_WIDTH + 2;
     localparam logic signed [NCO_WIDTH+1:0] ONE_FULL = (NCO_WIDTH+2)'(1) <<< NCO_WIDTH;
 
     // -------------------------------------------------------------------------
-    // W calculation: W = W_NOM + pi_i (uQ0.(NCO_WIDTH))
+    // W calculation: W = W_NOM + pi_i (uQ0.(NCO_WIDTH)), with optional force override
     // -------------------------------------------------------------------------
     logic [NCO_WIDTH-1:0] w_val;
+    logic [NCO_WIDTH-1:0] force_w_full;
+    logic [NCO_WIDTH-1:0] w_eff;
+
     assign w_val = W_NOM + NCO_WIDTH'(pi_i);
-    assign w_o   = w_val[NCO_WIDTH-1 -: W_OUT_WIDTH]; // Convert for observation port
+    generate
+      if (NCO_WIDTH >= W_OUT_WIDTH) begin : gen_w_up
+        assign force_w_full = NCO_WIDTH'(force_w_i) <<< (NCO_WIDTH - W_OUT_WIDTH);
+      end else begin : gen_w_down
+        assign force_w_full = NCO_WIDTH'(force_w_i >>> (W_OUT_WIDTH - NCO_WIDTH));
+      end
+    endgenerate
+    assign w_eff = force_w_en_i ? force_w_full : w_val;
+    assign w_o   = w_val[NCO_WIDTH-1 -: W_OUT_WIDTH]; // Convert unforced W for observation port
 
     // -------------------------------------------------------------------------
     // Modulo-1 Counter M and Region Crossing Logic
     // -------------------------------------------------------------------------
     logic [NCO_WIDTH-1:0] m_q;
     logic [NCO_WIDTH-1:0] m_next;
-    assign m_next = m_q - w_val; // Unsigned subtraction wraps mod 1.0
+    assign m_next = m_q - w_eff; // Unsigned subtraction wraps mod 1.0
 
     logic in_mid_old, in_mid_new;
     assign in_mid_old = (m_q >= Q25) && (m_q < Q75);
@@ -138,7 +151,7 @@ module modulo_1_controller #(
     assign term2 = NCO_WIDTH'(eta_pi_mult_q >>> TERM2_SHIFT); // Signed arithmetic shift aligned with NCO_WIDTH
 
     logic signed [MU_FULL_W-1:0] mu_full;
-    assign mu_full = $signed({1'b0, eta_4x_q2}) - $signed({{1{term2[NCO_WIDTH-1]}}, term2});
+    assign mu_full = $signed({2'b00, eta_4x_q2}) - $signed({{2{term2[NCO_WIDTH-1]}}, term2});
 
     logic [MU_WIDTH-1:0] mu_calc;
     always_comb begin

@@ -249,6 +249,13 @@ module sync_system_top #(
   logic str_valid_gated;
   assign str_valid_gated = str_valid & (fsm_state >= StCostasAcqVal);
 
+  // Register force_cfo_en by 1 cycle to align with coarse_cfo_core.cfo_q output
+  logic force_cfo_en_q;
+  always_ff @(posedge clk) begin
+    if (!rst_n_eff) force_cfo_en_q <= 1'b0;
+    else            force_cfo_en_q <= force_cfo_en;
+  end
+
   derotator #(
     .Width       (PhaseWidth),
     .Phase_Bits  (DerotPhaseBits),
@@ -268,6 +275,7 @@ module sync_system_top #(
     .freq_adj_i       (costas_freq_adj),
     .force_freq_en_i  (force_freq_en),
     .force_freq_i     (force_freq),
+    .force_cfo_en_i   (force_cfo_en_q),
     .phase_adj_valid_i(costas_phase_valid),
     .phase_adj_i      (costas_phase_adj),
     .m_axis_valid_o   (derot_valid),
@@ -396,12 +404,12 @@ module sync_system_top #(
     dft_all_ch[3]  = DftDataWidth'($signed(str_sym_i));
     dft_all_ch[4]  = DftDataWidth'($signed(coarse_est));
     dft_all_ch[5]  = DftDataWidth'($signed(costas_err_aligned));
-    dft_all_ch[6]  = DftDataWidth'(nco_freq_word);
+    dft_all_ch[6]  = DftDataWidth'($signed(nco_freq_word));
     dft_all_ch[7]  = DftDataWidth'(nco_phase);
     dft_all_ch[8]  = DftDataWidth'($signed(derot_sym_i));
-    dft_all_ch[9]  = DftDataWidth'(costas_int);
+    dft_all_ch[9]  = DftDataWidth'($signed(costas_int));
     dft_all_ch[10] = DftDataWidth'(costas_phase_adj);
-    dft_all_ch[11] = DftDataWidth'(costas_freq_adj);
+    dft_all_ch[11] = DftDataWidth'($signed(costas_freq_adj));
     dft_all_ch[12] = DftDataWidth'(str_lock);
     dft_all_ch[13] = DftDataWidth'(costas_lock);
     dft_all_ch[14] = DftDataWidth'(fsm_state);

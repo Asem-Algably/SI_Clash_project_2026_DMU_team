@@ -1,7 +1,7 @@
 Copyright 1986-2018 Xilinx, Inc. All Rights Reserved.
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version     : Vivado v.2018.2 (win64) Build 2258646 Thu Jun 14 20:03:12 MDT 2018
-| Date             : Fri Nov 27 16:19:24 2026
+| Date             : Fri Nov 27 19:44:40 2026
 | Host             : DESKTOP-GS9RTNI running 64-bit major release  (build 9200)
 | Command          : report_power -file C:/Users/Asem/Desktop/si_clash/rx_sync_project/reports/fpga_design_only/power_analysis.rpt -xpe C:/Users/Asem/Desktop/si_clash/rx_sync_project/reports/fpga_design_only/power_analysis.xpe
 | Design           : sync_system_top
@@ -52,17 +52,17 @@ Table of Contents
 +-------------------------+-----------+----------+-----------+-----------------+
 | On-Chip                 | Power (W) | Used     | Available | Utilization (%) |
 +-------------------------+-----------+----------+-----------+-----------------+
-| Clocks                  |     0.013 |        3 |       --- |             --- |
-| CLB Logic               |     0.030 |     4233 |       --- |             --- |
-|   LUT as Logic          |     0.026 |     2108 |    230400 |            0.91 |
-|   CARRY8                |     0.002 |      172 |     28800 |            0.60 |
-|   Register              |     0.001 |     1356 |    460800 |            0.29 |
+| Clocks                  |     0.012 |        3 |       --- |             --- |
+| CLB Logic               |     0.031 |     4214 |       --- |             --- |
+|   LUT as Logic          |     0.027 |     2131 |    230400 |            0.92 |
+|   CARRY8                |     0.002 |      175 |     28800 |            0.61 |
+|   Register              |     0.001 |     1293 |    460800 |            0.28 |
 |   LUT as Shift Register |    <0.001 |       21 |    101760 |            0.02 |
-|   Others                |     0.000 |       65 |       --- |             --- |
-|   F7/F8 Muxes           |     0.000 |       21 |    230400 |           <0.01 |
-| Signals                 |     0.031 |     3549 |       --- |             --- |
+|   Others                |     0.000 |       66 |       --- |             --- |
+|   F7/F8 Muxes           |     0.000 |       22 |    230400 |           <0.01 |
+| Signals                 |     0.030 |     3518 |       --- |             --- |
 | Block RAM               |     0.002 |        2 |       312 |            0.64 |
-| DSPs                    |     0.034 |       22 |      1728 |            1.27 |
+| DSPs                    |     0.035 |       22 |      1728 |            1.27 |
 | Static Power            |     0.592 |          |           |                 |
 | Total                   |     0.702 |          |           |                 |
 +-------------------------+-----------+----------+-----------+-----------------+
@@ -167,7 +167,7 @@ Table of Contents
 |   u_coarse_cfo              |     0.027 |
 |     u_accumulator           |    <0.001 |
 |     u_complex_mult          |     0.010 |
-|     u_cordic_angle          |     0.014 |
+|     u_cordic_angle          |     0.013 |
 |   u_costas                  |     0.011 |
 |     u_lock_int              |    <0.001 |
 |     u_lock_pub              |    <0.001 |
@@ -183,12 +183,12 @@ Table of Contents
 |     nco_inst                |     0.002 |
 |   u_dft_mux                 |     0.001 |
 |   u_err_align               |    <0.001 |
-|   u_str                     |     0.050 |
+|   u_str                     |     0.052 |
 |     u_i_interp              |     0.012 |
 |     u_lock_detector         |     0.001 |
-|     u_modulo_ctrl           |     0.009 |
-|     u_pi_loop               |     0.009 |
-|     u_q_interp              |     0.010 |
+|     u_modulo_ctrl           |     0.010 |
+|     u_pi_loop               |     0.010 |
+|     u_q_interp              |     0.011 |
 |     u_ted                   |     0.007 |
 +-----------------------------+-----------+
 

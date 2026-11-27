@@ -17,7 +17,9 @@ package main_sequence;
         endfunction
 
         task send(bit v, int i, int q, bit [3:0] dsel,
-                  bit fw = 0, bit fc = 0, bit ff = 0);
+                  bit fw = 0, logic [15:0] fw_val = 16'h1000,
+                  bit fc = 0, logic signed [23:0] fc_val = 24'sd100000,
+                  bit ff = 0, logic [31:0] ff_val = 32'h0010_0000);
             sync_system_top_seq_item item;
             item = sync_system_top_seq_item::type_id::create("item");
             start_item(item);
@@ -28,17 +30,21 @@ package main_sequence;
             item.mod_type      = mod_type;
             item.dft_sel       = dsel;
             item.force_w_en    = fw;
-            item.force_w       = 16'h1000;
+            item.force_w       = fw_val;
             item.force_cfo_en  = fc;
-            item.force_cfo     = 24'sd100000;
+            item.force_cfo     = fc_val;
             item.force_freq_en = ff;
-            item.force_freq    = 32'h0010_0000;
+            item.force_freq    = ff_val;
             finish_item(item);
         endtask
 
         task burst(bit use_force);
             logic signed [11:0] qpsk_i [4];
             logic signed [11:0] qpsk_q [4];
+            logic [15:0]        fw_val;
+            logic signed [23:0] fc_val;
+            logic [31:0]        ff_val;
+            bit                 fw, fc, ff;
             int sym_idx;
 
             sym_idx   = 0;
@@ -48,10 +54,14 @@ package main_sequence;
             qpsk_i[3] =  12'sd1000;  qpsk_q[3] = -12'sd1000;
 
             for (int n = 0; n < num_samples; n++) begin
-                send(1'b1, qpsk_i[sym_idx], qpsk_q[sym_idx], (n / 8) % 16,
-                     use_force && (n > 100 && n < 200),
-                     use_force && (n > 300 && n < 400),
-                     use_force && (n > 500 && n < 600));
+                fw     = use_force && (n > 100 && n < 200);
+                fw_val = (n < 150) ? 16'h2000 : 16'h6000; // Slow & fast STR NCO override
+                fc     = use_force && ((n == 450) || (n >= 470 && n < 500)); // 1-cycle pulse & held post-acq
+                fc_val = (n == 450) ? 24'sd250000 : -24'sd180000;
+                ff     = use_force && (n > 550 && n < 680);
+                ff_val = (n < 615) ? 32'h0010_0000 : 32'hFFE0_0000;
+                send(1'b1, qpsk_i[sym_idx], qpsk_q[sym_idx], (n / 4) % 16,
+                     fw, fw_val, fc, fc_val, ff, ff_val);
                 if (n % 4 == 3) sym_idx = (sym_idx + 1) % 4;
             end
             repeat (num_idle) send(1'b0, 0, 0, 4'd0);

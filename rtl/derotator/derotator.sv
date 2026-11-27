@@ -46,9 +46,10 @@ module derotator #(
     input logic                         freq_adj_valid_i,
     input logic signed [Width-1:0]      freq_adj_i,
 
-    // DFT override of the frequency word
+    // DFT override of the frequency word and coarse CFO reload
     input logic                         force_freq_en_i,
     input logic        [Width-1:0]      force_freq_i,
+    input logic                         force_cfo_en_i = 1'b0,
 
     // Initial phase correction k * pi/2, one pulse from the Costas loop
     input logic                         phase_adj_valid_i,
@@ -84,6 +85,7 @@ module derotator #(
         .freq_adj_valid_i(freq_adj_valid_i),
         .force_freq_en_i(force_freq_en_i),
         .force_freq_i(force_freq_i),
+        .force_cfo_en_i(force_cfo_en_i),
         .coarse_word_i(coarse_word_i),
         .coarse_valid_i(coarse_valid_i),
         .freq_word_o(freq_word_o)

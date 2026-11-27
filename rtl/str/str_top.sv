@@ -214,8 +214,8 @@ module str_top #(
         .W_OUT_WIDTH(ForceWWidth)
     ) u_modulo_ctrl (
         .clk_i(clk_i), .rst_ni(rst_ni), .valid_sample_i(ce_str),
-        .pi_i(pi_val), .mu_o(mu),
-        .mid_strobe_o(mid_strobe), .current_strobe_o(curr_strobe),
+        .pi_i(pi_val), .force_w_en_i(force_w_en_i), .force_w_i(force_w_i),
+        .mu_o(mu), .mid_strobe_o(mid_strobe), .current_strobe_o(curr_strobe),
         .w_o(w_val)
     );
 
