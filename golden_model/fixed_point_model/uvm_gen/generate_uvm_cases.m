@@ -568,6 +568,7 @@ function sim = run_full_chain_top(rx_samples, rst_n_vec, in_val_vec, sob_vec, mo
     mod_pipe_len  = T.lat.str + T.lat.derot + 1;
     mod_type_pipe = zeros(1, mod_pipe_len, 'uint8');
     smp_ptr       = 0;
+    fc_en_prev    = false;
 
     z_u32 = zeros(N, 1, 'uint32');
     sim.in_i_u      = z_u32;
@@ -678,6 +679,7 @@ function sim = run_full_chain_top(rx_samples, rst_n_vec, in_val_vec, sob_vec, mo
         derot_in.s_axis_q_sym_i    = w_prev.str_out.m_axis_q_sym_o;
         derot_in.coarse_valid_i    = w_prev.coarse_out.m_axis_valid_o;
         derot_in.coarse_word_i     = w_prev.coarse_out.m_axis_cfo_o;
+        derot_in.force_cfo_en_i    = fc_en_prev;
         derot_in.freq_adj_valid_i  = w_prev.costas_out.freq_adj_valid_o;
         derot_in.freq_adj_i        = w_prev.costas_out.freq_adj_o;
         derot_in.force_freq_en_i   = ff_en_vec(t);
@@ -727,6 +729,11 @@ function sim = run_full_chain_top(rx_samples, rst_n_vec, in_val_vec, sob_vec, mo
                 last_smp_i_d = in_i_d; last_smp_q_d = in_q_d;
             end
             mod_type_pipe = [mod_vec(t), mod_type_pipe(1:end-1)];
+        end
+        if ~rst_ni_eff
+            fc_en_prev = false;
+        else
+            fc_en_prev = fc_en_vec(t);
         end
 
         sim.exp_val_u(t)   = uint32(w.derot_out.m_axis_valid_o);

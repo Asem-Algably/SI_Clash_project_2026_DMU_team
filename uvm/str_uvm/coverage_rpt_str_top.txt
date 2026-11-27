@@ -24,16 +24,16 @@ Branch Coverage for instance /top/dut/u_i_interp
 Branch totals: 3 hits of 3 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    88                                     13641     Count coming in to IF
+    88                                     13640     Count coming in to IF
     88              1                         20     
-    93              1                      12683     
+    93              1                      12682     
                                              938     All False Count
 Branch totals: 3 hits of 3 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    123                                    13631     Count coming in to IF
+    123                                    13630     Count coming in to IF
     123             1                         20     
-    127             1                      12673     
+    127             1                      12672     
                                              938     All False Count
 Branch totals: 3 hits of 3 branches = 100.00%
 
@@ -82,26 +82,26 @@ Statement Coverage for instance /top/dut/u_i_interp --
     78              1                      12568     
     79              1                      12570     
     80              1                      12572     
-    87              1                      13641     
+    87              1                      13640     
     89              1                         20     
     90              1                         20     
     91              1                         20     
     92              1                         20     
-    95              1                      12683     
-    97              1                      12683     
-    98              1                      12683     
-    99              1                      12683     
+    95              1                      12682     
+    97              1                      12682     
+    98              1                      12682     
+    99              1                      12682     
     108             1                      12641     
-    112             1                      12377     
-    122             1                      13631     
+    112             1                      12376     
+    122             1                      13630     
     124             1                         20     
     125             1                         20     
     126             1                         20     
-    129             1                      12673     
-    130             1                      12673     
-    131             1                      12673     
-    140             1                      12636     
-    144             1                      12376     
+    129             1                      12672     
+    130             1                      12672     
+    131             1                      12672     
+    140             1                      12640     
+    144             1                      12379     
     149             1                      12564     
     156             1                      12591     
     158             1                      13555     
@@ -184,16 +184,16 @@ Branch Coverage for instance /top/dut/u_q_interp
 Branch totals: 3 hits of 3 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    88                                     13641     Count coming in to IF
+    88                                     13640     Count coming in to IF
     88              1                         20     
-    93              1                      12683     
+    93              1                      12682     
                                              938     All False Count
 Branch totals: 3 hits of 3 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    123                                    13631     Count coming in to IF
+    123                                    13630     Count coming in to IF
     123             1                         20     
-    127             1                      12673     
+    127             1                      12672     
                                              938     All False Count
 Branch totals: 3 hits of 3 branches = 100.00%
 
@@ -242,28 +242,28 @@ Statement Coverage for instance /top/dut/u_q_interp --
     78              1                      12559     
     79              1                      12561     
     80              1                      12563     
-    87              1                      13641     
+    87              1                      13640     
     89              1                         20     
     90              1                         20     
     91              1                         20     
     92              1                         20     
-    95              1                      12683     
-    97              1                      12683     
-    98              1                      12683     
-    99              1                      12683     
+    95              1                      12682     
+    97              1                      12682     
+    98              1                      12682     
+    99              1                      12682     
     108             1                      12642     
-    112             1                      12377     
-    122             1                      13631     
+    112             1                      12376     
+    122             1                      13630     
     124             1                         20     
     125             1                         20     
     126             1                         20     
-    129             1                      12673     
-    130             1                      12673     
-    131             1                      12673     
-    140             1                      12639     
-    144             1                      12379     
+    129             1                      12672     
+    130             1                      12672     
+    131             1                      12672     
+    140             1                      12638     
+    144             1                      12377     
     149             1                      12555     
-    156             1                      12592     
+    156             1                      12591     
     158             1                      13555     
     160             1                         20     
     162             1                      12597     
@@ -337,29 +337,29 @@ Branch Coverage for instance /top/dut/u_ted
     ----         ----                      -----     ------ 
   File ../../rtl/str/gardner_ted_estimator.sv
 ------------------------------------IF Branch------------------------------------
-    52                                     13614     Count coming in to IF
+    52                                     13612     Count coming in to IF
     52              1                         20     
-    56              1                      12635     
-                                             959     All False Count
+    56              1                      12634     
+                                             958     All False Count
 Branch totals: 3 hits of 3 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    58                                     12635     Count coming in to IF
-    58              1                       2929     
+    58                                     12634     Count coming in to IF
+    58              1                       2928     
                                             9706     All False Count
 Branch totals: 2 hits of 2 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    76                                     10010     Count coming in to IF
+    76                                     10012     Count coming in to IF
     76              1                         18     
-    79              1                       9054     
+    79              1                       9056     
                                              938     All False Count
 Branch totals: 3 hits of 3 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    81                                      9054     Count coming in to IF
-    81              1                       2928     
-                                            6126     All False Count
+    81                                      9056     Count coming in to IF
+    81              1                       2927     
+                                            6129     All False Count
 Branch totals: 2 hits of 2 branches = 100.00%
 
 
@@ -375,22 +375,22 @@ Statement Coverage for instance /top/dut/u_ted --
     Line         Item                      Count     Source 
     ----         ----                      -----     ------ 
   File ../../rtl/str/gardner_ted_estimator.sv
-    45              1                      15520     
-    46              1                      15517     
-    51              1                      13614     
+    45              1                      15519     
+    46              1                      15515     
+    51              1                      13612     
     53              1                         20     
     54              1                         20     
     55              1                         20     
-    57              1                      12635     
-    59              1                       2929     
-    60              1                       2929     
-    71              1                       2925     
-    73              1                       2925     
-    75              1                      10010     
+    57              1                      12634     
+    59              1                       2928     
+    60              1                       2928     
+    71              1                       2924     
+    73              1                       2924     
+    75              1                      10012     
     77              1                         18     
     78              1                         18     
-    80              1                       9054     
-    82              1                       2928     
+    80              1                       9056     
+    82              1                       2927     
 Toggle Coverage:
     Enabled Coverage              Bins      Hits    Misses  Coverage
     ----------------              ----      ----    ------  --------
@@ -445,37 +445,37 @@ Branch Coverage for instance /top/dut/u_pi_loop
     ----         ----                      -----     ------ 
   File ../../rtl/str/pI_loop.sv
 ------------------------------------IF Branch------------------------------------
-    56                                      9014     Count coming in to IF
+    56                                      9015     Count coming in to IF
     56              1                         18     
-    61              1                       8996     
+    61              1                       8997     
 Branch totals: 2 hits of 2 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    63                                      8996     Count coming in to IF
-    63              1                       2923     
-                                            6073     All False Count
+    63                                      8997     Count coming in to IF
+    63              1                       2922     
+                                            6075     All False Count
 Branch totals: 2 hits of 2 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    86                                      5837     Count coming in to IF
-    90              1                       5837     
+    86                                      5834     Count coming in to IF
+    90              1                       5834     
 Branch totals: 1 hit of 1 branch = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    106                                     8758     Count coming in to IF
-    110             1                       8758     
+    106                                     8754     Count coming in to IF
+    110             1                       8752     
 Branch totals: 1 hit of 1 branch = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    119                                     5875     Count coming in to IF
+    119                                     5873     Count coming in to IF
     119             1                         20     
-    122             1                       2923     
-                                            2932     All False Count
+    122             1                       2922     
+                                            2931     All False Count
 Branch totals: 3 hits of 3 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    124                                     2923     Count coming in to IF
-    128             1                       2923     
+    124                                     2922     Count coming in to IF
+    128             1                       2921     
 Branch totals: 1 hit of 1 branch = 100.00%
 
 
@@ -491,30 +491,30 @@ Statement Coverage for instance /top/dut/u_pi_loop --
     Line         Item                      Count     Source 
     ----         ----                      -----     ------ 
   File ../../rtl/str/pI_loop.sv
-    45              1                       2925     
-    55              1                       9014     
+    45              1                       2924     
+    55              1                       9015     
     57              1                         18     
     58              1                         18     
     59              1                         18     
     60              1                         18     
-    62              1                       8996     
-    64              1                       2923     
-    65              1                       2923     
-    66              1                       2923     
-    75              1                       2923     
-    78              1                       2923     
-    82              1                       5844     
-    85              1                       5837     
-    91              1                       5837     
-    97              1                       8759     
-    105             1                       8758     
-    111             1                       8758     
-    118             1                       5875     
+    62              1                       8997     
+    64              1                       2922     
+    65              1                       2922     
+    66              1                       2922     
+    75              1                       2922     
+    78              1                       2922     
+    82              1                       5841     
+    85              1                       5834     
+    91              1                       5834     
+    97              1                       8755     
+    105             1                       8754     
+    111             1                       8752     
+    118             1                       5873     
     120             1                         20     
     121             1                         20     
-    129             1                       2923     
-    131             1                       2923     
-    136             1                       2925     
+    129             1                       2921     
+    131             1                       2922     
+    136             1                       2924     
 Toggle Coverage:
     Enabled Coverage              Bins      Hits    Misses  Coverage
     ----------------              ----      ----    ------  --------
@@ -558,7 +558,7 @@ Toggle Coverage      =     100.00% (840 of 840 bins)
 Branch Coverage:
     Enabled Coverage              Bins      Hits    Misses  Coverage
     ----------------              ----      ----    ------  --------
-    Branches                        18        18         0   100.00%
+    Branches                        20        20         0   100.00%
 
 ================================Branch Details================================
 
@@ -568,49 +568,55 @@ Branch Coverage for instance /top/dut/u_modulo_ctrl
     ----         ----                      -----     ------ 
   File ../../rtl/str/modulo_1_controller.sv
 ------------------------------------IF Branch------------------------------------
-    64                                     12725     Count coming in to IF
-    64              1                       3181     
-    67              1                       3186     
-                                            6358     All False Count
-Branch totals: 3 hits of 3 branches = 100.00%
-
-------------------------------------IF Branch------------------------------------
-    69                                      3186     Count coming in to IF
-    69              1                       3170     
-    71              1                         16     
+    55                                     16715     Count coming in to IF
+    55              1                        227     
+    55              2                      16488     
 Branch totals: 2 hits of 2 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    95                                     13685     Count coming in to IF
-    95              1                         20     
-    102             1                      12713     
-                                             952     All False Count
+    77                                     12744     Count coming in to IF
+    77              1                       3185     
+    80              1                       3191     
+                                            6368     All False Count
 Branch totals: 3 hits of 3 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    121                                    13671     Count coming in to IF
-    121             1                         20     
-    126             1                      12713     
+    82                                      3191     Count coming in to IF
+    82              1                       3171     
+    84              1                         20     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    108                                    13687     Count coming in to IF
+    108             1                         20     
+    115             1                      12713     
+                                             954     All False Count
+Branch totals: 3 hits of 3 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    134                                    13671     Count coming in to IF
+    134             1                         20     
+    139             1                      12713     
                                              938     All False Count
 Branch totals: 3 hits of 3 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    145                                    12477     Count coming in to IF
-    145             1                         33     
-    149             1                      12444     
+    158                                    12466     Count coming in to IF
+    158             1                         35     
+    162             1                      12431     
 Branch totals: 2 hits of 2 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    161                                    13662     Count coming in to IF
-    161             1                         20     
-    165             1                      12704     
+    174                                    13662     Count coming in to IF
+    174             1                         20     
+    178             1                      12704     
                                              938     All False Count
 Branch totals: 3 hits of 3 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    168                                    12704     Count coming in to IF
-    168             1                       6354     
-                                            6350     All False Count
+    181                                    12704     Count coming in to IF
+    181             1                       6353     
+                                            6351     All False Count
 Branch totals: 2 hits of 2 branches = 100.00%
 
 
@@ -625,7 +631,7 @@ Condition Coverage for instance /top/dut/u_modulo_ctrl --
 
   File ../../rtl/str/modulo_1_controller.sv
 ----------------Focused Condition View-------------------
-Line       64 Item    1  (in_mid_old && ~in_mid_new)
+Line       77 Item    1  (in_mid_old && ~in_mid_new)
 Condition totals: 2 of 2 input terms covered = 100.00%
 
   Input Term   Covered  Reason for no coverage   Hint
@@ -641,7 +647,7 @@ Condition totals: 2 of 2 input terms covered = 100.00%
   Row   4:          1  in_mid_new_1          in_mid_old                    
 
 ----------------Focused Condition View-------------------
-Line       67 Item    1  (~in_mid_old && in_mid_new)
+Line       80 Item    1  (~in_mid_old && in_mid_new)
 Condition totals: 2 of 2 input terms covered = 100.00%
 
   Input Term   Covered  Reason for no coverage   Hint
@@ -657,7 +663,7 @@ Condition totals: 2 of 2 input terms covered = 100.00%
   Row   4:          1  in_mid_new_1          ~in_mid_old                   
 
 ----------------Focused Condition View-------------------
-Line       69 Item    1  (m_q >= 12582912)
+Line       82 Item    1  (m_q >= 12582912)
 Condition totals: 1 of 1 input term covered = 100.00%
 
          Input Term   Covered  Reason for no coverage   Hint
@@ -670,7 +676,7 @@ Condition totals: 1 of 1 input term covered = 100.00%
   Row   2:          1  (m_q >= 12582912)_1   -                             
 
 ----------------Focused Condition View-------------------
-Line       145 Item    1  (mu_full < 0)
+Line       158 Item    1  (mu_full < 0)
 Condition totals: 1 of 1 input term covered = 100.00%
 
      Input Term   Covered  Reason for no coverage   Hint
@@ -683,7 +689,7 @@ Condition totals: 1 of 1 input term covered = 100.00%
   Row   2:          1  (mu_full < 0)_1       -                             
 
 ----------------Focused Condition View-------------------
-Line       168 Item    1  (strobe_cur_q2 || strobe_mid_q2)
+Line       181 Item    1  (strobe_cur_q2 || strobe_mid_q2)
 Condition totals: 2 of 2 input terms covered = 100.00%
 
      Input Term   Covered  Reason for no coverage   Hint
@@ -710,7 +716,7 @@ Expression Coverage for instance /top/dut/u_modulo_ctrl --
 
   File ../../rtl/str/modulo_1_controller.sv
 ----------------Focused Expression View-----------------
-Line       53 Item    1  ((m_q >= 4194304) && (m_q < 12582912))
+Line       66 Item    1  ((m_q >= 4194304) && (m_q < 12582912))
 Expression totals: 2 of 2 input terms covered = 100.00%
 
         Input Term   Covered  Reason for no coverage   Hint
@@ -726,7 +732,7 @@ Expression totals: 2 of 2 input terms covered = 100.00%
   Row   4:          1  (m_q < 12582912)_1    (m_q >= 4194304)              
 
 ----------------Focused Expression View-----------------
-Line       54 Item    1  ((m_next >= 4194304) && (m_next < 12582912))
+Line       67 Item    1  ((m_next >= 4194304) && (m_next < 12582912))
 Expression totals: 2 of 2 input terms covered = 100.00%
 
            Input Term   Covered  Reason for no coverage   Hint
@@ -745,7 +751,7 @@ Expression totals: 2 of 2 input terms covered = 100.00%
 Statement Coverage:
     Enabled Coverage              Bins      Hits    Misses  Coverage
     ----------------              ----      ----    ------  --------
-    Statements                      48        48         0   100.00%
+    Statements                      50        50         0   100.00%
 
 ================================Statement Details================================
 
@@ -754,58 +760,60 @@ Statement Coverage for instance /top/dut/u_modulo_ctrl --
     Line         Item                      Count     Source 
     ----         ----                      -----     ------ 
   File ../../rtl/str/modulo_1_controller.sv
-    42              1                       2925     
-    43              1                       2925     
-    50              1                      15648     
-    53              1                      12724     
-    54              1                      15647     
-    59              1                      12725     
-    60              1                      12725     
-    61              1                      12725     
-    62              1                      12725     
-    65              1                       3181     
-    66              1                       3181     
-    68              1                       3186     
-    70              1                       3170     
-    72              1                         16     
-    94              1                      13685     
-    96              1                         20     
-    97              1                         20     
-    98              1                         20     
-    99              1                         20     
-    100             1                         20     
-    101             1                         20     
-    103             1                      12713     
-    104             1                      12713     
-    105             1                      12713     
-    106             1                      12713     
-    107             1                      12713     
-    108             1                      12713     
-    120             1                      13671     
-    122             1                         20     
-    123             1                         20     
-    124             1                         20     
-    125             1                         20     
-    127             1                      12713     
-    128             1                      12713     
-    129             1                      12713     
-    130             1                      12713     
-    138             1                      12477     
-    141             1                      24944     
-    144             1                      12477     
-    146             1                         33     
-    151             1                      12444     
-    160             1                      13662     
-    162             1                         20     
-    163             1                         20     
-    164             1                         20     
-    166             1                      12704     
-    167             1                      12704     
-    169             1                       6354     
+    47              1                       2924     
+    50              1                      13793     
+    55              1                      16716     
+    56              1                       2924     
+    63              1                      15968     
+    66              1                      12724     
+    67              1                      15967     
+    72              1                      12744     
+    73              1                      12744     
+    74              1                      12744     
+    75              1                      12744     
+    78              1                       3185     
+    79              1                       3185     
+    81              1                       3191     
+    83              1                       3171     
+    85              1                         20     
+    107             1                      13687     
+    109             1                         20     
+    110             1                         20     
+    111             1                         20     
+    112             1                         20     
+    113             1                         20     
+    114             1                         20     
+    116             1                      12713     
+    117             1                      12713     
+    118             1                      12713     
+    119             1                      12713     
+    120             1                      12713     
+    121             1                      12713     
+    133             1                      13671     
+    135             1                         20     
+    136             1                         20     
+    137             1                         20     
+    138             1                         20     
+    140             1                      12713     
+    141             1                      12713     
+    142             1                      12713     
+    143             1                      12713     
+    151             1                      12466     
+    154             1                      24922     
+    157             1                      12466     
+    159             1                         35     
+    164             1                      12431     
+    173             1                      13662     
+    175             1                         20     
+    176             1                         20     
+    177             1                         20     
+    179             1                      12704     
+    180             1                      12704     
+    182             1                       6353     
 Toggle Coverage:
     Enabled Coverage              Bins      Hits    Misses  Coverage
     ----------------              ----      ----    ------  --------
-    Toggles                        728       728         0   100.00%
+    Toggles                        838       838         0   100.00%
 
 ================================Toggle Details================================
 
@@ -815,39 +823,43 @@ Toggle Coverage for instance /top/dut/u_modulo_ctrl --
                                               ---------------------------------------
                                              clk_i           1           1      100.00 
                                   current_strobe_o           1           1      100.00 
-                                   eta_4x_q1[23-2]           1           1      100.00 
-                                   eta_4x_q2[23-2]           1           1      100.00 
-                               eta_pi_mult_q[47-0]           1           1      100.00 
-                                     eta_raw[22-0]           1           1      100.00 
-                                   eta_raw_q[22-0]           1           1      100.00 
+                                   eta_4x_q1[2-23]           1           1      100.00 
+                                   eta_4x_q2[2-23]           1           1      100.00 
+                               eta_pi_mult_q[0-47]           1           1      100.00 
+                                     eta_raw[0-22]           1           1      100.00 
+                                   eta_raw_q[0-22]           1           1      100.00 
+                                      force_w_en_i           1           1      100.00 
+                                force_w_full[8-22]           1           1      100.00 
+                                   force_w_i[0-14]           1           1      100.00 
                                         in_mid_new           1           1      100.00 
                                         in_mid_old           1           1      100.00 
-                                      m_next[23-0]           1           1      100.00 
-                                         m_q[23-0]           1           1      100.00 
+                                      m_next[0-23]           1           1      100.00 
+                                         m_q[0-23]           1           1      100.00 
                                       mid_strobe_o           1           1      100.00 
-                                      mu_calc[9-0]           1           1      100.00 
-                                     mu_full[24-0]           1           1      100.00 
-                                         mu_o[9-0]           1           1      100.00 
-                                       mu_reg[9-0]           1           1      100.00 
+                                      mu_calc[0-9]           1           1      100.00 
+                                     mu_full[0-25]           1           1      100.00 
+                                         mu_o[0-9]           1           1      100.00 
+                                       mu_reg[0-9]           1           1      100.00 
                                            new_cur           1           1      100.00 
                                            new_mid           1           1      100.00 
                                         pi_i[0-23]           1           1      100.00 
-                                        pi_q[23-0]           1           1      100.00 
+                                        pi_q[0-23]           1           1      100.00 
                                             rst_ni           1           1      100.00 
                                      strobe_cur_q1           1           1      100.00 
                                      strobe_cur_q2           1           1      100.00 
                                      strobe_mid_q1           1           1      100.00 
                                      strobe_mid_q2           1           1      100.00 
-                                       term2[23-0]           1           1      100.00 
+                                       term2[0-23]           1           1      100.00 
                                     valid_sample_i           1           1      100.00 
-                                         w_o[14-0]           1           1      100.00 
-                                       w_val[22-0]           1           1      100.00 
+                                       w_eff[0-22]           1           1      100.00 
+                                         w_o[0-14]           1           1      100.00 
+                                       w_val[0-22]           1           1      100.00 
 
-Total Node Count     =        364 
-Toggled Node Count   =        364 
+Total Node Count     =        419 
+Toggled Node Count   =        419 
 Untoggled Node Count =          0 
 
-Toggle Coverage      =     100.00% (728 of 728 bins)
+Toggle Coverage      =     100.00% (838 of 838 bins)
 
 =================================================================================
 === Instance: /top/dut/u_lock_detector
@@ -866,23 +878,23 @@ Branch Coverage for instance /top/dut/u_lock_detector
     ----         ----                      -----     ------ 
   File ../../rtl/str/lock_detector.sv
 ------------------------------------IF Branch------------------------------------
-    48                                      6092     Count coming in to IF
+    48                                      6094     Count coming in to IF
     48              1                         18     
-    50              1                       2923     
-                                            3151     All False Count
+    50              1                       2922     
+                                            3154     All False Count
 Branch totals: 3 hits of 3 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    51                                      2923     Count coming in to IF
-    51              1                       1438     
-    51              2                       1485     
+    51                                      2922     Count coming in to IF
+    51              1                       1428     
+    51              2                       1494     
 Branch totals: 2 hits of 2 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    58                                      5875     Count coming in to IF
+    58                                      5873     Count coming in to IF
     58              1                         20     
-    61              1                       2923     
-                                            2932     All False Count
+    61              1                       2922     
+                                            2931     All False Count
 Branch totals: 3 hits of 3 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
@@ -905,33 +917,33 @@ Branch totals: 3 hits of 3 branches = 100.00%
 Branch totals: 2 hits of 2 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    81                                     11905     Count coming in to IF
+    81                                     11900     Count coming in to IF
     81              1                         20     
-    88              1                      11885     
+    88              1                      11880     
 Branch totals: 2 hits of 2 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    92                                     11885     Count coming in to IF
-    92              1                       2923     
-                                            8962     All False Count
+    92                                     11880     Count coming in to IF
+    92              1                       2922     
+                                            8958     All False Count
 Branch totals: 2 hits of 2 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    94                                      2923     Count coming in to IF
+    94                                      2922     Count coming in to IF
     94              1                         10     
-                                            2913     All False Count
+                                            2912     All False Count
 Branch totals: 2 hits of 2 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    99                                     11885     Count coming in to IF
-    99              1                       2922     
-                                            8963     All False Count
+    99                                     11880     Count coming in to IF
+    99              1                       2921     
+                                            8959     All False Count
 Branch totals: 2 hits of 2 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    101                                     2922     Count coming in to IF
-    101             1                       2323     
-    103             1                        402     
+    101                                     2921     Count coming in to IF
+    101             1                       2324     
+    103             1                        400     
                                              197     All False Count
 Branch totals: 3 hits of 3 branches = 100.00%
 
@@ -1081,35 +1093,35 @@ Statement Coverage for instance /top/dut/u_lock_detector --
     Line         Item                      Count     Source 
     ----         ----                      -----     ------ 
   File ../../rtl/str/lock_detector.sv
-    47              1                       6092     
+    47              1                       6094     
     49              1                         18     
-    51              1                       2923     
-    55              1                       5848     
-    57              1                       5875     
+    51              1                       2922     
+    55              1                       5846     
+    57              1                       5873     
     59              1                         20     
     60              1                         20     
-    62              1                       2923     
-    63              1                       2923     
+    62              1                       2922     
+    63              1                       2922     
     67              1                         20     
     68              1                       2943     
     70              1                        230     
     72              1                        209     
     74              1                         10     
     76              1                         11     
-    80              1                      11905     
+    80              1                      11900     
     82              1                         20     
     83              1                         20     
     84              1                         20     
     85              1                         20     
     86              1                         20     
     87              1                         20     
-    89              1                      11885     
-    90              1                      11885     
-    93              1                       2923     
+    89              1                      11880     
+    90              1                      11880     
+    93              1                       2922     
     95              1                         10     
-    100             1                       2922     
-    102             1                       2323     
-    104             1                        402     
+    100             1                       2921     
+    102             1                       2324     
+    104             1                        400     
 Toggle Coverage:
     Enabled Coverage              Bins      Hits    Misses  Coverage
     ----------------              ----      ----    ------  --------
@@ -1174,28 +1186,28 @@ Branch Coverage for instance /top/dut
 Branch totals: 3 hits of 3 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    146                                    13657     Count coming in to IF
+    146                                    13656     Count coming in to IF
     146             1                         20     
-    150             1                      12655     
+    150             1                      12654     
                                              982     All False Count
 Branch totals: 3 hits of 3 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    151                                    12655     Count coming in to IF
-    151             1                       2928     
-                                            9727     All False Count
+    151                                    12654     Count coming in to IF
+    151             1                       2920     
+                                            9734     All False Count
 Branch totals: 2 hits of 2 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    156                                    12655     Count coming in to IF
-    156             1                       2929     
+    156                                    12654     Count coming in to IF
+    156             1                       2928     
                                             9726     All False Count
 Branch totals: 2 hits of 2 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
     226                                    16712     Count coming in to IF
-    226             1                        231     
-    228             1                      16481     
+    226             1                        227     
+    228             1                      16485     
 Branch totals: 2 hits of 2 branches = 100.00%
 
 
@@ -1280,23 +1292,23 @@ Statement Coverage for instance /top/dut --
     130             1                      12694     
     132             1                        982     
     133             1                        982     
-    145             1                      13657     
+    145             1                      13656     
     147             1                         20     
     147             2                         20     
     148             1                         20     
     148             2                         20     
     149             1                         20     
     149             2                         20     
-    152             1                       2928     
-    153             1                       2928     
-    157             1                       2929     
-    158             1                       2929     
-    159             1                       2929     
-    160             1                       2929     
+    152             1                       2920     
+    153             1                       2920     
+    157             1                       2928     
+    158             1                       2928     
+    159             1                       2928     
+    160             1                       2928     
     225             1                      16712     
-    227             1                        231     
-    229             1                      16481     
-    238             1                       2925     
+    227             1                        227     
+    229             1                      16485     
+    238             1                       2924     
 Toggle Coverage:
     Enabled Coverage              Bins      Hits    Misses  Coverage
     ----------------              ----      ----    ------  --------
@@ -1382,31 +1394,31 @@ Covergroup                                             Metric       Goal       B
         covered/total bins:                                 2          2          -                      
         missing/total bins:                                 0          2          -                      
         % Hit:                                        100.00%        100          -                      
-        bin auto[0]                                      2929          1          -    Covered              
-        bin auto[1]                                     10927          1          -    Covered              
+        bin auto[0]                                      2919          1          -    Covered              
+        bin auto[1]                                     10937          1          -    Covered              
     Coverpoint cp_ted_valid                           100.00%        100          -    Covered              
         covered/total bins:                                 2          2          -                      
         missing/total bins:                                 0          2          -                      
         % Hit:                                        100.00%        100          -                      
-        bin auto[0]                                     10636          1          -    Covered              
-        bin auto[1]                                      3220          1          -    Covered              
+        bin auto[0]                                     10632          1          -    Covered              
+        bin auto[1]                                      3224          1          -    Covered              
     Coverpoint cp_mu                                  100.00%        100          -    Covered              
         covered/total bins:                                 4          4          -                      
         missing/total bins:                                 0          4          -                      
         % Hit:                                        100.00%        100          -                      
-        bin q0                                           2699          1          -    Covered              
-        bin q1                                           4369          1          -    Covered              
-        bin q2                                           3839          1          -    Covered              
-        bin q3                                           2949          1          -    Covered              
+        bin q0                                           2751          1          -    Covered              
+        bin q1                                           4460          1          -    Covered              
+        bin q2                                           4023          1          -    Covered              
+        bin q3                                           2622          1          -    Covered              
     Cross cx_valid_lock                               100.00%        100          -    Covered              
         covered/total bins:                                 4          4          -                      
         missing/total bins:                                 0          4          -                      
         % Hit:                                        100.00%        100          -                      
         Auto, Default and User Defined Bins:
-            bin <auto[1],auto[1]>                        2508          1          -    Covered              
-            bin <auto[0],auto[1]>                        8419          1          -    Covered              
-            bin <auto[1],auto[0]>                         655          1          -    Covered              
-            bin <auto[0],auto[0]>                        2274          1          -    Covered              
+            bin <auto[1],auto[1]>                        2510          1          -    Covered              
+            bin <auto[0],auto[1]>                        8427          1          -    Covered              
+            bin <auto[1],auto[0]>                         653          1          -    Covered              
+            bin <auto[0],auto[0]>                        2266          1          -    Covered              
  Covergroup instance \/str_top_coverage_pkg::str_top_cover::g1  
                                                       100.00%        100          -    Covered              
     covered/total bins:                                    14         14          -                      
@@ -1422,31 +1434,31 @@ Covergroup                                             Metric       Goal       B
         covered/total bins:                                 2          2          -                      
         missing/total bins:                                 0          2          -                      
         % Hit:                                        100.00%        100          -                      
-        bin auto[0]                                      2929          1          -    Covered              
-        bin auto[1]                                     10927          1          -    Covered              
+        bin auto[0]                                      2919          1          -    Covered              
+        bin auto[1]                                     10937          1          -    Covered              
     Coverpoint cp_ted_valid                           100.00%        100          -    Covered              
         covered/total bins:                                 2          2          -                      
         missing/total bins:                                 0          2          -                      
         % Hit:                                        100.00%        100          -                      
-        bin auto[0]                                     10636          1          -    Covered              
-        bin auto[1]                                      3220          1          -    Covered              
+        bin auto[0]                                     10632          1          -    Covered              
+        bin auto[1]                                      3224          1          -    Covered              
     Coverpoint cp_mu                                  100.00%        100          -    Covered              
         covered/total bins:                                 4          4          -                      
         missing/total bins:                                 0          4          -                      
         % Hit:                                        100.00%        100          -                      
-        bin q0                                           2699          1          -    Covered              
-        bin q1                                           4369          1          -    Covered              
-        bin q2                                           3839          1          -    Covered              
-        bin q3                                           2949          1          -    Covered              
+        bin q0                                           2751          1          -    Covered              
+        bin q1                                           4460          1          -    Covered              
+        bin q2                                           4023          1          -    Covered              
+        bin q3                                           2622          1          -    Covered              
     Cross cx_valid_lock                               100.00%        100          -    Covered              
         covered/total bins:                                 4          4          -                      
         missing/total bins:                                 0          4          -                      
         % Hit:                                        100.00%        100          -                      
         Auto, Default and User Defined Bins:
-            bin <auto[1],auto[1]>                        2508          1          -    Covered              
-            bin <auto[0],auto[1]>                        8419          1          -    Covered              
-            bin <auto[1],auto[0]>                         655          1          -    Covered              
-            bin <auto[0],auto[0]>                        2274          1          -    Covered              
+            bin <auto[1],auto[1]>                        2510          1          -    Covered              
+            bin <auto[0],auto[1]>                        8427          1          -    Covered              
+            bin <auto[1],auto[0]>                         653          1          -    Covered              
+            bin <auto[0],auto[0]>                        2266          1          -    Covered              
 
 COVERGROUP COVERAGE:
 ----------------------------------------------------------------------------------------------------------
@@ -1467,31 +1479,31 @@ Covergroup                                             Metric       Goal       B
         covered/total bins:                                 2          2          -                      
         missing/total bins:                                 0          2          -                      
         % Hit:                                        100.00%        100          -                      
-        bin auto[0]                                      2929          1          -    Covered              
-        bin auto[1]                                     10927          1          -    Covered              
+        bin auto[0]                                      2919          1          -    Covered              
+        bin auto[1]                                     10937          1          -    Covered              
     Coverpoint cp_ted_valid                           100.00%        100          -    Covered              
         covered/total bins:                                 2          2          -                      
         missing/total bins:                                 0          2          -                      
         % Hit:                                        100.00%        100          -                      
-        bin auto[0]                                     10636          1          -    Covered              
-        bin auto[1]                                      3220          1          -    Covered              
+        bin auto[0]                                     10632          1          -    Covered              
+        bin auto[1]                                      3224          1          -    Covered              
     Coverpoint cp_mu                                  100.00%        100          -    Covered              
         covered/total bins:                                 4          4          -                      
         missing/total bins:                                 0          4          -                      
         % Hit:                                        100.00%        100          -                      
-        bin q0                                           2699          1          -    Covered              
-        bin q1                                           4369          1          -    Covered              
-        bin q2                                           3839          1          -    Covered              
-        bin q3                                           2949          1          -    Covered              
+        bin q0                                           2751          1          -    Covered              
+        bin q1                                           4460          1          -    Covered              
+        bin q2                                           4023          1          -    Covered              
+        bin q3                                           2622          1          -    Covered              
     Cross cx_valid_lock                               100.00%        100          -    Covered              
         covered/total bins:                                 4          4          -                      
         missing/total bins:                                 0          4          -                      
         % Hit:                                        100.00%        100          -                      
         Auto, Default and User Defined Bins:
-            bin <auto[1],auto[1]>                        2508          1          -    Covered              
-            bin <auto[0],auto[1]>                        8419          1          -    Covered              
-            bin <auto[1],auto[0]>                         655          1          -    Covered              
-            bin <auto[0],auto[0]>                        2274          1          -    Covered              
+            bin <auto[1],auto[1]>                        2510          1          -    Covered              
+            bin <auto[0],auto[1]>                        8427          1          -    Covered              
+            bin <auto[1],auto[0]>                         653          1          -    Covered              
+            bin <auto[0],auto[0]>                        2266          1          -    Covered              
  Covergroup instance \/str_top_coverage_pkg::str_top_cover::g1  
                                                       100.00%        100          -    Covered              
     covered/total bins:                                    14         14          -                      
@@ -1507,31 +1519,31 @@ Covergroup                                             Metric       Goal       B
         covered/total bins:                                 2          2          -                      
         missing/total bins:                                 0          2          -                      
         % Hit:                                        100.00%        100          -                      
-        bin auto[0]                                      2929          1          -    Covered              
-        bin auto[1]                                     10927          1          -    Covered              
+        bin auto[0]                                      2919          1          -    Covered              
+        bin auto[1]                                     10937          1          -    Covered              
     Coverpoint cp_ted_valid                           100.00%        100          -    Covered              
         covered/total bins:                                 2          2          -                      
         missing/total bins:                                 0          2          -                      
         % Hit:                                        100.00%        100          -                      
-        bin auto[0]                                     10636          1          -    Covered              
-        bin auto[1]                                      3220          1          -    Covered              
+        bin auto[0]                                     10632          1          -    Covered              
+        bin auto[1]                                      3224          1          -    Covered              
     Coverpoint cp_mu                                  100.00%        100          -    Covered              
         covered/total bins:                                 4          4          -                      
         missing/total bins:                                 0          4          -                      
         % Hit:                                        100.00%        100          -                      
-        bin q0                                           2699          1          -    Covered              
-        bin q1                                           4369          1          -    Covered              
-        bin q2                                           3839          1          -    Covered              
-        bin q3                                           2949          1          -    Covered              
+        bin q0                                           2751          1          -    Covered              
+        bin q1                                           4460          1          -    Covered              
+        bin q2                                           4023          1          -    Covered              
+        bin q3                                           2622          1          -    Covered              
     Cross cx_valid_lock                               100.00%        100          -    Covered              
         covered/total bins:                                 4          4          -                      
         missing/total bins:                                 0          4          -                      
         % Hit:                                        100.00%        100          -                      
         Auto, Default and User Defined Bins:
-            bin <auto[1],auto[1]>                        2508          1          -    Covered              
-            bin <auto[0],auto[1]>                        8419          1          -    Covered              
-            bin <auto[1],auto[0]>                         655          1          -    Covered              
-            bin <auto[0],auto[0]>                        2274          1          -    Covered              
+            bin <auto[1],auto[1]>                        2510          1          -    Covered              
+            bin <auto[0],auto[1]>                        8427          1          -    Covered              
+            bin <auto[1],auto[0]>                         653          1          -    Covered              
+            bin <auto[0],auto[0]>                        2266          1          -    Covered              
 
 TOTAL COVERGROUP COVERAGE: 100.00%  COVERGROUP TYPES: 1
 

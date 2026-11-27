@@ -118,3 +118,8 @@ coverage exclude -scope /top/dut -togglenode phase_adj_i[27] -comment {Structura
 coverage exclude -scope /top/dut -togglenode phase_adj_i[28] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
 coverage exclude -scope /top/dut -togglenode phase_adj_i[29] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
 coverage exclude -scope /top/dut -togglenode s0[15] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+# force_cfo_en_i is tied to 1'b0 in standalone derotator_uvm (exercised in sync_system_top_uvm)
+coverage exclude -scope /top/dut -togglenode force_cfo_en_i -comment {force_cfo_en_i tied to 1'b0 in standalone derotator_uvm; covered in sync_system_top_uvm}
+coverage exclude -scope /top/dut/freq_word_inst -togglenode force_cfo_en_i -comment {force_cfo_en_i tied to 1'b0 in standalone derotator_uvm; covered in sync_system_top_uvm}
+coverage exclude -scope /top/dut/freq_word_inst -feccondrow 66 4 -comment {force_cfo_en_i tied to 1'b0 in standalone derotator_uvm; covered in sync_system_top_uvm}
+coverage exclude -scope /top/dut/freq_word_inst -feccondrow 74 4 -comment {force_cfo_en_i tied to 1'b0 in standalone derotator_uvm; covered in sync_system_top_uvm}

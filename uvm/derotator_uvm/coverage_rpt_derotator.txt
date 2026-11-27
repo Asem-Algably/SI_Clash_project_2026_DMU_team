@@ -17,37 +17,78 @@ Branch Coverage for instance /top/dut/freq_word_inst
     ----         ----                      -----     ------ 
   File ../../rtl/derotator/Freq_word.sv
 ------------------------------------IF Branch------------------------------------
-    55                                      1404     Count coming in to IF
-    55              1                         22     
-    56              1                        748     
+    57                                      1404     Count coming in to IF
+    57              1                         22     
+    58              1                        748     
                                              634     All False Count
 Branch totals: 3 hits of 3 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    61                                        62     Count coming in to IF
-    61              1                         21     
-    64              1                         14     
+    63                                        62     Count coming in to IF
+    63              1                         21     
+    66              1                         14     
                                               27     All False Count
 Branch totals: 3 hits of 3 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    72                                      2166     Count coming in to IF
-    72              1                         28     
-    72              2                       2138     
+    74                                      2166     Count coming in to IF
+    74              1                         28     
+    74              2                       2138     
 Branch totals: 2 hits of 2 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    73                                      2166     Count coming in to IF
-    73              1                       1498     
-    73              2                        668     
+    75                                      2166     Count coming in to IF
+    75              1                       1498     
+    75              2                        668     
 Branch totals: 2 hits of 2 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    79                                      4588     Count coming in to IF
-    79              1                         23     
-    81              1                         14     
-    83              1                       4551     
+    81                                      4588     Count coming in to IF
+    81              1                         23     
+    83              1                         14     
+    85              1                       4551     
 Branch totals: 3 hits of 3 branches = 100.00%
+
+
+Condition Coverage:
+    Enabled Coverage              Bins   Covered    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Conditions                       4         4         0   100.00%
+
+================================Condition Details================================
+
+Condition Coverage for instance /top/dut/freq_word_inst --
+
+  File ../../rtl/derotator/Freq_word.sv
+----------------Focused Condition View-------------------
+Line       66 Item    1  (coarse_valid_i || force_cfo_en_i)
+Condition totals: 2 of 2 input terms covered = 100.00%
+
+      Input Term   Covered  Reason for no coverage   Hint
+     -----------  --------  -----------------------  --------------
+  coarse_valid_i         Y
+  force_cfo_en_i         Y
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:          1  coarse_valid_i_0      ~force_cfo_en_i               
+  Row   2:          1  coarse_valid_i_1      -                             
+  Row   3:          1  force_cfo_en_i_0      ~coarse_valid_i               
+
+----------------Focused Condition View-------------------
+Line       74 Item    1  (coarse_valid_i || force_cfo_en_i)
+Condition totals: 2 of 2 input terms covered = 100.00%
+
+      Input Term   Covered  Reason for no coverage   Hint
+     -----------  --------  -----------------------  --------------
+  coarse_valid_i         Y
+  force_cfo_en_i         Y
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:          1  coarse_valid_i_0      ~force_cfo_en_i               
+  Row   2:          1  coarse_valid_i_1      -                             
+  Row   3:          1  force_cfo_en_i_0      ~coarse_valid_i               
 
 
 Statement Coverage:
@@ -62,21 +103,21 @@ Statement Coverage for instance /top/dut/freq_word_inst --
     Line         Item                      Count     Source 
     ----         ----                      -----     ------ 
   File ../../rtl/derotator/Freq_word.sv
-    49              1                         30     
-    54              1                       1404     
-    55              1                         22     
-    56              1                        748     
-    60              1                         62     
-    62              1                         21     
-    65              1                         14     
-    71              1                       2167     
-    72              1                       2167     
+    51              1                         30     
+    56              1                       1404     
+    57              1                         22     
+    58              1                        748     
+    62              1                         62     
+    64              1                         21     
+    67              1                         14     
     73              1                       2167     
     74              1                       2167     
-    78              1                       4588     
-    80              1                         23     
-    82              1                         14     
-    84              1                       4551     
+    75              1                       2167     
+    76              1                       2167     
+    80              1                       4588     
+    82              1                         23     
+    84              1                         14     
+    86              1                       4551     
 Toggle Coverage:
     Enabled Coverage              Bins      Hits    Misses  Coverage
     ----------------              ----      ----    ------  --------

@@ -32,8 +32,9 @@ function [out, st] = step_derotator(in, st, T)
     coarse_cur = R(st_old.coarse);
     adj_cur    = R(st_old.adj);
 
-    % Latch Coarse Frequency Word from Coarse CFO Estimator
-    if in.coarse_valid_i
+    % Latch Coarse Frequency Word from Coarse CFO Estimator (or DFT force_cfo_en_i reload)
+    force_cfo_en = isfield(in, 'force_cfo_en_i') && logical(in.force_cfo_en_i);
+    if in.coarse_valid_i || force_cfo_en
         coarse_cur   = R(T.fi(in.coarse_word_i, 'freq_w'));
         st.coarse(:) = coarse_cur;
     end

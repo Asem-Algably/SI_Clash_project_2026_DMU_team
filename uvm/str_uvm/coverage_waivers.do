@@ -23,8 +23,8 @@ coverage exclude -du work.str_top_test_pkg -code bcefst -comment {Testbench/UVM 
 # Defensive STR PI saturation clamps & anti-windup (closed-loop error stays below +-MAX_V_PI = +-9395241)
 coverage exclude -scope /top/dut/u_pi_loop -linerange 86-89 102 103 106-109 124-127 -code bces -comment {Closed-loop STR never winds PI loop to +-MAX_V_PI clamp}
 
-# Modulo-1 controller upper clamp (mu_full >= 1.0 cannot be reached with closed-loop positive step W ~ 0.25)
-coverage exclude -scope /top/dut/u_modulo_ctrl -linerange 147-148 -code bcs -comment {Modulo-1 residual mu_full remains below 1.0 threshold}
+# Modulo-1 controller upper clamp (mu_full >= 1.0 cannot be reached with standalone str_uvm stimulus; covered in sync_system_top_uvm tc_30)
+coverage exclude -scope /top/dut/u_modulo_ctrl -linerange 160-161 -code bcs -comment {Modulo-1 residual mu_full remains below 1.0 threshold in standalone str_uvm}
 
 # STR lock_detector structural invariants (clr_i=0 tie-off, unsigned sym_cnt>=0, Min_Symbols=1 idx_ok_r==0 with Init_Error>thr)
 coverage exclude -scope /top/dut/u_lock_detector -feccondrow 48 4 -comment {clr_i tied to 1'b0 in str_top}
@@ -64,6 +64,16 @@ coverage exclude -scope /top/dut/u_modulo_ctrl -togglenode eta_raw[23] -comment 
 coverage exclude -scope /top/dut/u_modulo_ctrl -togglenode eta_raw_q[23] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
 coverage exclude -scope /top/dut/u_modulo_ctrl -togglenode w_o[15] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
 coverage exclude -scope /top/dut/u_modulo_ctrl -togglenode w_val[23] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut/u_modulo_ctrl -togglenode force_w_full[0] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut/u_modulo_ctrl -togglenode force_w_full[1] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut/u_modulo_ctrl -togglenode force_w_full[2] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut/u_modulo_ctrl -togglenode force_w_full[3] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut/u_modulo_ctrl -togglenode force_w_full[4] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut/u_modulo_ctrl -togglenode force_w_full[5] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut/u_modulo_ctrl -togglenode force_w_full[6] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut/u_modulo_ctrl -togglenode force_w_full[7] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut/u_modulo_ctrl -togglenode force_w_full[23] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut/u_modulo_ctrl -togglenode w_eff[23] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
 coverage exclude -scope /top/dut/u_lock_detector -togglenode clr_i -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
 coverage exclude -scope /top/dut/u_lock_detector/gen_pipelined -togglenode e_abs_r[19] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
 coverage exclude -scope /top/dut/u_lock_detector/gen_pipelined -togglenode e_abs_r[20] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}

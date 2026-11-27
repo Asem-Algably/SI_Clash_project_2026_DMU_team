@@ -1,7 +1,7 @@
 Copyright 1986-2018 Xilinx, Inc. All Rights Reserved.
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2018.2 (win64) Build 2258646 Thu Jun 14 20:03:12 MDT 2018
-| Date         : Fri Nov 27 16:37:28 2026
+| Date         : Fri Nov 27 19:59:17 2026
 | Host         : DESKTOP-GS9RTNI running 64-bit major release  (build 9200)
 | Command      : report_utilization -hierarchical -file C:/Users/Asem/Desktop/si_clash/rx_sync_project/reports/fpga_implementation/utilization_hierarchical.rpt
 | Design       : fpga_bist_top
@@ -21,19 +21,19 @@ Table of Contents
 +-------------------------------+---------------------------------+------------+------------+---------+------+------+--------+--------+------+--------------+
 |            Instance           |              Module             | Total LUTs | Logic LUTs | LUTRAMs | SRLs |  FFs | RAMB36 | RAMB18 | URAM | DSP48 Blocks |
 +-------------------------------+---------------------------------+------------+------------+---------+------+------+--------+--------+------+--------------+
-| fpga_bist_top                 |                           (top) |       2090 |       2070 |       0 |   20 | 1397 |     10 |      1 |    0 |           22 |
-|   (fpga_bist_top)             |                           (top) |         90 |         90 |       0 |    0 |  168 |      0 |      0 |    0 |            0 |
-|   u_dut                       |                 sync_system_top |       1939 |       1919 |       0 |   20 | 1198 |      2 |      0 |    0 |           22 |
+| fpga_bist_top                 |                           (top) |       2109 |       2089 |       0 |   20 | 1333 |     10 |      1 |    0 |           22 |
+|   (fpga_bist_top)             |                           (top) |         92 |         92 |       0 |    0 |   99 |      0 |      0 |    0 |            0 |
+|   u_dut                       |                 sync_system_top |       1956 |       1936 |       0 |   20 | 1203 |      2 |      0 |    0 |           22 |
 |     (u_dut)                   |                 sync_system_top |          2 |          1 |       0 |    1 |   35 |      0 |      0 |    0 |            0 |
-|     u_burst_ctrl              |                      burst_ctrl |        105 |        104 |       0 |    1 |   46 |      0 |      0 |    0 |            0 |
-|     u_coarse_cfo              |                 coarse_cfo_core |        518 |        518 |       0 |    0 |  288 |      0 |      0 |    0 |            4 |
+|     u_burst_ctrl              |                      burst_ctrl |        104 |        103 |       0 |    1 |   46 |      0 |      0 |    0 |            0 |
+|     u_coarse_cfo              |                 coarse_cfo_core |        517 |        517 |       0 |    0 |  288 |      0 |      0 |    0 |            4 |
 |       (u_coarse_cfo)          |                 coarse_cfo_core |          1 |          1 |       0 |    0 |  104 |      0 |      0 |    0 |            0 |
 |       u_accumulator           |                     accumulator |         50 |         50 |       0 |    0 |   48 |      0 |      0 |    0 |            0 |
 |       u_complex_mult          |                    complex_mult |        127 |        127 |       0 |    0 |    0 |      0 |      0 |    0 |            4 |
-|       u_cordic_angle          |                    cordic_angle |        340 |        340 |       0 |    0 |  136 |      0 |      0 |    0 |            0 |
-|     u_costas                  |                      costas_top |        392 |        392 |       0 |    0 |  167 |      0 |      0 |    0 |            4 |
+|       u_cordic_angle          |                    cordic_angle |        339 |        339 |       0 |    0 |  136 |      0 |      0 |    0 |            0 |
+|     u_costas                  |                      costas_top |        393 |        393 |       0 |    0 |  167 |      0 |      0 |    0 |            4 |
 |       (u_costas)              |                      costas_top |          0 |          0 |       0 |    0 |    8 |      0 |      0 |    0 |            0 |
-|       u_lock_int              |   lock_detector__parameterized0 |         54 |         54 |       0 |    0 |   25 |      0 |      0 |    0 |            0 |
+|       u_lock_int              |   lock_detector__parameterized0 |         56 |         56 |       0 |    0 |   25 |      0 |      0 |    0 |            0 |
 |       u_lock_pub              |   lock_detector__parameterized1 |         37 |         37 |       0 |    0 |   29 |      0 |      0 |    0 |            0 |
 |       u_pe                    |                     phase_error |         77 |         77 |       0 |    0 |   19 |      0 |      0 |    0 |            2 |
 |       u_pi                    |                       pi_filter |        195 |        195 |       0 |    0 |   71 |      0 |      0 |    0 |            2 |
@@ -44,14 +44,14 @@ Table of Contents
 |       freq_word_inst          |                       freq_word |         58 |         58 |       0 |    0 |   86 |      0 |      0 |    0 |            0 |
 |       input_pipeline_inst     |                  input_pipeline |          0 |          0 |       0 |    0 |    1 |      0 |      0 |    0 |            0 |
 |       lut_rom_inst            |                         lut_rom |          0 |          0 |       0 |    0 |    0 |      2 |      0 |    0 |            0 |
-|       nco_inst                |                 NCO_accumulator |         41 |         41 |       0 |    0 |   33 |      0 |      0 |    0 |            0 |
+|       nco_inst                |                 NCO_accumulator |         40 |         40 |       0 |    0 |   33 |      0 |      0 |    0 |            0 |
 |     u_dft_mux                 |                         dft_mux |          1 |          1 |       0 |    0 |    0 |      0 |      0 |    0 |            0 |
-|     u_str                     |                         str_top |        698 |        680 |       0 |   18 |  508 |      0 |      0 |    0 |           10 |
-|       (u_str)                 |                         str_top |          4 |          2 |       0 |    2 |   18 |      0 |      0 |    0 |            0 |
-|       u_i_interp              |   parabolic_farrow_interpolator |        163 |        155 |       0 |    8 |  103 |      0 |      0 |    0 |            2 |
+|     u_str                     |                         str_top |        717 |        699 |       0 |   18 |  513 |      0 |      0 |    0 |           10 |
+|       (u_str)                 |                         str_top |          4 |          2 |       0 |    2 |   16 |      0 |      0 |    0 |            0 |
+|       u_i_interp              |   parabolic_farrow_interpolator |        163 |        155 |       0 |    8 |  106 |      0 |      0 |    0 |            2 |
 |       u_lock_detector         |                   lock_detector |         80 |         80 |       0 |    0 |   58 |      0 |      0 |    0 |            0 |
-|       u_modulo_ctrl           |             modulo_1_controller |         79 |         79 |       0 |    0 |   83 |      0 |      0 |    0 |            2 |
-|       u_pi_loop               |                         pI_loop |        212 |        212 |       0 |    0 |  116 |      0 |      0 |    0 |            2 |
+|       u_modulo_ctrl           |             modulo_1_controller |         97 |         97 |       0 |    0 |   82 |      0 |      0 |    0 |            2 |
+|       u_pi_loop               |                         pI_loop |        213 |        213 |       0 |    0 |  121 |      0 |      0 |    0 |            2 |
 |       u_q_interp              | parabolic_farrow_interpolator_0 |        131 |        123 |       0 |    8 |  103 |      0 |      0 |    0 |            2 |
 |       u_ted                   |           gardner_ted_estimator |         30 |         30 |       0 |    0 |   27 |      0 |      0 |    0 |            2 |
 |   u_expected_rom              |               bist_expected_rom |         16 |         16 |       0 |    0 |    0 |      2 |      0 |    0 |            0 |

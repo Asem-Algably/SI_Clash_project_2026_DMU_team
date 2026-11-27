@@ -51,19 +51,45 @@ module top ();
     assign sync_system_top_test_vif.coarse_valid       = dut.coarse_valid;
     assign sync_system_top_test_vif.str_valid          = dut.str_valid;
 
-    // Assertions bound inside the DUT
+    // Assertions bound inside the DUT (includes 16-ch DFT mux & force isolation probes)
     bind sync_system_top sva sva_inst (
-        .clk            (clk),
-        .rst_n          (rst_n),
-        .in_sample_valid(in_sample_valid),
-        .out_sym_valid  (out_sym_valid),
-        .out_sym_i      (out_sym_i),
-        .out_sym_q      (out_sym_q),
-        .lock_detect    (lock_detect),
-        .str_lock       (str_lock),
-        .costas_lock    (costas_lock),
-        .flush_active   (flush_active),
-        .fsm_state      (fsm_state)
+        .clk               (clk),
+        .rst_n             (rst_n),
+        .rst_n_eff         (rst_n_eff),
+        .in_sample_valid   (in_sample_valid),
+        .out_sym_valid     (out_sym_valid),
+        .out_sym_i         (out_sym_i),
+        .out_sym_q         (out_sym_q),
+        .lock_detect       (lock_detect),
+        .str_lock          (str_lock),
+        .costas_lock       (costas_lock),
+        .flush_active      (flush_active),
+        .fsm_state         (fsm_state),
+        .dft_sel           (dft_sel),
+        .dft_obs_data      (dft_obs_data),
+        .force_w_en        (force_w_en),
+        .force_w           (force_w),
+        .force_cfo_en      (force_cfo_en),
+        .force_cfo         (force_cfo),
+        .force_freq_en     (force_freq_en),
+        .force_freq        (force_freq),
+        .ted_err_aligned   (ted_err_aligned),
+        .str_mu            (str_mu),
+        .str_w             (str_w),
+        .str_sym_i         (str_sym_i),
+        .coarse_est        (coarse_est),
+        .costas_err_aligned(costas_err_aligned),
+        .nco_freq_word     (nco_freq_word),
+        .nco_phase         (nco_phase),
+        .derot_sym_i       (derot_sym_i),
+        .costas_int        (costas_int),
+        .costas_phase_adj  (costas_phase_adj),
+        .costas_freq_adj   (costas_freq_adj),
+        .str_valid         (str_valid),
+        .str_ce            (u_str.ce_str),
+        .str_nco_m_q       (u_str.u_modulo_ctrl.m_q),
+        .derot_coarse_reg  (u_derotator.freq_word_inst.coarse_reg),
+        .derot_freq_word_o (u_derotator.freq_word_o)
     );
 
     initial begin

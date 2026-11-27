@@ -31,9 +31,11 @@ module freq_word #(
     // Take freq_adj_i as the new held correction
     input logic                        freq_adj_valid_i,
 
-    // DFT: when force_freq_en_i is high, force_freq_i replaces the frequency word
+    // DFT: when force_freq_en_i is high, force_freq_i replaces the frequency word;
+    // when force_cfo_en_i is high, coarse_reg updates immediately from coarse_word_i
     input logic                        force_freq_en_i,
     input logic         [Width-1:0]    force_freq_i,
+    input logic                        force_cfo_en_i = 1'b0,
 
     // Frequency control word for the NCO accumulator
     output logic signed [Width-1:0]    freq_word_o
@@ -56,12 +58,12 @@ module freq_word #(
         else if (freq_adj_valid_i) adj_reg <= freq_adj_i;
     end
 
-    // Coarse word register, loaded on coarse_valid_i with the scaled value (see coarse_ext)
+    // Coarse word register, loaded on coarse_valid_i or DFT force_cfo_en_i
     always_ff @(posedge clk_i)begin
         if(!rst_ni)begin
             coarse_reg <= '0;
         end
-        else if (coarse_valid_i) begin
+        else if (coarse_valid_i || force_cfo_en_i) begin
             coarse_reg <= coarse_ext;
         end
     end
@@ -69,7 +71,7 @@ module freq_word #(
     // Use a new coarse word and a new correction in the same cycle they arrive, without waiting
     // for the registers
     always_comb begin
-        coarse_now  = coarse_valid_i ? coarse_ext : coarse_reg;
+        coarse_now  = (coarse_valid_i || force_cfo_en_i) ? coarse_ext : coarse_reg;
         freq_adj_used = freq_adj_valid_i ? freq_adj_i : adj_reg;
         active_freq = coarse_now + freq_adj_used;
     end

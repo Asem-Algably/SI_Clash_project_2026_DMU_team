@@ -133,8 +133,12 @@ function [out, st] = step_str(in, st, T)
     xi = R(T.fi(in.s_axis_i_sample_i, 'in'));
     xq = R(T.fi(in.s_axis_q_sample_i, 'in'));
 
-    % Wait: force_w_en_i in str_top.sv is strictly an output mux on w_o; internal NCO M always uses st_old.W.
-    W_use = st_old.W;
+    % Apply DFT force_w_en_i directly to NCO step W matching modulo_1_controller.sv
+    if isfield(in, 'force_w_en_i') && logical(in.force_w_en_i)
+        W_use = T.fi(in.force_w_i, 'M');
+    else
+        W_use = st_old.W;
+    end
 
     % Pure fi two-region Modulo-1 boundary check using 25-bit signed wire M_s
     M_s   = R(T.fi(st_old.M, 'M_s'));
