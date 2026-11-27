@@ -11,7 +11,7 @@ set REPORT_DIR  "$PROJ_ROOT/reports/fpga_design_only"
 file mkdir $REPORT_DIR
 
 if {[current_project -quiet] == ""} {
-    set PROJ_FILE "D:/Asem/vivado_projects/rx_sync_design_only/rx_sync_design_only.xpr"
+    set PROJ_FILE "D:/Asem/vivado_projects/zcu106_fpga_flow/rx_sync_design_only.xpr"
     if {[file exists $PROJ_FILE]} {
         open_project $PROJ_FILE
     } else {

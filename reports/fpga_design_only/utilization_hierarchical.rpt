@@ -1,7 +1,7 @@
 Copyright 1986-2018 Xilinx, Inc. All Rights Reserved.
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2018.2 (win64) Build 2258646 Thu Jun 14 20:03:12 MDT 2018
-| Date         : Fri Nov 27 11:29:55 2026
+| Date         : Fri Nov 27 16:18:25 2026
 | Host         : DESKTOP-GS9RTNI running 64-bit major release  (build 9200)
 | Command      : report_utilization -hierarchical -file C:/Users/Asem/Desktop/si_clash/rx_sync_project/reports/fpga_design_only/utilization_hierarchical.rpt
 | Design       : sync_system_top
@@ -21,28 +21,28 @@ Table of Contents
 +-----------------------------+---------------------------------+------------+------------+---------+------+------+--------+--------+------+--------------+
 |           Instance          |              Module             | Total LUTs | Logic LUTs | LUTRAMs | SRLs |  FFs | RAMB36 | RAMB18 | URAM | DSP48 Blocks |
 +-----------------------------+---------------------------------+------------+------------+---------+------+------+--------+--------+------+--------------+
-| sync_system_top             |                           (top) |       2104 |       2083 |       0 |   21 | 1367 |      2 |      0 |    0 |           22 |
+| sync_system_top             |                           (top) |       2129 |       2108 |       0 |   21 | 1356 |      2 |      0 |    0 |           22 |
 |   (sync_system_top)         |                           (top) |          3 |          1 |       0 |    2 |  101 |      0 |      0 |    0 |            0 |
-|   u_burst_ctrl              |                      burst_ctrl |        103 |        102 |       0 |    1 |   58 |      0 |      0 |    0 |            0 |
-|   u_coarse_cfo              |                 coarse_cfo_core |        577 |        577 |       0 |    0 |  290 |      0 |      0 |    0 |            4 |
+|   u_burst_ctrl              |                      burst_ctrl |         95 |         94 |       0 |    1 |   47 |      0 |      0 |    0 |            0 |
+|   u_coarse_cfo              |                 coarse_cfo_core |        578 |        578 |       0 |    0 |  290 |      0 |      0 |    0 |            4 |
 |     (u_coarse_cfo)          |                 coarse_cfo_core |         49 |         49 |       0 |    0 |  106 |      0 |      0 |    0 |            0 |
 |     u_accumulator           |                     accumulator |         50 |         50 |       0 |    0 |   48 |      0 |      0 |    0 |            0 |
 |     u_complex_mult          |                    complex_mult |        127 |        127 |       0 |    0 |    0 |      0 |      0 |    0 |            4 |
-|     u_cordic_angle          |                    cordic_angle |        351 |        351 |       0 |    0 |  136 |      0 |      0 |    0 |            0 |
-|   u_costas                  |                      costas_top |        429 |        429 |       0 |    0 |  199 |      0 |      0 |    0 |            4 |
+|     u_cordic_angle          |                    cordic_angle |        352 |        352 |       0 |    0 |  136 |      0 |      0 |    0 |            0 |
+|   u_costas                  |                      costas_top |        464 |        464 |       0 |    0 |  199 |      0 |      0 |    0 |            4 |
 |     (u_costas)              |                      costas_top |          0 |          0 |       0 |    0 |    8 |      0 |      0 |    0 |            0 |
-|     u_lock_int              |   lock_detector__parameterized0 |         53 |         53 |       0 |    0 |   25 |      0 |      0 |    0 |            0 |
-|     u_lock_pub              |   lock_detector__parameterized1 |         37 |         37 |       0 |    0 |   29 |      0 |      0 |    0 |            0 |
-|     u_pe                    |                     phase_error |         77 |         77 |       0 |    0 |   19 |      0 |      0 |    0 |            2 |
-|     u_pi                    |                       pi_filter |        229 |        229 |       0 |    0 |  103 |      0 |      0 |    0 |            2 |
-|     u_quad                  |                      quad_check |         34 |         34 |       0 |    0 |   15 |      0 |      0 |    0 |            0 |
+|     u_lock_int              |   lock_detector__parameterized0 |         49 |         49 |       0 |    0 |   25 |      0 |      0 |    0 |            0 |
+|     u_lock_pub              |   lock_detector__parameterized1 |         34 |         34 |       0 |    0 |   29 |      0 |      0 |    0 |            0 |
+|     u_pe                    |                     phase_error |         85 |         85 |       0 |    0 |   19 |      0 |      0 |    0 |            2 |
+|     u_pi                    |                       pi_filter |        257 |        257 |       0 |    0 |  103 |      0 |      0 |    0 |            2 |
+|     u_quad                  |                      quad_check |         39 |         39 |       0 |    0 |   15 |      0 |      0 |    0 |            0 |
 |     u_slicer                |                          slicer |          0 |          0 |       0 |    0 |    0 |      0 |      0 |    0 |            0 |
-|   u_derotator               |                       derotator |        195 |        195 |       0 |    0 |  156 |      2 |      0 |    0 |            4 |
-|     complex_multiplier_inst |              complex_multiplier |        125 |        125 |       0 |    0 |   34 |      0 |      0 |    0 |            4 |
+|   u_derotator               |                       derotator |        194 |        194 |       0 |    0 |  156 |      2 |      0 |    0 |            4 |
+|     complex_multiplier_inst |              complex_multiplier |        123 |        123 |       0 |    0 |   34 |      0 |      0 |    0 |            4 |
 |     freq_word_inst          |                       freq_word |         31 |         31 |       0 |    0 |   88 |      0 |      0 |    0 |            0 |
 |     input_pipeline_inst     |                  input_pipeline |          0 |          0 |       0 |    0 |    1 |      0 |      0 |    0 |            0 |
 |     lut_rom_inst            |                         lut_rom |          0 |          0 |       0 |    0 |    0 |      2 |      0 |    0 |            0 |
-|     nco_inst                |                 NCO_accumulator |         40 |         40 |       0 |    0 |   33 |      0 |      0 |    0 |            0 |
+|     nco_inst                |                 NCO_accumulator |         41 |         41 |       0 |    0 |   33 |      0 |      0 |    0 |            0 |
 |   u_dft_mux                 |                         dft_mux |         99 |         99 |       0 |    0 |    0 |      0 |      0 |    0 |            0 |
 |   u_err_align               |                       err_align |          0 |          0 |       0 |    0 |   50 |      0 |      0 |    0 |            0 |
 |   u_str                     |                         str_top |        699 |        681 |       0 |   18 |  513 |      0 |      0 |    0 |           10 |

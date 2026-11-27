@@ -1,7 +1,7 @@
 Copyright 1986-2018 Xilinx, Inc. All Rights Reserved.
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version     : Vivado v.2018.2 (win64) Build 2258646 Thu Jun 14 20:03:12 MDT 2018
-| Date             : Fri Nov 27 11:30:35 2026
+| Date             : Fri Nov 27 16:19:24 2026
 | Host             : DESKTOP-GS9RTNI running 64-bit major release  (build 9200)
 | Command          : report_power -file C:/Users/Asem/Desktop/si_clash/rx_sync_project/reports/fpga_design_only/power_analysis.rpt -xpe C:/Users/Asem/Desktop/si_clash/rx_sync_project/reports/fpga_design_only/power_analysis.xpe
 | Design           : sync_system_top
@@ -30,10 +30,10 @@ Table of Contents
 ----------
 
 +--------------------------+--------------+
-| Total On-Chip Power (W)  | 0.703        |
+| Total On-Chip Power (W)  | 0.702        |
 | Design Power Budget (W)  | Unspecified* |
 | Power Budget Margin (W)  | NA           |
-| Dynamic (W)              | 0.111        |
+| Dynamic (W)              | 0.110        |
 | Device Static (W)        | 0.592        |
 | Effective TJA (C/W)      | 1.0          |
 | Max Ambient (C)          | 99.3         |
@@ -53,18 +53,18 @@ Table of Contents
 | On-Chip                 | Power (W) | Used     | Available | Utilization (%) |
 +-------------------------+-----------+----------+-----------+-----------------+
 | Clocks                  |     0.013 |        3 |       --- |             --- |
-| CLB Logic               |     0.031 |     4261 |       --- |             --- |
-|   LUT as Logic          |     0.027 |     2083 |    230400 |            0.90 |
+| CLB Logic               |     0.030 |     4233 |       --- |             --- |
+|   LUT as Logic          |     0.026 |     2108 |    230400 |            0.91 |
 |   CARRY8                |     0.002 |      172 |     28800 |            0.60 |
-|   Register              |     0.001 |     1367 |    460800 |            0.30 |
+|   Register              |     0.001 |     1356 |    460800 |            0.29 |
 |   LUT as Shift Register |    <0.001 |       21 |    101760 |            0.02 |
 |   Others                |     0.000 |       65 |       --- |             --- |
 |   F7/F8 Muxes           |     0.000 |       21 |    230400 |           <0.01 |
-| Signals                 |     0.031 |     3569 |       --- |             --- |
+| Signals                 |     0.031 |     3549 |       --- |             --- |
 | Block RAM               |     0.002 |        2 |       312 |            0.64 |
 | DSPs                    |     0.034 |       22 |      1728 |            1.27 |
 | Static Power            |     0.592 |          |           |                 |
-| Total                   |     0.703 |          |           |                 |
+| Total                   |     0.702 |          |           |                 |
 +-------------------------+-----------+----------+-----------+-----------------+
 
 
@@ -74,7 +74,7 @@ Table of Contents
 +-----------------+-------------+-----------+-------------+------------+
 | Source          | Voltage (V) | Total (A) | Dynamic (A) | Static (A) |
 +-----------------+-------------+-----------+-------------+------------+
-| Vccint          |       0.850 |     0.266 |       0.130 |      0.136 |
+| Vccint          |       0.850 |     0.265 |       0.129 |      0.136 |
 | Vccint_io       |       0.850 |     0.070 |       0.000 |      0.070 |
 | Vccbram         |       0.850 |     0.002 |       0.000 |      0.002 |
 | Vccaux          |       1.800 |     0.148 |       0.000 |      0.148 |
@@ -162,17 +162,17 @@ Table of Contents
 +-----------------------------+-----------+
 | Name                        | Power (W) |
 +-----------------------------+-----------+
-| sync_system_top             |     0.111 |
+| sync_system_top             |     0.110 |
 |   u_burst_ctrl              |     0.003 |
 |   u_coarse_cfo              |     0.027 |
 |     u_accumulator           |    <0.001 |
 |     u_complex_mult          |     0.010 |
 |     u_cordic_angle          |     0.014 |
-|   u_costas                  |     0.012 |
+|   u_costas                  |     0.011 |
 |     u_lock_int              |    <0.001 |
 |     u_lock_pub              |    <0.001 |
 |     u_pe                    |     0.003 |
-|     u_pi                    |     0.008 |
+|     u_pi                    |     0.006 |
 |     u_quad                  |    <0.001 |
 |     u_slicer                |    <0.001 |
 |   u_derotator               |     0.015 |
@@ -181,13 +181,13 @@ Table of Contents
 |     input_pipeline_inst     |    <0.001 |
 |     lut_rom_inst            |     0.002 |
 |     nco_inst                |     0.002 |
-|   u_dft_mux                 |     0.002 |
+|   u_dft_mux                 |     0.001 |
 |   u_err_align               |    <0.001 |
-|   u_str                     |     0.049 |
+|   u_str                     |     0.050 |
 |     u_i_interp              |     0.012 |
 |     u_lock_detector         |     0.001 |
 |     u_modulo_ctrl           |     0.009 |
-|     u_pi_loop               |     0.010 |
+|     u_pi_loop               |     0.009 |
 |     u_q_interp              |     0.010 |
 |     u_ted                   |     0.007 |
 +-----------------------------+-----------+

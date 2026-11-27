@@ -2,12 +2,12 @@
 # Script: create_design_gui_project.tcl
 # Purpose: Creates a Vivado GUI Project (.xpr) for the core synchronizer design
 #          ONLY (top: sync_system_top), excluding all BIST wrapper/ROM logic.
-# Output Project: D:/Asem/vivado_projects/rx_sync_design_only/rx_sync_design_only.xpr
+# Output Project: D:/Asem/vivado_projects/zcu106_fpga_flow/rx_sync_design_only.xpr
 # ==============================================================================
 
 set SCRIPT_DIR [file normalize [file dirname [info script]]]
 set PROJ_ROOT  [file normalize "$SCRIPT_DIR/../.."]
-set PROJ_DIR   "D:/Asem/vivado_projects/rx_sync_design_only"
+set PROJ_DIR   "D:/Asem/vivado_projects/zcu106_fpga_flow"
 set PROJ_NAME  "rx_sync_design_only"
 
 # 1. Create project directory

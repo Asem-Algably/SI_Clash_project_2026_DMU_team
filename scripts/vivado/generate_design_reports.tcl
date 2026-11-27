@@ -20,7 +20,7 @@ puts "======================================================================"
 
 # 1. Open project if not already open in Vivado GUI
 if {[current_project -quiet] == ""} {
-    set PROJ_FILE "D:/Asem/vivado_projects/rx_sync_design_only/rx_sync_design_only.xpr"
+    set PROJ_FILE "D:/Asem/vivado_projects/zcu106_fpga_flow/rx_sync_design_only.xpr"
     if {[file exists $PROJ_FILE]} {
         puts "INFO: Opening project: $PROJ_FILE"
         open_project $PROJ_FILE
