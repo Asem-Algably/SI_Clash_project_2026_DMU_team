@@ -6,3 +6,5 @@ cases/tb_derot_tc_05.hex
 cases/tb_derot_tc_06.hex
 cases/tb_derot_tc_07.hex
 cases/tb_derot_tc_08.hex
+cases/tb_derot_tc_09.hex
+cases/tb_derot_tc_10.hex

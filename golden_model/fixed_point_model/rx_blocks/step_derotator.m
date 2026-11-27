@@ -105,15 +105,17 @@ function [yi, yq] = lut_derotate(xr, xi, theta, D, T)
     s0 = T.rd(D.lut(a + 1));
     c0 = T.rd(D.lut(D.Nq - a));
 
-    % Pre-Rotation by (-j)^q
+    % Pre-Rotation by (-j)^q (saturating -(-1.0) -> +0.99997 matching quadrant_rotator.sv)
+    neg_xr = T.rd(T.fi(-xr, 'str_sym', 'sat'));
+    neg_xi = T.rd(T.fi(-xi, 'str_sym', 'sat'));
     switch q
-        case 0,    ur =  xr; ui =  xi;
-        case 1,    ur =  xi; ui = -xr;
-        case 2,    ur = -xr; ui = -xi;
-        otherwise, ur = -xi; ui =  xr;
+        case 0,    ur =     xr; ui =     xi;
+        case 1,    ur =     xi; ui = neg_xr;
+        case 2,    ur = neg_xr; ui = neg_xi;
+        otherwise, ur = neg_xi; ui =     xr;
     end
 
-    % Complex Multiply: (ur + j*ui) * (c0 - j*s0) (pure wire truncation matching RTL)
-    yi = T.fi(ur * c0 + ui * s0, 'rot_out');
-    yq = T.fi(ui * c0 - ur * s0, 'rot_out');
+    % Complex Multiply: (ur + j*ui) * (c0 - j*s0) (floor truncation + saturate matching complex_multiplier.sv)
+    yi = T.fi(ur * c0 + ui * s0, 'rot_out', 'sat');
+    yq = T.fi(ui * c0 - ur * s0, 'rot_out', 'sat');
 end

@@ -42,21 +42,25 @@ module gen_derot_cases;
         derot_cfg cfg;
         derot_cyc cyc;
         bit       rst_n, s_val, c_val, f_val, p_val, ff_en;
+        logic [31:0] ff_word;
         int       total_cycles, reset_clk;
         string    fname;
 
-        num_cases = 8;
+        num_cases = 10;
         void'($system("if not exist cases mkdir cases"));
         cfg = new();
         cyc = new();
 
         for (int c = 1; c <= num_cases; c++) begin
             cfg.gen_mode   = (c <= 2) ? 0 : 1;
-            cfg.corner_tag = (c <= 2) ? 0 : 2;
+            cfg.corner_tag = (c <= 2) ? 0 : (c == 9 ? 3 : (c == 10 ? 4 : 2));
             cfg.sign_dir   = (c % 2 == 1) ? 1 : -1;
             if (!cfg.randomize()) $fatal(1, "Randomization failed on derot cfg");
 
-            total_cycles = (cfg.gen_mode == 0) ? ((190 + cfg.N_payload) * 4 + 32) : 280;
+            if (cfg.gen_mode == 0)      total_cycles = (190 + cfg.N_payload) * 4 + 32;
+            else if (c == 9)            total_cycles = 4120; // Exhaustive 4096-entry quarter-wave ROM sweep
+            else if (c == 10)           total_cycles = 120;  // Full-scale -32768 & complex_multiplier saturation stress
+            else                        total_cycles = 280;
             reset_clk    = 140;
 
             fname = $sformatf("cases/cfg_tc_%02d.txt", c);
@@ -70,14 +74,27 @@ module gen_derot_cases;
 
             for (int t = 0; t < total_cycles; t++) begin
                 if (!cyc.randomize()) $fatal(1, "Randomization failed on derot mask");
-                rst_n = 1'b1;
-                c_val = 1'b0;
-                p_val = 1'b0;
-                ff_en = 1'b0;
+                rst_n   = 1'b1;
+                c_val   = 1'b0;
+                p_val   = 1'b0;
+                ff_en   = 1'b0;
+                ff_word = cyc.force_freq;
 
                 if (cfg.gen_mode == 0) begin
                     s_val = (t < total_cycles - 32) ? (t < 8 ? 1'b1 : cyc.s_valid) : 1'b0;
                     f_val = 1'b0;
+                end else if (c == 9) begin
+                    // LUT index +1 per valid symbol across all 4096 entries
+                    ff_en   = 1'b1;
+                    ff_word = 32'h0004_0000;
+                    s_val   = (t >= 4 && t < 4110);
+                    f_val   = 1'b0;
+                end else if (c == 10) begin
+                    // Jump NCO to 45 deg (lut_idx = 2048), then step +90 deg/symbol to exercise Q0..Q3 full-scale corners
+                    ff_en   = 1'b1;
+                    ff_word = (t < 5) ? 32'h2000_0000 : 32'h4000_0000;
+                    s_val   = (t == 4) || (t >= 7 && t < 110);
+                    f_val   = 1'b0;
                 end else begin
                     s_val = (t >= 4 && t < total_cycles - 12) ? ((t < 10) ? 1'b1 : cyc.s_valid) : 1'b0;
                     c_val = (t == 4) || (t == 160);
@@ -92,7 +109,7 @@ module gen_derot_cases;
                 end
 
                 $fwrite(fd, "%0d %0d %0d %0d %0d %0d %08x\n",
-                        rst_n, s_val, c_val, f_val, p_val, ff_en, cyc.force_freq);
+                        rst_n, s_val, c_val, f_val, p_val, ff_en, ff_word);
             end
             $fclose(fd);
             $display("[GEN_DEROT] Wrote %s (mode=%0d, seed=%0d, cfo=%0d, cyc=%0d)",

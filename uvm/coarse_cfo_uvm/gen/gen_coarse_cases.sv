@@ -11,7 +11,7 @@ module gen_coarse_cases;
         rand int        phase_q24;
         int             gen_mode;
         int             corner_tag;
-        int             cfo_mode; // 0: zero, 1: sm_pos, 2: sm_neg, 3: lg_pos, 4: lg_neg, 5: q2_q3
+        int             cfo_mode; // 0: zero, 1: sm_pos, 2: sm_neg, 3: lg_pos, 4: lg_neg, 5: q2_q3, 6: Q3, 7: Q2
 
         constraint c_seed { seed != 32'd0; }
         constraint c_len  { N_payload inside {[120 : 180]}; }
@@ -24,7 +24,9 @@ module gen_coarse_cases;
             else if (cfo_mode == 2) cfo_q24 inside {[-67108  : -8388]};     // -0.004  .. -0.0005 (small_neg)
             else if (cfo_mode == 3) cfo_q24 inside {[503316  : 1509949]};   // +0.03   .. +0.09 (large_pos)
             else if (cfo_mode == 4) cfo_q24 inside {[-1509949 : -503316]};  // -0.09   .. -0.03 (large_neg)
-            else                    cfo_q24 dist {[-2013265:-1258291] := 50, [1258291:2013265] := 50}; // Q2/Q3 CORDIC (|4*cfo| in [0.3, 0.48])
+            else if (cfo_mode == 6) cfo_q24 inside {[-1845493 : -1342177]}; // -0.11..-0.08 -> 4*cfo in (-0.44,-0.32) turns (CORDIC Q3)
+            else if (cfo_mode == 7) cfo_q24 inside {[1342177  : 1845493]};  // +0.08..+0.11 -> 4*cfo in (+0.32,+0.44) turns (CORDIC Q2)
+            else                    cfo_q24 dist {[-2013265:-1258291] := 50, [1258291:2013265] := 50};
         }
     endclass
 
@@ -47,7 +49,7 @@ module gen_coarse_cases;
         int        total_cycles, valid_cnt;
         string     fname;
 
-        num_cases = 8;
+        num_cases = 10;
         void'($system("if not exist cases mkdir cases"));
         cfg = new();
         cyc = new();
@@ -61,9 +63,11 @@ module gen_coarse_cases;
                 3: cfg.cfo_mode = 1; // unit small_pos
                 4: cfg.cfo_mode = 2; // unit small_neg + >32 syms
                 5: cfg.cfo_mode = 0; // unit zero + force_en pos/neg
-                6: cfg.cfo_mode = 5; // unit Q2/Q3 CORDIC quadrants
+                6: cfg.cfo_mode = 5; // unit high CFO corner
                 7: cfg.cfo_mode = 3; // unit multi-window + force_cfo_en
-                default: cfg.cfo_mode = 4; // unit mid-StIterate async/sync reset -> StIdle
+                8: cfg.cfo_mode = 4; // unit mid-StIterate reset -> StIdle
+                9: cfg.cfo_mode = 6; // unit guaranteed CORDIC Q3 (-pi + z)
+                default: cfg.cfo_mode = 7; // unit guaranteed CORDIC Q2 (pi - z)
             endcase
 
             if (!cfg.randomize()) $fatal(1, "Randomization failed on coarse cfg");

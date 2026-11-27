@@ -77,7 +77,7 @@ module gen_top_cases;
         int           switch_clk1, switch_clk2;
         string        fname;
 
-        num_cases = 28;
+        num_cases = 30;
         void'($system("if not exist cases mkdir cases"));
 
         cfg = new();
@@ -86,28 +86,29 @@ module gen_top_cases;
         for (int c = 1; c <= num_cases; c++) begin
             cfg.case_id = c;
             // Ensure balanced representation across CFO sign & initial modulation while keeping params random
-            cfg.forced_cfo_sign = (c <= 14) ? 1 : -1;
+            cfg.forced_cfo_sign = (c <= 15) ? 1 : -1;
             cfg.forced_mod_dir  = (c % 2);
             if (!cfg.randomize()) $fatal(1, "Randomization failed on burst cfg");
             // Enforce alternating start modulation cleanly alongside random switch flags
             cfg.init_mod = (c % 2 == 1) ? 2'b00 : 2'b01;
-            // Guarantee at least 3 early-watchdog cases (in Acquire, CoarseEst, CostasAcq),
+            // Guarantee at least 4 early-watchdog cases (incl. tc_29 valid-during-flush + sob=0 start),
             // 6 runtime mod_switch cases, and 2 active mid-burst reset cases (per user request >1)
-            cfg.early_watchdog = (c == 5 || c == 12 || c == 20);
-            cfg.do_mod_switch  = ((c % 3) == 0 && c != 5 && c != 12 && c != 20);
-            cfg.do_force       = (c == 4 || c == 7 || c == 11 || c == 16 || c == 22 || c == 25);
+            cfg.early_watchdog = (c == 5 || c == 12 || c == 20 || c == 29);
+            cfg.do_mod_switch  = ((c % 3) == 0 && c != 5 && c != 12 && c != 20 && c != 30);
+            cfg.do_force       = (c == 4 || c == 7 || c == 11 || c == 16 || c == 22 || c == 25 || c == 30);
             cfg.do_mid_reset   = (c == 27 || c == 28);
             if (cfg.do_mid_reset) begin
                 cfg.early_watchdog = 1'b0;
                 cfg.do_force       = 1'b0;
             end
+            if (c == 30) cfg.snr_x100 = 1800; // Clean STR lock before mid-burst force_w stress
 
             rx_len   = (190 + cfg.N_payload) * 4;
             tail_len = 48; // >= 14 watchdog + 16 flush + margin
             if (cfg.early_watchdog) begin
-                if (c == 5)       wd_trigger_clk = 120; // StAcquire -> Flush
-                else if (c == 12) wd_trigger_clk = 340; // StCoarseEst -> Flush
-                else              wd_trigger_clk = 620; // StCostasAcq -> Flush
+                if (c == 5 || c == 29) wd_trigger_clk = 120; // StAcquire -> Flush
+                else if (c == 12)      wd_trigger_clk = 340; // StCoarseEst -> Flush
+                else                   wd_trigger_clk = 620; // StCostasAcq -> Flush
                 total_cycles = wd_trigger_clk + tail_len;
             end else if (cfg.do_mid_reset) begin
                 wd_trigger_clk = -1;
@@ -139,12 +140,14 @@ module gen_top_cases;
                 if (!cyc.randomize()) $fatal(1, "Randomization failed on cycle mask");
 
                 rst_n  = 1'b1;
-                sob    = (t == 0);
+                // tc_29 intentionally enters StAcquire from StWaitBurst via in_val=1 with sob=0 (burst_ctrl L92)
+                sob    = (c == 29) ? 1'b0 : (t == 0);
                 dft_sel = dft_sel + 4'd1;
 
                 // Determine valid mask
                 if (cfg.early_watchdog && (t >= wd_trigger_clk)) begin
-                    in_val = 1'b0;
+                    // tc_29 pulses in_val=1 inside StFlush (after IDLE_TIMEOUT=14, during 16-clock flush) -> L164-165
+                    in_val = (c == 29 && t >= wd_trigger_clk + 18 && t <= wd_trigger_clk + 20) ? 1'b1 : 1'b0;
                 end else if (!cfg.early_watchdog && !cfg.do_mid_reset && (t >= rx_len)) begin
                     in_val = 1'b0;
                 end else if (cfg.do_mid_reset && (t >= reset_clk)) begin
@@ -155,6 +158,8 @@ module gen_top_cases;
                 end else if ((c <= 20) && (t >= stall_load_clk) && (t < stall_load_clk + 10)) begin
                     // 10-clock stall (< 14 watchdog) to stretch StLoad while rotating dft_sel
                     in_val = 1'b0;
+                end else if (c == 30) begin
+                    in_val = 1'b1; // Continuous samples so STR locks then takes forced-W timing disturbance
                 end else begin
                     in_val = cyc.in_val;
                 end
@@ -166,9 +171,16 @@ module gen_top_cases;
                 end
 
                 // Force overrides gated safely after lock/payload or mid-burst in force cases
-                fw_en = cfg.do_force && (t > 200 && t < total_cycles - tail_len) && cyc.force_w_en;
-                fc_en = cfg.do_force && (t > 900 && t < total_cycles - tail_len) && cyc.force_cfo_en;
-                ff_en = cfg.do_force && (t > 900 && t < total_cycles - tail_len) && cyc.force_freq_en;
+                if (c == 30 && t >= 480 && t < 540) begin
+                    fw_en = 1'b1;
+                    cyc.force_w = 16'h5800; // Sustained large W error after STR lock -> hits lock_detector bucket>=2
+                    fc_en = 1'b0;
+                    ff_en = 1'b0;
+                end else begin
+                    fw_en = (c != 30) && cfg.do_force && (t > 200 && t < total_cycles - tail_len) && cyc.force_w_en;
+                    fc_en = (c != 30) && cfg.do_force && (t > 900 && t < total_cycles - tail_len) && cyc.force_cfo_en;
+                    ff_en = (c != 30) && cfg.do_force && (t > 900 && t < total_cycles - tail_len) && cyc.force_freq_en;
+                end
 
                 $fwrite(fd, "%0d %0d %0d %1x %1x %0d %04x %0d %06x %0d %08x\n",
                         rst_n, in_val, sob, cur_mod, dft_sel,
