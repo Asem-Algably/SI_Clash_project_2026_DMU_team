@@ -5,7 +5,6 @@ import uvm_pkg::*;
 
 module top ();
     logic clk;
-    logic rst_n;
 
     initial begin
         clk = 0;
@@ -13,24 +12,22 @@ module top ();
     end
 
     costas_top_inter costas_top_test_vif (clk);
-    assign costas_top_test_vif.rst_n = rst_n;
 
     initial begin
-        rst_n = 0;
-        #100 rst_n = 1;
+        costas_top_test_vif.rst_n          = 0;
         costas_top_test_vif.s_axis_valid_i = 0;
         costas_top_test_vif.s_axis_i_sym_i = 0;
         costas_top_test_vif.s_axis_q_sym_i = 0;
-        costas_top_test_vif.mode_i = 0;
+        costas_top_test_vif.mode_i         = 0;
         costas_top_test_vif.preamble_end_i = 0;
-        costas_top_test_vif.mod_type_i = 0;
-        costas_top_test_vif.slicer_qpsk_i = 0;
-        costas_top_test_vif.costas_gain_i = 0;
+        costas_top_test_vif.mod_type_i     = 0;
+        costas_top_test_vif.slicer_qpsk_i  = 1;
+        costas_top_test_vif.costas_gain_i  = 0;
     end
 
     costas_top dut (
         .clk_i            (clk),
-        .rst_ni           (rst_n),
+        .rst_ni           (costas_top_test_vif.rst_n),
         .s_axis_valid_i   (costas_top_test_vif.s_axis_valid_i),
         .s_axis_i_sym_i   (costas_top_test_vif.s_axis_i_sym_i),
         .s_axis_q_sym_i   (costas_top_test_vif.s_axis_q_sym_i),
@@ -51,6 +48,8 @@ module top ();
         .dbg_lock_int_o   (costas_top_test_vif.dbg_lock_int_o),
         .dbg_quad_done_o  (costas_top_test_vif.dbg_quad_done_o)
     );
+
+    assign costas_top_test_vif.kp_obs = dut.kp_d3;
 
     // Connect the SVA to the DUT
     bind costas_top sva sva_inst (

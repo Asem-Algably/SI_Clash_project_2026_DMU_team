@@ -7,7 +7,7 @@ Coverage Report by instance with details
 Statement Coverage:
     Enabled Coverage              Bins      Hits    Misses  Coverage
     ----------------              ----      ----    ------  --------
-    Statements                       3         2         1    66.66%
+    Statements                       3         0         3     0.00%
 
 ================================Statement Details================================
 
@@ -16,13 +16,13 @@ Statement Coverage for instance /top/coarse_cfo_core_test_vif --
     Line         Item                      Count     Source 
     ----         ----                      -----     ------ 
   File coarse_cfo_core_interface.sv
-    13              1                          1     
+    13              1                    ***0***     
     17              1                    ***0***     
-    21              1                          1     
+    21              1                    ***0***     
 Toggle Coverage:
     Enabled Coverage              Bins      Hits    Misses  Coverage
     ----------------              ----      ----    ------  --------
-    Toggles                        172       149        23    86.62%
+    Toggles                        172       168         4    97.67%
 
 ================================Toggle Details================================
 
@@ -32,34 +32,9 @@ Toggle Coverage for instance /top/coarse_cfo_core_test_vif --
                                               ---------------------------------------------------------------
                                                clk           1           1                              100.00 
                                     force_cfo_en_i           1           1                              100.00 
-                                  force_cfo_i[0-3]           1           1                              100.00 
-                                    force_cfo_i[4]           0           0                                0.00 
-                                  force_cfo_i[5-8]           1           1                              100.00 
-                                    force_cfo_i[9]           0           0                                0.00 
-                                force_cfo_i[10-11]           1           1                              100.00 
-                                force_cfo_i[12-13]           0           0                                0.00 
-                                force_cfo_i[14-17]           1           1                              100.00 
-                                   force_cfo_i[18]           0           0                                0.00 
-                                   force_cfo_i[19]           1           1                              100.00 
-                                   force_cfo_i[20]           0           0                                0.00 
-                                   force_cfo_i[21]           1           1                              100.00 
-                                   force_cfo_i[22]           0           0                                0.00 
-                                   force_cfo_i[23]           1           1                              100.00 
-                                   m_axis_cfo_o[0]           0           1                               50.00 
-                                 m_axis_cfo_o[1-4]           1           1                              100.00 
-                                   m_axis_cfo_o[5]           0           1                               50.00 
-                                   m_axis_cfo_o[6]           1           1                              100.00 
-                                   m_axis_cfo_o[7]           0           1                               50.00 
-                                m_axis_cfo_o[8-13]           1           1                              100.00 
-                                  m_axis_cfo_o[14]           0           1                               50.00 
-                                  m_axis_cfo_o[15]           1           1                              100.00 
-                               m_axis_cfo_o[16-17]           0           1                               50.00 
-                                  m_axis_cfo_o[18]           1           1                              100.00 
-                                  m_axis_cfo_o[19]           0           1                               50.00 
-                                  m_axis_cfo_o[20]           1           1                              100.00 
-                                  m_axis_cfo_o[21]           0           1                               50.00 
-                                  m_axis_cfo_o[22]           1           1                              100.00 
-                                  m_axis_cfo_o[23]           0           1                               50.00 
+                                 force_cfo_i[0-21]           1           1                              100.00 
+                                force_cfo_i[22-23]           0           0                                0.00 
+                                m_axis_cfo_o[0-23]           1           1                              100.00 
                                     m_axis_valid_o           1           1                              100.00 
                                             rst_ni           1           1                              100.00 
                               s_axis_i_sym_i[0-15]           1           1                              100.00 
@@ -68,10 +43,10 @@ Toggle Coverage for instance /top/coarse_cfo_core_test_vif --
                                            start_i           1           1                              100.00 
 
 Total Node Count     =         86 
-Toggled Node Count   =         70 
-Untoggled Node Count =         16 
+Toggled Node Count   =         84 
+Untoggled Node Count =          2 
 
-Toggle Coverage      =      86.62% (149 of 172 bins)
+Toggle Coverage      =      97.67% (168 of 172 bins)
 
 =================================================================================
 === Instance: /top/dut/u_complex_mult
@@ -88,13 +63,13 @@ Statement Coverage for instance /top/dut/u_complex_mult --
 
     Line         Item                      Count     Source 
     ----         ----                      -----     ------ 
-  File complex_mult.sv
-    29              1                       2986     
-    30              1                       2982     
-    31              1                       2985     
-    32              1                       2983     
-    35              1                       2981     
-    38              1                       2982     
+  File ../../rtl/coarse_cfo/complex_mult.sv
+    29              1                       4195     
+    30              1                       4195     
+    31              1                       4195     
+    32              1                       4195     
+    35              1                       4132     
+    38              1                       4132     
 Toggle Coverage:
     Enabled Coverage              Bins      Hits    Misses  Coverage
     ----------------              ----      ----    ------  --------
@@ -138,36 +113,36 @@ Branch Coverage for instance /top/dut/u_accumulator
 
     Line         Item                      Count     Source 
     ----         ----                      -----     ------ 
-  File accumulator.sv
+  File ../../rtl/coarse_cfo/accumulator.sv
 ------------------------------------IF Branch------------------------------------
-    41                                      2961     Count coming in to IF
-    41              1                          2     
-    47              1                       2959     
+    41                                      3113     Count coming in to IF
+    41              1                         19     
+    47              1                       3094     
 Branch totals: 2 hits of 2 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    51                                      2959     Count coming in to IF
-    51              1                          6     
-    60              1                        187     
-                                            2766     All False Count
+    51                                      3094     Count coming in to IF
+    51              1                         13     
+    60              1                        372     
+                                            2709     All False Count
 Branch totals: 3 hits of 3 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    55                                         6     Count coming in to IF
-    55              1                          5     
+    55                                        13     Count coming in to IF
+    55              1                         12     
     57              1                          1     
 Branch totals: 2 hits of 2 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    61                                       187     Count coming in to IF
-    61              1                        168     
-                                              19     All False Count
+    61                                       372     Count coming in to IF
+    61              1                        336     
+                                              36     All False Count
 Branch totals: 2 hits of 2 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    66                                       187     Count coming in to IF
-    66              1                          6     
-                                             181     All False Count
+    66                                       372     Count coming in to IF
+    66              1                         12     
+                                             360     All False Count
 Branch totals: 2 hits of 2 branches = 100.00%
 
 
@@ -180,7 +155,7 @@ Condition Coverage:
 
 Condition Coverage for instance /top/dut/u_accumulator --
 
-  File accumulator.sv
+  File ../../rtl/coarse_cfo/accumulator.sv
 ----------------Focused Condition View-------------------
 Line       51 Item    1  (start_i && ~start_prev_q)
 Condition totals: 2 of 2 input terms covered = 100.00%
@@ -252,7 +227,7 @@ Expression Coverage:
 
 Expression Coverage for instance /top/dut/u_accumulator --
 
-  File accumulator.sv
+  File ../../rtl/coarse_cfo/accumulator.sv
 ----------------Focused Expression View-----------------
 Line       73 Item    1  (count_q == 32)
 Expression totals: 1 of 1 input term covered = 100.00%
@@ -278,28 +253,28 @@ Statement Coverage for instance /top/dut/u_accumulator --
 
     Line         Item                      Count     Source 
     ----         ----                      -----     ------ 
-  File accumulator.sv
-    40              1                       2961     
-    42              1                          2     
-    43              1                          2     
-    44              1                          2     
-    45              1                          2     
-    46              1                          2     
-    48              1                       2959     
-    52              1                          6     
-    53              1                          6     
-    54              1                          6     
-    56              1                          5     
+  File ../../rtl/coarse_cfo/accumulator.sv
+    40              1                       3113     
+    42              1                         19     
+    43              1                         19     
+    44              1                         19     
+    45              1                         19     
+    46              1                         19     
+    48              1                       3094     
+    52              1                         13     
+    53              1                         13     
+    54              1                         13     
+    56              1                         12     
     58              1                          1     
-    62              1                        168     
-    63              1                        168     
-    65              1                        187     
-    67              1                          6     
-    73              1                        194     
+    62              1                        336     
+    63              1                        336     
+    65              1                        372     
+    67              1                         12     
+    73              1                        394     
 Toggle Coverage:
     Enabled Coverage              Bins      Hits    Misses  Coverage
     ----------------              ----      ----    ------  --------
-    Toggles                        318       317         1    99.68%
+    Toggles                        318       318         0   100.00%
 
 ================================Toggle Details================================
 
@@ -314,17 +289,17 @@ Toggle Coverage for instance /top/dut/u_accumulator --
                                      in_re_i[0-32]           1           1                              100.00 
                                     out_im_o[39-0]           1           1                              100.00 
                                     out_re_o[39-0]           1           1                              100.00 
-                                            rst_ni           0           1                               50.00 
+                                            rst_ni           1           1                              100.00 
                                            start_i           1           1                              100.00 
                                       start_prev_q           1           1                              100.00 
                                            valid_i           1           1                              100.00 
                                            valid_o           1           1                              100.00 
 
 Total Node Count     =        159 
-Toggled Node Count   =        158 
-Untoggled Node Count =          1 
+Toggled Node Count   =        159 
+Untoggled Node Count =          0 
 
-Toggle Coverage      =      99.68% (317 of 318 bins)
+Toggle Coverage      =     100.00% (318 of 318 bins)
 
 =================================================================================
 === Instance: /top/dut/u_cordic_angle
@@ -341,97 +316,97 @@ Branch Coverage for instance /top/dut/u_cordic_angle
 
     Line         Item                      Count     Source 
     ----         ----                      -----     ------ 
-  File cordic_angle.sv
+  File ../../rtl/coarse_cfo/cordic_angle.sv
 ------------------------------------CASE Branch------------------------------------
-    36                                        96     Count coming in to CASE
-    37              1                          6     
-    38              1                          6     
-    39              1                          6     
-    40              1                          6     
-    41              1                          6     
-    42              1                          6     
-    43              1                          6     
-    44              1                          6     
-    45              1                          6     
-    46              1                          6     
-    47              1                          6     
-    48              1                          6     
-    49              1                          6     
-    50              1                          6     
-    51              1                          6     
-    52              1                          6     
+    36                                       182     Count coming in to CASE
+    37              1                         12     
+    38              1                         12     
+    39              1                         12     
+    40              1                         12     
+    41              1                         12     
+    42              1                         12     
+    43              1                         11     
+    44              1                         11     
+    45              1                         11     
+    46              1                         11     
+    47              1                         11     
+    48              1                         11     
+    49              1                         11     
+    50              1                         11     
+    51              1                         11     
+    52              1                         11     
     53              1                    ***0***     
 Branch totals: 16 hits of 17 branches = 94.11%
 
 ------------------------------------CASE Branch------------------------------------
-    73                                       116     Count coming in to CASE
-    74              1                         13     
-    80              1                         96     
-    95              1                          6     
+    73                                       226     Count coming in to CASE
+    74              1                         32     
+    80              1                        182     
+    95              1                         11     
     99              1                          1     
 Branch totals: 4 hits of 4 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    75                                        13     Count coming in to IF
-    75              1                          6     
-                                               7     All False Count
+    75                                        32     Count coming in to IF
+    75              1                         12     
+                                              20     All False Count
 Branch totals: 2 hits of 2 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    81                                        96     Count coming in to IF
-    81              1                         57     
-    85              1                         39     
+    81                                       182     Count coming in to IF
+    81              1                        104     
+    85              1                         78     
 Branch totals: 2 hits of 2 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    90                                        96     Count coming in to IF
-    90              1                          6     
-                                              90     All False Count
+    90                                       182     Count coming in to IF
+    90              1                         11     
+                                             171     All False Count
 Branch totals: 2 hits of 2 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    105                                      290     Count coming in to IF
-    105             1                          2     
-    115             1                        288     
+    105                                      580     Count coming in to IF
+    105             1                         18     
+    115             1                        562     
 Branch totals: 2 hits of 2 branches = 100.00%
 
 ------------------------------------CASE Branch------------------------------------
-    118                                      288     Count coming in to CASE
-    119             1                        186     
-    131             1                         96     
-    140             1                          6     
+    118                                      562     Count coming in to CASE
+    119             1                        370     
+    131             1                        181     
+    140             1                         11     
     153             1                    ***0***     
 Branch totals: 3 hits of 4 branches = 75.00%
 
 ------------------------------------IF Branch------------------------------------
-    121                                      186     Count coming in to IF
-    121             1                          6     
-                                             180     All False Count
+    121                                      370     Count coming in to IF
+    121             1                         12     
+                                             358     All False Count
 Branch totals: 2 hits of 2 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    122                                        6     Count coming in to IF
-    122             1                          1     
-    122             2                          5     
+    122                                       12     Count coming in to IF
+    122             1                          2     
+    122             2                         10     
 Branch totals: 2 hits of 2 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    123                                        6     Count coming in to IF
-    123             1                          1     
-    123             2                          5     
+    123                                       12     Count coming in to IF
+    123             1                          5     
+    123             2                          7     
 Branch totals: 2 hits of 2 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    135                                       96     Count coming in to IF
-    135             1                         90     
-                                               6     All False Count
+    135                                      181     Count coming in to IF
+    135             1                        170     
+                                              11     All False Count
 Branch totals: 2 hits of 2 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    141                                        6     Count coming in to IF
-    141             1                          4     
-    143             1                          1     
-    145             1                          1     
+    141                                       11     Count coming in to IF
+    141             1                          5     
+    143             1                          4     
+    145             1                          2     
     147             1                    ***0***     
 Branch totals: 3 hits of 4 branches = 75.00%
 
@@ -445,7 +420,7 @@ Condition Coverage:
 
 Condition Coverage for instance /top/dut/u_cordic_angle --
 
-  File cordic_angle.sv
+  File ../../rtl/coarse_cfo/cordic_angle.sv
 ----------------Focused Condition View-------------------
 Line       81 Item    1  (y_q > 0)
 Condition totals: 1 of 1 input term covered = 100.00%
@@ -564,7 +539,7 @@ FSM Coverage:
     Enabled Coverage              Bins      Hits    Misses  Coverage
     ----------------              ----      ----    ------  --------
     FSM States                       3         3         0   100.00%
-    FSM Transitions                  4         3         1    75.00%
+    FSM Transitions                  4         4         0   100.00%
 
 ================================FSM Details================================
 
@@ -584,27 +559,23 @@ Line          State Name               Value
     ----------------
                    State           Hit_count
                    -----           ---------
-                  StIdle                 188          
-               StIterate                  96          
-                  StDone                   6          
+                  StIdle                 387          
+               StIterate                 182          
+                  StDone                  11          
     Covered Transitions :
     ---------------------
 Line            Trans_ID           Hit_count          Transition          
 ----            --------           ---------          ----------          
-  76                   0                   6          StIdle -> StIterate           
-  91                   1                   6          StIterate -> StDone           
-  96                   3                   6          StDone -> StIdle              
-    Uncovered Transitions :
-    -----------------------
-Line            Trans_ID          Transition          
-----            --------          ----------          
- 106                   2          StIterate -> StIdle 
+  76                   0                  12          StIdle -> StIterate           
+  91                   1                  11          StIterate -> StDone           
+ 106                   2                   1          StIterate -> StIdle           
+  96                   3                  11          StDone -> StIdle              
 
 
     Summary                       Bins      Hits    Misses  Coverage
     -------                       ----      ----    ------  --------
         FSM States                   3         3         0   100.00%
-        FSM Transitions              4         3         1    75.00%
+        FSM Transitions              4         4         0   100.00%
 Statement Coverage:
     Enabled Coverage              Bins      Hits    Misses  Coverage
     ----------------              ----      ----    ------  --------
@@ -616,71 +587,71 @@ Statement Coverage for instance /top/dut/u_cordic_angle --
 
     Line         Item                      Count     Source 
     ----         ----                      -----     ------ 
-  File cordic_angle.sv
-    37              1                          6     
-    38              1                          6     
-    39              1                          6     
-    40              1                          6     
-    41              1                          6     
-    42              1                          6     
-    43              1                          6     
-    44              1                          6     
-    45              1                          6     
-    46              1                          6     
-    47              1                          6     
-    48              1                          6     
-    49              1                          6     
-    50              1                          6     
-    51              1                          6     
-    52              1                          6     
+  File ../../rtl/coarse_cfo/cordic_angle.sv
+    37              1                         12     
+    38              1                         12     
+    39              1                         12     
+    40              1                         12     
+    41              1                         12     
+    42              1                         12     
+    43              1                         11     
+    44              1                         11     
+    45              1                         11     
+    46              1                         11     
+    47              1                         11     
+    48              1                         11     
+    49              1                         11     
+    50              1                         11     
+    51              1                         11     
+    52              1                         11     
     53              1                    ***0***     
-    55              1                         96     
-    67              1                        116     
-    68              1                        116     
-    69              1                        116     
-    70              1                        116     
-    71              1                        116     
-    76              1                          6     
-    82              1                         57     
-    83              1                         57     
-    84              1                         57     
-    86              1                         39     
-    87              1                         39     
-    88              1                         39     
-    91              1                          6     
-    96              1                          6     
+    55              1                        182     
+    67              1                        226     
+    68              1                        226     
+    69              1                        226     
+    70              1                        226     
+    71              1                        226     
+    76              1                         12     
+    82              1                        104     
+    83              1                        104     
+    84              1                        104     
+    86              1                         78     
+    87              1                         78     
+    88              1                         78     
+    91              1                         11     
+    96              1                         11     
     99              1                          1     
-    104             1                        290     
-    106             1                          2     
-    107             1                          2     
-    108             1                          2     
-    109             1                          2     
-    110             1                          2     
-    111             1                          2     
-    112             1                          2     
-    113             1                          2     
-    114             1                          2     
-    116             1                        288     
-    120             1                        186     
-    122             1                          6     
-    123             1                          6     
-    124             1                          6     
-    125             1                          6     
-    126             1                          6     
-    127             1                          6     
-    132             1                         96     
-    133             1                         96     
-    134             1                         96     
-    136             1                         90     
-    142             1                          4     
-    144             1                          1     
-    146             1                          1     
+    104             1                        580     
+    106             1                         18     
+    107             1                         18     
+    108             1                         18     
+    109             1                         18     
+    110             1                         18     
+    111             1                         18     
+    112             1                         18     
+    113             1                         18     
+    114             1                         18     
+    116             1                        562     
+    120             1                        370     
+    122             1                         12     
+    123             1                         12     
+    124             1                         12     
+    125             1                         12     
+    126             1                         12     
+    127             1                         12     
+    132             1                        181     
+    133             1                        181     
+    134             1                        181     
+    136             1                        170     
+    142             1                          5     
+    144             1                          4     
+    146             1                          2     
     148             1                    ***0***     
-    150             1                          6     
+    150             1                         11     
 Toggle Coverage:
     Enabled Coverage              Bins      Hits    Misses  Coverage
     ----------------              ----      ----    ------  --------
-    Toggles                        654       619        35    94.64%
+    Toggles                        654       632        22    96.63%
 
 ================================Toggle Details================================
 
@@ -688,30 +659,16 @@ Toggle Coverage for instance /top/dut/u_cordic_angle --
 
                                               Node      1H->0L      0L->1H                          "Coverage"
                                               ---------------------------------------------------------------
-                                        angle_o[0]           0           1                               50.00 
-                                        angle_o[1]           1           1                              100.00 
-                                        angle_o[2]           0           1                               50.00 
-                                      angle_o[3-5]           1           1                              100.00 
-                                      angle_o[6-7]           0           1                               50.00 
-                                        angle_o[8]           1           1                              100.00 
-                                        angle_o[9]           0           1                               50.00 
-                                    angle_o[10-13]           1           1                              100.00 
-                                       angle_o[14]           0           1                               50.00 
-                                       angle_o[15]           1           1                              100.00 
-                                       angle_o[16]           0           1                               50.00 
-                                       angle_o[17]           1           1                              100.00 
-                                    angle_o[18-21]           0           1                               50.00 
-                                       angle_o[22]           1           1                              100.00 
-                                       angle_o[23]           0           1                               50.00 
+                                     angle_o[0-23]           1           1                              100.00 
                                              clk_i           1           1                              100.00 
                                        iter_q[0-3]           1           1                              100.00 
                                          iter_q[4]           0           0                                0.00 
-                                            rst_ni           0           1                               50.00 
+                                            rst_ni           1           1                              100.00 
                                           sign_x_q           1           1                              100.00 
                                           sign_y_q           1           1                              100.00 
                                            start_i           1           1                              100.00 
                                            state_d               ENUM type       Value       Count 
-                                                                    StIdle           2      100.00 
+                                                                    StIdle           1      100.00 
                                                                  StIterate           1      100.00 
                                                                     StDone           1      100.00 
                                            state_q               ENUM type       Value       Count 
@@ -732,10 +689,10 @@ Toggle Coverage for instance /top/dut/u_cordic_angle --
                                          z_q[0-23]           1           1                              100.00 
 
 Total Node Count     =        330 
-Toggled Node Count   =        306 
-Untoggled Node Count =         24 
+Toggled Node Count   =        319 
+Untoggled Node Count =         11 
 
-Toggle Coverage      =      94.64% (619 of 654 bins)
+Toggle Coverage      =      96.63% (632 of 654 bins)
 
 =================================================================================
 === Instance: /top/dut/sva_inst
@@ -749,11 +706,11 @@ Name                 File(Line)                   Failure      Pass     Vacuous 
                                                   Count        Count    Count      Count      Count       Count  Count          
 --------------------------------------------------------------------------------------------------------------------------------
 /top/dut/sva_inst/a_no_x_on_valid
-                     sva.sv(13)                         0          6       5906          5       5917          0           1 off
+                     sva.sv(13)                         0         11       4432         33       4476          0           1 off
 Toggle Coverage:
     Enabled Coverage              Bins      Hits    Misses  Coverage
     ----------------              ----      ----    ------  --------
-    Toggles                         54        44        10    81.48%
+    Toggles                         54        54         0   100.00%
 
 ================================Toggle Details================================
 
@@ -762,29 +719,15 @@ Toggle Coverage for instance /top/dut/sva_inst --
                                               Node      1H->0L      0L->1H                          "Coverage"
                                               ---------------------------------------------------------------
                                              clk_i           1           1                              100.00 
-                                   m_axis_cfo_o[0]           0           1                               50.00 
-                                 m_axis_cfo_o[1-4]           1           1                              100.00 
-                                   m_axis_cfo_o[5]           0           1                               50.00 
-                                   m_axis_cfo_o[6]           1           1                              100.00 
-                                   m_axis_cfo_o[7]           0           1                               50.00 
-                                m_axis_cfo_o[8-13]           1           1                              100.00 
-                                  m_axis_cfo_o[14]           0           1                               50.00 
-                                  m_axis_cfo_o[15]           1           1                              100.00 
-                               m_axis_cfo_o[16-17]           0           1                               50.00 
-                                  m_axis_cfo_o[18]           1           1                              100.00 
-                                  m_axis_cfo_o[19]           0           1                               50.00 
-                                  m_axis_cfo_o[20]           1           1                              100.00 
-                                  m_axis_cfo_o[21]           0           1                               50.00 
-                                  m_axis_cfo_o[22]           1           1                              100.00 
-                                  m_axis_cfo_o[23]           0           1                               50.00 
+                                m_axis_cfo_o[0-23]           1           1                              100.00 
                                     m_axis_valid_o           1           1                              100.00 
-                                            rst_ni           0           1                               50.00 
+                                            rst_ni           1           1                              100.00 
 
 Total Node Count     =         27 
-Toggled Node Count   =         17 
-Untoggled Node Count =         10 
+Toggled Node Count   =         27 
+Untoggled Node Count =          0 
 
-Toggle Coverage      =      81.48% (44 of 54 bins)
+Toggle Coverage      =     100.00% (54 of 54 bins)
 
 =================================================================================
 === Instance: /top/dut
@@ -801,39 +744,39 @@ Branch Coverage for instance /top/dut
 
     Line         Item                      Count     Source 
     ----         ----                      -----     ------ 
-  File coarse_cfo_core.sv
+  File ../../rtl/coarse_cfo/coarse_cfo_core.sv
 ------------------------------------IF Branch------------------------------------
-    36                                      2901     Count coming in to IF
-    36              1                          2     
-    38              1                       2727     
-    40              1                        130     
-                                              42     All False Count
+    36                                      1615     Count coming in to IF
+    36              1                         12     
+    38              1                       1006     
+    40              1                        384     
+                                             213     All False Count
 Branch totals: 4 hits of 4 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    50                                      2900     Count coming in to IF
-    50              1                          2     
-    55              1                       1499     
-                                            1399     All False Count
+    50                                      3111     Count coming in to IF
+    50              1                         19     
+    55              1                       1234     
+                                            1858     All False Count
 Branch totals: 3 hits of 3 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    110                                       25     Count coming in to IF
-    110             1                          2     
-    112             1                         23     
+    110                                       57     Count coming in to IF
+    110             1                         18     
+    112             1                         39     
 Branch totals: 2 hits of 2 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    142                                       23     Count coming in to IF
-    142             1                          2     
-    145             1                         21     
+    142                                     4403     Count coming in to IF
+    142             1                         20     
+    145             1                       4383     
 Branch totals: 2 hits of 2 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    147                                       21     Count coming in to IF
-    147             1                          2     
-    149             1                          6     
-                                              13     All False Count
+    147                                     4383     Count coming in to IF
+    147             1                          9     
+    149             1                         11     
+                                            4363     All False Count
 Branch totals: 3 hits of 3 branches = 100.00%
 
 
@@ -846,7 +789,7 @@ Condition Coverage:
 
 Condition Coverage for instance /top/dut --
 
-  File coarse_cfo_core.sv
+  File ../../rtl/coarse_cfo/coarse_cfo_core.sv
 ----------------Focused Condition View-------------------
 Line       40 Item    1  (s_axis_valid_i && (sym_count_q < 32))
 Condition totals: 2 of 2 input terms covered = 100.00%
@@ -873,7 +816,7 @@ Expression Coverage:
 
 Expression Coverage for instance /top/dut --
 
-  File coarse_cfo_core.sv
+  File ../../rtl/coarse_cfo/coarse_cfo_core.sv
 ----------------Focused Expression View-----------------
 Line       117 Item    1  (acc_done & ~acc_done_q)
 Expression totals: 2 of 2 input terms covered = 100.00%
@@ -902,38 +845,38 @@ Statement Coverage for instance /top/dut --
 
     Line         Item                      Count     Source 
     ----         ----                      -----     ------ 
-  File coarse_cfo_core.sv
-    35              1                       2901     
-    37              1                          2     
-    39              1                       2727     
-    41              1                        130     
-    49              1                       2900     
-    51              1                          2     
-    51              2                          8     
-    52              1                          8     
-    53              1                          8     
-    56              1                       1499     
-    57              1                       1499     
-    58              1                       1499     
-    58              2                       2998     
-    59              1                       2998     
-    60              1                       2998     
-    62              1                       1499     
-    63              1                       1499     
-    109             1                         25     
-    111             1                          2     
-    113             1                         23     
-    117             1                         25     
-    141             1                         23     
-    143             1                          2     
-    144             1                          2     
-    146             1                         21     
-    148             1                          2     
-    150             1                          6     
+  File ../../rtl/coarse_cfo/coarse_cfo_core.sv
+    35              1                       1615     
+    37              1                         12     
+    39              1                       1006     
+    41              1                        384     
+    49              1                       3111     
+    51              1                         19     
+    51              2                         76     
+    52              1                         76     
+    53              1                         76     
+    56              1                       1234     
+    57              1                       1234     
+    58              1                       1234     
+    58              2                       2468     
+    59              1                       2468     
+    60              1                       2468     
+    62              1                       1234     
+    63              1                       1234     
+    109             1                         57     
+    111             1                         18     
+    113             1                         39     
+    117             1                         49     
+    141             1                       4403     
+    143             1                         20     
+    144             1                         20     
+    146             1                       4383     
+    148             1                          9     
+    150             1                         11     
 Toggle Coverage:
     Enabled Coverage              Bins      Hits    Misses  Coverage
     ----------------              ----      ----    ------  --------
-    Toggles                        582       537        45    92.26%
+    Toggles                        582       578         4    99.31%
 
 ================================Toggle Details================================
 
@@ -946,72 +889,19 @@ Toggle Coverage for instance /top/dut --
                                         acc_done_q           1           1                              100.00 
                                       acc_im[39-0]           1           1                              100.00 
                                       acc_re[39-0]           1           1                              100.00 
-                                     angle_out[23]           0           1                               50.00 
-                                     angle_out[22]           1           1                              100.00 
-                                  angle_out[21-18]           0           1                               50.00 
-                                     angle_out[17]           1           1                              100.00 
-                                     angle_out[16]           0           1                               50.00 
-                                     angle_out[15]           1           1                              100.00 
-                                     angle_out[14]           0           1                               50.00 
-                                  angle_out[13-10]           1           1                              100.00 
-                                      angle_out[9]           0           1                               50.00 
-                                      angle_out[8]           1           1                              100.00 
-                                    angle_out[7-6]           0           1                               50.00 
-                                    angle_out[5-3]           1           1                              100.00 
-                                      angle_out[2]           0           1                               50.00 
-                                      angle_out[1]           1           1                              100.00 
-                                      angle_out[0]           0           1                               50.00 
+                                   angle_out[23-0]           1           1                              100.00 
                                        angle_valid           1           1                              100.00 
-                                         cfo_q[23]           0           1                               50.00 
-                                         cfo_q[22]           1           1                              100.00 
-                                         cfo_q[21]           0           1                               50.00 
-                                         cfo_q[20]           1           1                              100.00 
-                                         cfo_q[19]           0           1                               50.00 
-                                         cfo_q[18]           1           1                              100.00 
-                                      cfo_q[17-16]           0           1                               50.00 
-                                         cfo_q[15]           1           1                              100.00 
-                                         cfo_q[14]           0           1                               50.00 
-                                       cfo_q[13-8]           1           1                              100.00 
-                                          cfo_q[7]           0           1                               50.00 
-                                          cfo_q[6]           1           1                              100.00 
-                                          cfo_q[5]           0           1                               50.00 
-                                        cfo_q[4-1]           1           1                              100.00 
-                                          cfo_q[0]           0           1                               50.00 
+                                       cfo_q[23-0]           1           1                              100.00 
                                        cfo_valid_q           1           1                              100.00 
                                              clk_i           1           1                              100.00 
                                     force_cfo_en_i           1           1                              100.00 
-                                  force_cfo_i[0-3]           1           1                              100.00 
-                                    force_cfo_i[4]           0           0                                0.00 
-                                  force_cfo_i[5-8]           1           1                              100.00 
-                                    force_cfo_i[9]           0           0                                0.00 
-                                force_cfo_i[10-11]           1           1                              100.00 
-                                force_cfo_i[12-13]           0           0                                0.00 
-                                force_cfo_i[14-17]           1           1                              100.00 
-                                   force_cfo_i[18]           0           0                                0.00 
-                                   force_cfo_i[19]           1           1                              100.00 
-                                   force_cfo_i[20]           0           0                                0.00 
-                                   force_cfo_i[21]           1           1                              100.00 
-                                   force_cfo_i[22]           0           0                                0.00 
-                                   force_cfo_i[23]           1           1                              100.00 
-                                  m_axis_cfo_o[23]           0           1                               50.00 
-                                  m_axis_cfo_o[22]           1           1                              100.00 
-                                  m_axis_cfo_o[21]           0           1                               50.00 
-                                  m_axis_cfo_o[20]           1           1                              100.00 
-                                  m_axis_cfo_o[19]           0           1                               50.00 
-                                  m_axis_cfo_o[18]           1           1                              100.00 
-                               m_axis_cfo_o[17-16]           0           1                               50.00 
-                                  m_axis_cfo_o[15]           1           1                              100.00 
-                                  m_axis_cfo_o[14]           0           1                               50.00 
-                                m_axis_cfo_o[13-8]           1           1                              100.00 
-                                   m_axis_cfo_o[7]           0           1                               50.00 
-                                   m_axis_cfo_o[6]           1           1                              100.00 
-                                   m_axis_cfo_o[5]           0           1                               50.00 
-                                 m_axis_cfo_o[4-1]           1           1                              100.00 
-                                   m_axis_cfo_o[0]           0           1                               50.00 
+                                 force_cfo_i[0-21]           1           1                              100.00 
+                                force_cfo_i[22-23]           0           0                                0.00 
+                                m_axis_cfo_o[23-0]           1           1                              100.00 
                                     m_axis_valid_o           1           1                              100.00 
                                      mult_im[32-0]           1           1                              100.00 
                                      mult_re[32-0]           1           1                              100.00 
-                                            rst_ni           0           1                               50.00 
+                                            rst_ni           1           1                              100.00 
                               s_axis_i_sym_i[0-15]           1           1                              100.00 
                               s_axis_q_sym_i[0-15]           1           1                              100.00 
                                     s_axis_valid_i           1           1                              100.00 
@@ -1019,10 +909,10 @@ Toggle Coverage for instance /top/dut --
                                   sym_count_q[5-0]           1           1                              100.00 
 
 Total Node Count     =        291 
-Toggled Node Count   =        253 
-Untoggled Node Count =         38 
+Toggled Node Count   =        289 
+Untoggled Node Count =          2 
 
-Toggle Coverage      =      92.26% (537 of 582 bins)
+Toggle Coverage      =      99.31% (578 of 582 bins)
 
 =================================================================================
 === Instance: /top
@@ -1031,7 +921,7 @@ Toggle Coverage      =      92.26% (537 of 582 bins)
 Statement Coverage:
     Enabled Coverage              Bins      Hits    Misses  Coverage
     ----------------              ----      ----    ------  --------
-    Statements                      15        15         0   100.00%
+    Statements                      13        13         0   100.00%
 
 ================================Statement Details================================
 
@@ -1040,25 +930,23 @@ Statement Coverage for instance /top --
     Line         Item                      Count     Source 
     ----         ----                      -----     ------ 
   File coarse_cfo_core_top.sv
+    13              1                          1     
     14              1                          1     
-    15              1                          1     
-    15              2                      11835     
-    15              3                      11834     
-    20              1                          1     
-    21              1                          1     
-    21              2                          1     
-    31              1                          1     
-    32              1                          1     
-    33              1                          1     
-    34              1                          1     
-    35              1                          1     
-    36              1                          1     
-    63              1                          1     
-    65              1                          1     
+    14              2                       8954     
+    14              3                       8953     
+    22              1                          1     
+    23              1                          1     
+    24              1                          1     
+    25              1                          1     
+    26              1                          1     
+    27              1                          1     
+    28              1                          1     
+    55              1                          1     
+    57              1                          1     
 Toggle Coverage:
     Enabled Coverage              Bins      Hits    Misses  Coverage
     ----------------              ----      ----    ------  --------
-    Toggles                          4         3         1    75.00%
+    Toggles                          2         2         0   100.00%
 
 ================================Toggle Details================================
 
@@ -1067,13 +955,12 @@ Toggle Coverage for instance /top --
                                               Node      1H->0L      0L->1H                          "Coverage"
                                               ---------------------------------------------------------------
                                                clk           1           1                              100.00 
-                                             rst_n           0           1                               50.00 
 
-Total Node Count     =          2 
+Total Node Count     =          1 
 Toggled Node Count   =          1 
-Untoggled Node Count =          1 
+Untoggled Node Count =          0 
 
-Toggle Coverage      =      75.00% (3 of 4 bins)
+Toggle Coverage      =     100.00% (2 of 2 bins)
 
 =================================================================================
 === Instance: /coarse_cfo_core_sequence_item
@@ -1098,9 +985,9 @@ Branch Coverage for instance /coarse_cfo_core_sequence_item
 Branch totals: 0 hits of 2 branches = 0.00%
 
 ------------------------------------IF Branch------------------------------------
-    6                                       5917     Count coming in to IF
+    6                                       4452     Count coming in to IF
     6               2                    ***0***     
-                                            5917     All False Count
+                                            4452     All False Count
 Branch totals: 1 hit of 2 branches = 50.00%
 
 ------------------------------------IF Branch------------------------------------
@@ -1110,9 +997,9 @@ Branch totals: 1 hit of 2 branches = 50.00%
 Branch totals: 0 hits of 2 branches = 0.00%
 
 ------------------------------------IF Branch------------------------------------
-    6                                       5917     Count coming in to IF
+    6                                       4452     Count coming in to IF
     6               5                    ***0***     
-                                            5917     All False Count
+                                            4452     All False Count
 Branch totals: 1 hit of 2 branches = 50.00%
 
 ------------------------------------IF Branch------------------------------------
@@ -1162,7 +1049,7 @@ Condition totals: 0 of 1 input term covered = 0.00%
 Statement Coverage:
     Enabled Coverage              Bins      Hits    Misses  Coverage
     ----------------              ----      ----    ------  --------
-    Statements                      12         3         9    25.00%
+    Statements                      21        12         9    57.14%
 
 ================================Statement Details================================
 
@@ -1176,13 +1063,22 @@ Statement Coverage for instance /coarse_cfo_core_sequence_item --
     6               3                    ***0***     
     6               4                    ***0***     
     6               5                    ***0***     
-    6               6                       5917     
+    6               6                       4452     
     6               7                    ***0***     
     6               8                    ***0***     
-    6               9                       5917     
+    6               9                       4452     
     6              10                    ***0***     
-    21              1                      11834     
-    25              1                    ***0***     
+    9               1                       8928     
+    10              1                       8928     
+    11              1                       8928     
+    12              1                       8928     
+    13              1                       8928     
+    14              1                       8928     
+    15              1                       8928     
+    18              1                       8928     
+    19              1                       8928     
+    26              1                       8928     
+    30              1                    ***0***     
 
 =================================================================================
 === Instance: /directed_sequence
@@ -1191,7 +1087,7 @@ Statement Coverage for instance /coarse_cfo_core_sequence_item --
 Branch Coverage:
     Enabled Coverage              Bins      Hits    Misses  Coverage
     ----------------              ----      ----    ------  --------
-    Branches                        10         2         8    20.00%
+    Branches                        10         0        10     0.00%
 
 ================================Branch Details================================
 
@@ -1207,10 +1103,10 @@ Branch Coverage for instance /directed_sequence
 Branch totals: 0 hits of 2 branches = 0.00%
 
 ------------------------------------IF Branch------------------------------------
-    7                                          1     Count coming in to IF
+    7                                    ***0***     Count coming in to IF
     7               2                    ***0***     
-                                               1     All False Count
-Branch totals: 1 hit of 2 branches = 50.00%
+                                         ***0***     All False Count
+Branch totals: 0 hits of 2 branches = 0.00%
 
 ------------------------------------IF Branch------------------------------------
     7                                    ***0***     Count coming in to IF
@@ -1219,10 +1115,10 @@ Branch totals: 1 hit of 2 branches = 50.00%
 Branch totals: 0 hits of 2 branches = 0.00%
 
 ------------------------------------IF Branch------------------------------------
-    7                                          1     Count coming in to IF
+    7                                    ***0***     Count coming in to IF
     7               5                    ***0***     
-                                               1     All False Count
-Branch totals: 1 hit of 2 branches = 50.00%
+                                         ***0***     All False Count
+Branch totals: 0 hits of 2 branches = 0.00%
 
 ------------------------------------IF Branch------------------------------------
     7                                    ***0***     Count coming in to IF
@@ -1260,18 +1156,18 @@ Condition totals: 0 of 1 input term covered = 0.00%
 
             Input Term   Covered  Reason for no coverage   Hint
            -----------  --------  -----------------------  --------------
-  (tmp_data__ != null)         N  '_1' not hit             Hit '_1'
+  (tmp_data__ != null)         N  No hits                  Hit '_0' and '_1'
 
      Rows:       Hits  FEC Target              Non-masking condition(s)      
  ---------  ---------  --------------------    -------------------------     
-  Row   1:          1  (tmp_data__ != null)_0  -                             
+  Row   1:    ***0***  (tmp_data__ != null)_0  -                             
   Row   2:    ***0***  (tmp_data__ != null)_1  -                             
 
 
 Expression Coverage:
     Enabled Coverage              Bins   Covered    Misses  Coverage
     ----------------              ----      ----    ------  --------
-    Expressions                      2         2         0   100.00%
+    Expressions                      2         0         2     0.00%
 
 ================================Expression Details================================
 
@@ -1280,35 +1176,35 @@ Expression Coverage for instance /directed_sequence --
   File directed_seq.sv
 ----------------Focused Expression View-----------------
 Line       47 Item    1  (n == 0)
-Expression totals: 1 of 1 input term covered = 100.00%
+Expression totals: 0 of 1 input term covered = 0.00%
 
   Input Term   Covered  Reason for no coverage   Hint
  -----------  --------  -----------------------  --------------
-    (n == 0)         Y
+    (n == 0)         N  No hits                  Hit '_0' and '_1'
 
      Rows:       Hits  FEC Target            Non-masking condition(s)      
  ---------  ---------  --------------------  -------------------------     
-  Row   1:          1  (n == 0)_0            -                             
-  Row   2:          1  (n == 0)_1            -                             
+  Row   1:    ***0***  (n == 0)_0            -                             
+  Row   2:    ***0***  (n == 0)_1            -                             
 
 ----------------Focused Expression View-----------------
 Line       59 Item    1  (n == 0)
-Expression totals: 1 of 1 input term covered = 100.00%
+Expression totals: 0 of 1 input term covered = 0.00%
 
   Input Term   Covered  Reason for no coverage   Hint
  -----------  --------  -----------------------  --------------
-    (n == 0)         Y
+    (n == 0)         N  No hits                  Hit '_0' and '_1'
 
      Rows:       Hits  FEC Target            Non-masking condition(s)      
  ---------  ---------  --------------------  -------------------------     
-  Row   1:          1  (n == 0)_0            -                             
-  Row   2:          1  (n == 0)_1            -                             
+  Row   1:    ***0***  (n == 0)_0            -                             
+  Row   2:    ***0***  (n == 0)_1            -                             
 
 
 Statement Coverage:
     Enabled Coverage              Bins      Hits    Misses  Coverage
     ----------------              ----      ----    ------  --------
-    Statements                      91        83         8    91.20%
+    Statements                      91         0        91     0.00%
 
 ================================Statement Details================================
 
@@ -1322,92 +1218,92 @@ Statement Coverage for instance /directed_sequence --
     7               3                    ***0***     
     7               4                    ***0***     
     7               5                    ***0***     
-    7               6                          1     
+    7               6                    ***0***     
     7               7                    ***0***     
     7               8                    ***0***     
-    7               9                          1     
+    7               9                    ***0***     
     7              10                    ***0***     
-    10              1                          1     
-    19              1                          1     
-    21              1                          4     
-    22              1                          3     
-    23              1                          3     
-    24              1                          3     
-    24              2                          3     
-    24              3                          3     
-    24              4                          3     
-    24              5                          3     
-    24              6                          3     
-    25              1                          3     
-    27              1                          3     
-    27              2                         93     
-    28              1                         93     
-    29              1                         93     
-    30              1                         93     
-    32              1                         93     
-    33              1                         93     
-    34              1                         93     
-    34              2                         93     
-    34              3                         93     
-    34              4                         93     
-    34              5                         93     
-    34              6                         93     
-    35              1                         93     
-    37              1                          3     
-    37              2                         60     
-    38              1                         60     
-    39              1                         60     
-    39              2                         60     
-    39              3                         60     
-    39              4                         60     
-    39              5                         60     
-    39              6                         60     
-    39              7                         60     
-    39              8                         60     
-    44              1                          1     
-    44              2                         32     
-    45              1                         32     
-    46              1                         32     
-    47              1                         32     
-    47              2                         32     
-    47              3                         32     
-    47              4                         32     
-    47              5                         32     
-    47              6                         32     
-    48              1                         32     
-    50              1                          1     
-    50              2                         20     
-    51              1                         20     
-    52              1                         20     
-    52              2                         20     
-    52              3                         20     
-    52              4                         20     
-    52              5                         20     
-    52              6                         20     
-    52              7                         20     
-    52              8                         20     
-    56              1                          1     
-    56              2                         40     
-    57              1                         40     
-    58              1                         40     
-    59              1                         40     
-    59              2                         40     
-    59              3                         40     
-    59              4                         40     
-    60              1                         40     
-    60              2                         40     
-    61              1                         40     
-    63              1                          1     
-    63              2                         20     
-    64              1                         20     
-    65              1                         20     
-    65              2                         20     
-    65              3                         20     
-    65              4                         20     
-    65              5                         20     
-    65              6                         20     
-    65              7                         20     
-    65              8                         20     
+    10              1                    ***0***     
+    19              1                    ***0***     
+    21              1                    ***0***     
+    22              1                    ***0***     
+    23              1                    ***0***     
+    24              1                    ***0***     
+    24              2                    ***0***     
+    24              3                    ***0***     
+    24              4                    ***0***     
+    24              5                    ***0***     
+    24              6                    ***0***     
+    25              1                    ***0***     
+    27              1                    ***0***     
+    27              2                    ***0***     
+    28              1                    ***0***     
+    29              1                    ***0***     
+    30              1                    ***0***     
+    32              1                    ***0***     
+    33              1                    ***0***     
+    34              1                    ***0***     
+    34              2                    ***0***     
+    34              3                    ***0***     
+    34              4                    ***0***     
+    34              5                    ***0***     
+    34              6                    ***0***     
+    35              1                    ***0***     
+    37              1                    ***0***     
+    37              2                    ***0***     
+    38              1                    ***0***     
+    39              1                    ***0***     
+    39              2                    ***0***     
+    39              3                    ***0***     
+    39              4                    ***0***     
+    39              5                    ***0***     
+    39              6                    ***0***     
+    39              7                    ***0***     
+    39              8                    ***0***     
+    44              1                    ***0***     
+    44              2                    ***0***     
+    45              1                    ***0***     
+    46              1                    ***0***     
+    47              1                    ***0***     
+    47              2                    ***0***     
+    47              3                    ***0***     
+    47              4                    ***0***     
+    47              5                    ***0***     
+    47              6                    ***0***     
+    48              1                    ***0***     
+    50              1                    ***0***     
+    50              2                    ***0***     
+    51              1                    ***0***     
+    52              1                    ***0***     
+    52              2                    ***0***     
+    52              3                    ***0***     
+    52              4                    ***0***     
+    52              5                    ***0***     
+    52              6                    ***0***     
+    52              7                    ***0***     
+    52              8                    ***0***     
+    56              1                    ***0***     
+    56              2                    ***0***     
+    57              1                    ***0***     
+    58              1                    ***0***     
+    59              1                    ***0***     
+    59              2                    ***0***     
+    59              3                    ***0***     
+    59              4                    ***0***     
+    60              1                    ***0***     
+    60              2                    ***0***     
+    61              1                    ***0***     
+    63              1                    ***0***     
+    63              2                    ***0***     
+    64              1                    ***0***     
+    65              1                    ***0***     
+    65              2                    ***0***     
+    65              3                    ***0***     
+    65              4                    ***0***     
+    65              5                    ***0***     
+    65              6                    ***0***     
+    65              7                    ***0***     
+    65              8                    ***0***     
 
 =================================================================================
 === Instance: /golden_sequence
@@ -1416,7 +1312,7 @@ Statement Coverage for instance /directed_sequence --
 Branch Coverage:
     Enabled Coverage              Bins      Hits    Misses  Coverage
     ----------------              ----      ----    ------  --------
-    Branches                        16         4        12    25.00%
+    Branches                        56        27        29    48.21%
 
 ================================Branch Details================================
 
@@ -1456,20 +1352,140 @@ Branch totals: 1 hit of 2 branches = 50.00%
 Branch totals: 0 hits of 2 branches = 0.00%
 
 ------------------------------------IF Branch------------------------------------
-    34                                         1     Count coming in to IF
-    34              1                          1     
-                                         ***0***     All False Count
+    22                                    148920     Count coming in to IF
+    22              1                     109500     
+                                           39420     All False Count
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    31                                      4388     Count coming in to IF
+    31              1                    ***0***     
+                                            4388     All False Count
 Branch totals: 1 hit of 2 branches = 50.00%
 
 ------------------------------------IF Branch------------------------------------
-    36                                         1     Count coming in to IF
-    36              1                    ***0***     
+    59                                         1     Count coming in to IF
+    59              1                    ***0***     
                                                1     All False Count
 Branch totals: 1 hit of 2 branches = 50.00%
 
 ------------------------------------IF Branch------------------------------------
-    37                                   ***0***     Count coming in to IF
-    37              1                    ***0***     
+    64                                         1     Count coming in to IF
+    64              1                          1     
+                                         ***0***     All False Count
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    67                                         9     Count coming in to IF
+    67              1                          1     
+                                               8     All False Count
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    68                                         8     Count coming in to IF
+    68              1                    ***0***     
+                                               8     All False Count
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    72                                       208     Count coming in to IF
+    72              1                        200     
+                                               8     All False Count
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    75                                         8     Count coming in to IF
+    75              1                          8     
+                                         ***0***     All False Count
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    89                                         1     Count coming in to IF
+    89              1                    ***0***     
+                                               1     All False Count
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    94                                   ***0***     Count coming in to IF
+    94              1                    ***0***     
+                                         ***0***     All False Count
+Branch totals: 0 hits of 2 branches = 0.00%
+
+------------------------------------IF Branch------------------------------------
+    101                                        1     Count coming in to IF
+    101             1                    ***0***     
+                                               1     All False Count
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    102                                  ***0***     Count coming in to IF
+    102             1                    ***0***     
+                                         ***0***     All False Count
+Branch totals: 0 hits of 2 branches = 0.00%
+
+------------------------------------IF Branch------------------------------------
+    106                                        8     Count coming in to IF
+    106             1                          7     
+                                               1     All False Count
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    109                                        8     Count coming in to IF
+    109             1                    ***0***     
+                                               8     All False Count
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    110                                  ***0***     Count coming in to IF
+    110             1                    ***0***     
+                                         ***0***     All False Count
+Branch totals: 0 hits of 2 branches = 0.00%
+
+------------------------------------IF Branch------------------------------------
+    114                                     4388     Count coming in to IF
+    114             1                          8     
+                                            4380     All False Count
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    115                                     4380     Count coming in to IF
+    115             1                    ***0***     
+                                            4380     All False Count
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    117                                     4380     Count coming in to IF
+    117             1                    ***0***     
+                                            4380     All False Count
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    122                                     4380     Count coming in to IF
+    122             1                       4380     
+    132             1                    ***0***     
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    147                                     4380     Count coming in to IF
+    147             1                         11     
+                                            4369     All False Count
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    150                                        8     Count coming in to IF
+    150             1                          8     
+                                         ***0***     All False Count
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    154                                        1     Count coming in to IF
+    154             1                    ***0***     
+                                               1     All False Count
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    155                                  ***0***     Count coming in to IF
+    155             1                    ***0***     
                                          ***0***     All False Count
 Branch totals: 0 hits of 2 branches = 0.00%
 
@@ -1477,7 +1493,7 @@ Branch totals: 0 hits of 2 branches = 0.00%
 Condition Coverage:
     Enabled Coverage              Bins   Covered    Misses  Coverage
     ----------------              ----      ----    ------  --------
-    Conditions                       5         1         4    20.00%
+    Conditions                      29         7        22    24.13%
 
 ================================Condition Details================================
 
@@ -1511,23 +1527,225 @@ Condition totals: 0 of 1 input term covered = 0.00%
   Row   2:    ***0***  (tmp_data__ != null)_1  -                             
 
 ----------------Focused Condition View-------------------
-Line       30 Item    1  ((this.vec_mem[this.num_vecs] !== 'hxxxxxxxxxxxxxxxxx) && (this.num_vecs < 20000))
-Condition totals: 1 of 2 input terms covered = 50.00%
+Line       22 Item    1  ((((c >= 48) && (c <= 57)) || ((c >= 97) && (c <= 102))) || ((c >= 65) && (c <= 70)))
+Condition totals: 3 of 6 input terms covered = 50.00%
 
-                                             Input Term   Covered  Reason for no coverage   Hint
-                                            -----------  --------  -----------------------  --------------
-  (this.vec_mem[this.num_vecs] !== 'hxxxxxxxxxxxxxxxxx)         Y
-                                (this.num_vecs < 20000)         N  '_0' not hit             Hit '_0'
+  Input Term   Covered  Reason for no coverage   Hint
+ -----------  --------  -----------------------  --------------
+   (c >= 48)         Y
+   (c <= 57)         Y
+   (c >= 97)         Y
+  (c <= 102)         N  '_0' not hit             Hit '_0'
+   (c >= 65)         N  '_1' not hit             Hit '_1'
+   (c <= 70)         N  '_1' not hit             Hit '_1'
 
-     Rows:       Hits  FEC Target                                               Non-masking condition(s)      
- ---------  ---------  --------------------                                     -------------------------     
-  Row   1:          1  (this.vec_mem[this.num_vecs] !== 'hxxxxxxxxxxxxxxxxx)_0  -                             
-  Row   2:          1  (this.vec_mem[this.num_vecs] !== 'hxxxxxxxxxxxxxxxxx)_1  (this.num_vecs < 20000)       
-  Row   3:    ***0***  (this.num_vecs < 20000)_0                                (this.vec_mem[this.num_vecs] !== 'hxxxxxxxxxxxxxxxxx)
-  Row   4:          1  (this.num_vecs < 20000)_1                                (this.vec_mem[this.num_vecs] !== 'hxxxxxxxxxxxxxxxxx)
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:          1  (c >= 48)_0           (~((c >= 65) && (c <= 70)) && ~((c >= 97) && (c <= 102)))
+  Row   2:          1  (c >= 48)_1           (c <= 57)                     
+  Row   3:          1  (c <= 57)_0           (~((c >= 65) && (c <= 70)) && ~((c >= 97) && (c <= 102)) && (c >= 48))
+  Row   4:          1  (c <= 57)_1           (c >= 48)                     
+  Row   5:          1  (c >= 97)_0           (~((c >= 65) && (c <= 70)) && ~((c >= 48) && (c <= 57)))
+  Row   6:          1  (c >= 97)_1           (~((c >= 48) && (c <= 57)) && (c <= 102))
+  Row   7:    ***0***  (c <= 102)_0          (~((c >= 65) && (c <= 70)) && ~((c >= 48) && (c <= 57)) && (c >= 97))
+  Row   8:          1  (c <= 102)_1          (~((c >= 48) && (c <= 57)) && (c >= 97))
+  Row   9:          1  (c >= 65)_0           ~(((c >= 48) && (c <= 57)) || ((c >= 97) && (c <= 102)))
+ Row   10:    ***0***  (c >= 65)_1           (~(((c >= 48) && (c <= 57)) || ((c >= 97) && (c <= 102))) && (c <= 70))
+ Row   11:          1  (c <= 70)_0           (~(((c >= 48) && (c <= 57)) || ((c >= 97) && (c <= 102))) && (c >= 65))
+ Row   12:    ***0***  (c <= 70)_1           (~(((c >= 48) && (c <= 57)) || ((c >= 97) && (c <= 102))) && (c >= 65))
 
 ----------------Focused Condition View-------------------
-Line       36 Item    1  (this.num_vecs == 0)
+Line       31 Item    1  ((((c == 32) || (c == 9)) || (c == 13)) || (c == 10))
+Condition totals: 0 of 4 input terms covered = 0.00%
+
+  Input Term   Covered  Reason for no coverage   Hint
+ -----------  --------  -----------------------  --------------
+   (c == 32)         N  '_1' not hit             Hit '_1'
+    (c == 9)         N  '_1' not hit             Hit '_1'
+   (c == 13)         N  '_1' not hit             Hit '_1'
+   (c == 10)         N  '_1' not hit             Hit '_1'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:          1  (c == 32)_0           (~(c == 10) && ~(c == 13) && ~(c == 9))
+  Row   2:    ***0***  (c == 32)_1           -                             
+  Row   3:          1  (c == 9)_0            (~(c == 10) && ~(c == 13) && ~(c == 32))
+  Row   4:    ***0***  (c == 9)_1            ~(c == 32)                    
+  Row   5:          1  (c == 13)_0           (~(c == 10) && ~((c == 32) || (c == 9)))
+  Row   6:    ***0***  (c == 13)_1           ~((c == 32) || (c == 9))      
+  Row   7:          1  (c == 10)_0           ~(((c == 32) || (c == 9)) || (c == 13))
+  Row   8:    ***0***  (c == 10)_1           ~(((c == 32) || (c == 9)) || (c == 13))
+
+----------------Focused Condition View-------------------
+Line       64 Item    1  (fd != 0)
+Condition totals: 0 of 1 input term covered = 0.00%
+
+  Input Term   Covered  Reason for no coverage   Hint
+ -----------  --------  -----------------------  --------------
+   (fd != 0)         N  '_0' not hit             Hit '_0'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:    ***0***  (fd != 0)_0           -                             
+  Row   2:          1  (fd != 0)_1           -                             
+
+----------------Focused Condition View-------------------
+Line       67 Item    1  ($fgets(line,fd) == 0)
+Condition totals: 1 of 1 input term covered = 100.00%
+
+              Input Term   Covered  Reason for no coverage   Hint
+             -----------  --------  -----------------------  --------------
+  ($fgets(line,fd) == 0)         Y
+
+     Rows:       Hits  FEC Target                Non-masking condition(s)      
+ ---------  ---------  --------------------      -------------------------     
+  Row   1:          1  ($fgets(line,fd) == 0)_0  -                             
+  Row   2:          1  ($fgets(line,fd) == 0)_1  -                             
+
+----------------Focused Condition View-------------------
+Line       72 Item    1  ((((c != 32) && (c != 9)) && (c != 13)) && (c != 10))
+Condition totals: 1 of 4 input terms covered = 25.00%
+
+  Input Term   Covered  Reason for no coverage   Hint
+ -----------  --------  -----------------------  --------------
+   (c != 32)         N  '_0' not hit             Hit '_0'
+    (c != 9)         N  '_0' not hit             Hit '_0'
+   (c != 13)         N  '_0' not hit             Hit '_0'
+   (c != 10)         Y
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:    ***0***  (c != 32)_0           -                             
+  Row   2:          1  (c != 32)_1           ((c != 10) && (c != 13) && (c != 9))
+  Row   3:    ***0***  (c != 9)_0            (c != 32)                     
+  Row   4:          1  (c != 9)_1            ((c != 10) && (c != 13) && (c != 32))
+  Row   5:    ***0***  (c != 13)_0           ((c != 32) && (c != 9))       
+  Row   6:          1  (c != 13)_1           ((c != 10) && ((c != 32) && (c != 9)))
+  Row   7:          1  (c != 10)_0           (((c != 32) && (c != 9)) && (c != 13))
+  Row   8:          1  (c != 10)_1           (((c != 32) && (c != 9)) && (c != 13))
+
+----------------Focused Condition View-------------------
+Line       75 Item    1  (len(cleaned) > 0)
+Condition totals: 0 of 1 input term covered = 0.00%
+
+          Input Term   Covered  Reason for no coverage   Hint
+         -----------  --------  -----------------------  --------------
+  (len(cleaned) > 0)         N  '_0' not hit             Hit '_0'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:    ***0***  (len(cleaned) > 0)_0  -                             
+  Row   2:          1  (len(cleaned) > 0)_1  -                             
+
+----------------Focused Condition View-------------------
+Line       89 Item    1  (size(case_files) == 0)
+Condition totals: 0 of 1 input term covered = 0.00%
+
+               Input Term   Covered  Reason for no coverage   Hint
+              -----------  --------  -----------------------  --------------
+  (size(case_files) == 0)         N  '_1' not hit             Hit '_1'
+
+     Rows:       Hits  FEC Target                 Non-masking condition(s)      
+ ---------  ---------  --------------------       -------------------------     
+  Row   1:          1  (size(case_files) == 0)_0  -                             
+  Row   2:    ***0***  (size(case_files) == 0)_1  -                             
+
+----------------Focused Condition View-------------------
+Line       94 Item    1  (fd != 0)
+Condition totals: 0 of 1 input term covered = 0.00%
+
+  Input Term   Covered  Reason for no coverage   Hint
+ -----------  --------  -----------------------  --------------
+   (fd != 0)         N  No hits                  Hit '_0' and '_1'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:    ***0***  (fd != 0)_0           -                             
+  Row   2:    ***0***  (fd != 0)_1           -                             
+
+----------------Focused Condition View-------------------
+Line       101 Item    1  (size(case_files) == 0)
+Condition totals: 0 of 1 input term covered = 0.00%
+
+               Input Term   Covered  Reason for no coverage   Hint
+              -----------  --------  -----------------------  --------------
+  (size(case_files) == 0)         N  '_1' not hit             Hit '_1'
+
+     Rows:       Hits  FEC Target                 Non-masking condition(s)      
+ ---------  ---------  --------------------       -------------------------     
+  Row   1:          1  (size(case_files) == 0)_0  -                             
+  Row   2:    ***0***  (size(case_files) == 0)_1  -                             
+
+----------------Focused Condition View-------------------
+Line       106 Item    1  (cidx > 0)
+Condition totals: 1 of 1 input term covered = 100.00%
+
+  Input Term   Covered  Reason for no coverage   Hint
+ -----------  --------  -----------------------  --------------
+  (cidx > 0)         Y
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:          1  (cidx > 0)_0          -                             
+  Row   2:          1  (cidx > 0)_1          -                             
+
+----------------Focused Condition View-------------------
+Line       109 Item    1  (fd == 0)
+Condition totals: 0 of 1 input term covered = 0.00%
+
+  Input Term   Covered  Reason for no coverage   Hint
+ -----------  --------  -----------------------  --------------
+   (fd == 0)         N  '_1' not hit             Hit '_1'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:          1  (fd == 0)_0           -                             
+  Row   2:    ***0***  (fd == 0)_1           -                             
+
+----------------Focused Condition View-------------------
+Line       114 Item    1  ($fgets(line,fd) == 0)
+Condition totals: 1 of 1 input term covered = 100.00%
+
+              Input Term   Covered  Reason for no coverage   Hint
+             -----------  --------  -----------------------  --------------
+  ($fgets(line,fd) == 0)         Y
+
+     Rows:       Hits  FEC Target                Non-masking condition(s)      
+ ---------  ---------  --------------------      -------------------------     
+  Row   1:          1  ($fgets(line,fd) == 0)_0  -                             
+  Row   2:          1  ($fgets(line,fd) == 0)_1  -                             
+
+----------------Focused Condition View-------------------
+Line       117 Item    1  ((len(hexs) != 17) && (len(hexs) != 25))
+Condition totals: 0 of 2 input terms covered = 0.00%
+
+         Input Term   Covered  Reason for no coverage   Hint
+        -----------  --------  -----------------------  --------------
+  (len(hexs) != 17)         N  No hits                  Hit '_0' and '_1'
+  (len(hexs) != 25)         N  '_1' not hit             Hit '_1'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:    ***0***  (len(hexs) != 17)_0   -                             
+  Row   2:    ***0***  (len(hexs) != 17)_1   (len(hexs) != 25)             
+  Row   3:          1  (len(hexs) != 25)_0   (len(hexs) != 17)             
+  Row   4:    ***0***  (len(hexs) != 25)_1   (len(hexs) != 17)             
+
+----------------Focused Condition View-------------------
+Line       122 Item    1  (len(hexs) == 25)
+Condition totals: 0 of 1 input term covered = 0.00%
+
+         Input Term   Covered  Reason for no coverage   Hint
+        -----------  --------  -----------------------  --------------
+  (len(hexs) == 25)         N  '_0' not hit             Hit '_0'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:    ***0***  (len(hexs) == 25)_0   -                             
+  Row   2:          1  (len(hexs) == 25)_1   -                             
+
+----------------Focused Condition View-------------------
+Line       154 Item    1  (this.num_vecs == 0)
 Condition totals: 0 of 1 input term covered = 0.00%
 
             Input Term   Covered  Reason for no coverage   Hint
@@ -1543,7 +1761,7 @@ Condition totals: 0 of 1 input term covered = 0.00%
 Statement Coverage:
     Enabled Coverage              Bins      Hits    Misses  Coverage
     ----------------              ----      ----    ------  --------
-    Statements                      41        32         9    78.04%
+    Statements                     119        84        35    70.58%
 
 ================================Statement Details================================
 
@@ -1562,37 +1780,115 @@ Statement Coverage for instance /golden_sequence --
     7               8                    ***0***     
     7               9                          1     
     7              10                    ***0***     
+    9               1                          1     
     10              1                          1     
     13              1                          1     
-    26              1                          1     
-    28              1                          1     
-    30              1                       5625     
-    31              1                       5624     
-    34              1                          1     
-    37              1                    ***0***     
-    40              1                          1     
-    40              2                       5624     
-    41              1                       5624     
-    42              1                       5624     
-    44              1                       5624     
-    46              1                       5624     
-    47              1                       5624     
-    48              1                       5624     
-    49              1                       5624     
-    50              1                       5624     
-    51              1                       5624     
-    53              1                       5624     
-    56              1                          1     
-    56              2                         20     
-    57              1                         20     
-    58              1                         20     
-    59              1                         20     
-    60              1                         20     
-    61              1                         20     
-    62              1                         20     
-    63              1                         20     
-    64              1                         20     
-    65              1                         20     
+    19              1                       4380     
+    20              1                       4380     
+    20              2                     148920     
+    21              1                     148920     
+    23              1                     109500     
+    25              1                       4380     
+    29              1                       4388     
+    29              2                    ***0***     
+    30              1                       4388     
+    31              1                    ***0***     
+    32              1                       4388     
+    34              1                    ***0***     
+    39              1                         21     
+    40              1                         21     
+    41              1                         21     
+    42              1                         21     
+    42              2                         21     
+    42              3                         21     
+    43              1                         21     
+    43              2                         21     
+    44              1                         21     
+    46              1                         14     
+    47              1                         14     
+    48              1                         14     
+    49              1                         14     
+    49              2                         14     
+    49              3                         14     
+    50              1                         14     
+    50              2                         14     
+    51              1                         14     
+    58              1                          1     
+    60              1                    ***0***     
+    61              1                    ***0***     
+    63              1                          1     
+    65              1                          9     
+    66              1                          9     
+    67              1                          1     
+    68              1                    ***0***     
+    69              1                          8     
+    70              1                          8     
+    70              2                        208     
+    71              1                        208     
+    73              1                        200     
+    75              1                          8     
+    77              1                          1     
+    88              1                          1     
+    90              1                    ***0***     
+    91              1                    ***0***     
+    92              1                    ***0***     
+    93              1                    ***0***     
+    95              1                    ***0***     
+    96              1                    ***0***     
+    97              1                    ***0***     
+    102             1                    ***0***     
+    104             1                          9     
+    105             1                          8     
+    106             1                          7     
+    107             1                          8     
+    108             1                          8     
+    110             1                    ***0***     
+    112             1                       4388     
+    113             1                       4388     
+    114             1                          8     
+    115             1                    ***0***     
+    116             1                       4380     
+    117             1                    ***0***     
+    119             1                       4380     
+    120             1                       4380     
+    123             1                       4380     
+    124             1                       4380     
+    125             1                       4380     
+    126             1                       4380     
+    127             1                       4380     
+    128             1                       4380     
+    129             1                       4380     
+    130             1                       4380     
+    131             1                       4380     
+    133             1                    ***0***     
+    134             1                    ***0***     
+    135             1                    ***0***     
+    136             1                    ***0***     
+    137             1                    ***0***     
+    138             1                    ***0***     
+    139             1                    ***0***     
+    140             1                    ***0***     
+    141             1                    ***0***     
+    144             1                       4380     
+    145             1                       4380     
+    146             1                       4380     
+    147             1                         11     
+    149             1                          8     
+    150             1                          8     
+    155             1                    ***0***     
+    157             1                          1     
+    157             2                         30     
+    158             1                         30     
+    159             1                         30     
+    160             1                         30     
+    160             2                         30     
+    160             3                         30     
+    161             1                         30     
+    161             2                         30     
+    162             1                         30     
+    162             2                         30     
+    162             3                         30     
+    163             1                         30     
 
 =================================================================================
 === Instance: /reset_sequence
@@ -1681,7 +1977,7 @@ Condition totals: 0 of 1 input term covered = 0.00%
 Statement Coverage:
     Enabled Coverage              Bins      Hits    Misses  Coverage
     ----------------              ----      ----    ------  --------
-    Statements                      21        13         8    61.90%
+    Statements                      35        27         8    77.14%
 
 ================================Statement Details================================
 
@@ -1701,16 +1997,30 @@ Statement Coverage for instance /reset_sequence --
     7               9                          1     
     7              10                    ***0***     
     10              1                          1     
+    15              1                          5     
     16              1                          5     
     17              1                          5     
     18              1                          5     
     19              1                          5     
+    19              2                          5     
+    19              3                          5     
+    19              4                          5     
     20              1                          5     
+    20              2                          5     
+    20              3                          5     
     21              1                          5     
-    22              1                          5     
-    23              1                          5     
-    24              1                          5     
-    25              1                          5     
+    23              1                          2     
+    24              1                          2     
+    25              1                          2     
+    26              1                          2     
+    27              1                          2     
+    27              2                          2     
+    27              3                          2     
+    27              4                          2     
+    28              1                          2     
+    28              2                          2     
+    28              3                          2     
+    29              1                          2     
 
 =================================================================================
 === Instance: /coarse_cfo_core_scoreborad_pck
@@ -1719,7 +2029,7 @@ Statement Coverage for instance /reset_sequence --
 Branch Coverage:
     Enabled Coverage              Bins      Hits    Misses  Coverage
     ----------------              ----      ----    ------  --------
-    Branches                         8         4         4    50.00%
+    Branches                        25         9        16    36.00%
 
 ================================Branch Details================================
 
@@ -1729,26 +2039,75 @@ Branch Coverage for instance /coarse_cfo_core_scoreborad_pck
     ----         ----                      -----     ------ 
   File coarse_cfo_core_scoreboard.sv
 ------------------------------------IF Branch------------------------------------
-    41                                      5917     Count coming in to IF
-    41              1                          1     
-                                            5916     All False Count
+    42                                      4476     Count coming in to IF
+    42              1                         11     
+                                            4465     All False Count
 Branch totals: 2 hits of 2 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    42                                         1     Count coming in to IF
-    42              1                          1     
-    45              1                    ***0***     
-Branch totals: 1 hit of 2 branches = 50.00%
-
-------------------------------------IF Branch------------------------------------
-    44                                         1     Count coming in to IF
-    44              1                          1     
+    44                                        11     Count coming in to IF
+    44              1                         11     
                                          ***0***     All False Count
 Branch totals: 1 hit of 2 branches = 50.00%
 
 ------------------------------------IF Branch------------------------------------
-    47                                   ***0***     Count coming in to IF
-    47              1                    ***0***     
+    45                                        11     Count coming in to IF
+    45              1                         11     
+    54              1                    ***0***     
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    46                                        11     Count coming in to IF
+    46              1                         11     
+    49              1                    ***0***     
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    48                                        11     Count coming in to IF
+    48              1                         11     
+                                         ***0***     All False Count
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    51                                   ***0***     Count coming in to IF
+    51              1                    ***0***     
+                                         ***0***     All False Count
+Branch totals: 0 hits of 2 branches = 0.00%
+
+------------------------------------IF Branch------------------------------------
+    56                                   ***0***     Count coming in to IF
+    56              1                    ***0***     
+                                         ***0***     All False Count
+Branch totals: 0 hits of 2 branches = 0.00%
+
+------------------------------------IF Branch------------------------------------
+    66                                         1     Count coming in to IF
+    66              1                          1     
+                                         ***0***     All False Count
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    68                                         1     Count coming in to IF
+    68              1                    ***0***     
+    70              1                          1     
+    72              1                    ***0***     
+Branch totals: 1 hit of 3 branches = 33.33%
+
+------------------------------------IF Branch------------------------------------
+    69                                   ***0***     Count coming in to IF
+    69              1                    ***0***     
+                                         ***0***     All False Count
+Branch totals: 0 hits of 2 branches = 0.00%
+
+------------------------------------IF Branch------------------------------------
+    71                                         1     Count coming in to IF
+    71              1                          1     
+                                         ***0***     All False Count
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    73                                   ***0***     Count coming in to IF
+    73              1                    ***0***     
                                          ***0***     All False Count
 Branch totals: 0 hits of 2 branches = 0.00%
 
@@ -1756,7 +2115,7 @@ Branch totals: 0 hits of 2 branches = 0.00%
 Condition Coverage:
     Enabled Coverage              Bins   Covered    Misses  Coverage
     ----------------              ----      ----    ------  --------
-    Conditions                       4         2         2    50.00%
+    Conditions                       6         1         5    16.66%
 
 ================================Condition Details================================
 
@@ -1764,42 +2123,58 @@ Condition Coverage for instance /coarse_cfo_core_scoreborad_pck --
 
   File coarse_cfo_core_scoreboard.sv
 ----------------Focused Condition View-------------------
-Line       41 Item    1  (item.o_valid && this.check_enable)
-Condition totals: 2 of 2 input terms covered = 100.00%
+Line       42 Item    1  (item.o_valid === 1'b1)
+Condition totals: 1 of 1 input term covered = 100.00%
 
-         Input Term   Covered  Reason for no coverage   Hint
-        -----------  --------  -----------------------  --------------
-       item.o_valid         Y
-  this.check_enable         Y
+               Input Term   Covered  Reason for no coverage   Hint
+              -----------  --------  -----------------------  --------------
+  (item.o_valid === 1'b1)         Y
 
-     Rows:       Hits  FEC Target            Non-masking condition(s)      
- ---------  ---------  --------------------  -------------------------     
-  Row   1:          1  item.o_valid_0        -                             
-  Row   2:          1  item.o_valid_1        this.check_enable             
-  Row   3:          1  this.check_enable_0   item.o_valid                  
-  Row   4:          1  this.check_enable_1   item.o_valid                  
+     Rows:       Hits  FEC Target                 Non-masking condition(s)      
+ ---------  ---------  --------------------       -------------------------     
+  Row   1:          1  (item.o_valid === 1'b1)_0  -                             
+  Row   2:          1  (item.o_valid === 1'b1)_1  -                             
 
 ----------------Focused Condition View-------------------
-Line       42 Item    1  ((item.cfo >= (this.expected_cfo - this.tolerance)) && (item.cfo <= (this.expected_cfo + this.tolerance)))
-Condition totals: 0 of 2 input terms covered = 0.00%
+Line       46 Item    1  (item.cfo === expected.exp_cfo)
+Condition totals: 0 of 1 input term covered = 0.00%
 
-                                          Input Term   Covered  Reason for no coverage   Hint
-                                         -----------  --------  -----------------------  --------------
-  (item.cfo >= (this.expected_cfo - this.tolerance))         N  '_0' not hit             Hit '_0'
-  (item.cfo <= (this.expected_cfo + this.tolerance))         N  '_0' not hit             Hit '_0'
+                       Input Term   Covered  Reason for no coverage   Hint
+                      -----------  --------  -----------------------  --------------
+  (item.cfo === expected.exp_cfo)         N  '_0' not hit             Hit '_0'
 
-     Rows:       Hits  FEC Target                                            Non-masking condition(s)      
- ---------  ---------  --------------------                                  -------------------------     
-  Row   1:    ***0***  (item.cfo >= (this.expected_cfo - this.tolerance))_0  -                             
-  Row   2:          1  (item.cfo >= (this.expected_cfo - this.tolerance))_1  (item.cfo <= (this.expected_cfo + this.tolerance))
-  Row   3:    ***0***  (item.cfo <= (this.expected_cfo + this.tolerance))_0  (item.cfo >= (this.expected_cfo - this.tolerance))
-  Row   4:          1  (item.cfo <= (this.expected_cfo + this.tolerance))_1  (item.cfo >= (this.expected_cfo - this.tolerance))
+     Rows:       Hits  FEC Target                         Non-masking condition(s)      
+ ---------  ---------  --------------------               -------------------------     
+  Row   1:    ***0***  (item.cfo === expected.exp_cfo)_0  -                             
+  Row   2:          1  (item.cfo === expected.exp_cfo)_1  -                             
+
+----------------Focused Condition View-------------------
+Line       70 Item    1  ((this.wrong_count == 0) && (this.extra_count == 0) && (leftover == 0) && (this.correct_count > 0))
+Condition totals: 0 of 4 input terms covered = 0.00%
+
+                Input Term   Covered  Reason for no coverage   Hint
+               -----------  --------  -----------------------  --------------
+   (this.wrong_count == 0)         N  '_0' not hit             Hit '_0'
+   (this.extra_count == 0)         N  '_0' not hit             Hit '_0'
+           (leftover == 0)         N  '_0' not hit             Hit '_0'
+  (this.correct_count > 0)         N  '_0' not hit             Hit '_0'
+
+     Rows:       Hits  FEC Target                  Non-masking condition(s)      
+ ---------  ---------  --------------------        -------------------------     
+  Row   1:    ***0***  (this.wrong_count == 0)_0   -                             
+  Row   2:          1  (this.wrong_count == 0)_1   ((this.extra_count == 0) && ((leftover == 0) && (this.correct_count > 0)))
+  Row   3:    ***0***  (this.extra_count == 0)_0   (this.wrong_count == 0)       
+  Row   4:          1  (this.extra_count == 0)_1   ((this.wrong_count == 0) && ((leftover == 0) && (this.correct_count > 0)))
+  Row   5:    ***0***  (leftover == 0)_0           ((this.wrong_count == 0) && (this.extra_count == 0))
+  Row   6:          1  (leftover == 0)_1           ((this.wrong_count == 0) && (this.extra_count == 0) && (this.correct_count > 0))
+  Row   7:    ***0***  (this.correct_count > 0)_0  ((this.wrong_count == 0) && (this.extra_count == 0) && (leftover == 0))
+  Row   8:          1  (this.correct_count > 0)_1  ((this.wrong_count == 0) && (this.extra_count == 0) && (leftover == 0))
 
 
 Statement Coverage:
     Enabled Coverage              Bins      Hits    Misses  Coverage
     ----------------              ----      ----    ------  --------
-    Statements                      20        16         4    80.00%
+    Statements                      32        24         8    75.00%
 
 ================================Statement Details================================
 
@@ -1811,23 +2186,35 @@ Statement Coverage for instance /coarse_cfo_core_scoreborad_pck --
     7               1                    ***0***     
     7               2                    ***0***     
     7               3                          2     
-    12              1                          1     
-    13              1                          1     
+    14              1                          1     
     15              1                          1     
     16              1                          1     
-    19              1                          1     
-    22              1                          1     
+    17              1                          1     
+    18              1                          1     
+    21              1                          1     
+    25              1                          1     
     26              1                          1     
     27              1                          1     
     28              1                          1     
-    32              1                          1     
+    29              1                          1     
     33              1                          1     
-    38              1                          1     
-    39              1                       5918     
-    43              1                          1     
-    44              1                          1     
-    46              1                    ***0***     
-    47              1                    ***0***     
+    34              1                          1     
+    35              1                          1     
+    40              1                          1     
+    41              1                       4477     
+    43              1                         11     
+    47              1                         11     
+    48              1                         11     
+    50              1                    ***0***     
+    51              1                    ***0***     
+    55              1                    ***0***     
+    56              1                    ***0***     
+    64              1                          1     
+    65              1                          1     
+    66              1                          1     
+    69              1                    ***0***     
+    71              1                          1     
+    73              1                    ***0***     
 
 =================================================================================
 === Instance: /coarse_cfo_core_coverage_pkg
@@ -1851,17 +2238,17 @@ Covergroup                                             Metric       Goal       B
         covered/total bins:                                 2          2          -                      
         missing/total bins:                                 0          2          -                      
         % Hit:                                        100.00%        100          -                      
-        bin valid                                           6          1          -    Covered              
-        bin invalid                                      5911          1          -    Covered              
+        bin valid                                          11          1          -    Covered              
+        bin invalid                                      4465          1          -    Covered              
     Coverpoint cp_cfo                                 100.00%        100          -    Covered              
         covered/total bins:                                 5          5          -                      
         missing/total bins:                                 0          5          -                      
         % Hit:                                        100.00%        100          -                      
-        bin zero                                          386          1          -    Covered              
-        bin small_pos                                      52          1          -    Covered              
-        bin small_neg                                      63          1          -    Covered              
-        bin large_pos                                    5314          1          -    Covered              
-        bin large_neg                                     102          1          -    Covered              
+        bin zero                                         1530          1          -    Covered              
+        bin small_pos                                     199          1          -    Covered              
+        bin small_neg                                     301          1          -    Covered              
+        bin large_pos                                    1374          1          -    Covered              
+        bin large_neg                                    1072          1          -    Covered              
 Statement Coverage:
     Enabled Coverage              Bins      Hits    Misses  Coverage
     ----------------              ----      ----    ------  --------
@@ -1885,8 +2272,8 @@ Statement Coverage for instance /coarse_cfo_core_coverage_pkg --
     39              1                          1     
     40              1                          1     
     44              1                          1     
-    45              1                       5918     
-    46              1                       5917     
+    45              1                       4477     
+    46              1                       4476     
 
 =================================================================================
 === Instance: /coarse_cfo_core_monitor
@@ -1911,12 +2298,12 @@ Statement Coverage for instance /coarse_cfo_core_monitor --
     19              1                          1     
     20              1                          1     
     24              1                          1     
-    26              1                       5918     
-    27              1                       5917     
-    29              1                       5917     
-    30              1                       5917     
-    31              1                       5917     
-    32              1                       5917     
+    26              1                       4477     
+    27              1                       4477     
+    29              1                       4476     
+    30              1                       4476     
+    31              1                       4476     
+    32              1                       4476     
 
 =================================================================================
 === Instance: /coarse_cfo_core_sequencer
@@ -2051,10 +2438,53 @@ Statement Coverage for instance /coarse_cfo_core_configuration --
 === Instance: /coarse_cfo_core_drive
 === Design Unit: work.coarse_cfo_core_drive
 =================================================================================
+Branch Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Branches                         2         2         0   100.00%
+
+================================Branch Details================================
+
+Branch Coverage for instance /coarse_cfo_core_drive
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File coarse_cfo_core_driver.sv
+------------------------------------IF Branch------------------------------------
+    40                                      4452     Count coming in to IF
+    40              1                         11     
+                                            4441     All False Count
+Branch totals: 2 hits of 2 branches = 100.00%
+
+
+Condition Coverage:
+    Enabled Coverage              Bins   Covered    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Conditions                       1         1         0   100.00%
+
+================================Condition Details================================
+
+Condition Coverage for instance /coarse_cfo_core_drive --
+
+  File coarse_cfo_core_driver.sv
+----------------Focused Condition View-------------------
+Line       40 Item    1  (this.item.exp_valid === 1'b1)
+Condition totals: 1 of 1 input term covered = 100.00%
+
+                      Input Term   Covered  Reason for no coverage   Hint
+                     -----------  --------  -----------------------  --------------
+  (this.item.exp_valid === 1'b1)         Y
+
+     Rows:       Hits  FEC Target                        Non-masking condition(s)      
+ ---------  ---------  --------------------              -------------------------     
+  Row   1:          1  (this.item.exp_valid === 1'b1)_0  -                             
+  Row   2:          1  (this.item.exp_valid === 1'b1)_1  -                             
+
+
 Statement Coverage:
     Enabled Coverage              Bins      Hits    Misses  Coverage
     ----------------              ----      ----    ------  --------
-    Statements                      16        14         2    87.50%
+    Statements                      19        17         2    89.47%
 
 ================================Statement Details================================
 
@@ -2066,19 +2496,22 @@ Statement Coverage for instance /coarse_cfo_core_drive --
     8               1                    ***0***     
     8               2                    ***0***     
     8               3                          2     
-    15              1                          1     
-    19              1                          1     
-    23              1                          1     
-    24              1                          1     
-    25              1                       5918     
-    28              1                       5917     
-    30              1                       5917     
-    31              1                       5917     
-    32              1                       5917     
-    33              1                       5917     
-    34              1                       5917     
-    35              1                       5917     
-    37              1                       5917     
+    16              1                          1     
+    20              1                          1     
+    21              1                          1     
+    25              1                          1     
+    26              1                          1     
+    27              1                       4453     
+    30              1                       4452     
+    32              1                       4452     
+    33              1                       4452     
+    34              1                       4452     
+    35              1                       4452     
+    36              1                       4452     
+    37              1                       4452     
+    38              1                       4452     
+    41              1                         11     
+    44              1                       4452     
 
 =================================================================================
 === Instance: /coarse_cfo_core_agtt
@@ -2097,26 +2530,26 @@ Branch Coverage for instance /coarse_cfo_core_agtt
     ----         ----                      -----     ------ 
   File coarse_cfo_core_agt.sv
 ------------------------------------IF Branch------------------------------------
-    23                                         1     Count coming in to IF
-    23              1                    ***0***     
+    24                                         1     Count coming in to IF
+    24              1                    ***0***     
                                                1     All False Count
 Branch totals: 1 hit of 2 branches = 50.00%
 
 ------------------------------------IF Branch------------------------------------
-    24                                   ***0***     Count coming in to IF
-    24              1                    ***0***     
+    25                                   ***0***     Count coming in to IF
+    25              1                    ***0***     
                                          ***0***     All False Count
 Branch totals: 0 hits of 2 branches = 0.00%
 
 ------------------------------------IF Branch------------------------------------
-    25                                         1     Count coming in to IF
-    25              1                          1     
+    26                                         1     Count coming in to IF
+    26              1                          1     
                                          ***0***     All False Count
 Branch totals: 1 hit of 2 branches = 50.00%
 
 ------------------------------------IF Branch------------------------------------
-    36                                         1     Count coming in to IF
-    36              1                          1     
+    38                                         1     Count coming in to IF
+    38              1                          1     
                                          ***0***     All False Count
 Branch totals: 1 hit of 2 branches = 50.00%
 
@@ -2124,7 +2557,7 @@ Branch totals: 1 hit of 2 branches = 50.00%
 Statement Coverage:
     Enabled Coverage              Bins      Hits    Misses  Coverage
     ----------------              ----      ----    ------  --------
-    Statements                      15        12         3    80.00%
+    Statements                      17        14         3    82.35%
 
 ================================Statement Details================================
 
@@ -2136,18 +2569,20 @@ Statement Coverage for instance /coarse_cfo_core_agtt --
     10              1                    ***0***     
     10              2                    ***0***     
     10              3                          2     
-    17              1                          1     
-    20              1                          1     
-    22              1                          1     
-    24              1                    ***0***     
-    27              1                          1     
+    18              1                          1     
+    21              1                          1     
+    23              1                          1     
+    25              1                    ***0***     
     28              1                          1     
-    30              1                          1     
-    33              1                          1     
+    29              1                          1     
+    31              1                          1     
+    32              1                          1     
     35              1                          1     
-    38              1                          1     
-    39              1                          1     
+    37              1                          1     
+    40              1                          1     
     41              1                          1     
+    42              1                          1     
+    44              1                          1     
 
 =================================================================================
 === Instance: /coarse_cfo_core_env_pac
@@ -2156,7 +2591,7 @@ Statement Coverage for instance /coarse_cfo_core_agtt --
 Statement Coverage:
     Enabled Coverage              Bins      Hits    Misses  Coverage
     ----------------              ----      ----    ------  --------
-    Statements                      11         9         2    81.81%
+    Statements                      12        10         2    83.33%
 
 ================================Statement Details================================
 
@@ -2176,6 +2611,7 @@ Statement Coverage for instance /coarse_cfo_core_env_pac --
     24              1                          1     
     25              1                          1     
     26              1                          1     
+    27              1                          1     
 
 =================================================================================
 === Instance: /coarse_cfo_core_test_pkg
@@ -2184,7 +2620,7 @@ Statement Coverage for instance /coarse_cfo_core_env_pac --
 Branch Coverage:
     Enabled Coverage              Bins      Hits    Misses  Coverage
     ----------------              ----      ----    ------  --------
-    Branches                         6         2         4    33.33%
+    Branches                        10         3         7    30.00%
 
 ================================Branch Details================================
 
@@ -2206,8 +2642,20 @@ Branch totals: 1 hit of 2 branches = 50.00%
 Branch totals: 0 hits of 2 branches = 0.00%
 
 ------------------------------------IF Branch------------------------------------
-    66                                         1     Count coming in to IF
-    66              1                          1     
+    45                                         1     Count coming in to IF
+    45              1                    ***0***     
+    55              1                          1     
+Branch totals: 1 hit of 2 branches = 50.00%
+
+------------------------------------IF Branch------------------------------------
+    46                                   ***0***     Count coming in to IF
+    46              1                    ***0***     
+                                         ***0***     All False Count
+Branch totals: 0 hits of 2 branches = 0.00%
+
+------------------------------------IF Branch------------------------------------
+    63                                         1     Count coming in to IF
+    63              1                          1     
                                          ***0***     All False Count
 Branch totals: 1 hit of 2 branches = 50.00%
 
@@ -2215,7 +2663,7 @@ Branch totals: 1 hit of 2 branches = 50.00%
 Statement Coverage:
     Enabled Coverage              Bins      Hits    Misses  Coverage
     ----------------              ----      ----    ------  --------
-    Statements                      28        25         3    89.28%
+    Statements                      30        18        12    60.00%
 
 ================================Statement Details================================
 
@@ -2234,24 +2682,26 @@ Statement Coverage for instance /coarse_cfo_core_test_pkg --
     30              1                    ***0***     
     32              1                          1     
     33              1                          1     
-    37              1                          1     
     38              1                          1     
-    40              1                          1     
+    39              1                          1     
+    42              1                          1     
     43              1                          1     
-    44              1                          1     
-    47              1                          1     
-    48              1                          1     
-    49              1                          1     
-    52              1                          1     
-    53              1                          1     
-    54              1                          1     
-    60              1                          1     
-    61              1                          1     
-    62              1                          1     
+    46              1                    ***0***     
+    47              1                    ***0***     
+    48              1                    ***0***     
+    49              1                    ***0***     
+    50              1                    ***0***     
+    51              1                    ***0***     
+    52              1                    ***0***     
+    53              1                    ***0***     
+    54              1                    ***0***     
+    57              1                          1     
+    58              1                          1     
+    59              1                          1     
+    60              1                         25     
+    60              2                         25     
     63              1                          1     
-    64              1                          1     
     66              1                          1     
-    68              1                          1     
 
 COVERGROUP COVERAGE:
 ----------------------------------------------------------------------------------------------------------
@@ -2267,17 +2717,17 @@ Covergroup                                             Metric       Goal       B
         covered/total bins:                                 2          2          -                      
         missing/total bins:                                 0          2          -                      
         % Hit:                                        100.00%        100          -                      
-        bin valid                                           6          1          -    Covered              
-        bin invalid                                      5911          1          -    Covered              
+        bin valid                                          11          1          -    Covered              
+        bin invalid                                      4465          1          -    Covered              
     Coverpoint cp_cfo                                 100.00%        100          -    Covered              
         covered/total bins:                                 5          5          -                      
         missing/total bins:                                 0          5          -                      
         % Hit:                                        100.00%        100          -                      
-        bin zero                                          386          1          -    Covered              
-        bin small_pos                                      52          1          -    Covered              
-        bin small_neg                                      63          1          -    Covered              
-        bin large_pos                                    5314          1          -    Covered              
-        bin large_neg                                     102          1          -    Covered              
+        bin zero                                         1530          1          -    Covered              
+        bin small_pos                                     199          1          -    Covered              
+        bin small_neg                                     301          1          -    Covered              
+        bin large_pos                                    1374          1          -    Covered              
+        bin large_neg                                    1072          1          -    Covered              
 
 TOTAL COVERGROUP COVERAGE: 100.00%  COVERGROUP TYPES: 1
 
@@ -2287,7 +2737,7 @@ Name                 File(Line)                   Failure      Pass     Vacuous 
                                                   Count        Count    Count      Count      Count       Count  Count          
 --------------------------------------------------------------------------------------------------------------------------------
 /top/dut/sva_inst/a_no_x_on_valid
-                     sva.sv(13)                         0          6       5906          5       5917          0           1 off
+                     sva.sv(13)                         0         11       4432         33       4476          0           1 off
 
-Total Coverage By Instance (filtered view): 84.84%
+Total Coverage By Instance (filtered view): 79.67%
 

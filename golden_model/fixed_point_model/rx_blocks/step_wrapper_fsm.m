@@ -68,8 +68,9 @@ function [out, st] = step_wrapper_fsm(in, st, T)
         case E.WAIT_BURST
             st.idle_cnt  = 0;
             st.flush_cnt = 0;
-            if in.in_sample_valid
-                new_state = E.ACQUIRE;
+            if (isfield(in, 'start_of_burst') && logical(in.start_of_burst)) || logical(in.in_sample_valid)
+                new_state     = E.ACQUIRE;
+                st.sym_cnt(:) = 0;
             end
 
         case E.ACQUIRE
@@ -81,9 +82,17 @@ function [out, st] = step_wrapper_fsm(in, st, T)
 
         case E.COARSE_EST
             new_cs = true; % Maintain coarse_start high during COARSE_EST matching RTL burst_ctrl
-            % Wait for 32-symbol correlation + 20-stage CORDIC IP done
-            if in.coarse_valid
+            % Timeout fallback at NA1+NA2 symbols if coarse_valid missed
+            if in.str_valid && (cnt >= (T.preamble.N_A + T.preamble.N_cfo))
                 new_state = E.LOAD;
+            end
+            % Wait for 32-symbol correlation + 20-stage CORDIC IP done (overrides timeout)
+            if in.coarse_valid
+                if in.str_valid
+                    new_state = E.COSTAS_ACQ;
+                else
+                    new_state = E.LOAD;
+                end
             end
 
         case E.LOAD
@@ -103,12 +112,12 @@ function [out, st] = step_wrapper_fsm(in, st, T)
             % Steady-state payload tracking
 
         case E.FLUSH
-            % Draining in-flight pipeline symbols for F clock cycles
+            % Draining in-flight pipeline symbols for F clock cycles (FLUSH_CLOCKS - 1 match burst_ctrl)
             st.flush_cnt = st_old.flush_cnt + 1;
             if in.in_sample_valid
                 st.valid_during_flush = st_old.valid_during_flush + 1;
             end
-            if st_old.flush_cnt >= T.valid.flush_clocks
+            if st_old.flush_cnt >= (T.valid.flush_clocks - 1)
                 new_state    = E.WAIT_BURST;
                 st.flush_rst = true; % Single-cycle soft-reset pulse to re-arm all modules
                 st.idle_cnt  = 0;
@@ -116,7 +125,8 @@ function [out, st] = step_wrapper_fsm(in, st, T)
             end
 
         otherwise
-            new_state = E.WAIT_BURST;
+            new_state     = E.WAIT_BURST;
+            st.sym_cnt(:) = 0;
     end
 
     % Always-on Idle Watchdog (active during burst states)

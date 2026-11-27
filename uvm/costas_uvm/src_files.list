@@ -40,14 +40,14 @@ costas_top_env.sv
 costas_top_test.sv
 
 // ==========================================
-// 7. RTL Design Files
+// 7. RTL Design Files (authoritative rtl/)
 // ==========================================
-slicer.sv
-phase_error.sv
-pi_filter.sv
-lock_detector.sv
-quad_check.sv
-costas_top.sv
+../../rtl/costas/slicer.sv
+../../rtl/costas/phase_error.sv
+../../rtl/costas/pi_filter.sv
+../../rtl/costas/lock_detector.sv
+../../rtl/costas/quad_check.sv
+../../rtl/costas/costas_top.sv
 
 // ==========================================
 // 8. Top Module (Must be last)
