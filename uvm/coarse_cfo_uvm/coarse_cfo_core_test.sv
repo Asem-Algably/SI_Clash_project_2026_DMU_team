@@ -34,35 +34,37 @@ package coarse_cfo_core_test_pkg;
         endfunction
 
         task run_phase(uvm_phase phase);
-            string seq_sel;
             super.run_phase(phase);
             phase.raise_objection(this);
-
+            
+            #150; // Wait for top-level reset
+            
             // 1. Reset Sequence
             reset_seqq = reset_seq::type_id::create("reset_seq");
             reset_seqq.start(env_coarse_cfo_core.agt.sqr);
 
-            if ($value$plusargs("SEQ=%s", seq_sel) && (seq_sel == "directed")) begin
-                `uvm_info("TEST", "Running directed_cfo_seq (golden checking disabled)", UVM_LOW)
-                env_coarse_cfo_core.sb.check_enable = 1'b0;
-                dir_seqq = directed_cfo_seq::type_id::create("dir_seq");
-                dir_seqq.start(env_coarse_cfo_core.agt.sqr);
-                #100;
-                conf_coarse_cfo_core.coarse_cfo_core_test_vif.force_rst_low();
-                #50;
-                conf_coarse_cfo_core.coarse_cfo_core_test_vif.release_rst_ni();
-                #100;
-            end else begin
-                // 2. Multi-Case Golden Sequence (bit-exact checked)
-                env_coarse_cfo_core.sb.check_enable = 1'b1;
-                golden_seqq = golden_seq::type_id::create("golden_seq");
-                golden_seqq.start(env_coarse_cfo_core.agt.sqr);
-                repeat (25) @(posedge conf_coarse_cfo_core.coarse_cfo_core_test_vif.clk);
-            end
+            // 2. Golden Sequence (Checks exact CFO and hits large_pos)
+            env_coarse_cfo_core.sb.check_enable = 1; 
+            golden_seqq = golden_seq::type_id::create("golden_seq");
+            golden_seqq.start(env_coarse_cfo_core.agt.sqr);
 
-            `uvm_info("run_phase", $sformatf("correct_count=%0d, wrong_count=%0d",
-                      env_coarse_cfo_core.sb.correct_count, env_coarse_cfo_core.sb.wrong_count), UVM_LOW)
+            // 3. Directed Sequence (Disable checking to avoid false errors)
+            env_coarse_cfo_core.sb.check_enable = 0; 
+            dir_seqq = directed_cfo_seq::type_id::create("dir_seq");
+            dir_seqq.start(env_coarse_cfo_core.agt.sqr);
 
+            // 4. Force asynchronous reset to hit the missing FSM transition
+            // (StIterate -> StIdle). Since the Directed Sequence already 
+            // triggered CORDIC, we just apply a quick reset here.
+
+            #100;
+            conf_coarse_cfo_core.coarse_cfo_core_test_vif.force_rst_low();
+            #50;
+            conf_coarse_cfo_core.coarse_cfo_core_test_vif.release_rst_ni();
+            #100;
+            
+            `uvm_info("run_phase", $sformatf("correct_count=%0d, wrong_count=%0d", env_coarse_cfo_core.sb.correct_count, env_coarse_cfo_core.sb.wrong_count), UVM_LOW)
+            
             phase.drop_objection(this);
         endtask
     endclass

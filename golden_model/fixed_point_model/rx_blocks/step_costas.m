@@ -27,27 +27,12 @@ function [out, st] = step_costas(in, st, T)
     % =====================================================================
     if ~in.rst_ni
         st.acc       = T.fi(0, 'freq_w');
-        st.pw_val    = false(1, 3);
-        st.pw_pi     = T.fi(zeros(1, 3), 'freq_w');
+        st.pw_val    = false(1, Lc);
+        st.pw_pi     = T.fi(zeros(1, Lc), 'freq_w');
         st.sat_pos   = false;
         st.sat_neg   = false;
-
-        % phase_error.sv 3-stage pipeline + 1-stage slicer sign register (costas_top.sv)
-        st.pe_vm       = false;
-        st.pe_vd       = false;
-        st.pe_m_qa     = int64(0);
-        st.pe_m_ia     = int64(0);
-        st.pe_diff     = int64(0);
-        st.pe_e_int    = int64(0);
-        st.sgn_i_pos_q = false;
-        st.sgn_q_pos_q = false;
-
-        % kp/ki 3-stage pipeline matching costas_top.sv lines 133-152
-        st.kp_pipe   = repmat(int64(220364), 1, 3);
-        st.ki_pipe   = repmat(int64(7347),   1, 3);
-
-        st.li        = init_costas_hw_ld(uint32(5734), 12, 0);
-        st.lp        = init_costas_hw_ld(uint32(8192), 12, 15);
+        st.li        = init_costas_ld(T, C.lock_int(1).m0);
+        st.lp        = init_costas_ld(T, C.lock_pub(1).m0);
         st.cnt_i     = T.fi(0, 'sgn_cnt', 'sat');
         st.cnt_q     = T.fi(0, 'sgn_cnt', 'sat');
         st.reported  = false;
@@ -78,200 +63,155 @@ function [out, st] = step_costas(in, st, T)
         row = min(double(in.mod_type_i), 1) + 1;
     end
 
-    % Combinational gains/thresholds & kp/ki 3-stage shift register (costas_top.sv)
-    if mode == T.enc.mode.ACQ || use_qpsk
-        kp_cur = int64(220364);
-        ki_cur = int64(7347);
-    else
-        kp_cur = int64(396656);
-        ki_cur = int64(13224);
-    end
-    st.kp_pipe = [kp_cur, st_old.kp_pipe(1:2)];
-    st.ki_pipe = [ki_cur, st_old.ki_pipe(1:2)];
+    new_pw_val  = false;
+    new_pw_pi   = T.fi(0, 'freq_w');
+    new_pa_val  = false;
+    new_pa_word = T.fi(0, 'phase');
+    st.err_val  = false;
 
-    % 1-stage slicer sign register (updates only on s_axis_valid_i; not cleared on MODE_HOLD)
-    if in.s_axis_valid_i
-        st.sym_cnt = st_old.sym_cnt + 1;
-        yi = R(T.fi(in.s_axis_i_sym_i, 'rot_out'));
-        yq = R(T.fi(in.s_axis_q_sym_i, 'rot_out'));
-        [ai, aq] = fxp_slicer(yi, yq, (mode == MODE_HOLD) || use_qpsk, C);
-        st.ai    = ai;
-        st.aq    = aq;
-        st.a_ref = (double(ai) + 1j * double(aq)) / T.in_scale;
-        st.sgn_i_pos_q = (int64(storedInteger(yi)) >= 0);
-        st.sgn_q_pos_q = (int64(storedInteger(yq)) >= 0);
-    end
+    ci = R(st_old.cnt_i);
+    cq = R(st_old.cnt_q);
 
     if mode == MODE_HOLD
-        st.pe_vm     = false;
-        st.pe_vd     = false;
-        st.pe_e_int  = int64(0);
-        st.err_val   = false;
-        st.err_reg(:)= T.fi(0, 'cos_e');
-        st.cnt_i(:)  = 0;
-        st.cnt_q(:)  = 0;
+        ci = 0;
+        cq = 0;
         st.reported  = false;
         st.corr_sent = false;
         st.unres     = false;
-        st.quad_q    = NaN;
-        st.quad_k    = NaN;
         st.sat_pos   = false;
         st.sat_neg   = false;
         st.acc(:)    = T.fi(0, 'freq_w');
-        st.li        = init_costas_hw_ld(uint32(5734), 12, 0);
-        st.lp        = init_costas_hw_ld(uint32(8192), 12, 15);
-        st.pa_val    = false;
-        st.pa_word(:)= T.fi(0, 'phase');
-        st.pw_val(:) = false;
-        st.pw_pi(:)  = T.fi(0, 'freq_w');
-        out = costas_drive_outputs(st, T);
-        return;
-    end
-
-    % ---------------------------------------------------------------------
-    % 2. PHASE ERROR DETECTOR 3-STAGE PIPELINE (phase_error.sv)
-    % ---------------------------------------------------------------------
-    if in.s_axis_valid_i
-        yi_int = int64(storedInteger(yi));
-        yq_int = int64(storedInteger(yq));
-        ai_int = int64(storedInteger(ai));
-        aq_int = int64(storedInteger(aq));
-        st.pe_m_qa = yq_int * ai_int;
-        st.pe_m_ia = yi_int * aq_int;
-    end
-    if st_old.pe_vm
-        st.pe_diff = st_old.pe_m_qa - st_old.pe_m_ia;
-    end
-    st.pe_vm   = logical(in.s_axis_valid_i);
-    st.pe_vd   = st_old.pe_vm;
-    st.err_val = st_old.pe_vd;
-    if st_old.pe_vd
-        shifted = bitsra(st_old.pe_diff, 15);
-        if shifted > 32767
-            e_int = int64(32767);
-        elseif shifted < -32768
-            e_int = int64(-32768);
-        else
-            e_int = shifted;
+        if in.s_axis_valid_i
+            st.sym_cnt = st_old.sym_cnt + 1;
+            yi = R(T.fi(in.s_axis_i_sym_i, 'rot_out'));
+            yq = R(T.fi(in.s_axis_q_sym_i, 'rot_out'));
+            [ai, aq] = fxp_slicer(yi, yq, true, C);
+            st.ai    = ai;
+            st.aq    = aq;
+            st.a_ref = (double(ai) + 1j * double(aq)) / T.in_scale;
         end
-        st.pe_e_int   = e_int;
-        st.err_reg(:) = T.fi(double(e_int) * (2^-15), 'cos_e');
-    end
-
-    % Registered outputs of phase_error.sv available on this clock edge:
-    e_valid_r = st_old.err_val;
-    e_reg_int = st_old.pe_e_int;
-
-    % ---------------------------------------------------------------------
-    % 3. PI LOOP FILTER (3-stage pipeline fed by phase_error valid_o)
-    % ---------------------------------------------------------------------
-    if e_valid_r
-        sat_pos_prev = isfield(st_old, 'sat_pos') && logical(st_old.sat_pos);
-        sat_neg_prev = isfield(st_old, 'sat_neg') && logical(st_old.sat_neg);
-        acc_cur_int  = int64(storedInteger(st_old.acc));
-        kp_use       = st_old.kp_pipe(3);
-        ki_use       = st_old.ki_pipe(3);
-
-        [v_pi, acc_new, sat_pos, sat_neg] = fxp_costas_pi(...
-            e_reg_int, acc_cur_int, kp_use, ki_use, sat_pos_prev, sat_neg_prev, T);
-
-        st.acc(:)  = acc_new;
-        st.sat_pos = sat_pos;
-        st.sat_neg = sat_neg;
-        if sat_pos || sat_neg
-            st.sat_cnt = st_old.sat_cnt + 1;
-        end
-        new_pw_val = true;
-        new_pw_pi  = v_pi;
     else
-        new_pw_val = false;
-        new_pw_pi  = T.fi(0, 'freq_w');
-    end
-    st.pw_val    = [new_pw_val,   st_old.pw_val(1:end-1)];
-    st.pw_pi(:)  = [R(new_pw_pi), R(st_old.pw_pi(1:end-1))];
+        if in.s_axis_valid_i
+            st.sym_cnt = st_old.sym_cnt + 1;
+            yi = R(T.fi(in.s_axis_i_sym_i, 'rot_out'));
+            yq = R(T.fi(in.s_axis_q_sym_i, 'rot_out'));
 
-    % ---------------------------------------------------------------------
-    % 4. INTERNAL LOCK DETECTOR (costas_top.sv lines 203-219: Lock_Int_* constants)
-    % ---------------------------------------------------------------------
-    li_val = e_valid_r && ~st_old.reported;
-    [st.li, lock_int_comb] = step_costas_hw_ld(st_old.li, li_val, e_reg_int, uint32(3277), uint32(4915));
+            [ai, aq]      = fxp_slicer(yi, yq, use_qpsk, C);
+            st.ai         = ai;
+            st.aq         = aq;
+            st.a_ref      = (double(ai) + 1j * double(aq)) / T.in_scale;
 
-    % ---------------------------------------------------------------------
-    % 5. QUADRANT AMBIGUITY CHECK (quad_check.sv + costas_top.sv lines 221-236)
-    % ---------------------------------------------------------------------
-    ci = R(st_old.cnt_i);
-    cq = R(st_old.cnt_q);
-    st.pa_val = false;
+            % Phase Error Detector matching phase_error.sv
+            yi_int = int64(storedInteger(yi));
+            yq_int = int64(storedInteger(yq));
+            ai_int = int64(storedInteger(ai));
+            aq_int = int64(storedInteger(aq));
 
-    if ~st_old.reported
-        if ~lock_int_comb
-            ci_next = 0;
-            cq_next = 0;
-        elseif e_valid_r
-            if st_old.sgn_i_pos_q, si = 1; else, si = -1; end
-            if st_old.sgn_q_pos_q, sq = 1; else, sq = -1; end
-            ci_next = min(max(ci + si, C.cnt_full_neg), C.cnt_full_pos);
-            cq_next = min(max(cq + sq, C.cnt_full_neg), C.cnt_full_pos);
-        else
-            ci_next = ci;
-            cq_next = cq;
-        end
-
-        full_any = (ci_next == C.cnt_full_pos) || (ci_next == C.cnt_full_neg) || ...
-                   (cq_next == C.cnt_full_pos) || (cq_next == C.cnt_full_neg);
-        evt      = full_any || logical(in.preamble_end_i);
-        unknown  = (ci_next == 0) || (cq_next == 0);
-
-        if ~lock_int_comb
-            ci = 0;
-            cq = 0;
-        elseif e_valid_r
-            ci = ci_next;
-            cq = cq_next;
-        end
-
-        if evt
-            st.reported = true;
-            if unknown
-                st.unres     = true;
-                st.corr_sent = false;
-                st.quad_q    = NaN;
-                st.quad_k    = NaN;
+            m_qa = yq_int * ai_int;
+            m_ia = yi_int * aq_int;
+            diff_r = m_qa - m_ia;
+            % Pure wire truncation matching phase_error.sv
+            shifted = bitsra(diff_r, 15);
+            if shifted > 32767
+                e_int = int64(32767);
+            elseif shifted < -32768
+                e_int = int64(-32768);
             else
-                if ci_next > 0 && cq_next > 0
-                    q = 1;
-                elseif ci_next < 0 && cq_next > 0
-                    q = 2;
-                elseif ci_next < 0 && cq_next < 0
-                    q = 3;
+                e_int = shifted;
+            end
+            e_raw = T.fi(double(e_int) * (2^-15), 'cos_e');
+            st.err_val    = true;
+            st.err_reg(:) = e_raw;
+
+            % Select loop gains matching costas_top.sv
+            if mode == T.enc.mode.ACQ
+                kp_int = int64(220364);
+                ki_int = int64(7347);
+            else
+                if use_qpsk
+                    kp_int = int64(220364);
+                    ki_int = int64(7347);
                 else
-                    q = 4;
+                    kp_int = int64(396656);
+                    ki_int = int64(13224);
                 end
-                k = mod(q - 1, 4);
-                st.unres     = false;
-                st.corr_sent = true;
-                st.quad_q    = q;
-                st.quad_k    = k;
-                st.pa_val    = true;
-                st.pa_word(:)= T.fi(k * 0.25, 'phase');
+            end
+
+            % PI Loop Filter matching pi_filter.sv (pure truncation, no rounding)
+            sat_pos_prev = isfield(st_old, 'sat_pos') && logical(st_old.sat_pos);
+            sat_neg_prev = isfield(st_old, 'sat_neg') && logical(st_old.sat_neg);
+            acc_cur_int  = int64(storedInteger(st_old.acc));
+
+            [v_pi, acc_new, sat_pos, sat_neg] = fxp_costas_pi(...
+                e_int, acc_cur_int, kp_int, ki_int, sat_pos_prev, sat_neg_prev, T);
+
+            st.acc(:)    = acc_new;
+            st.sat_pos   = sat_pos;
+            st.sat_neg   = sat_neg;
+            if sat_pos || sat_neg
+                st.sat_cnt = st_old.sat_cnt + 1;
+            end
+            new_pw_val = true;
+            new_pw_pi  = v_pi;
+
+            st.li = step_costas_ld(st_old.li, e_raw, C.lock_int(row), T);
+
+            if ~st_old.reported
+                if ~st.li.locked
+                    ci = 0;
+                    cq = 0;
+                else
+                    if R(ai) >= 0, si = 1; else, si = -1; end
+                    if R(aq) >= 0, sq = 1; else, sq = -1; end
+                    ci = min(max(ci + si, C.cnt_full_neg), C.cnt_full_pos);
+                    cq = min(max(cq + sq, C.cnt_full_neg), C.cnt_full_pos);
+                end
+            else
+                if ~st_old.unres
+                    st.lp = step_costas_ld(st_old.lp, e_raw, C.lock_pub(row), T);
+                end
+            end
+        end
+
+        if ~st_old.reported
+            c_full  = (ci >= C.cnt_full_pos) || (ci <= C.cnt_full_neg) || ...
+                      (cq >= C.cnt_full_pos) || (cq <= C.cnt_full_neg);
+            do_eval = (c_full && (ci ~= 0) && (cq ~= 0) && in.s_axis_valid_i) || logical(in.preamble_end_i);
+            if do_eval
+                st.reported = true;
+                if (ci == 0) || (cq == 0)
+                    st.unres  = true;
+                    st.quad_q = NaN;
+                    st.quad_k = NaN;
+                else
+                    if ci > 0 && cq > 0
+                        q = 1;
+                    elseif ci < 0 && cq > 0
+                        q = 2;
+                    elseif ci < 0 && cq < 0
+                        q = 3;
+                    else
+                        q = 4;
+                    end
+                    k = mod(q - 1, 4);
+                    st.unres  = false;
+                    st.quad_q = q;
+                    st.quad_k = k;
+                    new_pa_val  = true;
+                    new_pa_word = T.fi(k * 0.25, 'phase');
+                end
+                st.corr_sent = ~st.unres;
+                st.lp        = init_costas_ld(T, C.lock_pub(row).m0);
             end
         end
     end
 
-    st.cnt_i(:) = ci;
-    st.cnt_q(:) = cq;
-
-    % ---------------------------------------------------------------------
-    % 6. PUBLIC LOCK DETECTOR (costas_top.sv lines 238-254)
-    % ---------------------------------------------------------------------
-    pub_clr = (~st_old.reported) || st_old.unres;
-    if pub_clr
-        st.lp = init_costas_hw_ld(uint32(8192), 12, 15);
-    else
-        thr_enter_pub = uint32(storedInteger(C.lock_pub(row).thr_enter));
-        thr_exit_pub  = uint32(storedInteger(C.lock_pub(row).thr_exit));
-        [st.lp, ~] = step_costas_hw_ld(st_old.lp, e_valid_r, e_reg_int, thr_enter_pub, thr_exit_pub);
-    end
+    st.cnt_i(:)   = ci;
+    st.cnt_q(:)   = cq;
+    st.pa_val     = new_pa_val;
+    st.pa_word(:) = new_pa_word;
+    st.pw_val     = [new_pw_val,   st_old.pw_val(1:end-1)];
+    st.pw_pi(:)   = [R(new_pw_pi), R(st_old.pw_pi(1:end-1))];
 
     out = costas_drive_outputs(st, T);
 end
@@ -363,68 +303,40 @@ function [v, acc_next, sat_pos, sat_neg] = fxp_costas_pi(e_int, acc_int, Kp_int,
     acc_next = T.fi(double(acc_next_int) * (2^-32), 'freq_w');
 end
 
-function ld = init_costas_hw_ld(init_err_u16, confirm_cnt, min_syms)
-    ld.m_acc       = uint32(init_err_u16) * uint32(16); % Alpha_Shift = 4
-    ld.m           = T_lock_m_dummy(init_err_u16);
-    ld.sym_cnt     = uint32(0);
-    ld.bucket      = uint32(0);
-    ld.locked      = false;
-    ld.confirm     = uint32(confirm_cnt);
-    ld.min_syms    = uint32(min_syms);
+function ld = init_costas_ld(T, m0)
+    ld.m      = T.fi(m0, 'lock_m');
+    ld.good   = false;
+    ld.bucket = T.fi(0, 'lock_b');
+    ld.locked = false;
 end
 
-function m_val = T_lock_m_dummy(init_err_u16)
-    m_val = double(init_err_u16) * (2^-15);
-end
-
-function [ld, lock_comb] = step_costas_hw_ld(ld_old, valid_i, e_int, thr_enter_u, thr_exit_u)
-    % Bit-exact match to rtl/costas/lock_detector.sv (gen_single_cycle)
+function ld = step_costas_ld(ld_old, e, p, T)
+    R  = T.rd;
     ld = ld_old;
-    if ~valid_i
-        lock_comb = ld_old.locked;
-        return;
-    end
+    a  = R(e);
+    if a < 0, a = -a; end
+    m_old   = R(ld_old.m);
+    d       = a - m_old;
+    ld.m(:) = m_old + bitsra(d, p.ema_shift);
 
-    e_abs  = uint32(abs(double(e_int)));
-    m_acc0 = uint32(ld_old.m_acc);
-    m_next = m_acc0 + e_abs - bitshift(m_acc0, -4);
-    m_val  = bitshift(m_next, -4);
-
-    idx_ok = (ld_old.min_syms == 0) || (ld_old.sym_cnt >= (ld_old.min_syms - 1));
-    if ld_old.locked
-        thr = thr_exit_u;
+    m_new = R(ld.m);
+    if ld_old.good
+        if m_new > R(p.thr_exit),  ld.good = false; end
     else
-        thr = thr_enter_u;
+        if m_new < R(p.thr_enter), ld.good = true;  end
     end
-    good = (m_val < thr) && idx_ok;
 
-    b_old = uint32(ld_old.bucket);
-    if good
-        if b_old >= ld_old.confirm
-            b_next = b_old;
-        else
-            b_next = b_old + 1;
-        end
-    elseif b_old >= 2
-        b_next = b_old - 2;
+    b_old = double(ld_old.bucket);
+    if ld.good
+        b_new = min(b_old + 1, p.confirm);
     else
-        b_next = uint32(0);
+        b_new = max(b_old - 2, 0);
     end
+    ld.bucket(:) = b_new;
 
-    if b_next >= ld_old.confirm
-        locked_comb = true;
-    elseif b_next == 0
-        locked_comb = false;
-    else
-        locked_comb = ld_old.locked;
+    if b_new >= p.confirm
+        ld.locked = true;
+    elseif b_new == 0
+        ld.locked = false;
     end
-
-    ld.m_acc  = m_next;
-    ld.m      = double(m_val) * (2^-15);
-    ld.bucket = b_next;
-    ld.locked = locked_comb;
-    if ld_old.sym_cnt < ld_old.min_syms
-        ld.sym_cnt = ld_old.sym_cnt + 1;
-    end
-    lock_comb = locked_comb;
 end

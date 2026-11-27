@@ -34,51 +34,50 @@ sync_system_top_env.sv
 sync_system_top_test.sv
 
 // ==========================================
-// 6. RTL - STR (authoritative rtl/)
+// 6. RTL - STR
 // ==========================================
-../../rtl/str/gardner_ted_estimator.sv
-../../rtl/str/lock_detector.sv
-../../rtl/str/modulo_1_controller.sv
-../../rtl/str/parabolic_farrow_interpolator.sv
-../../rtl/str/pI_loop.sv
-../../rtl/str/str_top.sv
+gardner_ted_estimator.sv
+lock_detector.sv
+modulo_1_controller.sv
+parabolic_farrow_interpolator.sv
+pI_loop.sv
+str_top.sv
 
 // ==========================================
-// 7. RTL - Coarse CFO (authoritative rtl/)
+// 7. RTL - Coarse CFO
 // ==========================================
-../../rtl/coarse_cfo/complex_mult.sv
-../../rtl/coarse_cfo/accumulator.sv
-../../rtl/coarse_cfo/cordic_angle.sv
-../../rtl/coarse_cfo/coarse_cfo_core.sv
+complex_mult.sv
+accumulator.sv
+cordic_angle.sv
+coarse_cfo_core.sv
 
 // ==========================================
-// 8. RTL - Derotator (authoritative rtl/)
+// 8. RTL - Derotator
 // ==========================================
-+incdir+../../rtl/derotator
-../../rtl/derotator/Freq_word.sv
-../../rtl/derotator/NCO_accumulator.sv
-../../rtl/derotator/quadrant_rotator.sv
-../../rtl/derotator/input_pipeline.sv
-../../rtl/derotator/complex_multiplier.sv
-../../rtl/derotator/lut_rom.sv
-../../rtl/derotator/derotator.sv
+Freq_word.sv
+NCO_accumulator.sv
+quadrant_rotator.sv
+input_pipeline.sv
+complex_multiplier.sv
+lut_rom.sv
+derotator.sv
 
 // ==========================================
-// 9. RTL - Costas (authoritative rtl/)
+// 9. RTL - Costas
 // ==========================================
-../../rtl/costas/slicer.sv
-../../rtl/costas/phase_error.sv
-../../rtl/costas/pi_filter.sv
-../../rtl/costas/quad_check.sv
-../../rtl/costas/costas_top.sv
+slicer.sv
+phase_error.sv
+pi_filter.sv
+quad_check.sv
+costas_top.sv
 
 // ==========================================
-// 10. RTL - System glue + DUT (authoritative rtl/)
+// 10. RTL - System glue + DUT
 // ==========================================
-../../rtl/top/burst_ctrl.sv
-../../rtl/costas/err_align.sv
-../../rtl/top/dft_mux.sv
-../../rtl/top/sync_system_top.sv
+burst_ctrl.sv
+err_align.sv
+dft_mux.sv
+sync_system_top.sv
 
 // ==========================================
 // 11. Top Module (Must be last)

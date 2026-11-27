@@ -24,10 +24,9 @@ function [out, st] = step_coarse_cfo(in, st, T)
         st.Ai         = T.fi(0, 'cacc');
         st.cf_val     = false(1, Lc);
         st.cf_w       = T.fi(zeros(1, Lc), 'cfo');
-        st.cfo_q      = T.fi(0, 'cfo');
 
         out.m_axis_valid_o = false;
-        out.m_axis_cfo_o   = st.cfo_q;
+        out.m_axis_cfo_o   = st.cf_w(end);
         return;
     end
 
@@ -88,17 +87,11 @@ function [out, st] = step_coarse_cfo(in, st, T)
     st.cf_val  = [new_valid,   st_old.cf_val(1 : end-1)];
     st.cf_w(:) = [R(new_word), R(st_old.cf_w(1 : end-1))];
 
-    % Registered output CFO hold & synchronous DFT force override matching coarse_cfo_core.sv
-    if isfield(in, 'force_cfo_en_i') && logical(in.force_cfo_en_i)
-        st.cfo_q = R(T.fi(in.force_cfo_i, 'cfo'));
-    elseif st_old.cf_val(end-1)
-        st.cfo_q = R(st_old.cf_w(end-1));
-    else
-        st.cfo_q = st_old.cfo_q;
-    end
-
     out.m_axis_valid_o = st.cf_val(end);
-    out.m_axis_cfo_o   = st.cfo_q;
+    out.m_axis_cfo_o   = st.cf_w(end);
+    if isfield(in, 'force_cfo_en_i') && in.force_cfo_en_i
+        out.m_axis_cfo_o = T.fi(in.force_cfo_i, 'cfo');
+    end
 end
 
 % =========================================================================

@@ -9,7 +9,6 @@ package coarse_cfo_core_drive;
 
     coarse_cfo_core_seq_item item;
     virtual coarse_cfo_core_inter coarse_cfo_core_test_vif;
-    uvm_analysis_port #(coarse_cfo_core_seq_item) drv_ap;
 
     function new(string name = "coarse_cfo_core_driver",
                  uvm_component parent = null);
@@ -18,7 +17,6 @@ package coarse_cfo_core_drive;
 
     function void build_phase(uvm_phase phase);
       super.build_phase(phase);
-      drv_ap = new("drv_ap", this);
     endfunction
 
     task run_phase(uvm_phase phase);
@@ -29,17 +27,12 @@ package coarse_cfo_core_drive;
         // Drive at negedge so signals are stable for DUT's posedge
         @(negedge coarse_cfo_core_test_vif.clk);
 
-        coarse_cfo_core_test_vif.rst_ni         <= item.rst_ni;
         coarse_cfo_core_test_vif.start_i        <= item.start;
         coarse_cfo_core_test_vif.s_axis_valid_i <= item.s_valid;
         coarse_cfo_core_test_vif.s_axis_i_sym_i <= item.i_sym;
         coarse_cfo_core_test_vif.s_axis_q_sym_i <= item.q_sym;
         coarse_cfo_core_test_vif.force_cfo_en_i <= item.force_en;
         coarse_cfo_core_test_vif.force_cfo_i    <= item.force_val;
-
-        if (item.exp_valid === 1'b1) begin
-          drv_ap.write(item);
-        end
 
         seq_item_port.item_done();
       end

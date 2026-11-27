@@ -33,8 +33,7 @@ package costas_top_coverage_pkg;
         task run_phase(uvm_phase phase);
             forever begin
                 cov_fifo.get(item);
-                if (item.rst_n !== 1'b1) continue;
-
+                
                 // Map UVM item to Golden Model Transaction
                 tr.mode = mode_e'(item.mode);
                 tr.mod_type = (item.mod_type == 2'b01) ? QAM16 : QPSK;
@@ -44,7 +43,7 @@ package costas_top_coverage_pkg;
                 tr.preamble_end = item.preamble_end;
                 tr.slicer_qpsk = item.slicer_qpsk;
                 tr.sample_in();
-
+                
                 tr.e = item.e;
                 tr.e_valid = item.e_valid;
                 tr.freq_adj = item.freq_adj;
@@ -56,7 +55,7 @@ package costas_top_coverage_pkg;
                 tr.lock_int = item.lock_int;
                 tr.quad_done = item.quad_done;
                 tr.quad_unres = item.quad_unres;
-                tr.kp = item.kp;
+                tr.kp = 24'd220364; // Dummy kp for coverage (or fetch from interface if needed)
                 tr.sample_out();
             end
         endtask

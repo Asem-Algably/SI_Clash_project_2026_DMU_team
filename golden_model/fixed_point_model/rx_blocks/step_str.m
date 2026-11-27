@@ -56,9 +56,6 @@ function [out, st] = step_str(in, st, T)
         st.lock.lock_sym = NaN;
 
         st.out_valid = false;
-        st.mid_d     = false;
-        st.y_i       = T.fi(0, 'str_sym');
-        st.y_q       = T.fi(0, 'str_sym');
         st.te_val    = false;
         st.te_e      = T.fi(0, 'ted_e');
 
@@ -67,9 +64,8 @@ function [out, st] = step_str(in, st, T)
         st.pipe_ted_e   = T.fi(zeros(1, 2), 'ted_e');
         st.pipe_pi_val  = false(1, 2);
         st.pipe_pi      = T.fi(zeros(1, 2), 'str_pi', 'sat');
-        st.pipe_pi_e    = T.fi(0, 'ted_e');
 
-        out = str_drive_outputs(st, in, T);
+        out = str_drive_outputs(st);
         return;
     end
 
@@ -87,33 +83,13 @@ function [out, st] = step_str(in, st, T)
         ce_str = true;
     end
 
-    % When ce_str = 0: str_top clears output strobe registers (curr_strobe_pipe[3],
-    % mid_strobe_pipe[3]) while freezing Farrow, modulo,TED & symbol capture.
-    % pI_loop and lock_detector advance their un-gated synchronous stages.
+    % When ce_str = 0: STR is completely frozen.
+    % Only st.out_valid clears to false (registered pulse); all data registers hold.
     if ~ce_str
         st = st_old;
         st.out_valid = false;
-        st.mid_d     = false;
-        st.te_val    = st_old.te_val;
-
-        % pI_loop Stage 1 receives valid_i = ted_error_valid && ce_str = false;
-        % Stage 2 updates acc and pi_reg if v_stg1_q was asserted previously.
-        if st_old.pipe_pi_val(1)
-            [v_pi, acc_new, sat_f] = str_pi_filter(st_old.pipe_pi_e, st_old.acc, T.str.kp, T.str.ki, T.str.max_pi, T);
-            st.acc(:)    = acc_new;
-            st.pi_reg(:) = R(v_pi);
-            q25_s        = R(T.fi(T.c.q25, 'M_s'));
-            st.W(:)      = T.fi(q25_s + R(v_pi), 'M');
-            if sat_f
-                st.sat_cnt(:) = R(st_old.sat_cnt) + 1;
-            end
-        end
-        st.pipe_pi_val = [false, false];
-
-        st.lock          = str_lock_hw_step(st_old.lock, false, st_old.te_e, double(st_old.sym_cnt), T);
-        st.lock.locked_q = st.lock.locked;
-
-        out = str_drive_outputs(st, in, T);
+        st.te_val    = false;
+        out = str_drive_outputs(st);
         return;
     end
 
@@ -133,8 +109,10 @@ function [out, st] = step_str(in, st, T)
     xi = R(T.fi(in.s_axis_i_sample_i, 'in'));
     xq = R(T.fi(in.s_axis_q_sample_i, 'in'));
 
-    % Wait: force_w_en_i in str_top.sv is strictly an output mux on w_o; internal NCO M always uses st_old.W.
     W_use = st_old.W;
+    if in.force_w_en_i
+        W_use = T.fi(in.force_w_i, 'M');
+    end
 
     % Pure fi two-region Modulo-1 boundary check using 25-bit signed wire M_s
     M_s   = R(T.fi(st_old.M, 'M_s'));
@@ -163,16 +141,11 @@ function [out, st] = step_str(in, st, T)
 
     if new_cur || new_mid
         % Exact hardware-aligned 24-bit mu calculation matching modulo_1_controller.sv
-        eta_raw_val = mod(double(storedInteger(eta_raw)), 2^24);
-        eta_4x      = mod(eta_raw_val * 4, 2^24);
-        pi_val      = double(bitsra(int64(storedInteger(st_old.pi_reg)), 4));
+        eta_raw_val = double(storedInteger(eta_raw));
+        eta_4x      = eta_raw_val * 4;
+        pi_val      = bitsra(double(storedInteger(st_old.pi_reg)), 4);
         eta_pi_mult = eta_raw_val * pi_val;
-        term2_u     = mod(double(bitsra(int64(eta_pi_mult), 20)), 2^24);
-        if term2_u >= 2^23
-            term2 = term2_u - 2^24;
-        else
-            term2 = term2_u;
-        end
+        term2       = bitsra(eta_pi_mult, 20);
         mu_full     = eta_4x - term2;
         if mu_full < 0
             mu_int = 0;
@@ -206,7 +179,7 @@ function [out, st] = step_str(in, st, T)
     st.ip_smp    = [cur_smp,      st_old.ip_smp(1:end-1)];
 
     % =====================================================================
-    % 5. STROBE SAMPLER, GARDNER TED, PI FILTER & LOCK DETECTOR (RTL-Aligned)
+    % 5. STROBE SAMPLER, GARDNER TED, PI FILTER & LOCK DETECTOR (At Tail)
     % =====================================================================
     tail_cur = st_old.ip_cur(end);
     tail_mid = st_old.ip_mid(end);
@@ -215,86 +188,91 @@ function [out, st] = step_str(in, st, T)
     yt_mu    = st_old.ip_mu(end);
     yt_smp   = st_old.ip_smp(end);
 
-    % Registered outputs of Stage 6 (curr_strobe_pipe[3], mid_strobe_pipe[3], i_y, q_y)
     st.out_valid = tail_cur;
-    st.mid_d     = tail_mid;
-    st.y_i(:)    = yt_i;
-    st.y_q(:)    = yt_q;
+    st.te_val    = false;
+
+    if tail_mid
+        st.mid_i(:) = yt_i;
+        st.mid_q(:) = yt_q;
+    end
+
     if tail_cur
+        st.prev_i(:)  = R(st_old.cur_i);
+        st.prev_q(:)  = R(st_old.cur_q);
+        st.cur_i(:)   = yt_i;
+        st.cur_q(:)   = yt_q;
         st.mu_reg(:)  = yt_mu;
         st.sym_cnt(:) = R(st_old.sym_cnt) + 1;
         cnt_new       = double(st.sym_cnt);
         st.smp_reg    = yt_smp;
         st.t_phase    = ((yt_smp - 3) + double(yt_mu)) / T.sps - (cnt_new - 1);
-    end
 
-    % Symbol registers (i_mid, i_cur, i_prev) & TED Stage 1 sample REGISTERED
-    % curr_strobe_d (st_old.out_valid) & mid_strobe_d (st_old.mid_d) on ce_str.
-    if st_old.mid_d
-        st.mid_i(:) = R(st_old.y_i);
-        st.mid_q(:) = R(st_old.y_q);
-    end
-
-    if st_old.out_valid
-        st.prev_i(:) = R(st_old.cur_i);
-        st.prev_q(:) = R(st_old.cur_q);
-        st.cur_i(:)  = R(st_old.y_i);
-        st.cur_q(:)  = R(st_old.y_q);
-
-        d_i = T.fi(R(st_old.y_i) - R(st_old.cur_i), 'ted_d');
-        d_q = T.fi(R(st_old.y_q) - R(st_old.cur_q), 'ted_d');
+        % Gardner TED input difference using current symbol yt_i and previous symbol st_old.cur_i
+        d_i = T.fi(yt_i - R(st_old.cur_i), 'ted_d');
+        d_q = T.fi(yt_q - R(st_old.cur_q), 'ted_d');
         e_calc = T.fi(R(st_old.mid_i) * R(d_i) + R(st_old.mid_q) * R(d_q), 'ted_e');
     else
         e_calc = T.fi(0, 'ted_e');
     end
 
-    % TED 2-Stage Pipeline (Stage 1: v_stg1_q; Stage 2: error_valid_o / error_o)
-    st.pipe_ted_val = [st_old.out_valid, st_old.pipe_ted_val(1)];
-    st.pipe_ted_e   = [e_calc,           R(st_old.pipe_ted_e(1))];
+    % ---------------------------------------------------------------------
+    % TED 2-Stage Pipeline (cfg.lat.ted = 2)
+    % ---------------------------------------------------------------------
+    st.pipe_ted_val = [tail_cur, st_old.pipe_ted_val(1)];
+    st.pipe_ted_e   = [e_calc,   R(st_old.pipe_ted_e(1))];
 
-    st.te_val = st_old.pipe_ted_val(1);
-    if st_old.pipe_ted_val(1)
-        st.te_e(:) = R(st_old.pipe_ted_e(1));
-    end
+    ted_val_stg2 = st_old.pipe_ted_val(2);
+    ted_e_stg2   = R(st_old.pipe_ted_e(2));
 
-    % pI_loop 2-Stage Pipeline (.valid_i = ted_error_valid && ce_str)
-    st.pipe_pi_val = [st_old.te_val, false];
-    st.pipe_pi_e   = st_old.te_e;
+    st.te_val = ted_val_stg2;
+    if ted_val_stg2
+        st.te_e(:) = ted_e_stg2;
 
-    if st_old.pipe_pi_val(1)
-        [v_pi, acc_new, sat_f] = str_pi_filter(st_old.pipe_pi_e, st_old.acc, T.str.kp, T.str.ki, T.str.max_pi, T);
+        % PI loop filter with saturation & conditional anti-windup
+        [v_pi, acc_new, sat_f] = str_pi_filter(ted_e_stg2, st_old.acc, T.str.kp, T.str.ki, T.str.max_pi, T);
         st.acc(:)    = acc_new;
-        st.pi_reg(:) = R(v_pi);
-        q25_s        = R(T.fi(T.c.q25, 'M_s'));
-        st.W(:)      = T.fi(q25_s + R(v_pi), 'M');
+        pi_calc      = v_pi;
         if sat_f
             st.sat_cnt(:) = R(st_old.sat_cnt) + 1;
         end
+    else
+        pi_calc = T.fi(0, 'str_pi', 'sat');
     end
 
-    % Continuous Hardware Lock Detector (3-stage pipeline inside str_lock_hw_step)
-    st.lock          = str_lock_hw_step(st_old.lock, st_old.te_val, st_old.te_e, double(st.sym_cnt), T);
-    st.lock.locked_q = st.lock.locked;
+    % Continuous Hardware Lock Detector (matches lock_detector.sv cycle-by-cycle)
+    st.lock = str_lock_hw_step(st_old.lock, ted_val_stg2, ted_e_stg2, double(st.sym_cnt), T);
+    st.lock.locked_q = st_old.lock.locked; % 1-cycle registered lock output matching RTL locked_o flip-flop
 
-    out = str_drive_outputs(st, in, T);
+    % ---------------------------------------------------------------------
+    % PI Loop Filter 2-Stage Pipeline (cfg.lat.str_pi = 2, total loop delay = 4)
+    % ---------------------------------------------------------------------
+    st.pipe_pi_val = [ted_val_stg2, st_old.pipe_pi_val(1)];
+    st.pipe_pi     = [pi_calc,      R(st_old.pipe_pi(1))];
+
+    pi_val_stg2 = st_old.pipe_pi_val(2);
+    pi_stg2     = R(st_old.pipe_pi(2));
+
+    if pi_val_stg2
+        st.pi_reg(:) = pi_stg2;
+        q25_s        = R(T.fi(T.c.q25, 'M_s'));
+        st.W(:)      = T.fi(q25_s + R(pi_stg2), 'M');
+    end
+
+    out = str_drive_outputs(st);
 end
 
 % =========================================================================
 % LOCAL HELPER FUNCTIONS
 % =========================================================================
-function out = str_drive_outputs(st, in, T)
+function out = str_drive_outputs(st)
     out.m_axis_valid_o  = st.out_valid;
-    out.m_axis_i_sym_o  = st.y_i;
-    out.m_axis_q_sym_o  = st.y_q;
-    out.lock_o          = st.lock.locked;
+    out.m_axis_i_sym_o  = st.cur_i;
+    out.m_axis_q_sym_o  = st.cur_q;
+    out.lock_o          = st.lock.locked_q;
     out.ted_err_valid_o = st.te_val;
     out.ted_err_o       = st.te_e;
     out.mu_o            = st.mu_reg;
-    if isfield(in, 'force_w_en_i') && logical(in.force_w_en_i)
-        out.w_o = T.fi(in.force_w_i, 'M');
-    else
-        out.w_o = st.W;
-    end
+    out.w_o             = st.W;
 end
 
 function y = farrow_eval(a, b, c, d, mu, T)
@@ -344,7 +322,7 @@ function ld = str_lock_hw_step(ld_old, valid_i, e_in, sym_idx, T)
 
     % Stage 1: Absolute error calculation (|e|)
     if valid_i
-        e_val = double(bitsra(int64(storedInteger(e_in)), 3));
+        e_val = bitsra(double(storedInteger(e_in)), 3);
         if e_val < 0
             e_abs = -e_val;
         else
