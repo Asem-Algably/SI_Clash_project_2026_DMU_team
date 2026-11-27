@@ -15,58 +15,67 @@
 
 module burst_ctrl #(
   // Preamble timing in symbols (from get_hw_config.m)
-  parameter int unsigned NA1          = 70,
-  parameter int unsigned NA2          = 40,
-  parameter int unsigned NPreamble    = 190,
-  parameter int unsigned IDLE_TIMEOUT = 14,  // Consecutive invalid clocks to trigger Flush
-  parameter int unsigned FLUSH_CLOCKS = 16,  // Pipeline drain clocks F
+  parameter int unsigned NA1                   = 70,
+  parameter int unsigned NA2                   = 40,
+  parameter int unsigned NPreamble             = 190,
+  parameter int unsigned IDLE_TIMEOUT          = 14,  // Consecutive invalid clocks to trigger Flush
+  parameter int unsigned FLUSH_CLOCKS          = 16,  // Pipeline drain clocks F
+
+  // Parameterized bus/counter widths and pipeline latency
+  parameter int unsigned StateWidth            = 3,
+  parameter int unsigned ModeWidth             = 2,
+  parameter int unsigned SymCntWidth           = 32,
+  parameter int unsigned ValidDuringFlushWidth = 8,
+  parameter int unsigned PreambleEndDelay      = 4,
 
   // Costas mode encoding (must match costas_top.sv)
-  parameter logic [1:0]  CostasHold  = 2'b00,
-  parameter logic [1:0]  CostasAcq   = 2'b01,
-  parameter logic [1:0]  CostasTrack = 2'b10
+  parameter logic [ModeWidth-1:0] CostasHold  = 2'b00,
+  parameter logic [ModeWidth-1:0] CostasAcq   = 2'b01,
+  parameter logic [ModeWidth-1:0] CostasTrack = 2'b10
 ) (
-  input  logic        clk_i,
-  input  logic        rst_ni,
+  input  logic                             clk_i,
+  input  logic                             rst_ni,
 
   // Control inputs
-  input  logic        start_of_burst_i,   // 1-cycle pulse or in_sample_valid from burst detector
-  input  logic        in_sample_valid_i,  // Real-time input sample valid (for watchdog)
-  input  logic        str_lock_i,         // STR lock (from STR top)
-  input  logic        coarse_valid_i,     // Coarse CFO estimate ready
-  input  logic        sym_strobe_i,       // Symbol-rate strobe (STR valid)
+  input  logic                             in_sample_valid_i,  // Real-time input sample valid (burst start + watchdog)
+  input  logic                             str_lock_i,         // STR lock (from STR top)
+  input  logic                             coarse_valid_i,     // Coarse CFO estimate ready
+  input  logic                             sym_strobe_i,       // Symbol-rate strobe (STR valid)
 
   // Control outputs
-  output logic        coarse_start_o,     // Level: coarse CFO window active
-  output logic [1:0]  costas_mode_o,      // HOLD / ACQ / TRACK for Costas
-  output logic        preamble_end_o,     // 1-cycle pulse: preamble complete
-  output logic [2:0]  state_o,            // FSM state (for DFT)
-  output logic        flush_active_o,     // 1 during FLUSH state
-  output logic        flush_rst_o,        // 1-cycle soft reset pulse after FLUSH drain
-  output logic [7:0]  valid_during_flush_o // Count of valid samples arriving during FLUSH
+  output logic                             coarse_start_o,      // Level: coarse CFO window active
+  output logic [ModeWidth-1:0]             costas_mode_o,       // HOLD / ACQ / TRACK for Costas
+  output logic                             preamble_end_o,      // 1-cycle pulse: preamble complete
+  output logic [StateWidth-1:0]            state_o,             // FSM state (for DFT)
+  output logic                             flush_active_o,      // 1 during FLUSH state
+  output logic                             flush_rst_o,         // 1-cycle soft reset pulse after FLUSH drain
+  output logic [ValidDuringFlushWidth-1:0] valid_during_flush_o // Count of valid samples arriving during FLUSH
 );
+
+  localparam int unsigned IdleCntWidth  = $clog2(IDLE_TIMEOUT + 1);
+  localparam int unsigned FlushCntWidth = $clog2(FLUSH_CLOCKS + 1);
 
   // --------------------------------------------------------------------------
   // State encoding
   // --------------------------------------------------------------------------
-  typedef enum logic [2:0] {
-    StWaitBurst = 3'd0,
-    StAcquire   = 3'd1,
-    StCoarseEst = 3'd2,
-    StLoad      = 3'd3,
-    StCostasAcq = 3'd4,
-    StTrack     = 3'd5,
-    StFlush     = 3'd6
+  typedef enum logic [StateWidth-1:0] {
+    StWaitBurst = StateWidth'(0),
+    StAcquire   = StateWidth'(1),
+    StCoarseEst = StateWidth'(2),
+    StLoad      = StateWidth'(3),
+    StCostasAcq = StateWidth'(4),
+    StTrack     = StateWidth'(5),
+    StFlush     = StateWidth'(6)
   } state_e;
 
-  state_e      state_q, state_d;
-  logic [31:0] sym_cnt_q, sym_cnt_d;
-  logic [7:0]  idle_cnt_q, idle_cnt_d;
-  logic [7:0]  flush_cnt_q, flush_cnt_d;
-  logic [7:0]  valid_during_flush_q, valid_during_flush_d;
-  logic        flush_rst_q, flush_rst_d;
-  logic [3:0]  pe_pipe_q;
-  logic        preamble_end_raw;
+  state_e                             state_q, state_d;
+  logic [SymCntWidth-1:0]             sym_cnt_q, sym_cnt_d;
+  logic [IdleCntWidth-1:0]            idle_cnt_q, idle_cnt_d;
+  logic [FlushCntWidth-1:0]           flush_cnt_q, flush_cnt_d;
+  logic [ValidDuringFlushWidth-1:0]   valid_during_flush_q, valid_during_flush_d;
+  logic                               flush_rst_q, flush_rst_d;
+  logic [PreambleEndDelay-1:0]        pe_pipe_q;
+  logic                               preamble_end_raw;
 
   // --------------------------------------------------------------------------
   // Combinational next-state logic
@@ -89,7 +98,7 @@ module burst_ctrl #(
       StWaitBurst: begin
         idle_cnt_d  = '0;
         flush_cnt_d = '0;
-        if (start_of_burst_i || in_sample_valid_i) begin
+        if (in_sample_valid_i) begin
           state_d   = StAcquire;
           sym_cnt_d = '0;
         end

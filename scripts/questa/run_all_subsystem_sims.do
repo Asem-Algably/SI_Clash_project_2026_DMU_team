@@ -25,7 +25,6 @@ vlog +acc +cover=bcestf -sv \
   rtl/coarse_cfo/accumulator.sv \
   rtl/coarse_cfo/cordic_angle.sv \
   rtl/coarse_cfo/coarse_cfo_core.sv \
-  rtl/coarse_cfo/coarse_cfo_axi_wrapper.sv \
   +incdir+rtl/derotator rtl/derotator/lut_rom.sv \
   +incdir+rtl/derotator rtl/derotator/quadrant_rotator.sv \
   +incdir+rtl/derotator rtl/derotator/input_pipeline.sv \

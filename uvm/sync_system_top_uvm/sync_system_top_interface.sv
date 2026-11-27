@@ -8,7 +8,6 @@ interface sync_system_top_inter (input bit clk);
     logic [7:0]          loop_gain;
     logic [7:0]          costas_loop_gain;
     logic [3:0]          dft_sel;
-    logic                start_of_burst;
     logic                force_w_en;
     logic [15:0]         force_w;
     logic                force_cfo_en;
@@ -23,14 +22,14 @@ interface sync_system_top_inter (input bit clk);
     logic signed [23:0]  coarse_cfo_est;
     logic signed [31:0]  fine_cfo_est;
     logic                lock_detect;
-    logic                flush_active;
-    logic [7:0]          valid_during_flush;
     logic [31:0]         dft_obs_data;
 
     // ---------------- internal taps (assigned in the top module) ----------------
-    logic [2:0]          fsm_state;     // dut.fsm_state (burst FSM)
-    logic                str_lock;      // dut.str_lock
-    logic                costas_lock;   // dut.costas_lock
-    logic                coarse_valid;  // dut.coarse_valid
-    logic                str_valid;     // dut.str_valid
+    logic                flush_active;       // dut.flush_active
+    logic [7:0]          valid_during_flush; // dut.valid_during_flush
+    logic [2:0]          fsm_state;          // dut.fsm_state (burst FSM)
+    logic                str_lock;           // dut.str_lock
+    logic                costas_lock;        // dut.costas_lock
+    logic                coarse_valid;       // dut.coarse_valid
+    logic                str_valid;          // dut.str_valid
 endinterface

@@ -25,12 +25,11 @@ coverage exclude -du work.coarse_cfo_core_test_pkg -code bcefst -comment {Testbe
 coverage exclude -scope /top/dut/u_accumulator -feccondrow 60 5 -comment {active_q clears at WinLen=32; (count_q < 32)_0 unreachable}
 
 # CORDIC unreachable default arms and redundant cascading else-if sign FEC rows
-coverage exclude -scope /top/dut/u_cordic_angle -linerange 53 153 -code bs -comment {Unreachable default case arms for synthesis/lint safety}
-coverage exclude -scope /top/dut/u_cordic_angle -feccondrow 143 3 -comment {Cascading else-if: (~sign_x_q && ~sign_y_q) intercepted at L141}
-coverage exclude -scope /top/dut/u_cordic_angle -feccondrow 145 1 -comment {Cascading else-if: sign_x_q=0 intercepted at L141/L143}
+coverage exclude -scope /top/dut/u_cordic_angle -linerange 73 173 -code bs -comment {Unreachable default case arms for synthesis/lint safety}
+coverage exclude -scope /top/dut/u_cordic_angle -feccondrow 163 3 -comment {Cascading else-if: (~sign_x_q && ~sign_y_q) intercepted at L161}
+coverage exclude -scope /top/dut/u_cordic_angle -feccondrow 165 1 -comment {Cascading else-if: sign_x_q=0 intercepted at L161/L163}
 
 # 3. Structural Zero-Toggle / Constant Tie-Off / Zero-Padding Bit Waivers
-coverage exclude -scope /top/dut/u_cordic_angle -togglenode iter_q[4] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
 coverage exclude -scope /top/dut/u_cordic_angle -togglenode x_d[35] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
 coverage exclude -scope /top/dut/u_cordic_angle -togglenode x_d[36] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
 coverage exclude -scope /top/dut/u_cordic_angle -togglenode x_d[37] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}

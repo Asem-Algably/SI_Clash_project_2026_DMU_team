@@ -23,23 +23,23 @@ coverage exclude -du work.costas_top_test_pkg -code bcefst -comment {Testbench/U
 
 # 2. DUT Behavioral/Code Coverage Waivers
 # Defensive Costas phase_error & pi_filter clamps (nominal AGC/gain scale avoids +-32767 and +-Max_Pi_Output saturation)
-coverage exclude -scope /top/dut/u_pe -linerange 52-56 -code bcs -comment {Nominal symbol scale does not saturate 16-bit phase_error}
-coverage exclude -scope /top/dut/u_pi -linerange 68-72 127-135 -code bcs -comment {Closed-loop frequency word remains well within +-Max_Pi_Output}
-coverage exclude -scope /top/dut/u_pi -linerange 121 -allfalse -code b -comment {Anti-windup freeze only active when output saturates}
-coverage exclude -scope /top/dut/u_pi -fecexprrow 76 2 3 4 6 7 8 -comment {Anti-windup freeze saturation flags remain 0 in linear operation}
+coverage exclude -scope /top/dut/u_pe -linerange 53-57 -code bcs -comment {Nominal symbol scale does not saturate 16-bit phase_error}
+coverage exclude -scope /top/dut/u_pi -linerange 69-73 128-136 -code bcs -comment {Closed-loop frequency word remains well within +-Max_Pi_Output}
+coverage exclude -scope /top/dut/u_pi -linerange 122 -allfalse -code b -comment {Anti-windup freeze only active when output saturates}
+coverage exclude -scope /top/dut/u_pi -fecexprrow 77 2 3 4 6 7 8 -comment {Anti-windup freeze saturation flags remain 0 in linear operation}
 
 # Costas quad_check mathematically unreachable false arms (full_any sets evt -> done_o<=1 same cycle as cnt reaches 15/-16)
-coverage exclude -scope /top/dut/u_quad -linerange 44 48 54 58 -allfalse -code b -comment {done_o latches same cycle cnt reaches 15/-16; !done_o blocks subsequent entry}
-coverage exclude -scope /top/dut/u_quad -feccondrow 44 1 -comment {cnt_i_q cannot be 15 while valid_i && !done_o}
-coverage exclude -scope /top/dut/u_quad -feccondrow 48 1 -comment {cnt_i_q cannot be -16 while valid_i && !done_o}
-coverage exclude -scope /top/dut/u_quad -feccondrow 54 1 -comment {cnt_q_q cannot be 15 while valid_i && !done_o}
-coverage exclude -scope /top/dut/u_quad -feccondrow 58 1 -comment {cnt_q_q cannot be -16 while valid_i && !done_o}
+coverage exclude -scope /top/dut/u_quad -linerange 47 51 57 61 -allfalse -code b -comment {done_o latches same cycle cnt reaches 15/-16; !done_o blocks subsequent entry}
+coverage exclude -scope /top/dut/u_quad -feccondrow 47 1 -comment {cnt_i_q cannot be 15 while valid_i && !done_o}
+coverage exclude -scope /top/dut/u_quad -feccondrow 51 1 -comment {cnt_i_q cannot be -16 while valid_i && !done_o}
+coverage exclude -scope /top/dut/u_quad -feccondrow 57 1 -comment {cnt_q_q cannot be 15 while valid_i && !done_o}
+coverage exclude -scope /top/dut/u_quad -feccondrow 61 1 -comment {cnt_q_q cannot be -16 while valid_i && !done_o}
 
 # Costas lock detectors parameter & threshold decay invariants
 coverage exclude -scope /top/dut/u_lock_int -linerange 161-162 -code bs -comment {Min_Symbols=0 dead counter increment}
 coverage exclude -scope /top/dut/u_lock_int -fecexprrow 133 3 -comment {Min_Symbols=0 -> idx_ok is constant 1'b1}
 coverage exclude -scope /top/dut/u_lock_pub -fecexprrow 133 3 -comment {Init_Error=8192 with alpha=1/16 stays above thr_enter before Min_Symbols=15}
-coverage exclude -scope /top/dut/u_quad -fecexprrow 64 8 -comment {Covered 9/9 in sync_system_top_uvm; in unit costas bursts I-counter reaches +15 first}
+coverage exclude -scope /top/dut/u_quad -fecexprrow 67 8 -comment {Covered 9/9 in sync_system_top_uvm; in unit costas bursts I-counter reaches +15 first}
 
 # 3. Structural Zero-Toggle / Constant Tie-Off / Zero-Padding Bit Waivers
 coverage exclude -scope /top/dut/u_slicer -togglenode mod_type_i[1] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}

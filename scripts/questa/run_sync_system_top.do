@@ -21,7 +21,6 @@ vlog +acc -sv \
   rtl/coarse_cfo/accumulator.sv \
   rtl/coarse_cfo/cordic_angle.sv \
   rtl/coarse_cfo/coarse_cfo_core.sv \
-  rtl/coarse_cfo/coarse_cfo_axi_wrapper.sv \
   +incdir+rtl/derotator rtl/derotator/lut_rom.sv \
   +incdir+rtl/derotator rtl/derotator/quadrant_rotator.sv \
   +incdir+rtl/derotator rtl/derotator/input_pipeline.sv \
@@ -54,7 +53,6 @@ add wave -position insertpoint sim:/tb_sync_system_top/rst_n
 add wave -position insertpoint sim:/tb_sync_system_top/in_sample_valid
 add wave -position insertpoint -radix decimal sim:/tb_sync_system_top/in_sample_i
 add wave -position insertpoint -radix decimal sim:/tb_sync_system_top/in_sample_q
-add wave -position insertpoint sim:/tb_sync_system_top/start_of_burst
 
 add wave -divider "STR Output"
 add wave -position insertpoint sim:/tb_sync_system_top/u_dut/str_valid

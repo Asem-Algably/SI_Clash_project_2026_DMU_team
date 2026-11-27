@@ -39,7 +39,6 @@ package sync_system_top_coverage_pkg;
             cp_cos_lock  : coverpoint item.costas_lock;
             cp_flush     : coverpoint item.flush_active;
             cp_in_valid  : coverpoint item.valid;
-            cp_sob       : coverpoint item.start;
             cp_dft_sel   : coverpoint item.dft_sel;
             cp_force_w   : coverpoint item.force_w_en;
             cp_force_cfo : coverpoint item.force_cfo_en;

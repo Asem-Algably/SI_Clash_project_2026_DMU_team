@@ -13,71 +13,102 @@
 // Output symbols are signed 16-bit Q1.15 (sQ1.15).
 // Resets are purely synchronous (active-low rst_ni).
 
-module str_top (
-    input  logic         clk_i,
-    input  logic         rst_ni,             // Synchronous active-low reset
-    input  logic         s_axis_valid_i,
-    input  logic         flush_active_i,
-    input  logic [11:0]  s_axis_i_sample_i,
-    input  logic [11:0]  s_axis_q_sample_i,
-    input  logic [7:0]   loop_gain_i,
-    output logic         m_axis_valid_o,
-    output logic [15:0]  m_axis_i_sym_o,
-    output logic [15:0]  m_axis_q_sym_o,
-    output logic         lock_o,
-    output logic         ted_err_valid_o,
-    output logic [31:0]  ted_err_o,
-    output logic [9:0]   mu_o,
-    output logic [15:0]  w_o,
-    input  logic         force_w_en_i,
-    input  logic [15:0]  force_w_i
+module str_top #(
+    parameter int                           InSampleIntWidth   = 1,
+    parameter int                           InSampleFracWidth  = 11,
+    parameter int                           OutSymIntWidth     = 1,
+    parameter int                           OutSymFracWidth    = 15,
+    parameter int                           GainWidth          = 8,
+    parameter int                           TedErrActiveWidth  = 25,
+    parameter int                           TedErrFracBits     = 21,
+    parameter int                           TedErrWidth        = 32,
+    parameter int                           MuWidth            = 10,
+    parameter int                           NcoWidth           = 24,
+    parameter int                           PiGainWidth        = 24,
+    parameter int                           KpFracBits         = 25,
+    parameter int                           KiFracBits         = 31,
+    parameter int                           PiIntWidth         = 26,
+    parameter int                           PiIntFracBits      = 28,
+    parameter int                           PiOutFracBits      = 24,
+    parameter logic [PiGainWidth-1:0]       KP                 = 24'h0A_EDD7,
+    parameter logic [PiGainWidth-1:0]       KI                 = 24'h09_53F9,
+    parameter logic signed [PiIntWidth-1:0] MAX_V_PI           = 26'sh08F_5C29,
+    parameter int                           ForceWWidth        = 16,
+    parameter int                           StrAlignLatency    = 4,
+    parameter int                           EmaShift           = 4,
+    parameter int                           LockErrWidth       = 23,
+    parameter int                           LockErrLsb         = 3,
+    parameter int                           LockConfirmCnt     = 20,
+    parameter int                           LockMinSymbols     = 1,
+    parameter logic [LockErrWidth-1:0]      LockInitError      = 23'd254691,
+    parameter logic [LockErrWidth-1:0]      LockThrEnter       = 23'd50938,
+    parameter logic [LockErrWidth-1:0]      LockThrExit        = 23'd127346,
+    parameter bit                           LockPipelined      = 1'b1
+)(
+    input  logic                                                      clk_i,
+    input  logic                                                      rst_ni,             // Synchronous active-low reset
+    input  logic                                                      s_axis_valid_i,
+    input  logic                                                      flush_active_i,
+    input  logic [InSampleIntWidth+InSampleFracWidth-1:0]             s_axis_i_sample_i,
+    input  logic [InSampleIntWidth+InSampleFracWidth-1:0]             s_axis_q_sample_i,
+    input  logic [GainWidth-1:0]                                      loop_gain_i,
+    output logic                                                      m_axis_valid_o,
+    output logic [OutSymIntWidth+OutSymFracWidth-1:0]                 m_axis_i_sym_o,
+    output logic [OutSymIntWidth+OutSymFracWidth-1:0]                 m_axis_q_sym_o,
+    output logic                                                      lock_o,
+    output logic                                                      ted_err_valid_o,
+    output logic [TedErrWidth-1:0]                                    ted_err_o,
+    output logic [MuWidth-1:0]                                        mu_o,
+    output logic [ForceWWidth-1:0]                                    w_o,
+    input  logic                                                      force_w_en_i,
+    input  logic [ForceWWidth-1:0]                                    force_w_i
 );
+
+    localparam int InSampleWidth = InSampleIntWidth + InSampleFracWidth;
+    localparam int OutSymWidth   = OutSymIntWidth + OutSymFracWidth;
 
     // STR Clock Enable: ce_str = s_axis_valid_i | flush_active_i
     logic ce_str;
     assign ce_str = s_axis_valid_i | flush_active_i;
 
-    // Parameters
-    localparam int MU_WIDTH = 10;
-    localparam int EMA_SHIFT = 4;
-    localparam logic [31:0] LOCK_THR_ENTER = 32'h0000_C6FA; // 0.194313 in sQ4.18 (stored int 50938)
-    localparam logic [31:0] LOCK_THR_EXIT  = 32'h0001_F172; // 0.485786 in sQ4.18 (stored int 127346)
-    localparam int LOCK_CONFIRM_CNT = 20;
-
     // Signals
-    logic [MU_WIDTH-1:0]  mu, mu_d;
+    logic [MuWidth-1:0]   mu, mu_d;
     logic                 mid_strobe, curr_strobe;
     logic                 mid_strobe_d, curr_strobe_d;
 
-    logic signed [15:0]   i_y, q_y;
-    logic                 y_valid;
+    logic signed [OutSymWidth-1:0]   i_y, q_y;
+    logic                            y_valid;
 
-    logic signed [15:0]   i_mid, q_mid;
-    logic signed [15:0]   i_cur, q_cur;
-    logic signed [15:0]   i_prev, q_prev;
+    logic signed [OutSymWidth-1:0]   i_mid, q_mid;
+    logic signed [OutSymWidth-1:0]   i_cur, q_cur;
+    logic signed [OutSymWidth-1:0]   i_prev, q_prev;
 
-    logic signed [31:0]   ted_error;
-    logic                 ted_error_valid;
+    logic signed [TedErrWidth-1:0]   ted_error;
+    logic                            ted_error_valid;
 
-    logic signed [23:0]   pi_val;
-    logic signed [15:0]   w_val, w_mux;
+    logic signed [NcoWidth-1:0]      pi_val;
+    logic signed [ForceWWidth-1:0]   w_val, w_mux;
 
     // -------------------------------------------------------------------------
-    // 1. Interpolators (4-cycle latency, sQ1.15 outputs)
+    // 1. Interpolators (4-cycle latency, sQ(OutSymIntWidth).(OutSymFracWidth))
     // -------------------------------------------------------------------------
     parabolic_farrow_interpolator #(
-        .DATA_IN_INTEGER_WIDTH(1), .DATA_IN_FRACTIONAL_WIDTH(11),
-        .DATA_OUT_INTEGER_WIDTH(1), .DATA_OUT_FRACTIONAL_WIDTH(15),
-        .MU_WIDTH(MU_WIDTH)
+        .DATA_IN_INTEGER_WIDTH   (InSampleIntWidth),
+        .DATA_IN_FRACTIONAL_WIDTH(InSampleFracWidth),
+        .DATA_OUT_INTEGER_WIDTH  (OutSymIntWidth),
+        .DATA_OUT_FRACTIONAL_WIDTH(OutSymFracWidth),
+        .MU_WIDTH                (MuWidth)
     ) u_i_interp (
         .clk_i(clk_i), .rst_n_i(rst_ni), .valid_sample_i(ce_str),
         .x_i(s_axis_i_sample_i), .mu_i(mu_d), .y_o(i_y), .valid_sample_o()
     );
 
     parabolic_farrow_interpolator #(
-        .DATA_IN_INTEGER_WIDTH(1), .DATA_IN_FRACTIONAL_WIDTH(11),
-        .DATA_OUT_INTEGER_WIDTH(1), .DATA_OUT_FRACTIONAL_WIDTH(15),
-        .MU_WIDTH(MU_WIDTH)
+        .DATA_IN_INTEGER_WIDTH   (InSampleIntWidth),
+        .DATA_IN_FRACTIONAL_WIDTH(InSampleFracWidth),
+        .DATA_OUT_INTEGER_WIDTH  (OutSymIntWidth),
+        .DATA_OUT_FRACTIONAL_WIDTH(OutSymFracWidth),
+        .MU_WIDTH                (MuWidth)
     ) u_q_interp (
         .clk_i(clk_i), .rst_n_i(rst_ni), .valid_sample_i(ce_str),
         .x_i(s_axis_q_sample_i), .mu_i(mu_d), .y_o(q_y), .valid_sample_o(y_valid)
@@ -85,35 +116,26 @@ module str_top (
 
     // -------------------------------------------------------------------------
     // 2. Strobe Alignment Pipeline (6 cycles total latency = 3 modulo stages + 3 interpolator stages)
-    //    Cycle 0: sample x_i at input, modulo_1_controller calculates new_cur/mu
-    //    Cycle 1: modulo_1_controller Cut 1 registers (DSP inputs: eta_raw_q, pi_q)
-    //    Cycle 2: modulo_1_controller Cut 2 registers (DSP output: eta_pi_mult_q)
-    //    Cycle 3: modulo_1_controller Stage 3 outputs registered current_strobe / mu_reg;
-    //             interpolator captures [s4, s5, s6, s7] = [t-2, t-3, t-4, t-5]
-    //    Cycle 4: pipe[0] & mu_d assert (aligned with [s4..s7]); interpolator registers Stage 1 (v1, v2)
-    //    Cycle 5: pipe[1] asserts; interpolator registers Stage 2 (h1)
-    //    Cycle 6: pipe[2] asserts = curr_strobe_d; interpolator registers Stage 3 (y_o)
-    //             m_axis_valid_o and m_axis_*_sym_o are valid at Cycle 6 (matching Golden Model)
     // -------------------------------------------------------------------------
-    logic [3:0] mid_strobe_pipe, curr_strobe_pipe;
+    logic [StrAlignLatency-1:0] mid_strobe_pipe, curr_strobe_pipe;
     always_ff @(posedge clk_i) begin
         if (!rst_ni) begin
             mid_strobe_pipe  <= '0;
             curr_strobe_pipe <= '0;
             mu_d             <= '0;
         end else if (ce_str) begin
-            mid_strobe_pipe  <= {mid_strobe_pipe[2:0], mid_strobe};
-            curr_strobe_pipe <= {curr_strobe_pipe[2:0], curr_strobe};
+            mid_strobe_pipe  <= {mid_strobe_pipe[StrAlignLatency-2:0], mid_strobe};
+            curr_strobe_pipe <= {curr_strobe_pipe[StrAlignLatency-2:0], curr_strobe};
             // Delay mu by 1 ce_str cycle to stay aligned with Farrow's 7-tap window [s7..s4] on adjacent strobes
             mu_d             <= mu;
         end else begin
-            mid_strobe_pipe[3]  <= 1'b0;
-            curr_strobe_pipe[3] <= 1'b0;
+            mid_strobe_pipe[StrAlignLatency-1]  <= 1'b0;
+            curr_strobe_pipe[StrAlignLatency-1] <= 1'b0;
         end
     end
 
-    assign mid_strobe_d   = mid_strobe_pipe[3];
-    assign curr_strobe_d  = curr_strobe_pipe[3];
+    assign mid_strobe_d   = mid_strobe_pipe[StrAlignLatency-1];
+    assign curr_strobe_d  = curr_strobe_pipe[StrAlignLatency-1];
 
     assign m_axis_valid_o = curr_strobe_d;
     assign m_axis_i_sym_o = i_y;
@@ -143,7 +165,13 @@ module str_top (
     // -------------------------------------------------------------------------
     // 3. Gardner TED
     // -------------------------------------------------------------------------
-    gardner_ted_estimator u_ted (
+    gardner_ted_estimator #(
+        .DataWidth     (OutSymWidth),
+        .DataFracBits  (OutSymFracWidth),
+        .ErrActiveWidth(TedErrActiveWidth),
+        .ErrFracBits   (TedErrFracBits),
+        .ErrOutWidth   (TedErrWidth)
+    ) u_ted (
         .clk_i(clk_i), .rst_ni(rst_ni), .ce_i(ce_str), .valid_i(curr_strobe_d),
         .i_mid_i(i_mid), .q_mid_i(q_mid),
         .i_cur_i(i_y), .q_cur_i(q_y),
@@ -157,7 +185,21 @@ module str_top (
     // -------------------------------------------------------------------------
     // 4. PI Loop Filter
     // -------------------------------------------------------------------------
-    pI_loop u_pi_loop (
+    pI_loop #(
+        .ErrInWidth    (TedErrWidth),
+        .ErrActiveWidth(TedErrActiveWidth),
+        .ErrFracBits   (TedErrFracBits),
+        .GainWidth     (PiGainWidth),
+        .KpFracBits    (KpFracBits),
+        .KiFracBits    (KiFracBits),
+        .PiIntWidth    (PiIntWidth),
+        .PiIntFracBits (PiIntFracBits),
+        .PiOutWidth    (NcoWidth),
+        .PiOutFracBits (PiOutFracBits),
+        .KP            (KP),
+        .KI            (KI),
+        .MAX_V_PI      (MAX_V_PI)
+    ) u_pi_loop (
         .clk_i(clk_i), .rst_ni(rst_ni), .valid_i(ted_error_valid && ce_str),
         .error_i(ted_error), .pi_o(pi_val)
     );
@@ -165,7 +207,12 @@ module str_top (
     // -------------------------------------------------------------------------
     // 5. Modulo-1 Controller
     // -------------------------------------------------------------------------
-    modulo_1_controller #(.MU_WIDTH(MU_WIDTH)) u_modulo_ctrl (
+    modulo_1_controller #(
+        .MU_WIDTH   (MuWidth),
+        .NCO_WIDTH  (NcoWidth),
+        .PI_WIDTH   (NcoWidth),
+        .W_OUT_WIDTH(ForceWWidth)
+    ) u_modulo_ctrl (
         .clk_i(clk_i), .rst_ni(rst_ni), .valid_sample_i(ce_str),
         .pi_i(pi_val), .mu_o(mu),
         .mid_strobe_o(mid_strobe), .current_strobe_o(curr_strobe),
@@ -186,31 +233,25 @@ module str_top (
 
     // -------------------------------------------------------------------------
     // 6. Lock Detector (Synchronous Reset, reusing lock_detector.sv)
-    //    Error: TED error (sQ3.21 in ted_error[24:0] sign-extended to 32 bits)
-    //    Aligned to sQ4.18 by arithmetic right shift by 3 bits.
-    //    Stored integer in 23-bit signed format (sQ4.18):
-    //      Init_Error     = 23'd254691 (0.97157 in sQ4.18)
-    //      LOCK_THR_ENTER = 23'd50938  (0.19431 in sQ4.18)
-    //      LOCK_THR_EXIT  = 23'd127346 (0.48579 in sQ4.18)
     // -------------------------------------------------------------------------
-    logic signed [22:0] ted_err_aligned;
-    assign ted_err_aligned = ted_error[25:3];
+    logic signed [LockErrWidth-1:0] ted_err_aligned;
+    assign ted_err_aligned = ted_error[LockErrLsb +: LockErrWidth];
 
     lock_detector #(
-        .Error_Width   (23),
-        .Alpha_Shift   (EMA_SHIFT),
-        .Confirm_Count (LOCK_CONFIRM_CNT),
-        .Min_Symbols   (1),
-        .Init_Error    (23'd254691),
-        .Pipelined     (1'b1)
+        .Error_Width   (LockErrWidth),
+        .Alpha_Shift   (EmaShift),
+        .Confirm_Count (LockConfirmCnt),
+        .Min_Symbols   (LockMinSymbols),
+        .Init_Error    (LockInitError),
+        .Pipelined     (LockPipelined)
     ) u_lock_detector (
         .clk_i      (clk_i),
         .rst_ni     (rst_ni),
         .clr_i      (1'b0),
         .valid_i    (ted_error_valid && ce_str),
         .e_i        (ted_err_aligned),
-        .thr_enter_i(23'd50938),
-        .thr_exit_i (23'd127346),
+        .thr_enter_i(LockThrEnter),
+        .thr_exit_i (LockThrExit),
         .lock_comb_o(),
         .locked_o   (lock_o)
     );

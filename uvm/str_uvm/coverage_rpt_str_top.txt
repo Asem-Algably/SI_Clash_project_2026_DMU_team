@@ -17,44 +17,44 @@ Branch Coverage for instance /top/dut/u_i_interp
     ----         ----                      -----     ------ 
   File ../../rtl/str/parabolic_farrow_interpolator.sv
 ------------------------------------IF Branch------------------------------------
-    40                                     13599     Count coming in to IF
-    40              1                         20     
-    48              1                      12641     
+    54                                     13599     Count coming in to IF
+    54              1                         20     
+    62              1                      12641     
                                              938     All False Count
 Branch totals: 3 hits of 3 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    74                                     13641     Count coming in to IF
-    74              1                         20     
-    79              1                      12683     
+    88                                     13641     Count coming in to IF
+    88              1                         20     
+    93              1                      12683     
                                              938     All False Count
 Branch totals: 3 hits of 3 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    100                                    13631     Count coming in to IF
-    100             1                         20     
-    104             1                      12673     
-                                             938     All False Count
-Branch totals: 3 hits of 3 branches = 100.00%
-
-------------------------------------IF Branch------------------------------------
-    123                                    13555     Count coming in to IF
+    123                                    13631     Count coming in to IF
     123             1                         20     
-    125             1                      12597     
+    127             1                      12673     
                                              938     All False Count
 Branch totals: 3 hits of 3 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    135                                     6315     Count coming in to IF
-    135             1                         13     
-    137             1                       6302     
+    159                                    13555     Count coming in to IF
+    159             1                         20     
+    161             1                      12597     
+                                             938     All False Count
+Branch totals: 3 hits of 3 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    171                                     6315     Count coming in to IF
+    171             1                         13     
+    173             1                       6302     
 Branch totals: 2 hits of 2 branches = 100.00%
 
 
 Statement Coverage:
     Enabled Coverage              Bins      Hits    Misses  Coverage
     ----------------              ----      ----    ------  --------
-    Statements                      44        44         0   100.00%
+    Statements                      47        47         0   100.00%
 
 ================================Statement Details================================
 
@@ -63,54 +63,57 @@ Statement Coverage for instance /top/dut/u_i_interp --
     Line         Item                      Count     Source 
     ----         ----                      -----     ------ 
   File ../../rtl/str/parabolic_farrow_interpolator.sv
-    39              1                      13599     
-    41              1                         20     
-    42              1                         20     
-    43              1                         20     
-    44              1                         20     
-    45              1                         20     
-    46              1                         20     
-    47              1                         20     
-    49              1                      12641     
-    50              1                      12641     
-    51              1                      12641     
-    52              1                      12641     
-    53              1                      12641     
-    54              1                      12641     
-    55              1                      12641     
-    63              1                      12566     
-    64              1                      12568     
-    65              1                      12570     
-    66              1                      12572     
-    73              1                      13641     
-    75              1                         20     
-    76              1                         20     
-    77              1                         20     
-    78              1                         20     
-    81              1                      12683     
-    83              1                      12683     
-    84              1                      12683     
-    85              1                      12683     
-    93              1                      12641     
-    99              1                      13631     
-    101             1                         20     
-    102             1                         20     
-    103             1                         20     
-    106             1                      12673     
-    107             1                      12673     
-    108             1                      12673     
-    116             1                      12636     
-    120             1                      24938     
-    122             1                      13555     
+    53              1                      13599     
+    55              1                         20     
+    56              1                         20     
+    57              1                         20     
+    58              1                         20     
+    59              1                         20     
+    60              1                         20     
+    61              1                         20     
+    63              1                      12641     
+    64              1                      12641     
+    65              1                      12641     
+    66              1                      12641     
+    67              1                      12641     
+    68              1                      12641     
+    69              1                      12641     
+    77              1                      12566     
+    78              1                      12568     
+    79              1                      12570     
+    80              1                      12572     
+    87              1                      13641     
+    89              1                         20     
+    90              1                         20     
+    91              1                         20     
+    92              1                         20     
+    95              1                      12683     
+    97              1                      12683     
+    98              1                      12683     
+    99              1                      12683     
+    108             1                      12641     
+    112             1                      12377     
+    122             1                      13631     
     124             1                         20     
-    126             1                      12597     
-    134             1                       6315     
-    136             1                         13     
-    138             1                       6302     
+    125             1                         20     
+    126             1                         20     
+    129             1                      12673     
+    130             1                      12673     
+    131             1                      12673     
+    140             1                      12636     
+    144             1                      12376     
+    149             1                      12564     
+    156             1                      12591     
+    158             1                      13555     
+    160             1                         20     
+    162             1                      12597     
+    170             1                       6315     
+    172             1                         13     
+    174             1                       6302     
 Toggle Coverage:
     Enabled Coverage              Bins      Hits    Misses  Coverage
     ----------------              ----      ----    ------  --------
-    Toggles                        732       732         0   100.00%
+    Toggles                        890       890         0   100.00%
 
 ================================Toggle Details================================
 
@@ -118,41 +121,44 @@ Toggle Coverage for instance /top/dut/u_i_interp --
 
                                               Node      1H->0L      0L->1H  "Coverage"
                                               ---------------------------------------
-                                         a12[15-1]           1           1      100.00 
-                                         b12[15-1]           1           1      100.00 
-                                        b_s1[15-1]           1           1      100.00 
-                                        b_s2[15-1]           1           1      100.00 
-                                         c12[15-1]           1           1      100.00 
+                                         a12[1-15]           1           1      100.00 
+                                         b12[1-15]           1           1      100.00 
+                                   b_aligned[4-27]           1           1      100.00 
+                                        b_s1[1-15]           1           1      100.00 
+                                        b_s2[1-15]           1           1      100.00 
+                                         c12[1-15]           1           1      100.00 
                                              clk_i           1           1      100.00 
-                                         d12[15-1]           1           1      100.00 
-                                        h1_q[16-0]           1           1      100.00 
-                                     h1_x_mu[27-0]           1           1      100.00 
+                                         d12[1-15]           1           1      100.00 
+                               h1_mu_aligned[0-27]           1           1      100.00 
+                                        h1_q[0-16]           1           1      100.00 
+                                     h1_x_mu[0-27]           1           1      100.00 
                                          mu_i[0-9]           1           1      100.00 
-                                        mu_s1[9-0]           1           1      100.00 
-                                        mu_s2[9-0]           1           1      100.00 
+                                        mu_s1[0-9]           1           1      100.00 
+                                        mu_s2[0-9]           1           1      100.00 
                                            rst_n_i           1           1      100.00 
-                                        s1_q[11-0]           1           1      100.00 
-                                        s2_q[11-0]           1           1      100.00 
-                                        s3_q[11-0]           1           1      100.00 
-                                        s4_q[11-0]           1           1      100.00 
-                                        s5_q[11-0]           1           1      100.00 
-                                        s6_q[11-0]           1           1      100.00 
-                                        s7_q[11-0]           1           1      100.00 
-                                        v1_q[15-0]           1           1      100.00 
-                                        v2_q[15-0]           1           1      100.00 
-                                     v2_x_mu[26-0]           1           1      100.00 
-                                     val_pipe[5-0]           1           1      100.00 
+                                        s1_q[0-11]           1           1      100.00 
+                                        s2_q[0-11]           1           1      100.00 
+                                        s3_q[0-11]           1           1      100.00 
+                                        s4_q[0-11]           1           1      100.00 
+                                        s5_q[0-11]           1           1      100.00 
+                                        s6_q[0-11]           1           1      100.00 
+                                        s7_q[0-11]           1           1      100.00 
+                                        v1_q[0-15]           1           1      100.00 
+                               v2_mu_aligned[0-26]           1           1      100.00 
+                                        v2_q[0-15]           1           1      100.00 
+                                     v2_x_mu[0-26]           1           1      100.00 
+                                     val_pipe[0-5]           1           1      100.00 
                                     valid_sample_i           1           1      100.00 
                                     valid_sample_o           1           1      100.00 
                                          x_i[0-11]           1           1      100.00 
-                                      y_full[19-0]           1           1      100.00 
-                                         y_o[15-0]           1           1      100.00 
+                                      y_full[0-19]           1           1      100.00 
+                                         y_o[0-15]           1           1      100.00 
 
-Total Node Count     =        366 
-Toggled Node Count   =        366 
+Total Node Count     =        445 
+Toggled Node Count   =        445 
 Untoggled Node Count =          0 
 
-Toggle Coverage      =     100.00% (732 of 732 bins)
+Toggle Coverage      =     100.00% (890 of 890 bins)
 
 =================================================================================
 === Instance: /top/dut/u_q_interp
@@ -171,44 +177,44 @@ Branch Coverage for instance /top/dut/u_q_interp
     ----         ----                      -----     ------ 
   File ../../rtl/str/parabolic_farrow_interpolator.sv
 ------------------------------------IF Branch------------------------------------
-    40                                     13599     Count coming in to IF
-    40              1                         20     
-    48              1                      12641     
+    54                                     13599     Count coming in to IF
+    54              1                         20     
+    62              1                      12641     
                                              938     All False Count
 Branch totals: 3 hits of 3 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    74                                     13641     Count coming in to IF
-    74              1                         20     
-    79              1                      12683     
+    88                                     13641     Count coming in to IF
+    88              1                         20     
+    93              1                      12683     
                                              938     All False Count
 Branch totals: 3 hits of 3 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    100                                    13631     Count coming in to IF
-    100             1                         20     
-    104             1                      12673     
-                                             938     All False Count
-Branch totals: 3 hits of 3 branches = 100.00%
-
-------------------------------------IF Branch------------------------------------
-    123                                    13555     Count coming in to IF
+    123                                    13631     Count coming in to IF
     123             1                         20     
-    125             1                      12597     
+    127             1                      12673     
                                              938     All False Count
 Branch totals: 3 hits of 3 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    135                                     6315     Count coming in to IF
-    135             1                         13     
-    137             1                       6302     
+    159                                    13555     Count coming in to IF
+    159             1                         20     
+    161             1                      12597     
+                                             938     All False Count
+Branch totals: 3 hits of 3 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    171                                     6315     Count coming in to IF
+    171             1                         13     
+    173             1                       6302     
 Branch totals: 2 hits of 2 branches = 100.00%
 
 
 Statement Coverage:
     Enabled Coverage              Bins      Hits    Misses  Coverage
     ----------------              ----      ----    ------  --------
-    Statements                      44        44         0   100.00%
+    Statements                      47        47         0   100.00%
 
 ================================Statement Details================================
 
@@ -217,54 +223,57 @@ Statement Coverage for instance /top/dut/u_q_interp --
     Line         Item                      Count     Source 
     ----         ----                      -----     ------ 
   File ../../rtl/str/parabolic_farrow_interpolator.sv
-    39              1                      13599     
-    41              1                         20     
-    42              1                         20     
-    43              1                         20     
-    44              1                         20     
-    45              1                         20     
-    46              1                         20     
-    47              1                         20     
-    49              1                      12641     
-    50              1                      12641     
-    51              1                      12641     
-    52              1                      12641     
-    53              1                      12641     
-    54              1                      12641     
-    55              1                      12641     
-    63              1                      12557     
-    64              1                      12559     
-    65              1                      12561     
-    66              1                      12563     
-    73              1                      13641     
-    75              1                         20     
-    76              1                         20     
-    77              1                         20     
-    78              1                         20     
-    81              1                      12683     
-    83              1                      12683     
-    84              1                      12683     
-    85              1                      12683     
-    93              1                      12642     
-    99              1                      13631     
-    101             1                         20     
-    102             1                         20     
-    103             1                         20     
-    106             1                      12673     
-    107             1                      12673     
-    108             1                      12673     
-    116             1                      12639     
-    120             1                      24930     
-    122             1                      13555     
+    53              1                      13599     
+    55              1                         20     
+    56              1                         20     
+    57              1                         20     
+    58              1                         20     
+    59              1                         20     
+    60              1                         20     
+    61              1                         20     
+    63              1                      12641     
+    64              1                      12641     
+    65              1                      12641     
+    66              1                      12641     
+    67              1                      12641     
+    68              1                      12641     
+    69              1                      12641     
+    77              1                      12557     
+    78              1                      12559     
+    79              1                      12561     
+    80              1                      12563     
+    87              1                      13641     
+    89              1                         20     
+    90              1                         20     
+    91              1                         20     
+    92              1                         20     
+    95              1                      12683     
+    97              1                      12683     
+    98              1                      12683     
+    99              1                      12683     
+    108             1                      12642     
+    112             1                      12377     
+    122             1                      13631     
     124             1                         20     
-    126             1                      12597     
-    134             1                       6315     
-    136             1                         13     
-    138             1                       6302     
+    125             1                         20     
+    126             1                         20     
+    129             1                      12673     
+    130             1                      12673     
+    131             1                      12673     
+    140             1                      12639     
+    144             1                      12379     
+    149             1                      12555     
+    156             1                      12592     
+    158             1                      13555     
+    160             1                         20     
+    162             1                      12597     
+    170             1                       6315     
+    172             1                         13     
+    174             1                       6302     
 Toggle Coverage:
     Enabled Coverage              Bins      Hits    Misses  Coverage
     ----------------              ----      ----    ------  --------
-    Toggles                        732       732         0   100.00%
+    Toggles                        890       890         0   100.00%
 
 ================================Toggle Details================================
 
@@ -272,41 +281,44 @@ Toggle Coverage for instance /top/dut/u_q_interp --
 
                                               Node      1H->0L      0L->1H  "Coverage"
                                               ---------------------------------------
-                                         a12[15-1]           1           1      100.00 
-                                         b12[15-1]           1           1      100.00 
-                                        b_s1[15-1]           1           1      100.00 
-                                        b_s2[15-1]           1           1      100.00 
-                                         c12[15-1]           1           1      100.00 
+                                         a12[1-15]           1           1      100.00 
+                                         b12[1-15]           1           1      100.00 
+                                   b_aligned[4-27]           1           1      100.00 
+                                        b_s1[1-15]           1           1      100.00 
+                                        b_s2[1-15]           1           1      100.00 
+                                         c12[1-15]           1           1      100.00 
                                              clk_i           1           1      100.00 
-                                         d12[15-1]           1           1      100.00 
-                                        h1_q[16-0]           1           1      100.00 
-                                     h1_x_mu[27-0]           1           1      100.00 
+                                         d12[1-15]           1           1      100.00 
+                               h1_mu_aligned[0-27]           1           1      100.00 
+                                        h1_q[0-16]           1           1      100.00 
+                                     h1_x_mu[0-27]           1           1      100.00 
                                          mu_i[0-9]           1           1      100.00 
-                                        mu_s1[9-0]           1           1      100.00 
-                                        mu_s2[9-0]           1           1      100.00 
+                                        mu_s1[0-9]           1           1      100.00 
+                                        mu_s2[0-9]           1           1      100.00 
                                            rst_n_i           1           1      100.00 
-                                        s1_q[11-0]           1           1      100.00 
-                                        s2_q[11-0]           1           1      100.00 
-                                        s3_q[11-0]           1           1      100.00 
-                                        s4_q[11-0]           1           1      100.00 
-                                        s5_q[11-0]           1           1      100.00 
-                                        s6_q[11-0]           1           1      100.00 
-                                        s7_q[11-0]           1           1      100.00 
-                                        v1_q[15-0]           1           1      100.00 
-                                        v2_q[15-0]           1           1      100.00 
-                                     v2_x_mu[26-0]           1           1      100.00 
-                                     val_pipe[5-0]           1           1      100.00 
+                                        s1_q[0-11]           1           1      100.00 
+                                        s2_q[0-11]           1           1      100.00 
+                                        s3_q[0-11]           1           1      100.00 
+                                        s4_q[0-11]           1           1      100.00 
+                                        s5_q[0-11]           1           1      100.00 
+                                        s6_q[0-11]           1           1      100.00 
+                                        s7_q[0-11]           1           1      100.00 
+                                        v1_q[0-15]           1           1      100.00 
+                               v2_mu_aligned[0-26]           1           1      100.00 
+                                        v2_q[0-15]           1           1      100.00 
+                                     v2_x_mu[0-26]           1           1      100.00 
+                                     val_pipe[0-5]           1           1      100.00 
                                     valid_sample_i           1           1      100.00 
                                     valid_sample_o           1           1      100.00 
                                          x_i[0-11]           1           1      100.00 
-                                      y_full[19-0]           1           1      100.00 
-                                         y_o[15-0]           1           1      100.00 
+                                      y_full[0-19]           1           1      100.00 
+                                         y_o[0-15]           1           1      100.00 
 
-Total Node Count     =        366 
-Toggled Node Count   =        366 
+Total Node Count     =        445 
+Toggled Node Count   =        445 
 Untoggled Node Count =          0 
 
-Toggle Coverage      =     100.00% (732 of 732 bins)
+Toggle Coverage      =     100.00% (890 of 890 bins)
 
 =================================================================================
 === Instance: /top/dut/u_ted
@@ -325,28 +337,28 @@ Branch Coverage for instance /top/dut/u_ted
     ----         ----                      -----     ------ 
   File ../../rtl/str/gardner_ted_estimator.sv
 ------------------------------------IF Branch------------------------------------
-    41                                     13614     Count coming in to IF
-    41              1                         20     
-    45              1                      12635     
+    52                                     13614     Count coming in to IF
+    52              1                         20     
+    56              1                      12635     
                                              959     All False Count
 Branch totals: 3 hits of 3 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    47                                     12635     Count coming in to IF
-    47              1                       2929     
+    58                                     12635     Count coming in to IF
+    58              1                       2929     
                                             9706     All False Count
 Branch totals: 2 hits of 2 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    65                                     10010     Count coming in to IF
-    65              1                         18     
-    68              1                       9054     
+    76                                     10010     Count coming in to IF
+    76              1                         18     
+    79              1                       9054     
                                              938     All False Count
 Branch totals: 3 hits of 3 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    70                                      9054     Count coming in to IF
-    70              1                       2928     
+    81                                      9054     Count coming in to IF
+    81              1                       2928     
                                             6126     All False Count
 Branch totals: 2 hits of 2 branches = 100.00%
 
@@ -363,22 +375,22 @@ Statement Coverage for instance /top/dut/u_ted --
     Line         Item                      Count     Source 
     ----         ----                      -----     ------ 
   File ../../rtl/str/gardner_ted_estimator.sv
-    34              1                      15520     
-    35              1                      15517     
-    40              1                      13614     
-    42              1                         20     
-    43              1                         20     
-    44              1                         20     
-    46              1                      12635     
-    48              1                       2929     
-    49              1                       2929     
-    60              1                       2925     
-    62              1                       2925     
-    64              1                      10010     
-    66              1                         18     
-    67              1                         18     
-    69              1                       9054     
-    71              1                       2928     
+    45              1                      15520     
+    46              1                      15517     
+    51              1                      13614     
+    53              1                         20     
+    54              1                         20     
+    55              1                         20     
+    57              1                      12635     
+    59              1                       2929     
+    60              1                       2929     
+    71              1                       2925     
+    73              1                       2925     
+    75              1                      10010     
+    77              1                         18     
+    78              1                         18     
+    80              1                       9054     
+    82              1                       2928     
 Toggle Coverage:
     Enabled Coverage              Bins      Hits    Misses  Coverage
     ----------------              ----      ----    ------  --------
@@ -433,37 +445,37 @@ Branch Coverage for instance /top/dut/u_pi_loop
     ----         ----                      -----     ------ 
   File ../../rtl/str/pI_loop.sv
 ------------------------------------IF Branch------------------------------------
-    41                                      9014     Count coming in to IF
-    41              1                         18     
-    46              1                       8996     
+    56                                      9014     Count coming in to IF
+    56              1                         18     
+    61              1                       8996     
 Branch totals: 2 hits of 2 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    48                                      8996     Count coming in to IF
-    48              1                       2923     
+    63                                      8996     Count coming in to IF
+    63              1                       2923     
                                             6073     All False Count
 Branch totals: 2 hits of 2 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    71                                      5837     Count coming in to IF
-    75              1                       5837     
+    86                                      5837     Count coming in to IF
+    90              1                       5837     
 Branch totals: 1 hit of 1 branch = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    91                                      8758     Count coming in to IF
-    95              1                       8758     
+    106                                     8758     Count coming in to IF
+    110             1                       8758     
 Branch totals: 1 hit of 1 branch = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    104                                     5875     Count coming in to IF
-    104             1                         20     
-    107             1                       2923     
+    119                                     5875     Count coming in to IF
+    119             1                         20     
+    122             1                       2923     
                                             2932     All False Count
 Branch totals: 3 hits of 3 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    109                                     2923     Count coming in to IF
-    113             1                       2923     
+    124                                     2923     Count coming in to IF
+    128             1                       2923     
 Branch totals: 1 hit of 1 branch = 100.00%
 
 
@@ -479,30 +491,30 @@ Statement Coverage for instance /top/dut/u_pi_loop --
     Line         Item                      Count     Source 
     ----         ----                      -----     ------ 
   File ../../rtl/str/pI_loop.sv
-    28              1                       2925     
-    40              1                       9014     
-    42              1                         18     
-    43              1                         18     
-    44              1                         18     
-    45              1                         18     
-    47              1                       8996     
-    49              1                       2923     
-    50              1                       2923     
-    51              1                       2923     
-    60              1                       2923     
-    63              1                       2923     
-    67              1                       5844     
-    70              1                       5837     
-    76              1                       5837     
-    82              1                       8759     
-    90              1                       8758     
-    96              1                       8758     
-    103             1                       5875     
-    105             1                         20     
-    106             1                         20     
-    114             1                       2923     
-    116             1                       2923     
-    121             1                       2925     
+    45              1                       2925     
+    55              1                       9014     
+    57              1                         18     
+    58              1                         18     
+    59              1                         18     
+    60              1                         18     
+    62              1                       8996     
+    64              1                       2923     
+    65              1                       2923     
+    66              1                       2923     
+    75              1                       2923     
+    78              1                       2923     
+    82              1                       5844     
+    85              1                       5837     
+    91              1                       5837     
+    97              1                       8759     
+    105             1                       8758     
+    111             1                       8758     
+    118             1                       5875     
+    120             1                         20     
+    121             1                         20     
+    129             1                       2923     
+    131             1                       2923     
+    136             1                       2925     
 Toggle Coverage:
     Enabled Coverage              Bins      Hits    Misses  Coverage
     ----------------              ----      ----    ------  --------
@@ -556,48 +568,48 @@ Branch Coverage for instance /top/dut/u_modulo_ctrl
     ----         ----                      -----     ------ 
   File ../../rtl/str/modulo_1_controller.sv
 ------------------------------------IF Branch------------------------------------
-    57                                     12725     Count coming in to IF
-    57              1                       3181     
-    60              1                       3186     
+    64                                     12725     Count coming in to IF
+    64              1                       3181     
+    67              1                       3186     
                                             6358     All False Count
 Branch totals: 3 hits of 3 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    62                                      3186     Count coming in to IF
-    62              1                       3170     
-    64              1                         16     
+    69                                      3186     Count coming in to IF
+    69              1                       3170     
+    71              1                         16     
 Branch totals: 2 hits of 2 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    88                                     13685     Count coming in to IF
-    88              1                         20     
-    95              1                      12713     
+    95                                     13685     Count coming in to IF
+    95              1                         20     
+    102             1                      12713     
                                              952     All False Count
 Branch totals: 3 hits of 3 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    114                                    13671     Count coming in to IF
-    114             1                         20     
-    119             1                      12713     
+    121                                    13671     Count coming in to IF
+    121             1                         20     
+    126             1                      12713     
                                              938     All False Count
 Branch totals: 3 hits of 3 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    140                                    12477     Count coming in to IF
-    140             1                         33     
-    144             1                      12444     
+    145                                    12477     Count coming in to IF
+    145             1                         33     
+    149             1                      12444     
 Branch totals: 2 hits of 2 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    156                                    13662     Count coming in to IF
-    156             1                         20     
-    160             1                      12704     
+    161                                    13662     Count coming in to IF
+    161             1                         20     
+    165             1                      12704     
                                              938     All False Count
 Branch totals: 3 hits of 3 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    163                                    12704     Count coming in to IF
-    163             1                       6354     
+    168                                    12704     Count coming in to IF
+    168             1                       6354     
                                             6350     All False Count
 Branch totals: 2 hits of 2 branches = 100.00%
 
@@ -613,7 +625,7 @@ Condition Coverage for instance /top/dut/u_modulo_ctrl --
 
   File ../../rtl/str/modulo_1_controller.sv
 ----------------Focused Condition View-------------------
-Line       57 Item    1  (in_mid_old && ~in_mid_new)
+Line       64 Item    1  (in_mid_old && ~in_mid_new)
 Condition totals: 2 of 2 input terms covered = 100.00%
 
   Input Term   Covered  Reason for no coverage   Hint
@@ -629,7 +641,7 @@ Condition totals: 2 of 2 input terms covered = 100.00%
   Row   4:          1  in_mid_new_1          in_mid_old                    
 
 ----------------Focused Condition View-------------------
-Line       60 Item    1  (~in_mid_old && in_mid_new)
+Line       67 Item    1  (~in_mid_old && in_mid_new)
 Condition totals: 2 of 2 input terms covered = 100.00%
 
   Input Term   Covered  Reason for no coverage   Hint
@@ -645,7 +657,7 @@ Condition totals: 2 of 2 input terms covered = 100.00%
   Row   4:          1  in_mid_new_1          ~in_mid_old                   
 
 ----------------Focused Condition View-------------------
-Line       62 Item    1  (m_q >= 12582912)
+Line       69 Item    1  (m_q >= 12582912)
 Condition totals: 1 of 1 input term covered = 100.00%
 
          Input Term   Covered  Reason for no coverage   Hint
@@ -658,7 +670,7 @@ Condition totals: 1 of 1 input term covered = 100.00%
   Row   2:          1  (m_q >= 12582912)_1   -                             
 
 ----------------Focused Condition View-------------------
-Line       140 Item    1  (mu_full < 0)
+Line       145 Item    1  (mu_full < 0)
 Condition totals: 1 of 1 input term covered = 100.00%
 
      Input Term   Covered  Reason for no coverage   Hint
@@ -671,7 +683,7 @@ Condition totals: 1 of 1 input term covered = 100.00%
   Row   2:          1  (mu_full < 0)_1       -                             
 
 ----------------Focused Condition View-------------------
-Line       163 Item    1  (strobe_cur_q2 || strobe_mid_q2)
+Line       168 Item    1  (strobe_cur_q2 || strobe_mid_q2)
 Condition totals: 2 of 2 input terms covered = 100.00%
 
      Input Term   Covered  Reason for no coverage   Hint
@@ -698,7 +710,7 @@ Expression Coverage for instance /top/dut/u_modulo_ctrl --
 
   File ../../rtl/str/modulo_1_controller.sv
 ----------------Focused Expression View-----------------
-Line       46 Item    1  ((m_q >= 4194304) && (m_q < 12582912))
+Line       53 Item    1  ((m_q >= 4194304) && (m_q < 12582912))
 Expression totals: 2 of 2 input terms covered = 100.00%
 
         Input Term   Covered  Reason for no coverage   Hint
@@ -714,7 +726,7 @@ Expression totals: 2 of 2 input terms covered = 100.00%
   Row   4:          1  (m_q < 12582912)_1    (m_q >= 4194304)              
 
 ----------------Focused Expression View-----------------
-Line       47 Item    1  ((m_next >= 4194304) && (m_next < 12582912))
+Line       54 Item    1  ((m_next >= 4194304) && (m_next < 12582912))
 Expression totals: 2 of 2 input terms covered = 100.00%
 
            Input Term   Covered  Reason for no coverage   Hint
@@ -742,54 +754,54 @@ Statement Coverage for instance /top/dut/u_modulo_ctrl --
     Line         Item                      Count     Source 
     ----         ----                      -----     ------ 
   File ../../rtl/str/modulo_1_controller.sv
-    35              1                       2925     
-    36              1                       2925     
-    43              1                      15648     
-    46              1                      12724     
-    47              1                      15647     
-    52              1                      12725     
-    53              1                      12725     
-    54              1                      12725     
-    55              1                      12725     
-    58              1                       3181     
-    59              1                       3181     
-    61              1                       3186     
-    63              1                       3170     
-    65              1                         16     
-    87              1                      13685     
-    89              1                         20     
-    90              1                         20     
-    91              1                         20     
-    92              1                         20     
-    93              1                         20     
-    94              1                         20     
-    96              1                      12713     
-    97              1                      12713     
-    98              1                      12713     
-    99              1                      12713     
-    100             1                      12713     
-    101             1                      12713     
-    113             1                      13671     
-    115             1                         20     
-    116             1                         20     
-    117             1                         20     
-    118             1                         20     
-    121             1                      12713     
-    122             1                      12713     
-    123             1                      12713     
-    124             1                      12713     
-    133             1                      12477     
-    136             1                      24944     
-    139             1                      12477     
-    141             1                         33     
-    146             1                      12444     
-    155             1                      13662     
-    157             1                         20     
-    158             1                         20     
-    159             1                         20     
-    161             1                      12704     
-    162             1                      12704     
-    164             1                       6354     
+    42              1                       2925     
+    43              1                       2925     
+    50              1                      15648     
+    53              1                      12724     
+    54              1                      15647     
+    59              1                      12725     
+    60              1                      12725     
+    61              1                      12725     
+    62              1                      12725     
+    65              1                       3181     
+    66              1                       3181     
+    68              1                       3186     
+    70              1                       3170     
+    72              1                         16     
+    94              1                      13685     
+    96              1                         20     
+    97              1                         20     
+    98              1                         20     
+    99              1                         20     
+    100             1                         20     
+    101             1                         20     
+    103             1                      12713     
+    104             1                      12713     
+    105             1                      12713     
+    106             1                      12713     
+    107             1                      12713     
+    108             1                      12713     
+    120             1                      13671     
+    122             1                         20     
+    123             1                         20     
+    124             1                         20     
+    125             1                         20     
+    127             1                      12713     
+    128             1                      12713     
+    129             1                      12713     
+    130             1                      12713     
+    138             1                      12477     
+    141             1                      24944     
+    144             1                      12477     
+    146             1                         33     
+    151             1                      12444     
+    160             1                      13662     
+    162             1                         20     
+    163             1                         20     
+    164             1                         20     
+    166             1                      12704     
+    167             1                      12704     
+    169             1                       6354     
 Toggle Coverage:
     Enabled Coverage              Bins      Hits    Misses  Coverage
     ----------------              ----      ----    ------  --------
@@ -1155,35 +1167,35 @@ Branch Coverage for instance /top/dut
     ----         ----                      -----     ------ 
   File ../../rtl/str/str_top.sv
 ------------------------------------IF Branch------------------------------------
-    100                                    13696     Count coming in to IF
-    100             1                         20     
-    104             1                      12694     
-    109             1                        982     
+    122                                    13696     Count coming in to IF
+    122             1                         20     
+    126             1                      12694     
+    131             1                        982     
 Branch totals: 3 hits of 3 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    124                                    13657     Count coming in to IF
-    124             1                         20     
-    128             1                      12655     
+    146                                    13657     Count coming in to IF
+    146             1                         20     
+    150             1                      12655     
                                              982     All False Count
 Branch totals: 3 hits of 3 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    129                                    12655     Count coming in to IF
-    129             1                       2928     
+    151                                    12655     Count coming in to IF
+    151             1                       2928     
                                             9727     All False Count
 Branch totals: 2 hits of 2 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    134                                    12655     Count coming in to IF
-    134             1                       2929     
+    156                                    12655     Count coming in to IF
+    156             1                       2929     
                                             9726     All False Count
 Branch totals: 2 hits of 2 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    179                                    16712     Count coming in to IF
-    179             1                        231     
-    181             1                      16481     
+    226                                    16712     Count coming in to IF
+    226             1                        231     
+    228             1                      16481     
 Branch totals: 2 hits of 2 branches = 100.00%
 
 
@@ -1198,7 +1210,7 @@ Expression Coverage for instance /top/dut --
 
   File ../../rtl/str/str_top.sv
 ----------------Focused Expression View-----------------
-Line       38 Item    1  (s_axis_valid_i | flush_active_i)
+Line       72 Item    1  (s_axis_valid_i | flush_active_i)
 Expression totals: 2 of 2 input terms covered = 100.00%
 
       Input Term   Covered  Reason for no coverage   Hint
@@ -1214,7 +1226,7 @@ Expression totals: 2 of 2 input terms covered = 100.00%
   Row   4:          1  flush_active_i_1      ~s_axis_valid_i               
 
 ----------------Focused Expression View-----------------
-Line       161 Item    1  (ted_error_valid && ce_str)
+Line       203 Item    1  (ted_error_valid && ce_str)
 Expression totals: 2 of 2 input terms covered = 100.00%
 
        Input Term   Covered  Reason for no coverage   Hint
@@ -1230,7 +1242,7 @@ Expression totals: 2 of 2 input terms covered = 100.00%
   Row   4:          1  ce_str_1              ted_error_valid               
 
 ----------------Focused Expression View-----------------
-Line       210 Item    1  (ted_error_valid && ce_str)
+Line       251 Item    1  (ted_error_valid && ce_str)
 Expression totals: 2 of 2 input terms covered = 100.00%
 
        Input Term   Covered  Reason for no coverage   Hint
@@ -1258,33 +1270,33 @@ Statement Coverage for instance /top/dut --
     Line         Item                      Count     Source 
     ----         ----                      -----     ------ 
   File ../../rtl/str/str_top.sv
-    38              1                       1873     
-    99              1                      13696     
-    101             1                         20     
-    102             1                         20     
-    103             1                         20     
-    105             1                      12694     
-    106             1                      12694     
-    108             1                      12694     
-    110             1                        982     
-    111             1                        982     
-    123             1                      13657     
+    72              1                       1873     
+    121             1                      13696     
+    123             1                         20     
+    124             1                         20     
     125             1                         20     
-    125             2                         20     
-    126             1                         20     
-    126             2                         20     
-    127             1                         20     
-    127             2                         20     
-    130             1                       2928     
-    131             1                       2928     
-    135             1                       2929     
-    136             1                       2929     
-    137             1                       2929     
-    138             1                       2929     
-    178             1                      16712     
-    180             1                        231     
-    182             1                      16481     
-    197             1                       2925     
+    127             1                      12694     
+    128             1                      12694     
+    130             1                      12694     
+    132             1                        982     
+    133             1                        982     
+    145             1                      13657     
+    147             1                         20     
+    147             2                         20     
+    148             1                         20     
+    148             2                         20     
+    149             1                         20     
+    149             2                         20     
+    152             1                       2928     
+    153             1                       2928     
+    157             1                       2929     
+    158             1                       2929     
+    159             1                       2929     
+    160             1                       2929     
+    225             1                      16712     
+    227             1                        231     
+    229             1                      16481     
+    238             1                       2925     
 Toggle Coverage:
     Enabled Coverage              Bins      Hits    Misses  Coverage
     ----------------              ----      ----    ------  --------

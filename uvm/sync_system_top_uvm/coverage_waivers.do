@@ -22,10 +22,10 @@ coverage exclude -du work.sync_system_top_test_pkg -code bcefst -comment {Testbe
 
 # 2. DUT Behavioral/Code Coverage Waivers
 # Defensive STR PI saturation clamps & anti-windup (closed-loop error stays below +-MAX_V_PI = +-9395241)
-coverage exclude -scope /top/dut/u_str/u_pi_loop -linerange 71-74 87 88 91-94 109-112 -code bces -comment {Closed-loop STR never winds PI loop to +-MAX_V_PI clamp}
+coverage exclude -scope /top/dut/u_str/u_pi_loop -linerange 86-89 102 103 106-109 124-127 -code bces -comment {Closed-loop STR never winds PI loop to +-MAX_V_PI clamp}
 
 # Modulo-1 controller upper clamp (mu_full >= 1.0 cannot be reached with closed-loop positive step W ~ 0.25)
-coverage exclude -scope /top/dut/u_str/u_modulo_ctrl -linerange 142-143 -code bcs -comment {Modulo-1 residual mu_full remains below 1.0 threshold}
+coverage exclude -scope /top/dut/u_str/u_modulo_ctrl -linerange 147-148 -code bcs -comment {Modulo-1 residual mu_full remains below 1.0 threshold}
 
 # STR lock_detector structural invariants (clr_i=0 tie-off, unsigned sym_cnt>=0, Min_Symbols=1 idx_ok_r==0 with Init_Error>thr)
 coverage exclude -scope /top/dut/u_str/u_lock_detector -feccondrow 48 4 -comment {clr_i tied to 1'b0 in str_top}
@@ -41,9 +41,9 @@ coverage exclude -scope /top/dut/u_str/u_lock_detector -linerange 73-74 -code bc
 coverage exclude -scope /top/dut/u_coarse_cfo/u_accumulator -feccondrow 60 5 -comment {active_q clears at WinLen=32; (count_q < 32)_0 unreachable}
 
 # CORDIC unreachable default arms and redundant cascading else-if sign FEC rows
-coverage exclude -scope /top/dut/u_coarse_cfo/u_cordic_angle -linerange 53 153 -code bs -comment {Unreachable default case arms for synthesis/lint safety}
-coverage exclude -scope /top/dut/u_coarse_cfo/u_cordic_angle -feccondrow 143 3 -comment {Cascading else-if: (~sign_x_q && ~sign_y_q) intercepted at L141}
-coverage exclude -scope /top/dut/u_coarse_cfo/u_cordic_angle -feccondrow 145 1 -comment {Cascading else-if: sign_x_q=0 intercepted at L141/L143}
+coverage exclude -scope /top/dut/u_coarse_cfo/u_cordic_angle -linerange 73 173 -code bs -comment {Unreachable default case arms for synthesis/lint safety}
+coverage exclude -scope /top/dut/u_coarse_cfo/u_cordic_angle -feccondrow 163 3 -comment {Cascading else-if: (~sign_x_q && ~sign_y_q) intercepted at L161}
+coverage exclude -scope /top/dut/u_coarse_cfo/u_cordic_angle -feccondrow 165 1 -comment {Cascading else-if: sign_x_q=0 intercepted at L161/L163}
 
 # Derotator saturation & ROM waivers at top level (all covered 100% in standalone derotator_uvm)
 coverage exclude -scope /top/dut/u_derotator/lut_rom_inst -code bs -comment {Exhaustive 4096/4096 ROM indices and default waived against derotator_uvm}
@@ -51,17 +51,17 @@ coverage exclude -scope /top/dut/u_derotator/quadrant_rotator_inst -linerange 35
 coverage exclude -scope /top/dut/u_derotator/complex_multiplier_inst -linerange 71-72 -code bcs -comment {16-bit saturation clamps covered in derotator_uvm; top in_scale=0.5 stays linear}
 
 # Defensive Costas phase_error & pi_filter clamps (nominal AGC/gain scale avoids +-32767 and +-Max_Pi_Output saturation)
-coverage exclude -scope /top/dut/u_costas/u_pe -linerange 52-56 -code bcs -comment {Nominal symbol scale does not saturate 16-bit phase_error}
-coverage exclude -scope /top/dut/u_costas/u_pi -linerange 68-72 127-135 -code bcs -comment {Closed-loop frequency word remains well within +-Max_Pi_Output}
-coverage exclude -scope /top/dut/u_costas/u_pi -linerange 121 -allfalse -code b -comment {Anti-windup freeze only active when output saturates}
-coverage exclude -scope /top/dut/u_costas/u_pi -fecexprrow 76 2 3 4 6 7 8 -comment {Anti-windup freeze saturation flags remain 0 in linear operation}
+coverage exclude -scope /top/dut/u_costas/u_pe -linerange 53-57 -code bcs -comment {Nominal symbol scale does not saturate 16-bit phase_error}
+coverage exclude -scope /top/dut/u_costas/u_pi -linerange 69-73 128-136 -code bcs -comment {Closed-loop frequency word remains well within +-Max_Pi_Output}
+coverage exclude -scope /top/dut/u_costas/u_pi -linerange 122 -allfalse -code b -comment {Anti-windup freeze only active when output saturates}
+coverage exclude -scope /top/dut/u_costas/u_pi -fecexprrow 77 2 3 4 6 7 8 -comment {Anti-windup freeze saturation flags remain 0 in linear operation}
 
 # Costas quad_check mathematically unreachable false arms (full_any sets evt -> done_o<=1 same cycle as cnt reaches 15/-16)
-coverage exclude -scope /top/dut/u_costas/u_quad -linerange 44 48 54 58 -allfalse -code b -comment {done_o latches same cycle cnt reaches 15/-16; !done_o blocks subsequent entry}
-coverage exclude -scope /top/dut/u_costas/u_quad -feccondrow 44 1 -comment {cnt_i_q cannot be 15 while valid_i && !done_o}
-coverage exclude -scope /top/dut/u_costas/u_quad -feccondrow 48 1 -comment {cnt_i_q cannot be -16 while valid_i && !done_o}
-coverage exclude -scope /top/dut/u_costas/u_quad -feccondrow 54 1 -comment {cnt_q_q cannot be 15 while valid_i && !done_o}
-coverage exclude -scope /top/dut/u_costas/u_quad -feccondrow 58 1 -comment {cnt_q_q cannot be -16 while valid_i && !done_o}
+coverage exclude -scope /top/dut/u_costas/u_quad -linerange 47 51 57 61 -allfalse -code b -comment {done_o latches same cycle cnt reaches 15/-16; !done_o blocks subsequent entry}
+coverage exclude -scope /top/dut/u_costas/u_quad -feccondrow 47 1 -comment {cnt_i_q cannot be 15 while valid_i && !done_o}
+coverage exclude -scope /top/dut/u_costas/u_quad -feccondrow 51 1 -comment {cnt_i_q cannot be -16 while valid_i && !done_o}
+coverage exclude -scope /top/dut/u_costas/u_quad -feccondrow 57 1 -comment {cnt_q_q cannot be 15 while valid_i && !done_o}
+coverage exclude -scope /top/dut/u_costas/u_quad -feccondrow 61 1 -comment {cnt_q_q cannot be -16 while valid_i && !done_o}
 
 # Costas lock detectors parameter & threshold decay invariants
 coverage exclude -scope /top/dut/u_costas/u_lock_int -linerange 161-162 -code bs -comment {Min_Symbols=0 dead counter increment}
@@ -69,20 +69,28 @@ coverage exclude -scope /top/dut/u_costas/u_lock_int -fecexprrow 133 3 -comment 
 coverage exclude -scope /top/dut/u_costas/u_lock_pub -fecexprrow 133 3 -comment {Init_Error=8192 with alpha=1/16 stays above thr_enter before Min_Symbols=15}
 
 # burst_ctrl StCoarseEst deadlock safety timeout (NA1+NA2=110 symbols): Coarse CFO finishes well before timeout
-coverage exclude -scope /top/dut/u_burst_ctrl -linerange 118-119 -code bcs -comment {Deadlock failsafe timeout never reached with functioning coarse_cfo}
+coverage exclude -scope /top/dut/u_burst_ctrl -linerange 127-128 -code bcs -comment {Deadlock failsafe timeout never reached with functioning coarse_cfo}
 
 # sync_system_top lock_detect expression invariant: Costas cannot lock while STR is unlocked
-coverage exclude -scope /top/dut -fecexprrow 389 1 -comment {Costas requires STR symbol strobes (en_costas) to converge}
+coverage exclude -scope /top/dut -fecexprrow 441 1 -comment {Costas requires STR symbol strobes (en_costas) to converge}
 
 # 3. Structural Zero-Toggle / Constant Tie-Off / Zero-Padding Bit Waivers
 coverage exclude -scope /top/dut/u_str/u_i_interp -togglenode a12[0] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
 coverage exclude -scope /top/dut/u_str/u_i_interp -togglenode b12[0] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut/u_str/u_i_interp -togglenode b_aligned[0] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut/u_str/u_i_interp -togglenode b_aligned[1] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut/u_str/u_i_interp -togglenode b_aligned[2] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut/u_str/u_i_interp -togglenode b_aligned[3] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
 coverage exclude -scope /top/dut/u_str/u_i_interp -togglenode b_s1[0] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
 coverage exclude -scope /top/dut/u_str/u_i_interp -togglenode b_s2[0] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
 coverage exclude -scope /top/dut/u_str/u_i_interp -togglenode c12[0] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
 coverage exclude -scope /top/dut/u_str/u_i_interp -togglenode d12[0] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
 coverage exclude -scope /top/dut/u_str/u_q_interp -togglenode a12[0] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
 coverage exclude -scope /top/dut/u_str/u_q_interp -togglenode b12[0] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut/u_str/u_q_interp -togglenode b_aligned[0] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut/u_str/u_q_interp -togglenode b_aligned[1] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut/u_str/u_q_interp -togglenode b_aligned[2] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut/u_str/u_q_interp -togglenode b_aligned[3] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
 coverage exclude -scope /top/dut/u_str/u_q_interp -togglenode b_s1[0] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
 coverage exclude -scope /top/dut/u_str/u_q_interp -togglenode b_s2[0] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
 coverage exclude -scope /top/dut/u_str/u_q_interp -togglenode c12[0] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
@@ -190,7 +198,6 @@ coverage exclude -scope /top/dut/u_str -togglenode loop_gain_i[7] -comment {Stru
 coverage exclude -scope /top/dut/u_str -togglenode w_mux[15] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
 coverage exclude -scope /top/dut/u_str -togglenode w_o[15] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
 coverage exclude -scope /top/dut/u_str -togglenode w_val[15] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
-coverage exclude -scope /top/dut/u_coarse_cfo/u_cordic_angle -togglenode iter_q[4] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
 coverage exclude -scope /top/dut/u_coarse_cfo/u_cordic_angle -togglenode x_d[35] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
 coverage exclude -scope /top/dut/u_coarse_cfo/u_cordic_angle -togglenode x_d[36] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
 coverage exclude -scope /top/dut/u_coarse_cfo/u_cordic_angle -togglenode x_d[37] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
@@ -1164,3 +1171,195 @@ coverage exclude -scope /top/dut -togglenode valid_during_flush[5] -comment {Str
 coverage exclude -scope /top/dut -togglenode valid_during_flush[6] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
 coverage exclude -scope /top/dut -togglenode valid_during_flush[7] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
 coverage exclude -scope /top/dut -togglenode valid_during_flush[1] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+
+coverage exclude -scope /top/dut -togglenode dft_all_ch[1][10] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[1][11] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[1][12] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[1][13] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[1][14] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[1][15] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[1][16] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[1][17] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[1][18] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[1][19] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[1][20] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[1][21] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[1][22] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[1][23] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[1][24] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[1][25] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[1][26] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[1][27] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[1][28] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[1][29] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[1][30] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[1][31] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[2][15] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[2][16] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[2][17] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[2][18] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[2][19] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[2][20] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[2][21] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[2][22] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[2][23] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[2][24] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[2][25] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[2][26] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[2][27] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[2][28] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[2][29] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[2][30] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[2][31] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[10][0] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[10][1] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[10][2] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[10][3] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[10][4] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[10][5] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[10][6] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[10][7] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[10][8] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[10][9] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[10][10] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[10][11] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[10][12] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[10][13] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[10][14] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[10][15] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[10][16] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[10][17] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[10][18] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[10][19] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[10][20] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[10][21] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[10][22] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[10][23] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[10][24] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[10][25] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[10][26] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[10][27] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[10][28] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[10][29] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[12][1] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[12][2] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[12][3] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[12][4] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[12][5] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[12][6] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[12][7] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[12][8] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[12][9] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[12][10] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[12][11] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[12][12] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[12][13] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[12][14] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[12][15] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[12][16] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[12][17] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[12][18] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[12][19] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[12][20] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[12][21] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[12][22] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[12][23] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[12][24] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[12][25] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[12][26] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[12][27] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[12][28] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[12][29] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[12][30] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[12][31] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[13][1] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[13][2] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[13][3] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[13][4] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[13][5] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[13][6] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[13][7] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[13][8] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[13][9] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[13][10] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[13][11] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[13][12] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[13][13] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[13][14] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[13][15] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[13][16] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[13][17] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[13][18] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[13][19] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[13][20] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[13][21] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[13][22] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[13][23] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[13][24] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[13][25] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[13][26] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[13][27] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[13][28] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[13][29] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[13][30] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[13][31] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[14][3] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[14][4] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[14][5] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[14][6] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[14][7] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[14][8] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[14][9] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[14][10] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[14][11] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[14][12] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[14][13] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[14][14] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[14][15] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[14][16] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[14][17] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[14][18] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[14][19] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[14][20] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[14][21] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[14][22] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[14][23] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[14][24] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[14][25] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[14][26] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[14][27] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[14][28] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[14][29] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[14][30] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[14][31] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[15][1] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[15][2] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[15][3] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[15][4] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[15][5] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[15][6] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[15][7] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[15][8] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[15][9] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[15][10] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[15][11] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[15][12] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[15][13] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[15][14] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[15][15] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[15][16] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[15][17] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[15][18] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[15][19] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[15][20] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[15][21] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[15][22] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[15][23] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[15][24] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[15][25] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[15][26] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[15][27] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[15][28] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[15][29] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[15][30] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut -togglenode dft_all_ch[15][31] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}

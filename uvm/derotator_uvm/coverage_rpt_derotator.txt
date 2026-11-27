@@ -246,7 +246,7 @@ Branch Coverage for instance /top/dut/lut_rom_inst
 Branch totals: 2 hits of 2 branches = 100.00%
 
 
-  File sine_quarter_lut.svh
+  File ../../rtl/derotator/sine_quarter_lut.svh
 ------------------------------------CASE Branch------------------------------------
     4                                      11242     Count coming in to CASE
     4               1                         21     
@@ -4367,7 +4367,7 @@ Statement Coverage for instance /top/dut/lut_rom_inst --
     62              1                       5621     
     66              1                       5511     
     67              1                       5501     
-  File sine_quarter_lut.svh
+  File ../../rtl/derotator/sine_quarter_lut.svh
     4               1                         21     
     5               1                          4     
     6               1                          4     

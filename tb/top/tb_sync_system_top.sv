@@ -19,7 +19,6 @@ module tb_sync_system_top;
   logic [7:0]                    loop_gain;
   logic [7:0]                    costas_loop_gain;
   logic [3:0]                    dft_sel;
-  logic                          start_of_burst;
   logic                          force_w_en;
   logic [15:0]                   force_w;
   logic                          force_cfo_en;
@@ -32,8 +31,6 @@ module tb_sync_system_top;
   logic signed [CoarseWidth-1:0] coarse_cfo_est;
   logic signed [PhaseWidth-1:0]  fine_cfo_est;
   logic                          lock_detect;
-  logic                          flush_active;
-  logic [7:0]                    valid_during_flush;
   logic [31:0]                   dft_obs_data;
 
   // Expected golden signals
@@ -86,7 +83,6 @@ module tb_sync_system_top;
     .loop_gain         (loop_gain),
     .costas_loop_gain  (costas_loop_gain),
     .dft_sel           (dft_sel),
-    .start_of_burst    (start_of_burst),
     .force_w_en        (force_w_en),
     .force_w           (force_w),
     .force_cfo_en      (force_cfo_en),
@@ -99,8 +95,6 @@ module tb_sync_system_top;
     .coarse_cfo_est    (coarse_cfo_est),
     .fine_cfo_est      (fine_cfo_est),
     .lock_detect       (lock_detect),
-    .flush_active      (flush_active),
-    .valid_during_flush(valid_during_flush),
     .dft_obs_data      (dft_obs_data)
   );
 
@@ -145,7 +139,6 @@ module tb_sync_system_top;
     // Reset sequence (Synchronous Reset)
     rst_n           = 1'b0;
     in_sample_valid = 1'b0;
-    start_of_burst  = 1'b0;
     in_sample_i     = '0;
     in_sample_q     = '0;
     repeat (5) @(posedge clk);
@@ -156,7 +149,6 @@ module tb_sync_system_top;
       {v_val, in_sample_i, in_sample_q, v_sob,
        v_exp_oval, exp_oi, exp_oq, v_exp_fsm, v_exp_lock} = vec_mem[k];
       in_sample_valid = v_val[0];
-      start_of_burst  = v_sob[0];
       exp_oval        = v_exp_oval[0];
       exp_fsm         = v_exp_fsm[2:0];
       exp_lock        = v_exp_lock[0];

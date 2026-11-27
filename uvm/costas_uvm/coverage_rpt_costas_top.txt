@@ -17,63 +17,63 @@ Branch Coverage for instance /top/dut/u_slicer
     ----         ----                      -----     ------ 
   File ../../rtl/costas/slicer.sv
 ------------------------------------IF Branch------------------------------------
-    33                                      3166     Count coming in to IF
-    33              1                       1135     
-    41              1                       2031     
+    35                                      3166     Count coming in to IF
+    35              1                       1135     
+    43              1                       2031     
 Branch totals: 2 hits of 2 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    34                                      1135     Count coming in to IF
-    34              1                        688     
-    37              1                        447     
+    36                                      1135     Count coming in to IF
+    36              1                        688     
+    39              1                        447     
 Branch totals: 2 hits of 2 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    35                                       688     Count coming in to IF
-    35              1                        264     
-    35              2                        424     
+    37                                       688     Count coming in to IF
+    37              1                        264     
+    37              2                        424     
 Branch totals: 2 hits of 2 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    38                                       447     Count coming in to IF
-    38              1                        210     
-    38              2                        237     
+    40                                       447     Count coming in to IF
+    40              1                        210     
+    40              2                        237     
 Branch totals: 2 hits of 2 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    42                                      2030     Count coming in to IF
-    42              1                        693     
-    42              2                       1337     
+    44                                      2030     Count coming in to IF
+    44              1                        693     
+    44              2                       1337     
 Branch totals: 2 hits of 2 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    46                                      3166     Count coming in to IF
-    46              1                       1135     
-    54              1                       2031     
+    48                                      3166     Count coming in to IF
+    48              1                       1135     
+    56              1                       2031     
 Branch totals: 2 hits of 2 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    47                                      1135     Count coming in to IF
-    47              1                        685     
-    50              1                        450     
+    49                                      1135     Count coming in to IF
+    49              1                        685     
+    52              1                        450     
 Branch totals: 2 hits of 2 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    48                                       685     Count coming in to IF
-    48              1                        257     
-    48              2                        428     
+    50                                       685     Count coming in to IF
+    50              1                        257     
+    50              2                        428     
 Branch totals: 2 hits of 2 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    51                                       450     Count coming in to IF
-    51              1                        231     
-    51              2                        219     
+    53                                       450     Count coming in to IF
+    53              1                        231     
+    53              2                        219     
 Branch totals: 2 hits of 2 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    55                                      2030     Count coming in to IF
-    55              1                        652     
-    55              2                       1378     
+    57                                      2030     Count coming in to IF
+    57              1                        652     
+    57              2                       1378     
 Branch totals: 2 hits of 2 branches = 100.00%
 
 
@@ -88,7 +88,7 @@ Condition Coverage for instance /top/dut/u_slicer --
 
   File ../../rtl/costas/slicer.sv
 ----------------Focused Condition View-------------------
-Line       34 Item    1  (yi_i >= 0)
+Line       36 Item    1  (yi_i >= 0)
 Condition totals: 1 of 1 input term covered = 100.00%
 
    Input Term   Covered  Reason for no coverage   Hint
@@ -101,7 +101,7 @@ Condition totals: 1 of 1 input term covered = 100.00%
   Row   2:          1  (yi_i >= 0)_1         -                             
 
 ----------------Focused Condition View-------------------
-Line       35 Item    1  (yi_i >= 10922)
+Line       37 Item    1  (yi_i >= 10922)
 Condition totals: 1 of 1 input term covered = 100.00%
 
        Input Term   Covered  Reason for no coverage   Hint
@@ -114,7 +114,7 @@ Condition totals: 1 of 1 input term covered = 100.00%
   Row   2:          1  (yi_i >= 10922)_1     -                             
 
 ----------------Focused Condition View-------------------
-Line       38 Item    1  (yi_i < -10922)
+Line       40 Item    1  (yi_i < -10922)
 Condition totals: 1 of 1 input term covered = 100.00%
 
        Input Term   Covered  Reason for no coverage   Hint
@@ -127,7 +127,7 @@ Condition totals: 1 of 1 input term covered = 100.00%
   Row   2:          1  (yi_i < -10922)_1     -                             
 
 ----------------Focused Condition View-------------------
-Line       47 Item    1  (yq_i >= 0)
+Line       49 Item    1  (yq_i >= 0)
 Condition totals: 1 of 1 input term covered = 100.00%
 
    Input Term   Covered  Reason for no coverage   Hint
@@ -140,7 +140,7 @@ Condition totals: 1 of 1 input term covered = 100.00%
   Row   2:          1  (yq_i >= 0)_1         -                             
 
 ----------------Focused Condition View-------------------
-Line       48 Item    1  (yq_i >= 10922)
+Line       50 Item    1  (yq_i >= 10922)
 Condition totals: 1 of 1 input term covered = 100.00%
 
        Input Term   Covered  Reason for no coverage   Hint
@@ -153,7 +153,7 @@ Condition totals: 1 of 1 input term covered = 100.00%
   Row   2:          1  (yq_i >= 10922)_1     -                             
 
 ----------------Focused Condition View-------------------
-Line       51 Item    1  (yq_i < -10922)
+Line       53 Item    1  (yq_i < -10922)
 Condition totals: 1 of 1 input term covered = 100.00%
 
        Input Term   Covered  Reason for no coverage   Hint
@@ -177,20 +177,20 @@ Expression Coverage for instance /top/dut/u_slicer --
 
   File ../../rtl/costas/slicer.sv
 ----------------Focused Expression View-----------------
-Line       30 Item    1  ((mod_type_i == 1) && ~slicer_qpsk_i)
+Line       32 Item    1  (~slicer_qpsk_i && (mod_type_i == 1))
 Expression totals: 2 of 2 input terms covered = 100.00%
 
          Input Term   Covered  Reason for no coverage   Hint
         -----------  --------  -----------------------  --------------
-  (mod_type_i == 1)         Y
       slicer_qpsk_i         Y
+  (mod_type_i == 1)         Y
 
      Rows:       Hits  FEC Target            Non-masking condition(s)      
  ---------  ---------  --------------------  -------------------------     
-  Row   1:          1  (mod_type_i == 1)_0   -                             
-  Row   2:          1  (mod_type_i == 1)_1   ~slicer_qpsk_i                
-  Row   3:          1  slicer_qpsk_i_0       (mod_type_i == 1)             
-  Row   4:          1  slicer_qpsk_i_1       (mod_type_i == 1)             
+  Row   1:          1  slicer_qpsk_i_0       (mod_type_i == 1)             
+  Row   2:          1  slicer_qpsk_i_1       -                             
+  Row   3:          1  (mod_type_i == 1)_0   ~slicer_qpsk_i                
+  Row   4:          1  (mod_type_i == 1)_1   ~slicer_qpsk_i                
 
 
 Statement Coverage:
@@ -205,16 +205,16 @@ Statement Coverage for instance /top/dut/u_slicer --
     Line         Item                      Count     Source 
     ----         ----                      -----     ------ 
   File ../../rtl/costas/slicer.sv
-    29              1                       3166     
-    30              1                       3166     
-    35              1                        688     
-    38              1                        447     
-    42              1                       2031     
-    48              1                        685     
-    51              1                        450     
-    55              1                       2031     
-    58              1                       3166     
-    59              1                       3166     
+    31              1                       3166     
+    32              1                       3166     
+    37              1                        688     
+    40              1                        447     
+    44              1                       2031     
+    50              1                        685     
+    53              1                        450     
+    57              1                       2031     
+    60              1                       3166     
+    61              1                       3166     
 Toggle Coverage:
     Enabled Coverage              Bins      Hits    Misses  Coverage
     ----------------              ----      ----    ------  --------
@@ -259,27 +259,27 @@ Branch Coverage for instance /top/dut/u_pe
     ----         ----                      -----     ------ 
   File ../../rtl/costas/phase_error.sv
 ------------------------------------IF Branch------------------------------------
-    35                                      3205     Count coming in to IF
-    35              1                       2585     
+    36                                      3205     Count coming in to IF
+    36              1                       2585     
                                              620     All False Count
 Branch totals: 2 hits of 2 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    43                                      3096     Count coming in to IF
-    43              1                       2478     
+    44                                      3096     Count coming in to IF
+    44              1                       2478     
                                              618     All False Count
 Branch totals: 2 hits of 2 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    61                                      4202     Count coming in to IF
-    61              1                         18     
-    67              1                         56     
-    73              1                       4128     
+    62                                      4202     Count coming in to IF
+    62              1                         18     
+    68              1                         56     
+    74              1                       4128     
 Branch totals: 3 hits of 3 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    77                                      4128     Count coming in to IF
-    77              1                       2215     
+    78                                      4128     Count coming in to IF
+    78              1                       2215     
                                             1913     All False Count
 Branch totals: 2 hits of 2 branches = 100.00%
 
@@ -295,7 +295,7 @@ Condition Coverage for instance /top/dut/u_pe --
 
   File ../../rtl/costas/phase_error.sv
 ----------------Focused Condition View-------------------
-Line       67 Item    1  (mode_i == 0)
+Line       68 Item    1  (mode_i == 0)
 Condition totals: 1 of 1 input term covered = 100.00%
 
      Input Term   Covered  Reason for no coverage   Hint
@@ -320,27 +320,27 @@ Statement Coverage for instance /top/dut/u_pe --
     Line         Item                      Count     Source 
     ----         ----                      -----     ------ 
   File ../../rtl/costas/phase_error.sv
-    34              1                       3205     
-    36              1                       2585     
+    35              1                       3205     
     37              1                       2585     
-    42              1                       3096     
-    44              1                       2478     
-    49              1                       2168     
+    38              1                       2585     
+    43              1                       3096     
+    45              1                       2478     
     50              1                       2168     
     51              1                       2168     
-    60              1                       4202     
-    62              1                         18     
+    52              1                       2168     
+    61              1                       4202     
     63              1                         18     
     64              1                         18     
     65              1                         18     
-    68              1                         56     
+    66              1                         18     
     69              1                         56     
     70              1                         56     
     71              1                         56     
-    74              1                       4128     
+    72              1                         56     
     75              1                       4128     
     76              1                       4128     
-    78              1                       2215     
+    77              1                       4128     
+    79              1                       2215     
 Toggle Coverage:
     Enabled Coverage              Bins      Hits    Misses  Coverage
     ----------------              ----      ----    ------  --------
@@ -392,44 +392,44 @@ Branch Coverage for instance /top/dut/u_pi
     ----         ----                      -----     ------ 
   File ../../rtl/costas/pi_filter.sv
 ------------------------------------IF Branch------------------------------------
-    47                                      2837     Count coming in to IF
-    47              1                       2213     
+    48                                      2837     Count coming in to IF
+    48              1                       2213     
                                              624     All False Count
 Branch totals: 2 hits of 2 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    81                                      2813     Count coming in to IF
-    81              1                       2202     
+    82                                      2813     Count coming in to IF
+    82              1                       2202     
                                              611     All False Count
 Branch totals: 2 hits of 2 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    95                                      4519     Count coming in to IF
-    95              1                         18     
-    105             1                         45     
-    115             1                       4456     
+    96                                      4519     Count coming in to IF
+    96              1                         18     
+    106             1                         45     
+    116             1                       4456     
 Branch totals: 3 hits of 3 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    120                                     4456     Count coming in to IF
-    120             1                       2543     
+    121                                     4456     Count coming in to IF
+    121             1                       2543     
                                             1913     All False Count
 Branch totals: 2 hits of 2 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    121                                     2543     Count coming in to IF
-    121             1                       2543     
+    122                                     2543     Count coming in to IF
+    122             1                       2543     
 Branch totals: 1 hit of 1 branch = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    126                                     4456     Count coming in to IF
-    126             1                       2527     
+    127                                     4456     Count coming in to IF
+    127             1                       2527     
                                             1929     All False Count
 Branch totals: 2 hits of 2 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    127                                     2527     Count coming in to IF
-    137             1                       2527     
+    128                                     2527     Count coming in to IF
+    138             1                       2527     
 Branch totals: 1 hit of 1 branch = 100.00%
 
 
@@ -444,7 +444,7 @@ Condition Coverage for instance /top/dut/u_pi --
 
   File ../../rtl/costas/pi_filter.sv
 ----------------Focused Condition View-------------------
-Line       105 Item    1  (mode_i == 0)
+Line       106 Item    1  (mode_i == 0)
 Condition totals: 1 of 1 input term covered = 100.00%
 
      Input Term   Covered  Reason for no coverage   Hint
@@ -468,7 +468,7 @@ Expression Coverage for instance /top/dut/u_pi --
 
   File ../../rtl/costas/pi_filter.sv
 ----------------Focused Expression View-----------------
-Line       50 Item    1  (~e_i[15] && (e_i != 1'b0))
+Line       51 Item    1  (~e_i[15] && (e_i != 1'b0))
 Expression totals: 2 of 2 input terms covered = 100.00%
 
      Input Term   Covered  Reason for no coverage   Hint
@@ -484,7 +484,7 @@ Expression totals: 2 of 2 input terms covered = 100.00%
   Row   4:          1  (e_i != 1'b0)_1       ~e_i[15]                      
 
 ----------------Focused Expression View-----------------
-Line       76 Item    1  ((sat_pos_q && e_pos_1) || (sat_neg_q && e_neg_1))
+Line       77 Item    1  ((sat_pos_q && e_pos_1) || (sat_neg_q && e_neg_1))
 Expression totals: 2 of 2 input terms covered = 100.00%
 
   Input Term   Covered  Reason for no coverage   Hint
@@ -510,23 +510,22 @@ Statement Coverage for instance /top/dut/u_pi --
     Line         Item                      Count     Source 
     ----         ----                      -----     ------ 
   File ../../rtl/costas/pi_filter.sv
-    46              1                       2837     
-    48              1                       2213     
+    47              1                       2837     
     49              1                       2213     
     50              1                       2213     
     51              1                       2213     
-    62              1                       3089     
+    52              1                       2213     
     63              1                       3089     
     64              1                       3089     
-    66              1                       3089     
+    65              1                       3089     
     67              1                       3089     
-    76              1                       3089     
-    80              1                       2813     
-    82              1                       2202     
-    89              1                       2518     
+    68              1                       3089     
+    77              1                       3089     
+    81              1                       2813     
+    83              1                       2202     
     90              1                       2518     
-    94              1                       4519     
-    96              1                         18     
+    91              1                       2518     
+    95              1                       4519     
     97              1                         18     
     98              1                         18     
     99              1                         18     
@@ -534,7 +533,7 @@ Statement Coverage for instance /top/dut/u_pi --
     101             1                         18     
     102             1                         18     
     103             1                         18     
-    106             1                         45     
+    104             1                         18     
     107             1                         45     
     108             1                         45     
     109             1                         45     
@@ -542,14 +541,15 @@ Statement Coverage for instance /top/dut/u_pi --
     111             1                         45     
     112             1                         45     
     113             1                         45     
-    116             1                       4456     
+    114             1                         45     
     117             1                       4456     
     118             1                       4456     
-    122             1                       2543     
-    138             1                       2527     
+    119             1                       4456     
+    123             1                       2543     
     139             1                       2527     
     140             1                       2527     
-    142             1                       2527     
+    141             1                       2527     
+    143             1                       2527     
 Toggle Coverage:
     Enabled Coverage              Bins      Hits    Misses  Coverage
     ----------------              ----      ----    ------  --------
@@ -860,74 +860,74 @@ Branch Coverage for instance /top/dut/u_quad
     ----         ----                      -----     ------ 
   File ../../rtl/costas/quad_check.sv
 ------------------------------------IF Branch------------------------------------
-    38                                      2639     Count coming in to IF
-    38              1                        431     
-    42              1                        289     
+    41                                      2639     Count coming in to IF
+    41              1                        431     
+    45              1                        289     
                                             1919     All False Count
 Branch totals: 3 hits of 3 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    43                                       289     Count coming in to IF
-    43              1                        176     
-    47              1                        113     
+    46                                       289     Count coming in to IF
+    46              1                        176     
+    50              1                        113     
 Branch totals: 2 hits of 2 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    44                                       176     Count coming in to IF
-    44              1                        176     
+    47                                       176     Count coming in to IF
+    47              1                        176     
 Branch totals: 1 hit of 1 branch = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    48                                       113     Count coming in to IF
-    48              1                        113     
+    51                                       113     Count coming in to IF
+    51              1                        113     
 Branch totals: 1 hit of 1 branch = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    53                                       289     Count coming in to IF
-    53              1                        185     
-    57              1                        104     
+    56                                       289     Count coming in to IF
+    56              1                        185     
+    60              1                        104     
 Branch totals: 2 hits of 2 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    54                                       185     Count coming in to IF
-    54              1                        185     
+    57                                       185     Count coming in to IF
+    57              1                        185     
 Branch totals: 1 hit of 1 branch = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    58                                       104     Count coming in to IF
-    58              1                        104     
+    61                                       104     Count coming in to IF
+    61              1                        104     
 Branch totals: 1 hit of 1 branch = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    73                                      1541     Count coming in to IF
-    73              1                         18     
-    81              1                         45     
-    89              1                       1478     
+    76                                      1541     Count coming in to IF
+    76              1                         18     
+    84              1                         45     
+    92              1                       1478     
 Branch totals: 3 hits of 3 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    92                                      1478     Count coming in to IF
-    92              1                        583     
+    95                                      1478     Count coming in to IF
+    95              1                        583     
                                              895     All False Count
 Branch totals: 2 hits of 2 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    93                                       583     Count coming in to IF
-    93              1                        232     
-    97              1                        282     
+    96                                       583     Count coming in to IF
+    96              1                        232     
+    100             1                        282     
                                               69     All False Count
 Branch totals: 3 hits of 3 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    102                                      583     Count coming in to IF
-    102             1                         17     
+    105                                      583     Count coming in to IF
+    105             1                         17     
                                              566     All False Count
 Branch totals: 2 hits of 2 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    104                                       17     Count coming in to IF
-    104             1                          3     
-    107             1                         14     
+    107                                       17     Count coming in to IF
+    107             1                          3     
+    110             1                         14     
 Branch totals: 2 hits of 2 branches = 100.00%
 
 
@@ -942,7 +942,7 @@ Condition Coverage for instance /top/dut/u_quad --
 
   File ../../rtl/costas/quad_check.sv
 ----------------Focused Condition View-------------------
-Line       42 Item    1  (valid_i && ~done_o)
+Line       45 Item    1  (valid_i && ~done_o)
 Condition totals: 2 of 2 input terms covered = 100.00%
 
   Input Term   Covered  Reason for no coverage   Hint
@@ -958,7 +958,7 @@ Condition totals: 2 of 2 input terms covered = 100.00%
   Row   4:          1  done_o_1              valid_i                       
 
 ----------------Focused Condition View-------------------
-Line       44 Item    1  (cnt_i_q != 15)
+Line       47 Item    1  (cnt_i_q != 15)
 Condition totals: 1 of 1 input term covered = 100.00%
 
        Input Term   Covered  Reason for no coverage   Hint
@@ -970,7 +970,7 @@ Condition totals: 1 of 1 input term covered = 100.00%
   Row   2:          1  (cnt_i_q != 15)_1     -                             
 
 ----------------Focused Condition View-------------------
-Line       48 Item    1  (cnt_i_q != -16)
+Line       51 Item    1  (cnt_i_q != -16)
 Condition totals: 1 of 1 input term covered = 100.00%
 
         Input Term   Covered  Reason for no coverage   Hint
@@ -982,7 +982,7 @@ Condition totals: 1 of 1 input term covered = 100.00%
   Row   2:          1  (cnt_i_q != -16)_1    -                             
 
 ----------------Focused Condition View-------------------
-Line       54 Item    1  (cnt_q_q != 15)
+Line       57 Item    1  (cnt_q_q != 15)
 Condition totals: 1 of 1 input term covered = 100.00%
 
        Input Term   Covered  Reason for no coverage   Hint
@@ -994,7 +994,7 @@ Condition totals: 1 of 1 input term covered = 100.00%
   Row   2:          1  (cnt_q_q != 15)_1     -                             
 
 ----------------Focused Condition View-------------------
-Line       58 Item    1  (cnt_q_q != -16)
+Line       61 Item    1  (cnt_q_q != -16)
 Condition totals: 1 of 1 input term covered = 100.00%
 
         Input Term   Covered  Reason for no coverage   Hint
@@ -1006,7 +1006,7 @@ Condition totals: 1 of 1 input term covered = 100.00%
   Row   2:          1  (cnt_q_q != -16)_1    -                             
 
 ----------------Focused Condition View-------------------
-Line       81 Item    1  (mode_i == 0)
+Line       84 Item    1  (mode_i == 0)
 Condition totals: 1 of 1 input term covered = 100.00%
 
      Input Term   Covered  Reason for no coverage   Hint
@@ -1022,7 +1022,7 @@ Condition totals: 1 of 1 input term covered = 100.00%
 Expression Coverage:
     Enabled Coverage              Bins   Covered    Misses  Coverage
     ----------------              ----      ----    ------  --------
-    Expressions                      9         9         0   100.00%
+    Expressions                      7         7         0   100.00%
 
 ================================Expression Details================================
 
@@ -1030,7 +1030,7 @@ Expression Coverage for instance /top/dut/u_quad --
 
   File ../../rtl/costas/quad_check.sv
 ----------------Focused Expression View-----------------
-Line       64 Item    1  ((((cnt_i_next == 15) || (cnt_i_next == -16)) || (cnt_q_next == 15)) || (cnt_q_next == -16))
+Line       67 Item    1  ((((cnt_i_next == 15) || (cnt_i_next == -16)) || (cnt_q_next == 15)) || (cnt_q_next == -16))
 Expression totals: 4 of 4 input terms covered = 100.00%
 
            Input Term   Covered  Reason for no coverage   Hint
@@ -1051,7 +1051,7 @@ Expression totals: 4 of 4 input terms covered = 100.00%
   Row   7:          1  (cnt_q_next == -16)_0  ~(((cnt_i_next == 15) || (cnt_i_next == -16)) || (cnt_q_next == 15))
 
 ----------------Focused Expression View-----------------
-Line       66 Item    1  (~done_o && (full_any || preamble_end_i))
+Line       69 Item    1  (~done_o && (full_any || preamble_end_i))
 Expression totals: 3 of 3 input terms covered = 100.00%
 
       Input Term   Covered  Reason for no coverage   Hint
@@ -1069,22 +1069,6 @@ Expression totals: 3 of 3 input terms covered = 100.00%
   Row   5:          1  preamble_end_i_0      (~done_o && ~full_any)        
   Row   6:          1  preamble_end_i_1      (~done_o && ~full_any)        
 
-----------------Focused Expression View-----------------
-Line       67 Item    1  ((cnt_i_next == 0) || (cnt_q_next == 0))
-Expression totals: 2 of 2 input terms covered = 100.00%
-
-         Input Term   Covered  Reason for no coverage   Hint
-        -----------  --------  -----------------------  --------------
-  (cnt_i_next == 0)         Y
-  (cnt_q_next == 0)         Y
-
-     Rows:       Hits  FEC Target            Non-masking condition(s)      
- ---------  ---------  --------------------  -------------------------     
-  Row   1:          1  (cnt_i_next == 0)_0   ~(cnt_q_next == 0)            
-  Row   2:          1  (cnt_i_next == 0)_1   -                             
-  Row   3:          1  (cnt_q_next == 0)_0   ~(cnt_i_next == 0)            
-  Row   4:          1  (cnt_q_next == 0)_1   ~(cnt_i_next == 0)            
-
 
 Statement Coverage:
     Enabled Coverage              Bins      Hits    Misses  Coverage
@@ -1098,42 +1082,42 @@ Statement Coverage for instance /top/dut/u_quad --
     Line         Item                      Count     Source 
     ----         ----                      -----     ------ 
   File ../../rtl/costas/quad_check.sv
-    34              1                       2639     
-    35              1                       2639     
-    36              1                       2639     
-    39              1                        431     
-    40              1                        431     
-    45              1                        176     
-    49              1                        113     
-    55              1                        185     
-    59              1                        104     
-    64              1                       2639     
-    66              1                       2639     
+    37              1                       2639     
+    38              1                       2639     
+    39              1                       2639     
+    42              1                        431     
+    43              1                        431     
+    48              1                        176     
+    52              1                        113     
+    58              1                        185     
+    62              1                        104     
     67              1                       2639     
-    68              1                       2639     
     69              1                       2639     
-    72              1                       1541     
-    74              1                         18     
-    75              1                         18     
-    76              1                         18     
+    70              1                       2639     
+    71              1                       2639     
+    72              1                       2639     
+    75              1                       1541     
     77              1                         18     
     78              1                         18     
     79              1                         18     
-    82              1                         45     
-    83              1                         45     
-    84              1                         45     
+    80              1                         18     
+    81              1                         18     
+    82              1                         18     
     85              1                         45     
     86              1                         45     
     87              1                         45     
-    90              1                       1478     
-    94              1                        232     
-    95              1                        232     
-    98              1                        282     
-    99              1                        282     
-    103             1                         17     
-    105             1                          3     
-    108             1                         14     
-    109             1                         14     
+    88              1                         45     
+    89              1                         45     
+    90              1                         45     
+    93              1                       1478     
+    97              1                        232     
+    98              1                        232     
+    101             1                        282     
+    102             1                        282     
+    106             1                         17     
+    108             1                          3     
+    111             1                         14     
+    112             1                         14     
 Toggle Coverage:
     Enabled Coverage              Bins      Hits    Misses  Coverage
     ----------------              ----      ----    ------  --------
@@ -1494,46 +1478,46 @@ Branch Coverage for instance /top/dut
     ----         ----                      -----     ------ 
   File ../../rtl/costas/costas_top.sv
 ------------------------------------IF Branch------------------------------------
-    101                                     2363     Count coming in to IF
-    101             1                         24     
-    105             1                       1713     
+    111                                     2363     Count coming in to IF
+    111             1                         24     
+    115             1                       1713     
                                              626     All False Count
 Branch totals: 3 hits of 3 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    119                                       72     Count coming in to IF
-    119             1                         17     
-    123             1                         55     
+    129                                       72     Count coming in to IF
+    129             1                         17     
+    133             1                         55     
 Branch totals: 2 hits of 2 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    124                                       54     Count coming in to IF
-    124             1                         13     
-    124             2                         41     
+    134                                       54     Count coming in to IF
+    134             1                         13     
+    134             2                         41     
 Branch totals: 2 hits of 2 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    125                                       54     Count coming in to IF
-    125             1                         13     
-    125             2                         41     
+    135                                       54     Count coming in to IF
+    135             1                         13     
+    135             2                         41     
 Branch totals: 2 hits of 2 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    128                                       71     Count coming in to IF
-    128             1                         13     
-    128             2                         58     
+    138                                       71     Count coming in to IF
+    138             1                         13     
+    138             2                         58     
 Branch totals: 2 hits of 2 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    129                                       71     Count coming in to IF
-    129             1                         13     
-    129             2                         58     
+    139                                       71     Count coming in to IF
+    139             1                         13     
+    139             2                         58     
 Branch totals: 2 hits of 2 branches = 100.00%
 
 ------------------------------------IF Branch------------------------------------
-    137                                      131     Count coming in to IF
-    137             1                         17     
-    144             1                        114     
+    147                                      131     Count coming in to IF
+    147             1                         17     
+    154             1                        114     
 Branch totals: 2 hits of 2 branches = 100.00%
 
 
@@ -1548,7 +1532,7 @@ Condition Coverage for instance /top/dut --
 
   File ../../rtl/costas/costas_top.sv
 ----------------Focused Condition View-------------------
-Line       119 Item    1  (mode_i == 1)
+Line       129 Item    1  (mode_i == 1)
 Condition totals: 1 of 1 input term covered = 100.00%
 
      Input Term   Covered  Reason for no coverage   Hint
@@ -1572,7 +1556,7 @@ Expression Coverage for instance /top/dut --
 
   File ../../rtl/costas/costas_top.sv
 ----------------Focused Expression View-----------------
-Line       117 Item    1  (~slicer_qpsk_i && (mod_type_i == 1))
+Line       127 Item    1  (~slicer_qpsk_i && (mod_type_i == 1))
 Expression totals: 2 of 2 input terms covered = 100.00%
 
          Input Term   Covered  Reason for no coverage   Hint
@@ -1588,7 +1572,7 @@ Expression totals: 2 of 2 input terms covered = 100.00%
   Row   4:          1  (mod_type_i == 1)_1   ~slicer_qpsk_i                
 
 ----------------Focused Expression View-----------------
-Line       212 Item    1  (mode_i == 0)
+Line       227 Item    1  (mode_i == 0)
 Expression totals: 1 of 1 input term covered = 100.00%
 
      Input Term   Covered  Reason for no coverage   Hint
@@ -1601,7 +1585,7 @@ Expression totals: 1 of 1 input term covered = 100.00%
   Row   2:          1  (mode_i == 0)_1       -                             
 
 ----------------Focused Expression View-----------------
-Line       213 Item    1  (e_valid && ~done)
+Line       228 Item    1  (e_valid && ~done)
 Expression totals: 2 of 2 input terms covered = 100.00%
 
   Input Term   Covered  Reason for no coverage   Hint
@@ -1617,7 +1601,7 @@ Expression totals: 2 of 2 input terms covered = 100.00%
   Row   4:          1  done_1                e_valid                       
 
 ----------------Focused Expression View-----------------
-Line       247 Item    1  (((mode_i == 0) || ~done) || quad_unres)
+Line       266 Item    1  (((mode_i == 0) || ~done) || quad_unres)
 Expression totals: 3 of 3 input terms covered = 100.00%
 
      Input Term   Covered  Reason for no coverage   Hint
@@ -1636,7 +1620,7 @@ Expression totals: 3 of 3 input terms covered = 100.00%
   Row   6:          1  quad_unres_1          ~((mode_i == 0) || ~done)     
 
 ----------------Focused Expression View-----------------
-Line       257 Item    1  ((done && ~quad_unres) && lock_pub)
+Line       276 Item    1  ((done && ~quad_unres) && lock_pub)
 Expression totals: 3 of 3 input terms covered = 100.00%
 
   Input Term   Covered  Reason for no coverage   Hint
@@ -1667,33 +1651,33 @@ Statement Coverage for instance /top/dut --
     Line         Item                      Count     Source 
     ----         ----                      -----     ------ 
   File ../../rtl/costas/costas_top.sv
-    100             1                       2363     
-    102             1                         24     
-    103             1                         24     
-    106             1                       1713     
-    107             1                       1713     
-    116             1                         72     
-    117             1                         72     
-    120             1                         17     
-    121             1                         17     
-    124             1                         55     
-    125             1                         55     
-    128             1                         72     
-    129             1                         72     
-    136             1                        131     
-    138             1                         17     
-    139             1                         17     
-    140             1                         17     
-    141             1                         17     
-    142             1                         17     
-    143             1                         17     
-    145             1                        114     
-    146             1                        114     
-    147             1                        114     
-    148             1                        114     
-    149             1                        114     
-    150             1                        114     
-    257             1                         62     
+    110             1                       2363     
+    112             1                         24     
+    113             1                         24     
+    116             1                       1713     
+    117             1                       1713     
+    126             1                         72     
+    127             1                         72     
+    130             1                         17     
+    131             1                         17     
+    134             1                         55     
+    135             1                         55     
+    138             1                         72     
+    139             1                         72     
+    146             1                        131     
+    148             1                         17     
+    149             1                         17     
+    150             1                         17     
+    151             1                         17     
+    152             1                         17     
+    153             1                         17     
+    155             1                        114     
+    156             1                        114     
+    157             1                        114     
+    158             1                        114     
+    159             1                        114     
+    160             1                        114     
+    276             1                         62     
 Toggle Coverage:
     Enabled Coverage              Bins      Hits    Misses  Coverage
     ----------------              ----      ----    ------  --------

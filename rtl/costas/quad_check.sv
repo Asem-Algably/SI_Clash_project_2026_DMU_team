@@ -6,11 +6,14 @@
 //               Accumulates sign stats to calculate initial phase adjustment.
 // ============================================================================
 module quad_check #(
-    parameter int Phase_Width = 32
+    parameter int                  Phase_Width = 32,
+    parameter int                  ModeWidth   = 2,
+    parameter logic [ModeWidth-1:0] ModeHold   = 2'b00,
+    parameter int                  CntMax      = 15
 )(
     input  logic                   clk_i,
     input  logic                   rst_ni,
-    input  logic [1:0]             mode_i,
+    input  logic [ModeWidth-1:0]   mode_i,
     input  logic                   valid_i,
     input  logic                   sgn_i_pos_i,
     input  logic                   sgn_q_pos_i,
@@ -22,12 +25,12 @@ module quad_check #(
     output logic                   quad_unresolved_o,
     output logic                   done_o
 );
-    localparam logic        [1:0] MODE_HOLD = 2'b00;
-    localparam logic signed [4:0] CNT_MAX   =  5'sd15; // Saturation max limit
-    localparam logic signed [4:0] CNT_MIN   = -5'sd16; // Saturation min limit
+    localparam int QuadCntWidth = $clog2(CntMax + 1) + 1;
+    localparam logic signed [QuadCntWidth-1:0] CNT_MAX = QuadCntWidth'(CntMax);       // Saturation max limit
+    localparam logic signed [QuadCntWidth-1:0] CNT_MIN = -$signed(QuadCntWidth'(CntMax + 1)); // Saturation min limit
 
-    logic signed [4:0] cnt_i_q, cnt_q_q;               // 5-bit sign counters
-    logic signed [4:0] cnt_i_next, cnt_q_next;
+    logic signed [QuadCntWidth-1:0] cnt_i_q, cnt_q_q;               // Sign counters
+    logic signed [QuadCntWidth-1:0] cnt_i_next, cnt_q_next;
     logic full_any, evt, unknown;
     logic neg_i, neg_q;                                // Sign bits
 
@@ -36,27 +39,27 @@ module quad_check #(
         cnt_q_next = cnt_q_q;
 
         if (!lock_i) begin
-            cnt_i_next = 0;
-            cnt_q_next = 0;
+            cnt_i_next = '0;
+            cnt_q_next = '0;
         end
         else if (valid_i && !done_o) begin
             if (sgn_i_pos_i) begin
                 if (cnt_i_q != CNT_MAX) begin
-                    cnt_i_next = cnt_i_q + 5'sd1;   // Count up I
+                    cnt_i_next = cnt_i_q + QuadCntWidth'(1);   // Count up I
                 end
             end else begin
                 if (cnt_i_q != CNT_MIN) begin
-                    cnt_i_next = cnt_i_q - 5'sd1;   // Count down I
+                    cnt_i_next = cnt_i_q - QuadCntWidth'(1);   // Count down I
                 end
             end
 
             if (sgn_q_pos_i) begin
                 if (cnt_q_q != CNT_MAX) begin
-                    cnt_q_next = cnt_q_q + 5'sd1;   // Count up Q
+                    cnt_q_next = cnt_q_q + QuadCntWidth'(1);   // Count up Q
                 end
             end else begin
                 if (cnt_q_q != CNT_MIN) begin
-                    cnt_q_next = cnt_q_q - 5'sd1;   // Count down Q
+                    cnt_q_next = cnt_q_q - QuadCntWidth'(1);   // Count down Q
                 end
             end
         end
@@ -64,9 +67,9 @@ module quad_check #(
         full_any = (cnt_i_next == CNT_MAX) || (cnt_i_next == CNT_MIN) ||
                    (cnt_q_next == CNT_MAX) || (cnt_q_next == CNT_MIN);          // Counter full flag
         evt = !done_o && (full_any || preamble_end_i);                          // Trigger evaluation
-        unknown = ((cnt_i_next == 5'sd0) || (cnt_q_next == 5'sd0));             // Zero sign ambiguity
-        neg_i = cnt_i_next[4];                                                  // Extract sign I
-        neg_q = cnt_q_next[4];                                                  // Extract sign Q
+        unknown = ((cnt_i_next == '0) || (cnt_q_next == '0));                   // Zero sign ambiguity
+        neg_i = cnt_i_next[QuadCntWidth-1];                                     // Extract sign I
+        neg_q = cnt_q_next[QuadCntWidth-1];                                     // Extract sign Q
     end
 
     always_ff @(posedge clk_i) begin
@@ -78,7 +81,7 @@ module quad_check #(
             phase_adj_o       <= '0;
             quad_unresolved_o <= 1'b0;
         end
-        else if (mode_i == MODE_HOLD) begin
+        else if (mode_i == ModeHold) begin
             cnt_i_q           <= '0;
             cnt_q_q           <= '0;
             done_o            <= 1'b0;

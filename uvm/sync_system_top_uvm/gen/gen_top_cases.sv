@@ -140,8 +140,7 @@ module gen_top_cases;
                 if (!cyc.randomize()) $fatal(1, "Randomization failed on cycle mask");
 
                 rst_n  = 1'b1;
-                // tc_29 intentionally enters StAcquire from StWaitBurst via in_val=1 with sob=0 (burst_ctrl L92)
-                sob    = (c == 29) ? 1'b0 : (t == 0);
+                sob    = 1'b0; // DUT triggers burst directly on in_sample_valid (keep column 0 for cfg compat)
                 dft_sel = dft_sel + 4'd1;
 
                 // Determine valid mask

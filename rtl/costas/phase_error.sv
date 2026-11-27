@@ -6,13 +6,15 @@
 //               3-stage pipeline: multiply / subtract / round+shift+saturate.
 // ============================================================================
 module phase_error #(
-    parameter int Data_Width     = 16,
-    parameter int Error_Width    = 16,
-    parameter int Data_Frac_Bits = 15
+    parameter int                  Data_Width     = 16,
+    parameter int                  Error_Width    = 16,
+    parameter int                  Data_Frac_Bits = 15,
+    parameter int                  ModeWidth      = 2,
+    parameter logic [ModeWidth-1:0] ModeHold      = 2'b00
 )(
     input  logic                          clk_i,
     input  logic                          rst_ni,
-    input  logic        [1:0]             mode_i,
+    input  logic        [ModeWidth-1:0]   mode_i,
     input  logic                          valid_i,
     input  logic signed [Data_Width-1:0]  yi_i, yq_i,
     input  logic signed [Data_Width-1:0]  ai_i, aq_i,
@@ -20,9 +22,8 @@ module phase_error #(
     output logic signed [Error_Width-1:0] e_o,
     output logic                          valid_o
 );
-    localparam logic        [1:0]             MODE_HOLD = 2'b00;
-    localparam logic signed [Error_Width-1:0] E_MAX     = {1'b0, {(Error_Width-1){1'b1}}};
-    localparam logic signed [Error_Width-1:0] E_MIN     = {1'b1, {(Error_Width-1){1'b0}}};
+    localparam logic signed [Error_Width-1:0] E_MAX = {1'b0, {(Error_Width-1){1'b1}}};
+    localparam logic signed [Error_Width-1:0] E_MIN = {1'b1, {(Error_Width-1){1'b0}}};
 
     logic signed [2*Data_Width-1:0] m_qa, m_ia;     // stage 1: yq*ai, yi*aq
     logic signed [2*Data_Width:0]   diff_r;         // stage 2: m_qa - m_ia
@@ -64,7 +65,7 @@ module phase_error #(
             e_o     <= '0;
             valid_o <= 1'b0;
         end
-        else if (mode_i == MODE_HOLD) begin
+        else if (mode_i == ModeHold) begin
             v_m     <= 1'b0;
             v_d     <= 1'b0;
             e_o     <= '0;

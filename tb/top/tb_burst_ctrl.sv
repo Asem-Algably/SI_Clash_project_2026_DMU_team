@@ -44,7 +44,7 @@ module tb_burst_ctrl;
 
   logic       clk;
   logic       rst_n;
-  logic       start_of_burst;
+  logic       in_sample_valid;
   logic       str_lock;
   logic       coarse_valid;
   logic       sym_strobe;
@@ -52,6 +52,9 @@ module tb_burst_ctrl;
   logic [1:0] costas_mode;
   logic       preamble_end;
   logic [2:0] state;
+  logic       flush_active;
+  logic       flush_rst;
+  logic [7:0] valid_during_flush;
 
   int errors = 0;
 
@@ -66,16 +69,19 @@ module tb_burst_ctrl;
     .CostasAcq  (CostasAcq),
     .CostasTrack(CostasTrack)
   ) u_dut (
-    .clk_i          (clk),
-    .rst_ni         (rst_n),
-    .start_of_burst_i(start_of_burst),
-    .str_lock_i     (str_lock),
-    .coarse_valid_i (coarse_valid),
-    .sym_strobe_i   (sym_strobe),
-    .coarse_start_o (coarse_start),
-    .costas_mode_o  (costas_mode),
-    .preamble_end_o (preamble_end),
-    .state_o        (state)
+    .clk_i               (clk),
+    .rst_ni              (rst_n),
+    .in_sample_valid_i   (in_sample_valid),
+    .str_lock_i          (str_lock),
+    .coarse_valid_i      (coarse_valid),
+    .sym_strobe_i        (sym_strobe),
+    .coarse_start_o      (coarse_start),
+    .costas_mode_o       (costas_mode),
+    .preamble_end_o      (preamble_end),
+    .state_o             (state),
+    .flush_active_o      (flush_active),
+    .flush_rst_o         (flush_rst),
+    .valid_during_flush_o(valid_during_flush)
   );
 
   // -------------------------------------------------------------------------
@@ -107,11 +113,11 @@ module tb_burst_ctrl;
   endtask
 
   task automatic do_reset();
-    rst_n          = 1'b0;
-    start_of_burst = 1'b0;
-    str_lock       = 1'b0;
-    coarse_valid   = 1'b0;
-    sym_strobe     = 1'b0;
+    rst_n           = 1'b0;
+    in_sample_valid = 1'b0;
+    str_lock        = 1'b0;
+    coarse_valid    = 1'b0;
+    sym_strobe      = 1'b0;
     repeat (3) @(posedge clk);
     rst_n = 1'b1;
     @(posedge clk);
@@ -135,11 +141,10 @@ module tb_burst_ctrl;
     $display("\n=== TEST 2: Normal acquisition path ===");
     do_reset();
 
-    start_of_burst = 1'b1;
+    in_sample_valid = 1'b1;
     @(posedge clk);
-    start_of_burst = 1'b0;
     @(posedge clk);
-    assert_state(StAcquire, "after start_of_burst");
+    assert_state(StAcquire, "after in_sample_valid");
     assert_costas_mode(CostasHold, "HOLD in Acquire");
 
     drive_symbols(20);
@@ -198,9 +203,8 @@ module tb_burst_ctrl;
     $display("\n=== TEST 3: Timeout path ===");
     do_reset();
 
-    start_of_burst = 1'b1;
+    in_sample_valid = 1'b1;
     @(posedge clk);
-    start_of_burst = 1'b0;
     @(posedge clk);
 
     // Acquire → CoarseEst at symbol 70 (NA1 timeout)

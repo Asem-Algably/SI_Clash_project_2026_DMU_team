@@ -27,7 +27,6 @@ package sync_system_top_monitor_pkg;
                 // inputs (needed for coverage)
                 item.rst_n         = sync_system_top_test_vif.rst_n;
                 item.valid         = sync_system_top_test_vif.in_sample_valid;
-                item.start         = sync_system_top_test_vif.start_of_burst;
                 item.mod_type      = sync_system_top_test_vif.mod_type;
                 item.dft_sel       = sync_system_top_test_vif.dft_sel;
                 item.force_w_en    = sync_system_top_test_vif.force_w_en;

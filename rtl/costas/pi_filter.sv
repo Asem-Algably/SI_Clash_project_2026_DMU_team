@@ -14,16 +14,18 @@
 //               Latency = 3 clocks. Back-to-back samples are accumulated correctly.
 // ============================================================================
 module pi_filter #(
-    parameter int Error_Width     = 16,
-    parameter int Gain_Width      = 24,
-    parameter int Phase_Width     = 32,
-    parameter int Error_Frac_Bits = 15,   // fractional bits of e_i (Q1.15)
-    parameter int Gain_Frac_Bits  = 24,   // fractional bits of kp_i / ki_i (Q0.24)
-    parameter logic signed [Phase_Width-1:0] Max_Pi_Output = 32'sh1EB8_51EB  // 0.12 * 2^32 (Q0.32, turns/symbol)
+    parameter int                           Error_Width     = 16,
+    parameter int                           Gain_Width      = 24,
+    parameter int                           Phase_Width     = 32,
+    parameter int                           Error_Frac_Bits = 15,   // fractional bits of e_i (Q1.15)
+    parameter int                           Gain_Frac_Bits  = 24,   // fractional bits of kp_i / ki_i (Q0.24)
+    parameter logic signed [Phase_Width-1:0] Max_Pi_Output  = 32'sh1EB8_51EB, // 0.12 * 2^32 (Q0.32, turns/symbol)
+    parameter int                           ModeWidth       = 2,
+    parameter logic [ModeWidth-1:0]         ModeHold        = 2'b00
 )(
     input  logic                          clk_i,
     input  logic                          rst_ni,
-    input  logic        [1:0]             mode_i,      // 00 HOLD, 01 ACQ, 10 TRACK
+    input  logic        [ModeWidth-1:0]   mode_i,      // HOLD, ACQ, TRACK
     input  logic                          valid_i,
     input  logic signed [Error_Width-1:0] e_i,
     input  logic        [Gain_Width-1:0]  kp_i,
@@ -33,7 +35,6 @@ module pi_filter #(
     output logic                          valid_o,
     output logic signed [Phase_Width-1:0] int_o
 );
-    localparam logic [1:0] MODE_HOLD = 2'b00;
     localparam int MW = Error_Width + Gain_Width;                           // Multiplier width (Q1.39)
     localparam int SW = Phase_Width + 2;                                    // Sum width (Q1.34)
     localparam int SHIFT = Error_Frac_Bits + Gain_Frac_Bits - Phase_Width;  // Shift right to align to Q0.32
@@ -102,7 +103,7 @@ module pi_filter #(
             sat_pos_q <= 1'b0;
             sat_neg_q <= 1'b0;
         end
-        else if (mode_i == MODE_HOLD) begin
+        else if (mode_i == ModeHold) begin
             v1        <= 1'b0;
             v2        <= 1'b0;
             valid_o   <= 1'b0;

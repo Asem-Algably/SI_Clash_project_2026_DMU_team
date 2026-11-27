@@ -21,10 +21,10 @@ coverage exclude -du work.str_top_test_pkg -code bcefst -comment {Testbench/UVM 
 
 # 2. DUT Behavioral/Code Coverage Waivers
 # Defensive STR PI saturation clamps & anti-windup (closed-loop error stays below +-MAX_V_PI = +-9395241)
-coverage exclude -scope /top/dut/u_pi_loop -linerange 71-74 87 88 91-94 109-112 -code bces -comment {Closed-loop STR never winds PI loop to +-MAX_V_PI clamp}
+coverage exclude -scope /top/dut/u_pi_loop -linerange 86-89 102 103 106-109 124-127 -code bces -comment {Closed-loop STR never winds PI loop to +-MAX_V_PI clamp}
 
 # Modulo-1 controller upper clamp (mu_full >= 1.0 cannot be reached with closed-loop positive step W ~ 0.25)
-coverage exclude -scope /top/dut/u_modulo_ctrl -linerange 142-143 -code bcs -comment {Modulo-1 residual mu_full remains below 1.0 threshold}
+coverage exclude -scope /top/dut/u_modulo_ctrl -linerange 147-148 -code bcs -comment {Modulo-1 residual mu_full remains below 1.0 threshold}
 
 # STR lock_detector structural invariants (clr_i=0 tie-off, unsigned sym_cnt>=0, Min_Symbols=1 idx_ok_r==0 with Init_Error>thr)
 coverage exclude -scope /top/dut/u_lock_detector -feccondrow 48 4 -comment {clr_i tied to 1'b0 in str_top}
@@ -36,12 +36,20 @@ coverage exclude -scope /top/dut/u_lock_detector -fecexprrow 68 3 -comment {Init
 # 3. Structural Zero-Toggle / Constant Tie-Off / Zero-Padding Bit Waivers
 coverage exclude -scope /top/dut/u_i_interp -togglenode a12[0] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
 coverage exclude -scope /top/dut/u_i_interp -togglenode b12[0] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut/u_i_interp -togglenode b_aligned[0] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut/u_i_interp -togglenode b_aligned[1] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut/u_i_interp -togglenode b_aligned[2] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut/u_i_interp -togglenode b_aligned[3] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
 coverage exclude -scope /top/dut/u_i_interp -togglenode b_s1[0] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
 coverage exclude -scope /top/dut/u_i_interp -togglenode b_s2[0] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
 coverage exclude -scope /top/dut/u_i_interp -togglenode c12[0] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
 coverage exclude -scope /top/dut/u_i_interp -togglenode d12[0] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
 coverage exclude -scope /top/dut/u_q_interp -togglenode a12[0] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
 coverage exclude -scope /top/dut/u_q_interp -togglenode b12[0] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut/u_q_interp -togglenode b_aligned[0] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut/u_q_interp -togglenode b_aligned[1] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut/u_q_interp -togglenode b_aligned[2] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
+coverage exclude -scope /top/dut/u_q_interp -togglenode b_aligned[3] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
 coverage exclude -scope /top/dut/u_q_interp -togglenode b_s1[0] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
 coverage exclude -scope /top/dut/u_q_interp -togglenode b_s2[0] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
 coverage exclude -scope /top/dut/u_q_interp -togglenode c12[0] -comment {Structural constant tie-off, zero-padding, or bounded MSB/LSB bit}
