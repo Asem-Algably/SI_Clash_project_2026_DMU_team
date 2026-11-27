@@ -7,6 +7,7 @@ import uvm_pkg::*;
 module top ();
 
   logic clk;
+  logic rst_n;
 
   // Clock: 50 MHz (20 ns period)
   initial begin
@@ -14,12 +15,19 @@ module top ();
     forever #10 clk = ~clk;
   end
 
-  // Interface instance — rst_ni driven directly by UVM driver without multi-driver contention
+  // Reset: asserted 100 ns
+  initial begin
+    rst_n = 0;
+    #100 rst_n = 1;
+  end
+
+  // Interface instance — اسمه مطابق لـ run.do
   coarse_cfo_core_inter coarse_cfo_core_test_vif (clk);
 
-  // Initialize interface signals cleanly at t=0
+  assign coarse_cfo_core_test_vif.rst_ni = rst_n;
+
+  // Initialize interface signals
   initial begin
-    coarse_cfo_core_test_vif.rst_ni         = 0;
     coarse_cfo_core_test_vif.start_i        = 0;
     coarse_cfo_core_test_vif.s_axis_valid_i = 0;
     coarse_cfo_core_test_vif.s_axis_i_sym_i = 0;
@@ -28,10 +36,10 @@ module top ();
     coarse_cfo_core_test_vif.force_cfo_i    = 0;
   end
 
-  // DUT — fully connected through interface
+  // DUT — fully connected
   coarse_cfo_core dut (
     .clk_i           (clk),
-    .rst_ni          (coarse_cfo_core_test_vif.rst_ni),
+    .rst_ni          (rst_n),
     .start_i         (coarse_cfo_core_test_vif.start_i),
     .s_axis_valid_i  (coarse_cfo_core_test_vif.s_axis_valid_i),
     .s_axis_i_sym_i  (coarse_cfo_core_test_vif.s_axis_i_sym_i),

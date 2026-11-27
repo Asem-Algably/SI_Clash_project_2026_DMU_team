@@ -67,8 +67,8 @@ function cfg = get_hw_config()
     cfg.w.str_pi         = [1, 26, 28];      % sQ-3.28: STR PI integrator & output (SATURATING)
     cfg.w.str_kp         = [0, 24, 25];      % uQ-1.25: STR proportional gain Kp
     cfg.w.str_ki         = [0, 24, 31];      % uQ-7.31: STR integral gain Ki
-    cfg.w.cprod          = [1, 33, 30];      % sQ2.30 : Coarse CFO lag-4 product r[n]*conj(r[n-4]) matching complex_mult.sv
-    cfg.w.cacc           = [1, 40, 30];      % sQ9.30 : Coarse CFO correlation accumulator matching accumulator.sv
+    cfg.w.cprod          = [1, 22, 19];      % sQ2.19 : Coarse CFO lag-4 product r[n]*conj(r[n-4])
+    cfg.w.cacc           = [1, 30, 21];      % sQ8.21 : Coarse CFO correlation accumulator
     cfg.w.cx             = [1, 32, 22];      % sQ9.22 : CORDIC vectoring X, Y registers
     cfg.w.cz             = [1, 28, 26];      % sQ1.26 : CORDIC angle Z accumulator in turns
     cfg.w.cfo            = [1, 24, 24];      % sQ-1.24: Coarse CFO output word in turns/symbol
@@ -226,10 +226,10 @@ function cfg = get_hw_config()
     cfg.valid.enable           = true;       % Hardware valid-handling & STR clock enable
     cfg.valid.idle_timeout     = 14;         % Consecutive invalid sample clocks to trigger FLUSH
     cfg.valid.flush_fill       = 'repeat';   % Pad sample fill mode: 'repeat' (default) or 'zero'
-    cfg.valid.flush_margin     = 3;          % Safety margin clocks added to flush duration F
+    cfg.valid.flush_margin     = 4;          % Safety margin clocks added to flush duration F
     cfg.valid.drop_pad_symbols = false;      % Drain shuts down via soft-reset before pad reaches output
     % Derived F: worst-case wait for next strobe (sps) + STR latency + derotator + wrap_out + margin
-    cfg.valid.flush_clocks     = cfg.sps + cfg.lat.str + cfg.lat.derot + cfg.lat.wrap_out + cfg.valid.flush_margin; % 16 clocks (matches burst_ctrl FLUSH_CLOCKS)
+    cfg.valid.flush_clocks     = cfg.sps + cfg.lat.str + cfg.lat.derot + cfg.lat.wrap_out + cfg.valid.flush_margin; % 16 clocks
 end
 
 % --- Helper Functions ---

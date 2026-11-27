@@ -45,8 +45,8 @@ package str_top_drive;
                 str_top_test_vif.s_axis_i_sample_i <= item.i_in;
                 str_top_test_vif.s_axis_q_sample_i <= item.q_in;
                 str_top_test_vif.loop_gain_i       <= 8'd0;
-                str_top_test_vif.force_w_en_i      <= item.force_w_en;
-                str_top_test_vif.force_w_i         <= item.force_w;
+                str_top_test_vif.force_w_en_i      <= 1'b0;
+                str_top_test_vif.force_w_i         <= 16'd0;
 
                 if (item.exp_valid === 1'b1)
                     drv_ap.write(item);

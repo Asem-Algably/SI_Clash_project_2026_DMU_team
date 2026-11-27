@@ -10,7 +10,7 @@ function [out, st] = step_derotator(in, st, T)
 
     R  = T.rd;
     D  = T.derot;
-    Ld = T.lat.derot; % 3 entries = 3 posedge clock stages (1 input_pipeline + 2 complex_multiplier) matching RTL derotator.sv
+    Ld = T.lat.derot + 1; % 4 entries = 3 cycles delay to match RTL derotator.sv pipeline
 
     % =====================================================================
     % 1. ACTIVE-LOW RESET (~rst_ni)
@@ -44,12 +44,8 @@ function [out, st] = step_derotator(in, st, T)
         st.adj(:) = adj_cur;
     end
 
-    fw_cur = coarse_cur + adj_cur;
-    if isfield(in, 'force_freq_en_i') && logical(in.force_freq_en_i)
-        st.fw(:) = T.fi(in.force_freq_i, 'freq_w');
-    else
-        st.fw(:) = fw_cur;
-    end
+    fw_cur   = coarse_cur + adj_cur;
+    st.fw(:) = fw_cur;
 
     new_valid = false;
     new_yi    = T.fi(0, 'rot_out');

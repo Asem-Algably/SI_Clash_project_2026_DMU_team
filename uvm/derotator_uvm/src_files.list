@@ -12,13 +12,12 @@ derotator_agt.sv
 derotator_env.sv
 derotator_test.sv
 
-+incdir+../../rtl/derotator
-../../rtl/derotator/Freq_word.sv
-../../rtl/derotator/NCO_accumulator.sv
-../../rtl/derotator/quadrant_rotator.sv
-../../rtl/derotator/input_pipeline.sv
-../../rtl/derotator/complex_multiplier.sv
-../../rtl/derotator/lut_rom.sv
-../../rtl/derotator/derotator.sv
+freq_word.sv
+NCO_accumulator.sv
+quadrant_rotator.sv
+input_pipeline.sv
+complex_multiplier.sv
+lut_rom.sv
+derotator.sv
 
 derotator_top.sv
